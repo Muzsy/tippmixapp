@@ -1,7 +1,6 @@
-/// Header widget used on the profile screen.
-///
-/// Displays the user's avatar, name and e-mail when authenticated. If the user
-/// is not signed in a short call-to-action is shown instead.
+// Header widget used on the profile screen.
+// Displays the user's avatar, name and e-mail when authenticated.
+// If the user is not signed in a short call-to-action is shown instead.
 import 'package:flutter/material.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';

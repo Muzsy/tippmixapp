@@ -57,7 +57,7 @@ class BetSlipService {
       id: ticketId,
       userId: userId,
       tips: tips,
-      stake: stake,
+      stake: stake.toDouble(),
       totalOdd: totalOdd,
       potentialWin: potentialWin,
       createdAt: DateTime.now(),
