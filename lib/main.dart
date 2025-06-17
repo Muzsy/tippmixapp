@@ -10,6 +10,11 @@ import 'providers/auth_provider.dart';
 // import 'screens/login_screen.dart';
 // import 'screens/register_screen.dart';
 import 'screens/login_register_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/events_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/my_tickets_screen.dart';
+import 'screens/create_ticket_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,18 +36,41 @@ class MyApp extends ConsumerWidget {
         ref.watch(authProvider.notifier).authStateStream,
       ),
       redirect: (context, state) {
-        //final loggingIn = state.uri.toString() == '/login' || state.uri.toString() == '/register';
-        final loggingIn = state.uri.path == '/login';
+        final loggingIn = state.subloc == '/login';
         if (user == null && !loggingIn) return '/login';
         if (user != null && loggingIn) return '/';
         return null;
       },
       routes: [
-        // GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-        // GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
-        GoRoute(path: '/login', builder: (context, _) => const LoginRegisterScreen()),
-        //GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-        // ...további route-ok
+        GoRoute(
+          path: '/login',
+          builder: (context, _) => const LoginRegisterScreen(),
+        ),
+        ShellRoute(
+          builder: (context, state, child) => HomeScreen(child: child),
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, _) => const EventsScreen(sportKey: 'soccer'),
+            ),
+            GoRoute(
+              path: '/profile',
+              builder: (context, _) => const ProfileScreen(),
+            ),
+            GoRoute(
+              path: '/my-tickets',
+              builder: (context, _) => const MyTicketsScreen(),
+            ),
+            GoRoute(
+              path: '/create-ticket',
+              builder: (context, _) => const CreateTicketScreen(),
+            ),
+            GoRoute(
+              path: '/events',
+              builder: (context, _) => const EventsScreen(sportKey: 'soccer'),
+            ),
+          ],
+        ),
       ],
     );
 
