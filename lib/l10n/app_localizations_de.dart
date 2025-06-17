@@ -159,6 +159,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get events_empty => 'Keine Ereignisse verfügbar';
 
   @override
+  String get events_screen_no_events => 'Keine Ereignisse gefunden';
+
+  @override
+  String get events_screen_quota_warning =>
+      'Warnung: API Kontingent fast aufgebraucht';
+
+  @override
+  String get events_screen_refresh => 'Aktualisieren';
+
+  @override
+  String get events_screen_no_odds => 'Keine Quoten verfügbar';
+
+  @override
+  String get events_screen_no_market => 'Kein Markt verfügbar';
+
+  @override
+  String events_screen_start_time(Object time) {
+    return 'Startzeit: $time';
+  }
+
+  @override
+  String get events_screen_tip_added => 'Tipp hinzugefügt';
+
+  @override
+  String get events_screen_tip_duplicate => 'Tipp bereits hinzugefügt';
+
+  @override
   String get add_tip => 'Hinzufügen';
 
   @override

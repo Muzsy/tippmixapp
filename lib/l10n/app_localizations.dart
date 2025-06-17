@@ -397,6 +397,30 @@ abstract class AppLocalizations {
   /// **'No events available'**
   String get events_empty;
 
+  /// No description provided for @events_screen_no_events.
+  String get events_screen_no_events;
+
+  /// No description provided for @events_screen_quota_warning.
+  String get events_screen_quota_warning;
+
+  /// No description provided for @events_screen_refresh.
+  String get events_screen_refresh;
+
+  /// No description provided for @events_screen_no_odds.
+  String get events_screen_no_odds;
+
+  /// No description provided for @events_screen_no_market.
+  String get events_screen_no_market;
+
+  /// No description provided for @events_screen_start_time.
+  String events_screen_start_time(Object time);
+
+  /// No description provided for @events_screen_tip_added.
+  String get events_screen_tip_added;
+
+  /// No description provided for @events_screen_tip_duplicate.
+  String get events_screen_tip_duplicate;
+
   /// No description provided for @add_tip.
   ///
   /// In en, this message translates to:
