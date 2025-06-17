@@ -6,7 +6,7 @@ class TicketDetailsDialog extends StatelessWidget {
   final Ticket ticket;
   final List<TipModel> tips;
 
-  const TicketDetailsDialog({Key? key, required this.ticket, required this.tips}) : super(key: key);
+  const TicketDetailsDialog({super.key, required this.ticket, required this.tips});
 
   @override
   Widget build(BuildContext context) {
