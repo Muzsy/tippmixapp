@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/ticket_model.dart';
 import '../models/tip_model.dart';
+import '../l10n/app_localizations.dart';
 
 class TicketDetailsDialog extends StatelessWidget {
   final Ticket ticket;
@@ -10,13 +11,14 @@ class TicketDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text('Ticket ${ticket.id}'),
-      content: Text('Tips: ${tips.length}'),
+      title: Text('${loc.ticket_id} ${ticket.id}'),
+      content: Text('${loc.tips_label}: ${tips.length}'),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('OK'),
+          child: Text(loc.ok),
         ),
       ],
     );

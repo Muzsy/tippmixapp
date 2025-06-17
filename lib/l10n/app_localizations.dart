@@ -402,6 +402,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add'**
   String get add_tip;
+
+  /// No description provided for @no_tips_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No tips selected'**
+  String get no_tips_selected;
+
+  /// No description provided for @ticket_submit_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket submitted successfully'**
+  String get ticket_submit_success;
+
+  /// No description provided for @ticket_submit_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred:'**
+  String get ticket_submit_error;
+
+  /// No description provided for @odds_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Odds'**
+  String get odds_label;
+
+  /// No description provided for @total_odds_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Total odds'**
+  String get total_odds_label;
+
+  /// No description provided for @potential_win_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Potential win'**
+  String get potential_win_label;
+
+  /// No description provided for @ticket_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get ticket_id;
+
+  /// No description provided for @tips_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips'**
+  String get tips_label;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @not_logged_in.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not logged in.'**
+  String get not_logged_in;
+
+  /// No description provided for @profile_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profile_email;
+
+  /// No description provided for @profile_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profile_name;
+
+  /// No description provided for @drawer_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer'**
+  String get drawer_title;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

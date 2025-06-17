@@ -73,21 +73,21 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            TextField(
-              controller: _emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
+              TextField(
+                controller: _emailCtrl,
+                decoration: InputDecoration(labelText: loc.email_hint),
+              ),
             const SizedBox(height: 8),
-            TextField(
-              controller: _passCtrl,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
+              TextField(
+                controller: _passCtrl,
+                decoration: InputDecoration(labelText: loc.password_hint),
+                obscureText: true,
+              ),
             if (!_isLogin) ...[
               const SizedBox(height: 8),
               TextField(
                 controller: _confirmCtrl,
-                decoration: const InputDecoration(labelText: 'Confirm Password'),
+                decoration: InputDecoration(labelText: loc.confirm_password_hint),
                 obscureText: true,
               ),
             ],
