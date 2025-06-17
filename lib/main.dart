@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'dart:async'; // Szükséges a StreamSubscription-hoz
 
 import 'providers/auth_provider.dart';
@@ -47,6 +48,8 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       routerConfig: router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
       // Ide kerülhet még: theme, locale, stb.
     );
