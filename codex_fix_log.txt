@@ -9,3 +9,12 @@ Updated CreateTicketScreen to call BetSlipService directly and corrected TipMode
 Added missing TicketDetailsDialog widget.
 Converted hooks_riverpod usages to flutter_riverpod where possible.
 Remaining issues related to missing user models and hook based login screens were not fixed.
+Created missing user and user_model classes for authentication and profile services.
+Fixed BetSlipService stake type mismatch.
+Added http package dependency.
+Provided const constructor for MyApp widget.
+Cleaned odds_api_response comment causing HTML warning.
+Replaced unreachable default in TicketStatusChip.
+Updated TicketValidator to use flutter_riverpod and TipModel.
+Rewrote LoginRegisterScreen without hooks and missing widgets.
+Removed dangling library doc comment from ProfileHeader.

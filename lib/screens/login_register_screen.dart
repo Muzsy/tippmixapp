@@ -1,34 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/auth/login_form.dart';
-import 'package:tippmixapp/widgets/auth/register_form.dart';
-import 'package:tippmixapp/controllers/auth_controller.dart';
 
-class LoginRegisterScreen extends StatelessWidget {
-  const LoginRegisterScreen({Key? key}) : super(key: key);
+import '../providers/auth_provider.dart';
+import '../l10n/app_localizations.dart';
+
+class LoginRegisterScreen extends ConsumerStatefulWidget {
+  const LoginRegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isLogin = useState(true);
-    final emailCtrl = useTextEditingController();
-    final passCtrl = useTextEditingController();
-    final confirmCtrl = useTextEditingController();
+  ConsumerState<LoginRegisterScreen> createState() => _LoginRegisterScreenState();
+}
 
-    ref.listen(authControllerProvider, (prev, next) {
-      next.whenOrNull(data: (user) {
-        if (user != null) {
-          context.go('/');
-        }
-      });
-    });
+class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _passCtrl = TextEditingController();
+  final TextEditingController _confirmCtrl = TextEditingController();
+  bool _isLogin = true;
 
-    final loc = AppLocalizations.of(context)!;
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    _confirmCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_isLogin) {
+      await ref.read(authProvider.notifier).login(
+            _emailCtrl.text,
+            _passCtrl.text,
+          );
+    } else {
+      if (_passCtrl.text != _confirmCtrl.text) return;
+      await ref.read(authProvider.notifier).register(
+            _emailCtrl.text,
+            _passCtrl.text,
+          );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
+    ref.listen<User?>(authProvider, (previous, next) {
+      if (next != null) context.go('/');
+    });
+
     return Scaffold(
       appBar: AppBar(title: Text(loc.login_title)),
       body: Padding(
@@ -40,42 +60,44 @@ class LoginRegisterScreen extends StatelessWidget {
               children: [
                 ChoiceChip(
                   label: Text(loc.login_tab),
-                  selected: isLogin.value,
-                  onSelected: (_) => isLogin.value = true,
+                  selected: _isLogin,
+                  onSelected: (_) => setState(() => _isLogin = true),
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
                   label: Text(loc.register_tab),
-                  selected: !isLogin.value,
-                  onSelected: (_) => isLogin.value = false,
+                  selected: !_isLogin,
+                  onSelected: (_) => setState(() => _isLogin = false),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            Expanded(
-              child: SingleChildScrollView(
-                child: isLogin.value
-                    ? LoginForm(
-                        emailController: emailCtrl,
-                        passwordController: passCtrl,
-                      )
-                    : RegisterForm(
-                        emailController: emailCtrl,
-                        passwordController: passCtrl,
-                        confirmController: confirmCtrl,
-                      ),
-              ),
+            TextField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.login),
-              label: Text(loc.google_login),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _passCtrl,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            if (!_isLogin) ...[
+              const SizedBox(height: 8),
+              TextField(
+                controller: _confirmCtrl,
+                decoration: const InputDecoration(labelText: 'Confirm Password'),
+                obscureText: true,
+              ),
+            ],
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _submit,
+              child: Text(_isLogin ? loc.login_button : loc.register_button),
             ),
           ],
         ),
       ),
     );
   }
-}
 }

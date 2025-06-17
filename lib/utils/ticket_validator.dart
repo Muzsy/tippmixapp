@@ -1,4 +1,5 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/tip_model.dart';
 
 
 final ticketValidatorProvider = Provider<TicketValidator>((ref) {
@@ -11,7 +12,7 @@ class TicketValidator {
     return null;
   }
 
-  String? checkDuplicateTips(List<Tip> tips) {
+  String? checkDuplicateTips(List<TipModel> tips) {
     final ids = <String>{};
     for (final tip in tips) {
       if (!ids.add(tip.id)) return 'errorDuplicate';
@@ -19,7 +20,7 @@ class TicketValidator {
     return null;
   }
 
-  String? validateMatchConflicts(List<Tip> tips) {
+  String? validateMatchConflicts(List<TipModel> tips) {
     final matchIds = <String, int>{};
     for (final tip in tips) {
       matchIds.update(tip.matchId, (v) => v + 1, ifAbsent: () => 1);

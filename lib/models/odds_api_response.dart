@@ -1,4 +1,4 @@
-/// API-válasz objektum: adat + hiba (nem kötelező, ha csak egy egyszerű List<OddsEvent>-et adsz vissza).
+/// API-válasz objektum: adat és opcionális hiba.
 enum ApiErrorType {
   none,
   unauthorized,
