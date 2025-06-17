@@ -28,7 +28,6 @@ class TicketStatusChip extends StatelessWidget {
         label = loc.ticket_status_pending;
         break;
       case TicketStatus.voided:
-      default:
         color = Colors.grey;
         label = loc.ticket_status_void;
     }
