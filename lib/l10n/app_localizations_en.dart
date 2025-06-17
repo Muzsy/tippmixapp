@@ -159,6 +159,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get events_empty => 'No events available';
 
   @override
+  String get events_screen_no_events => 'No events found';
+
+  @override
+  String get events_screen_quota_warning => 'API quota is nearly exceeded';
+
+  @override
+  String get events_screen_refresh => 'Refresh';
+
+  @override
+  String get events_screen_no_odds => 'No odds available';
+
+  @override
+  String get events_screen_no_market => 'No market data';
+
+  @override
+  String events_screen_start_time(Object time) {
+    return 'Start time: $time';
+  }
+
+  @override
+  String get events_screen_tip_added => 'Tip added';
+
+  @override
+  String get events_screen_tip_duplicate => 'Tip already added';
+
+  @override
   String get add_tip => 'Add';
 
   @override

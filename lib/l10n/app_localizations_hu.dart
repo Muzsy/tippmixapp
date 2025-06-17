@@ -159,6 +159,33 @@ class AppLocalizationsHu extends AppLocalizations {
   String get events_empty => 'Nincs elérhető esemény';
 
   @override
+  String get events_screen_no_events => 'Nincs esemény';
+
+  @override
+  String get events_screen_quota_warning =>
+      'Figyelem: az API kvóta hamarosan elfogy';
+
+  @override
+  String get events_screen_refresh => 'Frissítés';
+
+  @override
+  String get events_screen_no_odds => 'Nincs elérhető odds';
+
+  @override
+  String get events_screen_no_market => 'Nincs elérhető piac';
+
+  @override
+  String events_screen_start_time(Object time) {
+    return 'Kezdés: $time';
+  }
+
+  @override
+  String get events_screen_tip_added => 'Tipp hozzáadva';
+
+  @override
+  String get events_screen_tip_duplicate => 'A tipp már hozzá van adva';
+
+  @override
   String get add_tip => 'Hozzáadás';
 
   @override
