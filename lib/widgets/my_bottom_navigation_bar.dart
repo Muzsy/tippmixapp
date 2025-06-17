@@ -38,11 +38,11 @@ class MyBottomNavigationBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),
-          label: AppLocalizations.of(context)!.profile,
+          label: AppLocalizations.of(context)!.home_nav_profile,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.receipt_long),
-          label: AppLocalizations.of(context)!.my_tickets,
+          label: AppLocalizations.of(context)!.my_tickets_title,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,

@@ -14,6 +14,14 @@ import 'package:tippmixapp/models/tip_model.dart';
 class BetSlipService {
   BetSlipService._(); // ne lehessen példányosítani
 
+  static double calculateTotalOdd(List<TipModel> tips) {
+    return tips.fold<double>(1.0, (acc, tip) => acc * tip.odds);
+  }
+
+  static double calculatePotentialWin(double totalOdd, double stake) {
+    return totalOdd * stake;
+  }
+
   /// Ment egy szelvényt a Firestore‑ba.
   ///
   /// [userId] – kötelező, a bejelentkezett felhasználó azonosítója.  
@@ -39,22 +47,22 @@ class BetSlipService {
     }
 
     // 2️⃣ Össz‑odds és várható nyeremény
-    final totalOdd = tips.fold<double>(1.0, (acc, tip) => acc * tip.odds);
-    final potentialWin = totalOdd * stake;
+    final totalOdd = calculateTotalOdd(tips);
+    final potentialWin = calculatePotentialWin(totalOdd, stake.toDouble());
 
     // 3️⃣ Ticket modell összeállítása
     final ticketId = '${userId}_${DateTime.now().millisecondsSinceEpoch}';
 
-    final ticket = TicketModel(
-      ticketId: ticketId,
+    final ticket = Ticket(
+      id: ticketId,
       userId: userId,
       tips: tips,
       stake: stake,
       totalOdd: totalOdd,
       potentialWin: potentialWin,
       createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       status: TicketStatus.pending,
-      evaluatedAt: null,
     );
 
     // 4️⃣ Írás Firestore‑ba (transactions nélkül – S2‑3‑ban bővítjük)
