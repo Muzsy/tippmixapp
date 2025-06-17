@@ -36,8 +36,9 @@ class MyApp extends ConsumerWidget {
         ref.watch(authProvider.notifier).authStateStream,
       ),
       redirect: (context, state) {
-        final loggingIn = state.subloc == '/login';
-        if (user == null && !loggingIn) return '/login';
+        final subLoc = state.uri.path;
+        final loggingIn = subLoc == '/login';
+        if (user == null && loggingIn == false) return '/login';
         if (user != null && loggingIn) return '/';
         return null;
       },
