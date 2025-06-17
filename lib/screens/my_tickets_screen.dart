@@ -29,11 +29,11 @@ class MyTicketsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authProvider);
+    final user = ref.watch(authProvider);
     final ticketsAsync = ref.watch(ticketsProvider);
     final loc = AppLocalizations.of(context)!;
 
-    if (!isLoggedIn) {
+    if (user == null) {
       return Scaffold(
         appBar: AppBar(title: Text(loc.my_tickets_title)),
         body: const EmptyTicketPlaceholder(),
@@ -45,9 +45,9 @@ class MyTicketsScreen extends ConsumerWidget {
       body: ticketsAsync.when(
         data: (tickets) {
           return RefreshIndicator(
-            onRefresh: () async {
-              ref.refresh(ticketsProvider);
-            },
+              onRefresh: () async {
+                await ref.refresh(ticketsProvider.future);
+              },
             child: tickets.isEmpty
                 ? ListView(children: const [EmptyTicketPlaceholder()])
                 : ListView.builder(

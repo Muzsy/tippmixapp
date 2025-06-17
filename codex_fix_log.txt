@@ -18,3 +18,8 @@ Replaced unreachable default in TicketStatusChip.
 Updated TicketValidator to use flutter_riverpod and TipModel.
 Rewrote LoginRegisterScreen without hooks and missing widgets.
 Removed dangling library doc comment from ProfileHeader.
+Added User import in LoginRegisterScreen for ref.listen.
+Fixed null check and refresh await in MyTicketsScreen.
+Updated TicketValidator for new TipModel fields.
+Reordered FloatingActionButton params in EventsScreen.
+Converted constructors to use super.key.

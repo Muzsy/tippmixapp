@@ -11,7 +11,7 @@ import '../utils/localization_stub.dart';
 class EventsScreen extends ConsumerWidget {
   final String sportKey;
 
-  const EventsScreen({Key? key, required this.sportKey}) : super(key: key);
+  const EventsScreen({super.key, required this.sportKey});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,8 +73,8 @@ class EventsScreen extends ConsumerWidget {
         onPressed: () {
           ref.read(oddsApiProvider.notifier).fetchOdds(sport: sportKey);
         },
-        child: const Icon(Icons.refresh),
         tooltip: 'events_screen_refresh'.tr(), // ARB kulcs
+        child: const Icon(Icons.refresh),
       ),
     );
   }

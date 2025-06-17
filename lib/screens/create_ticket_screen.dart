@@ -5,7 +5,7 @@ import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {
-  const CreateTicketScreen({Key? key}) : super(key: key);
+  const CreateTicketScreen({super.key});
 
   @override
   ConsumerState<CreateTicketScreen> createState() => _CreateTicketScreenState();
