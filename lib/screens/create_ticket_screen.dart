@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/bet_slip_provider.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
+import '../l10n/app_localizations.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {
   const CreateTicketScreen({super.key});
@@ -23,6 +24,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   }
 
   Future<void> _submitTicket() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -33,14 +35,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
     if (tips.isEmpty) {
       setState(() {
-        _errorMessage = 'Nincs kiválasztott tipp!';
+        _errorMessage = loc.no_tips_selected;
         _isLoading = false;
       });
       return;
     }
     if (stake == null || stake <= 0) {
       setState(() {
-        _errorMessage = 'Adj meg érvényes tétet!';
+        _errorMessage = loc.errorInvalidStake;
         _isLoading = false;
       });
       return;
@@ -57,13 +59,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Szelvény sikeresen elküldve!')),
+          SnackBar(content: Text(loc.ticket_submit_success)),
         );
         Navigator.of(context).pop();
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Hiba történt: $e';
+        _errorMessage = '${loc.ticket_submit_error} $e';
         _isLoading = false;
       });
     }
@@ -71,6 +73,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final tips = ref.watch(betSlipProvider).tips;
 
     final double totalOdd = BetSlipService.calculateTotalOdd(tips);
@@ -81,7 +84,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Szelvény létrehozása'),
+        title: Text(loc.createTicketTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -97,7 +100,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               ),
             Expanded(
               child: tips.isEmpty
-                  ? const Center(child: Text('Nincs kiválasztott tipp.'))
+                  ? Center(child: Text(loc.no_tips_selected))
                   : ListView.builder(
                       itemCount: tips.length,
                       itemBuilder: (context, index) {
@@ -106,7 +109,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           child: ListTile(
                             title: Text(tip.eventName),
-                            subtitle: Text('Odds: ${tip.odds}'),
+                            subtitle: Text('${loc.odds_label}: ${tip.odds}'),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
@@ -124,9 +127,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             TextField(
               controller: _stakeController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Tét (Ft)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: '${loc.stakeHint} (Ft)',
+                border: const OutlineInputBorder(),
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -134,8 +137,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Össz odds: $totalOdd'),
-                Text('Várható nyeremény: ${potentialWin.toStringAsFixed(2)} Ft'),
+                Text('${loc.total_odds_label}: $totalOdd'),
+                Text('${loc.potential_win_label}: ${potentialWin.toStringAsFixed(2)} Ft'),
               ],
             ),
             const SizedBox(height: 12),
@@ -153,7 +156,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Szelvény leadása'),
+                    : Text(loc.placeBet),
               ),
             ),
           ],
