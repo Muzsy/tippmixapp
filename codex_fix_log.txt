@@ -1,0 +1,11 @@
+Fixed plus sign import causing parse error in lib/router.dart.
+Fixed missing sportKey argument in EventsScreen route.
+Replaced missing localization keys 'notifications', 'profile', and 'my_tickets' usage with valid ones.
+Added stub localization extension (lib/utils/localization_stub.dart) to resolve undefined 'tr' method errors.
+Created AppDrawer widget stub and updated HomeScreen import.
+Added ThemeProvider and modified SettingsSection accordingly.
+Implemented calculateTotalOdd and calculatePotentialWin in BetSlipService and corrected ticket creation using Ticket model.
+Updated CreateTicketScreen to call BetSlipService directly and corrected TipModel property names.
+Added missing TicketDetailsDialog widget.
+Converted hooks_riverpod usages to flutter_riverpod where possible.
+Remaining issues related to missing user models and hook based login screens were not fixed.

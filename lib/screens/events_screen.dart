@@ -6,6 +6,7 @@ import '../models/odds_event.dart';
 import '../models/tip_model.dart';
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
+import '../utils/localization_stub.dart';
 
 class EventsScreen extends ConsumerWidget {
   final String sportKey;
