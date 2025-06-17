@@ -1,0 +1,53 @@
+{
+  "home_title": "Startseite",
+  "home_guest_message": "Melde dich an oder registriere dich, um dein Profil anzusehen",
+  "home_coin": "TippCoin",
+  "home_stats": "Statistik",
+  "home_nav_profile": "Profil",
+  "home_nav_stats": "Statistik",
+  "home_nav_messages": "Nachrichten",
+  "home_nav_forum": "Forum",
+  "home_tile_bets": "Wetten",
+  "home_tile_news": "Nachrichten",
+  "home_tile_my_bets": "Meine Wetten",
+  "home_tile_friends": "Freunde",
+  "home_highlight_tip": "Tipp des Tages: Bayern gewinnt",
+  "home_highlight_motivation": "Motivation: Probiere eine neue Strategie aus!",
+  "home_highlight_coin": "TippCoin: Verdiene zusätzliche Münzen durch Aktivität!",
+  "login_title": "Anmelden",
+  "login_tab": "Login",
+  "register_tab": "Registrieren",
+  "email_hint": "E-Mail",
+  "password_hint": "Passwort",
+  "confirm_password_hint": "Passwort erneut",
+  "login_button": "Login",
+  "register_button": "Registrieren",
+  "forgot_password": "Passwort vergessen?",
+  "google_login": "Weiter mit Google"
+  ,"profile_title": "Profil"
+  ,"profile_logout": "Abmelden"
+  ,"profile_language": "Sprache"
+  ,"profile_theme": "Thema"
+  ,"profile_rank": "Rang"
+  ,"profile_guest": "Als Gast anmelden"
+  ,"createTicketTitle": "Schein erstellen"
+  ,"stakeHint": "Einsatz"
+  ,"placeBet": "Wette abgeben"
+  ,"errorInvalidStake": "Ungültiger Einsatz"
+  ,"errorDuplicate": "Doppelte Tipps sind nicht erlaubt"
+  ,"errorMatchConflict": "Konfliktierende Tipps auf dasselbe Spiel"
+  ,"my_tickets_title": "Meine Scheine"
+  ,"ticket_status_pending": "Ausstehend"
+  ,"ticket_status_won": "Gewonnen"
+  ,"ticket_status_lost": "Verloren"
+  ,"ticket_status_void": "Ungültig"
+  ,"empty_ticket_message": "Du hast noch keine Scheine"
+  ,"ticket_details_title": "Schein Details"
+  ,"api_error_limit": "Odds API Anfrage-Limit überschritten"
+  ,"api_error_key": "Ungültiger Odds API Schlüssel"
+  ,"api_error_network": "Netzwerkfehler beim Kontaktieren der Odds API"
+  ,"api_error_unknown": "Unbekannter Fehler von der Odds API"
+  ,"events_title": "Ereignisse"
+  ,"events_empty": "Keine Ereignisse verfügbar"
+  ,"add_tip": "Hinzufügen"
+}

@@ -1,0 +1,53 @@
+{
+  "home_title": "Főképernyő",
+  "home_guest_message": "Jelentkezz be vagy regisztrálj a profilod megtekintéséhez",
+  "home_coin": "TippCoin",
+  "home_stats": "Statisztika",
+  "home_nav_profile": "Profil",
+  "home_nav_stats": "Statisztika",
+  "home_nav_messages": "Üzenetek",
+  "home_nav_forum": "Fórum",
+  "home_tile_bets": "Fogadás",
+  "home_tile_news": "Hírcsatorna",
+  "home_tile_my_bets": "Fogadásaim",
+  "home_tile_friends": "Barátok",
+  "home_highlight_tip": "Napi tipp: Bayern győz",
+  "home_highlight_motivation": "Motiváció: Próbálj ki egy új stratégiát!",
+  "home_highlight_coin": "TippCoin: Nyerj extra coinokat aktivitással!",
+  "login_title": "Bejelentkezés",
+  "login_tab": "Belépés",
+  "register_tab": "Regisztráció",
+  "email_hint": "Email",
+  "password_hint": "Jelszó",
+  "confirm_password_hint": "Jelszó újra",
+  "login_button": "Belépés",
+  "register_button": "Regisztráció",
+  "forgot_password": "Elfelejtett jelszó?",
+  "google_login": "Folytatás Google-lel"
+  ,"profile_title": "Profil"
+  ,"profile_logout": "Kijelentkezés"
+  ,"profile_language": "Nyelv"
+  ,"profile_theme": "Téma"
+  ,"profile_rank": "Rang"
+  ,"profile_guest": "Bejelentkezés vendégként"
+  ,"createTicketTitle": "Szelvény készítése"
+  ,"stakeHint": "Tét"
+  ,"placeBet": "Fogadás leadása"
+  ,"errorInvalidStake": "Érvénytelen tét"
+  ,"errorDuplicate": "Duplikált tippek nem engedélyezettek"
+  ,"errorMatchConflict": "Ütköző tippek ugyanarra a meccsre"
+  ,"my_tickets_title": "Szelvényeim"
+  ,"ticket_status_pending": "Függőben"
+  ,"ticket_status_won": "Nyert"
+  ,"ticket_status_lost": "Veszített"
+  ,"ticket_status_void": "Érvénytelen"
+  ,"empty_ticket_message": "Még nincs szelvényed"
+  ,"ticket_details_title": "Szelvény részletei"
+  ,"api_error_limit": "Túl sok kérés az OddsAPI felé"
+  ,"api_error_key": "Érvénytelen OddsAPI kulcs"
+  ,"api_error_network": "Hálózati hiba az OddsAPI elérésekor"
+  ,"api_error_unknown": "Ismeretlen hiba az OddsAPI-tól"
+  ,"events_title": "Események"
+  ,"events_empty": "Nincs elérhető esemény"
+  ,"add_tip": "Hozzáadás"
+}

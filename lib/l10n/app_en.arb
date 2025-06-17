@@ -1,0 +1,53 @@
+{
+  "home_title": "Home",
+  "home_guest_message": "Log in or register to view your profile",
+  "home_coin": "TippCoin",
+  "home_stats": "Stats",
+  "home_nav_profile": "Profile",
+  "home_nav_stats": "Stats",
+  "home_nav_messages": "Messages",
+  "home_nav_forum": "Forum",
+  "home_tile_bets": "Bets",
+  "home_tile_news": "News Feed",
+  "home_tile_my_bets": "My Bets",
+  "home_tile_friends": "Friends",
+  "home_highlight_tip": "Daily Tip: Bayern wins",
+  "home_highlight_motivation": "Motivation: Try a new strategy!",
+  "home_highlight_coin": "TippCoin: Earn extra coins with activity!",
+  "login_title": "Sign In",
+  "login_tab": "Login",
+  "register_tab": "Register",
+  "email_hint": "Email",
+  "password_hint": "Password",
+  "confirm_password_hint": "Confirm Password",
+  "login_button": "Login",
+  "register_button": "Register",
+  "forgot_password": "Forgot password?",
+  "google_login": "Continue with Google"
+  ,"profile_title": "Profile"
+  ,"profile_logout": "Logout"
+  ,"profile_language": "Language"
+  ,"profile_theme": "Theme"
+  ,"profile_rank": "Rank"
+  ,"profile_guest": "Sign in as guest"
+  ,"createTicketTitle": "Create Ticket"
+  ,"stakeHint": "Stake"
+  ,"placeBet": "Place Bet"
+  ,"errorInvalidStake": "Invalid stake"
+  ,"errorDuplicate": "Duplicate tips are not allowed"
+  ,"errorMatchConflict": "Conflicting tips on the same match"
+  ,"my_tickets_title": "My Tickets"
+  ,"ticket_status_pending": "Pending"
+  ,"ticket_status_won": "Won"
+  ,"ticket_status_lost": "Lost"
+  ,"ticket_status_void": "Void"
+  ,"empty_ticket_message": "You have no tickets yet"
+  ,"ticket_details_title": "Ticket Details"
+  ,"api_error_limit": "Odds API rate limit exceeded"
+  ,"api_error_key": "Invalid Odds API key"
+  ,"api_error_network": "Network error while contacting Odds API"
+  ,"api_error_unknown": "Unknown error from Odds API"
+  ,"events_title": "Events"
+  ,"events_empty": "No events available"
+  ,"add_tip": "Add"
+}
