@@ -15,7 +15,8 @@ class TicketValidator {
   String? checkDuplicateTips(List<TipModel> tips) {
     final ids = <String>{};
     for (final tip in tips) {
-      if (!ids.add(tip.id)) return 'errorDuplicate';
+      final tipId = '${tip.eventId}_${tip.marketKey}_${tip.outcome}';
+      if (!ids.add(tipId)) return 'errorDuplicate';
     }
     return null;
   }
@@ -23,8 +24,8 @@ class TicketValidator {
   String? validateMatchConflicts(List<TipModel> tips) {
     final matchIds = <String, int>{};
     for (final tip in tips) {
-      matchIds.update(tip.matchId, (v) => v + 1, ifAbsent: () => 1);
-      if (matchIds[tip.matchId]! > 1) return 'errorMatchConflict';
+      matchIds.update(tip.eventId, (v) => v + 1, ifAbsent: () => 1);
+      if (matchIds[tip.eventId]! > 1) return 'errorMatchConflict';
     }
     return null;
   }
