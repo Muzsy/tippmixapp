@@ -160,4 +160,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_tip => 'Add';
+
+  @override
+  String get no_tips_selected => 'No tips selected';
+
+  @override
+  String get ticket_submit_success => 'Ticket submitted successfully';
+
+  @override
+  String get ticket_submit_error => 'Error occurred:';
+
+  @override
+  String get odds_label => 'Odds';
+
+  @override
+  String get total_odds_label => 'Total odds';
+
+  @override
+  String get potential_win_label => 'Potential win';
+
+  @override
+  String get ticket_id => 'Ticket';
+
+  @override
+  String get tips_label => 'Tips';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get not_logged_in => 'You are not logged in.';
+
+  @override
+  String get profile_email => 'Email';
+
+  @override
+  String get profile_name => 'Name';
+
+  @override
+  String get drawer_title => 'Drawer';
 }

@@ -160,4 +160,43 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get add_tip => 'Hozzáadás';
+
+  @override
+  String get no_tips_selected => 'Nincs kiválasztott tipp';
+
+  @override
+  String get ticket_submit_success => 'Szelvény sikeresen elküldve';
+
+  @override
+  String get ticket_submit_error => 'Hiba történt:';
+
+  @override
+  String get odds_label => 'Odds';
+
+  @override
+  String get total_odds_label => 'Össz odds';
+
+  @override
+  String get potential_win_label => 'Várható nyeremény';
+
+  @override
+  String get ticket_id => 'Szelvény';
+
+  @override
+  String get tips_label => 'Tippek';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get not_logged_in => 'Nem vagy bejelentkezve.';
+
+  @override
+  String get profile_email => 'Email';
+
+  @override
+  String get profile_name => 'Név';
+
+  @override
+  String get drawer_title => 'Menü';
 }
