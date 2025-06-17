@@ -9,7 +9,6 @@ import 'providers/auth_provider.dart';
 // import 'screens/login_screen.dart';
 // import 'screens/register_screen.dart';
 import 'screens/login_register_screen.dart';
-import 'screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +24,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
 
-    final _router = GoRouter(
+    final router = GoRouter(
       refreshListenable: GoRouterRefreshStream(
         ref.watch(authProvider.notifier).authStateStream,
       ),
@@ -46,7 +45,7 @@ class MyApp extends ConsumerWidget {
     );
 
     return MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
       // Ide kerülhet még: theme, locale, stb.
     );

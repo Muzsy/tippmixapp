@@ -47,10 +47,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     }
 
     try {
-      await ref.read(betSlipProvider.notifier).submitTicket(
-        context: context,
+      await BetSlipService.submitTicket(
+        userId: 'demo',
         tips: tips,
-        stake: stake,
+        stake: stake.toInt(),
       );
       setState(() {
         _isLoading = false;
@@ -105,8 +105,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           child: ListTile(
-                            title: Text(tip.description ?? ''),
-                            subtitle: Text('Odds: ${tip.odd}'),
+                            title: Text(tip.eventName),
+                            subtitle: Text('Odds: ${tip.odds}'),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {

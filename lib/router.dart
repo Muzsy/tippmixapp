@@ -5,7 +5,7 @@ import 'package:tippmixapp/screens/home_screen.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
-+import 'package:tippmixapp/screens/login_register_screen.dart';
+import 'package:tippmixapp/screens/login_register_screen.dart';
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
@@ -40,7 +40,7 @@ final GoRouter router = GoRouter(
           path: '/events',
           name: 'events',
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const EventsScreen(),
+            child: const EventsScreen(sportKey: 'soccer'),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),

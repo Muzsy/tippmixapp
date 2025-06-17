@@ -25,10 +25,10 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {
               // Ide jöhet később notification logika
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(AppLocalizations.of(context)!.notifications)),
+                SnackBar(content: Text(AppLocalizations.of(context)!.home_nav_messages)),
               );
             },
-            tooltip: AppLocalizations.of(context)!.notifications,
+            tooltip: AppLocalizations.of(context)!.home_nav_messages,
           ),
         ],
       ),
