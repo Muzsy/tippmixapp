@@ -90,6 +90,7 @@ class EventCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Egyszerűsített: csak az első bookmaker, első piac jelenik meg
+    final loc = AppLocalizations.of(context)!;
     final bookmaker = event.bookmakers.isNotEmpty ? event.bookmakers.first : null;
     if (bookmaker == null) {
       return Card(

@@ -55,7 +55,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          oddsApiProvider.overrideWith(() => provider),
+          oddsApiProvider.overrideWith((ref) => provider),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
