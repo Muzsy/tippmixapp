@@ -23,3 +23,6 @@ Fixed null check and refresh await in MyTicketsScreen.
 Updated TicketValidator for new TipModel fields.
 Reordered FloatingActionButton params in EventsScreen.
 Converted constructors to use super.key.
+Defined loc inside EventCard build and updated localization references.
+Used result of ref.refresh in MyTicketsScreen onRefresh.
+Corrected oddsApiProvider override in events_screen_test.

@@ -46,7 +46,7 @@ class MyTicketsScreen extends ConsumerWidget {
         data: (tickets) {
           return RefreshIndicator(
               onRefresh: () async {
-                await ref.refresh(ticketsProvider.future);
+                final _ = await ref.refresh(ticketsProvider.future);
               },
             child: tickets.isEmpty
                 ? ListView(children: const [EmptyTicketPlaceholder()])
