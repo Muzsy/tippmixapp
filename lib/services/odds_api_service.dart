@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 import '../models/odds_event.dart';
 import '../models/odds_api_response.dart';
@@ -14,9 +15,11 @@ class OddsApiService {
     DateTime? from,        // később: időintervallum
     DateTime? to,
   }) async {
-    print('OddsApiService: getOdds called, apiKey=${dotenv.env['ODDS_API_KEY']}');
+    // ignore: avoid_print
+    debugPrint('OddsApiService: getOdds called, apiKey=${dotenv.env['ODDS_API_KEY']}');
     final String? apiKey = dotenv.env['ODDS_API_KEY'];
-    print('OddsApiService: getOdds called sport=$sport');
+    // ignore: avoid_print
+    debugPrint('OddsApiService: getOdds called sport=$sport');
     if (apiKey == null || apiKey.isEmpty) {
       return OddsApiResponse(
         data: null,
@@ -39,9 +42,11 @@ class OddsApiService {
         url += '&dateTo=${to.toIso8601String()}';
       }
 
-      print('OddsApiService: before http.get url=$url');
+        // ignore: avoid_print
+        debugPrint('OddsApiService: before http.get url=$url');
       final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
-      print('OddsApiService: after http.get code=${response.statusCode}');
+        // ignore: avoid_print
+        debugPrint('OddsApiService: after http.get code=${response.statusCode}');
 
       if (response.statusCode == 429) {
         return OddsApiResponse(
@@ -102,8 +107,10 @@ class OddsApiService {
         errorMessage: 'api_error_network',
       );
     } catch (e, stack) {
-        print('ODDSAPI ERROR: $e');
-        print('STACK: $stack');
+          // ignore: avoid_print
+          debugPrint('ODDSAPI ERROR: $e');
+          // ignore: avoid_print
+          debugPrint('STACK: $stack');
         return OddsApiResponse(
           data: null,
           errorType: ApiErrorType.unknown,
