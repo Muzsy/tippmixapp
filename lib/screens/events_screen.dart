@@ -7,10 +7,24 @@ import '../models/tip_model.dart';
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
 
-class EventsScreen extends ConsumerWidget {
+
+class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
 
   const EventsScreen({super.key, required this.sportKey});
+
+  @override
+  ConsumerState<EventsScreen> createState() => _EventsScreenState();
+}
+
+class _EventsScreenState extends ConsumerState<EventsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Kick‑off the fetch exactly once after first frame
+    Future.microtask(() =>
+        ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey));
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,16 +40,15 @@ class EventsScreen extends ConsumerWidget {
           if (oddsState is OddsApiLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (oddsState is OddsApiError) {
-            return Center(
-              child: Text(_localizeError(loc, oddsState.errorMessageKey)),
-            );
+            return Center(child: Text(_localizeError(loc, oddsState.errorMessageKey)));
           } else if (oddsState is OddsApiEmpty) {
-            return Center(
-              child: Text(loc.events_screen_no_events),
-            );
+            return Center(child: Text(loc.events_screen_no_events));
           } else if (oddsState is OddsApiData) {
             final events = oddsState.events;
             final quotaWarn = oddsState.quotaWarning;
+            if (events.isEmpty) {
+              return Center(child: Text(loc.events_screen_no_events));
+            }
             return Column(
               children: [
                 if (quotaWarn)
@@ -58,50 +71,58 @@ class EventsScreen extends ConsumerWidget {
                 Expanded(
                   child: ListView.builder(
                     itemCount: events.length,
-                    itemBuilder: (context, i) {
-                      final event = events[i];
-                      return EventCard(event: event);
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return _EventCard(event: event, loc: loc);
                     },
                   ),
                 ),
               ],
             );
+          } else {
+            return const SizedBox.shrink();
           }
-          // Default fallback
-          return const Center(child: Text('events_screen_unknown_error'));
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(oddsApiProvider.notifier).fetchOdds(sport: sportKey);
-        },
         tooltip: loc.events_screen_refresh,
+        onPressed: () =>
+            ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey),
         child: const Icon(Icons.refresh),
       ),
     );
   }
+
+  String _localizeError(AppLocalizations loc, String key) {
+    switch (key) {
+      case 'api_error_limit':
+        return loc.api_error_limit;
+      case 'api_error_key':
+        return loc.api_error_key;
+      case 'api_error_network':
+        return loc.api_error_network;
+      case 'api_error_unknown':
+        return loc.api_error_unknown;
+      default:
+        return key;
+    }
+  }
 }
 
-/// Egy eseménykártya (meccs) odds listával, odds pickerrel.
-class EventCard extends ConsumerWidget {
+class _EventCard extends ConsumerWidget {
+  const _EventCard({Key? key, required this.event, required this.loc}) : super(key: key);
+
   final OddsEvent event;
-  const EventCard({super.key, required this.event});
+  final AppLocalizations loc;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Egyszerűsített: csak az első bookmaker, első piac jelenik meg
-    final bookmaker = event.bookmakers.isNotEmpty ? event.bookmakers.first : null;
-    final loc = AppLocalizations.of(context)!;
-    if (bookmaker == null) {
-      return Card(
-        child: ListTile(
-          title: Text('${event.homeTeam} – ${event.awayTeam}'),
-          subtitle: Text(loc.events_screen_no_odds),
-        ),
-      );
-    }
+    // Find the first head‑to‑head market
+    final market = event.markets.firstWhere(
+      (m) => m.key == 'h2h',
+      orElse: () => event.markets.isNotEmpty ? event.markets.first : null,
+    );
 
-    final market = bookmaker.markets.isNotEmpty ? bookmaker.markets.first : null;
     if (market == null) {
       return Card(
         child: ListTile(
@@ -118,9 +139,7 @@ class EventCard extends ConsumerWidget {
           ListTile(
             title: Text('${event.homeTeam} – ${event.awayTeam}'),
             subtitle: Text(
-              loc.events_screen_start_time(
-                event.commenceTime.toString(),
-              ),
+              loc.events_screen_start_time(event.commenceTime.toString()),
             ),
           ),
           Row(
@@ -134,17 +153,15 @@ class EventCard extends ConsumerWidget {
                         eventId: event.id,
                         eventName: '${event.homeTeam} – ${event.awayTeam}',
                         startTime: event.commenceTime,
-                        sportKey: event.sportKey,
-                        bookmaker: bookmaker.title,
-                        marketKey: market.key,
-                        outcome: outcome.name,
+                        outcomeName: outcome.name,
                         odds: outcome.price,
                       );
-                      final added = ref
-                          .read(betSlipProvider.notifier)
-                          .addTip(tip);
+
+                      final added = ref.read(betSlipProvider.notifier).addTip(tip);
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          duration: const Duration(seconds: 2),
                           content: Text(
                             added
                                 ? loc.events_screen_tip_added
@@ -169,19 +186,3 @@ class EventCard extends ConsumerWidget {
     );
   }
 }
-
-String _localizeError(AppLocalizations loc, String key) {
-  switch (key) {
-    case 'api_error_limit':
-      return loc.api_error_limit;
-    case 'api_error_key':
-      return loc.api_error_key;
-    case 'api_error_network':
-      return loc.api_error_network;
-    case 'api_error_unknown':
-      return loc.api_error_unknown;
-    default:
-      return key;
-  }
-}
-
