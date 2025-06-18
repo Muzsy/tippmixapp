@@ -162,8 +162,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get events_screen_no_events => 'Keine Ereignisse gefunden';
 
   @override
-  String get events_screen_quota_warning =>
-      'Warnung: API Kontingent fast aufgebraucht';
+  String get events_screen_quota_warning => 'Warnung: API Kontingent fast aufgebraucht';
 
   @override
   String get events_screen_refresh => 'Aktualisieren';
@@ -226,4 +225,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get drawer_title => 'Menü';
+
+  @override
+  String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
+
+  @override
+  String get go_to_create_ticket => 'Wettschein abschicken';
 }
