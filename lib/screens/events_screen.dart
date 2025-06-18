@@ -6,6 +6,7 @@ import '../models/odds_event.dart';
 import '../models/tip_model.dart';
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
+import 'package:go_router/go_router.dart';
 
 
 class EventsScreen extends ConsumerStatefulWidget {
@@ -84,11 +85,28 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: loc.events_screen_refresh,
-        onPressed: () =>
-            ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey),
-        child: const Icon(Icons.refresh),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'createTicket',
+            tooltip: loc.go_to_create_ticket,
+            child: const Icon(Icons.check),
+            onPressed: () {
+              GoRouter.of(context).push('/create-ticket');
+            },
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'refreshOdds',
+            tooltip: loc.events_screen_refresh,
+            onPressed: () {
+              ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey);
+            },
+            child: const Icon(Icons.refresh),
+          ),
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import '../providers/bet_slip_provider.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
 import '../l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {
   const CreateTicketScreen({super.key});
@@ -49,8 +50,16 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     }
 
     try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        setState(() {
+          _errorMessage = loc.errorUserNotFound;
+          _isLoading = false;
+        });
+        return;
+      }
       await BetSlipService.submitTicket(
-        userId: 'demo',
+        userId: userId,
         tips: tips,
         stake: stake.toInt(),
       );

@@ -162,8 +162,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get events_screen_no_events => 'Nincs esemény';
 
   @override
-  String get events_screen_quota_warning =>
-      'Figyelem: az API kvóta hamarosan elfogy';
+  String get events_screen_quota_warning => 'Figyelem: az API kvóta hamarosan elfogy';
 
   @override
   String get events_screen_refresh => 'Frissítés';
@@ -226,4 +225,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get drawer_title => 'Menü';
+
+  @override
+  String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
+
+  @override
+  String get go_to_create_ticket => 'Szelvény elküldése';
 }

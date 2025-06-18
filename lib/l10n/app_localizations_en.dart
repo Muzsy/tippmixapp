@@ -225,4 +225,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawer_title => 'Drawer';
+
+  @override
+  String get errorUserNotFound => 'User not found. Please log in again.';
+
+  @override
+  String get go_to_create_ticket => 'Submit Ticket';
 }
