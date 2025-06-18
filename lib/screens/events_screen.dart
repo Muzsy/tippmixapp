@@ -128,12 +128,7 @@ class _EventCard extends ConsumerWidget {
     }
 
     final bookmaker = event.bookmakers.first;
-    final market = bookmaker.markets.firstWhere(
-      (m) => m.key == 'h2h',
-      orElse: () => bookmaker.markets.isNotEmpty ? bookmaker.markets.first : null,
-    );
-
-    if (market == null) {
+    if (bookmaker.markets.isEmpty) {
       return Card(
         child: ListTile(
           title: Text('${event.homeTeam} – ${event.awayTeam}'),
@@ -141,6 +136,11 @@ class _EventCard extends ConsumerWidget {
         ),
       );
     }
+
+    final market = bookmaker.markets.firstWhere(
+      (m) => m.key == 'h2h',
+      orElse: () => bookmaker.markets.first,
+    );
 
     return Card(
       child: Column(
