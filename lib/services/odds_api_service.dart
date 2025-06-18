@@ -14,7 +14,9 @@ class OddsApiService {
     DateTime? from,        // később: időintervallum
     DateTime? to,
   }) async {
+    print('OddsApiService: getOdds called, apiKey=${dotenv.env['ODDS_API_KEY']}');
     final String? apiKey = dotenv.env['ODDS_API_KEY'];
+    print('OddsApiService: getOdds called sport=$sport');
     if (apiKey == null || apiKey.isEmpty) {
       return OddsApiResponse(
         data: null,
@@ -24,7 +26,9 @@ class OddsApiService {
     }
 
     try {
-      String url = '$_baseUrl/$sport/odds/?apiKey=$apiKey';
+      // Kötelező query-paraméterek ( régió + piac )
+      String url =
+       '$_baseUrl/$sport/odds/?apiKey=$apiKey&regions=eu&markets=h2h';
       if (league != null && league.isNotEmpty) {
         url += '&regions=$league';
       }
@@ -35,7 +39,9 @@ class OddsApiService {
         url += '&dateTo=${to.toIso8601String()}';
       }
 
-      final response = await http.get(Uri.parse(url));
+      print('OddsApiService: before http.get url=$url');
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
+      print('OddsApiService: after http.get code=${response.statusCode}');
 
       if (response.statusCode == 429) {
         return OddsApiResponse(
@@ -95,11 +101,13 @@ class OddsApiService {
         errorType: ApiErrorType.network,
         errorMessage: 'api_error_network',
       );
-    } catch (_) {
-      return OddsApiResponse(
-        data: null,
-        errorType: ApiErrorType.unknown,
-        errorMessage: 'api_error_unknown',
+    } catch (e, stack) {
+        print('ODDSAPI ERROR: $e');
+        print('STACK: $stack');
+        return OddsApiResponse(
+          data: null,
+          errorType: ApiErrorType.unknown,
+          errorMessage: 'api_error_unknown',
       );
     }
   }
