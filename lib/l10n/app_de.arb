@@ -71,4 +71,6 @@
   ,"profile_email": "E-Mail"
   ,"profile_name": "Name"
   ,"drawer_title": "Menü"
+  ,"errorUserNotFound": "Benutzer nicht gefunden. Bitte melde dich erneut an."
+  ,"go_to_create_ticket": "Wettschein abschicken"
 }

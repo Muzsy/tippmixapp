@@ -71,4 +71,6 @@
   ,"profile_email": "Email"
   ,"profile_name": "Név"
   ,"drawer_title": "Menü"
+  ,"errorUserNotFound": "Felhasználó nem található. Jelentkezz be újra."
+  ,"go_to_create_ticket": "Szelvény elküldése"
 }

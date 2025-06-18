@@ -398,27 +398,51 @@ abstract class AppLocalizations {
   String get events_empty;
 
   /// No description provided for @events_screen_no_events.
+  ///
+  /// In en, this message translates to:
+  /// **'No events found'**
   String get events_screen_no_events;
 
   /// No description provided for @events_screen_quota_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'API quota is nearly exceeded'**
   String get events_screen_quota_warning;
 
   /// No description provided for @events_screen_refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
   String get events_screen_refresh;
 
   /// No description provided for @events_screen_no_odds.
+  ///
+  /// In en, this message translates to:
+  /// **'No odds available'**
   String get events_screen_no_odds;
 
   /// No description provided for @events_screen_no_market.
+  ///
+  /// In en, this message translates to:
+  /// **'No market data'**
   String get events_screen_no_market;
 
   /// No description provided for @events_screen_start_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Start time: {time}'**
   String events_screen_start_time(Object time);
 
   /// No description provided for @events_screen_tip_added.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip added'**
   String get events_screen_tip_added;
 
   /// No description provided for @events_screen_tip_duplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip already added'**
   String get events_screen_tip_duplicate;
 
   /// No description provided for @add_tip.
@@ -504,6 +528,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drawer'**
   String get drawer_title;
+
+  /// No description provided for @errorUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found. Please log in again.'**
+  String get errorUserNotFound;
+
+  /// No description provided for @go_to_create_ticket.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Ticket'**
+  String get go_to_create_ticket;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
