@@ -27,7 +27,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final oddsState = ref.watch(oddsApiProvider);
     final loc = AppLocalizations.of(context)!;
 
@@ -110,17 +110,27 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
 }
 
 class _EventCard extends ConsumerWidget {
-  const _EventCard({Key? key, required this.event, required this.loc}) : super(key: key);
+  const _EventCard({super.key, required this.event, required this.loc});
 
   final OddsEvent event;
   final AppLocalizations loc;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Find the first head‑to‑head market
-    final market = event.markets.firstWhere(
+    // Use the first bookmaker and try to find a head‑to‑head market
+    if (event.bookmakers.isEmpty) {
+      return Card(
+        child: ListTile(
+          title: Text('${event.homeTeam} – ${event.awayTeam}'),
+          subtitle: Text(loc.events_screen_no_market),
+        ),
+      );
+    }
+
+    final bookmaker = event.bookmakers.first;
+    final market = bookmaker.markets.firstWhere(
       (m) => m.key == 'h2h',
-      orElse: () => event.markets.isNotEmpty ? event.markets.first : null,
+      orElse: () => bookmaker.markets.isNotEmpty ? bookmaker.markets.first : null,
     );
 
     if (market == null) {
@@ -147,15 +157,18 @@ class _EventCard extends ConsumerWidget {
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final tip = TipModel(
-                        eventId: event.id,
-                        eventName: '${event.homeTeam} – ${event.awayTeam}',
-                        startTime: event.commenceTime,
-                        outcomeName: outcome.name,
-                        odds: outcome.price,
-                      );
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final tip = TipModel(
+                          eventId: event.id,
+                          eventName: '${event.homeTeam} – ${event.awayTeam}',
+                          startTime: event.commenceTime,
+                          sportKey: event.sportKey,
+                          bookmaker: bookmaker.key,
+                          marketKey: market.key,
+                          outcome: outcome.name,
+                          odds: outcome.price,
+                        );
 
                       final added = ref.read(betSlipProvider.notifier).addTip(tip);
 
