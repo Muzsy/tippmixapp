@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/odds_event.dart';
 import '../models/odds_api_response.dart';
@@ -34,7 +35,8 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
 
   /// Események lekérése sport (és később liga/idő) szerint.
   Future<void> fetchOdds({required String sport}) async {
-    print('OddsApiProvider: fetchOdds called sport=$sport');
+    // ignore: avoid_print
+    debugPrint('OddsApiProvider: fetchOdds called sport=$sport');
     state = OddsApiLoading();
     final response = await _service.getOdds(sport: sport);
 

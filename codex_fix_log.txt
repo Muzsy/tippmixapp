@@ -27,3 +27,7 @@ Defined loc inside EventCard build and updated localization references.
 Used result of ref.refresh in MyTicketsScreen onRefresh.
 Corrected oddsApiProvider override in events_screen_test.
 No issues found in analyze_log.txt - nothing to fix.
+Fixed print usage in OddsApiProvider by replacing with debugPrint.
+Corrected _EventsScreenState build signature and TipModel construction.
+Updated _EventCard to use event.bookmakers and super parameter for key.
+Replaced print statements in OddsApiService with debugPrint.
