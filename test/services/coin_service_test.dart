@@ -3,13 +3,20 @@ import 'package:cloud_functions/cloud_functions.dart';
 
 import 'package:tippmixapp/services/coin_service.dart';
 
+class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
+  @override
+  final T data;
+
+  FakeHttpsCallableResult(this.data);
+}
+
 class FakeHttpsCallable implements HttpsCallable {
   Map<String, dynamic>? lastData;
 
   @override
-  Future<HttpsCallableResult> call([dynamic parameters]) async {
+  Future<HttpsCallableResult<T>> call<T>([dynamic parameters]) async {
     lastData = Map<String, dynamic>.from(parameters as Map);
-    return HttpsCallableResult(null);
+    return FakeHttpsCallableResult<T>(null as T);
   }
 
   @override

@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 class CoinService {
   final FirebaseFunctions _functions;
 
-  const CoinService([FirebaseFunctions? functions])
+  CoinService([FirebaseFunctions? functions])
       : _functions = functions ?? FirebaseFunctions.instance;
 
   /// Deduct coins from a user by calling the `coin_trx` Cloud Function.
