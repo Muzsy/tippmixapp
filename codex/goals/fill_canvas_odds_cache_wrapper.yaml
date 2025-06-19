@@ -1,0 +1,24 @@
+steps:
+  - name: OddsCacheWrapper osztály létrehozása
+    description: Hozz létre egy odds_cache_wrapper.dart fájlt, amely cache-elési logikát biztosít az OddsApiService köré építve. Használj 15 perces TTL-t, és a válaszokat SharedPreferences-ben tárold.
+    outputs:
+      - lib/services/odds_cache_wrapper.dart
+
+  - name: SharedPreferences integráció
+    description: Ellenőrizd, hogy a shared_preferences csomag szerepel-e a pubspec.yaml-ban. Ha hiányzik, add hozzá.
+    outputs:
+      - pubspec.yaml
+
+  - name: OddsApiService refaktorálása wrapper használatára
+    description: Módosítsd azokat a kódhelyeket, ahol közvetlenül a fetchOdds() hívás történik, úgy, hogy azok az OddsCacheWrapper-en keresztül történjenek.
+    outputs:
+      - lib/services/odds_api_service.dart
+      - esetleges odds-ot használó screen vagy widget fájlok
+
+  - name: Egységtesztek OddsCacheWrapper-re
+    description: Készíts unit teszteket a cache viselkedésre (cache-hit, cache-miss, TTL lejárt, hibás válasz kizárása a cache-ből).
+    outputs:
+      - test/services/odds_cache_wrapper_test.dart
+
+inputs:
+  - lib/docs/canvases_odds_api_integration.md

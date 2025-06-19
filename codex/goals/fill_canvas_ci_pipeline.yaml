@@ -1,0 +1,26 @@
+steps:
+  - name: CI workflow fájl létrehozása
+    description: Hozz létre egy `.github/workflows/ci.yaml` fájlt, amely tartalmazza a Flutter projekt automatikus linter, teszt és coverage deklarációit. A Codex nem futtatja ezeket, csak a fájlt állítja elő.
+    outputs:
+      - .github/workflows/ci.yaml
+
+  - name: Linter parancs beillesztése
+    description: Add hozzá a `flutter analyze` parancsot a CI workflow lépések közé. A CI akkor tekintendő hibásnak, ha bármilyen warning vagy error előfordul.
+    outputs:
+      - .github/workflows/ci.yaml
+
+  - name: Tesztelés coverage-el
+    description: Illeszd be a `flutter test --coverage` parancsot a pipeline-ba. Az eredményt `coverage/lcov.info` fájlba mentse.
+    outputs:
+      - .github/workflows/ci.yaml
+      - coverage/lcov.info (build step részeként)
+
+  - name: ARB lokalizációs fájlok validálása
+    description: A workflow tartalmazzon lépést, amely JSON szinten ellenőrzi a `lib/l10n/*.arb` fájlok érvényességét. A Codex csak deklarálja a validációt, futtatni nem tudja.
+    outputs:
+      - .github/workflows/ci.yaml
+
+  - name: Coverage badge snippet generálása (opcionális)
+    description: Helyezz el egy coverage badge sablont a `README.md` fájlba, amely Codecov vagy más coverage szolgáltatóval integrálható.
+    outputs:
+      - README.md

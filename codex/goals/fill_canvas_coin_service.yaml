@@ -1,0 +1,47 @@
+steps:
+  - name: CoinService osztály létrehozása
+    description: Hozz létre egy CoinService Dart osztályt, amely két fő metódust tartalmaz: debitCoin és creditCoin. Mindkettő paraméterezetten hívja a backend oldali Cloud Function-t.
+    outputs:
+      - lib/services/coin_service.dart
+
+  - name: Firebase Cloud Function fejlesztés
+    description: Hozz létre egy coin_trx.ts fájlt a Cloud Functions mappában. Ez kezeli a tranzakciós logikát: validálás, Firestore frissítés, log mentés. A függvény csak akkor hajtódik végre, ha a tranzakció még nem történt meg (transactionId egyedi), és a reason-amount kombináció is érvényes.
+    outputs:
+      - cloud_functions/coin_trx.ts
+
+  - name: Firestore szabályok frissítése
+    description: Bővítsd a firebase.rules fájlt, hogy a coin_logs kollekcióhoz csak a saját user olvashasson és írhasson, a timestamp szerver oldali legyen, az amount típusellenőrzött, a type értéke csak "debit" vagy "credit" lehet, és az update legyen tiltva.
+    outputs:
+      - firebase.rules
+
+  - name: submitTicket módosítása CoinService integrációval
+    description: Módosítsd a fogadási logikát úgy, hogy a TippCoin levonás a CoinService debitCoin metódusán keresztül történjen.
+    outputs:
+      - lib/services/ticket_service.dart
+
+  - name: Unit tesztek CoinService-re
+    description: Írj külön unit teszteket a debitCoin és creditCoin függvényekre, többféle bemenettel és hibakezeléssel.
+    outputs:
+      - test/services/coin_service_test.dart
+
+  - name: Egyedi transactionId bevezetése
+    description: Minden tranzakcióhoz legyen kötelező egy transactionId mező. A Cloud Function ellenőrizze, hogy ez az ID még nem szerepel a coin_logs kollekcióban, így elkerülhető a duplikáció vagy replay támadás.
+    outputs:
+      - cloud_functions/coin_trx.ts
+
+  - name: Reason-alapú jogosultság és korlátozás
+    description: A tranzakció csak akkor engedélyezett, ha a megadott reason és amount kombináció érvényes. Pl. "daily_bonus" csak +50 coin, max napi 1x. A valid reason értékek legyenek konfigurálva (pl. bonus_policy.md alapján).
+    outputs:
+      - cloud_functions/coin_trx.ts
+
+  - name: Admin-only tranzakciók szétválasztása
+    description: Külön Cloud Function készüljön admin coin-műveletekre (pl. reset, manuális jóváírás), és ezek csak akkor fusson, ha a user rendelkezik admin szerepkörrel.
+    outputs:
+      - cloud_functions/admin_coin_ops.ts
+
+  - name: Dokumentációs hivatkozások beillesztése
+    description: Használd bemeneti referenciaként a lib/docs/tippmix_app_teljes_adatmodell.md, bonus_policy.md és betting_ticket_data_model.md fájlokat.
+    inputs:
+      - lib/docs/tippmix_app_teljes_adatmodell.md
+      - lib/docs/bonus_policy.md
+      - lib/docs/betting_ticket_data_model.md
