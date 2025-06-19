@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tippmixapp/models/ticket_model.dart';
 import 'package:tippmixapp/models/tip_model.dart';
+import 'coin_service.dart';
 
 /// A szelvény-összeállító réteg végleges mentésért felelős statikus szolgáltatás.
 ///
@@ -65,7 +66,16 @@ class BetSlipService {
       status: TicketStatus.pending,
     );
 
-    // 4️⃣ Írás Firestore‑ba (transactions nélkül – S2‑3‑ban bővítjük)
+    // 4️⃣ TippCoin levonás
+    final coinService = CoinService();
+    await coinService.debitCoin(
+      userId: userId,
+      amount: stake,
+      reason: 'bet_stake',
+      transactionId: 'ticket_$ticketId',
+    );
+
+    // 5️⃣ Írás Firestore‑ba (transactions nélkül – S2‑3‑ban bővítjük)
     final ticketsRef = FirebaseFirestore.instance.collection('tickets');
 
     await ticketsRef.doc(ticketId).set(ticket.toJson());
