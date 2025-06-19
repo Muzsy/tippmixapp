@@ -73,4 +73,9 @@
   ,"drawer_title": "Menü"
   ,"errorUserNotFound": "Benutzer nicht gefunden. Bitte melde dich erneut an."
   ,"go_to_create_ticket": "Wettschein abschicken"
+  ,"insufficient_permissions": "Keine Berechtigung."
+  ,"invalid_transaction_type": "Ungültiger Transaktionstyp."
+  ,"missing_transaction_id": "TransactionId fehlt."
+  ,"amount_must_be_integer": "Betrag muss Ganzzahl sein."
+  ,"admin_only_field": "Dieses Feld darf nur von Admins geändert werden."
 }
