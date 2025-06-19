@@ -1,5 +1,7 @@
 # TippmixApp
 
+[![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
+
 TippmixApp is a minimal Flutter MVP that demonstrates a sports betting workflow.
 It integrates Firebase for authentication and data storage, fetches live event
 information from the [Odds API](https://the-odds-api.com/), and uses Riverpod for
