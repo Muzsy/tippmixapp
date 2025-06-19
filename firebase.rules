@@ -9,9 +9,21 @@ service cloud.firestore {
       allow create: if isOwner(request.resource.data.userId)
         && request.resource.data.amount is int
         && (request.resource.data.type in ['debit', 'credit'])
-        && request.resource.data.timestamp == request.time;
+        && request.resource.data.timestamp == request.time
+        && request.resource.data.transactionId is string
+        && request.resource.data.reason is string;
       allow read: if isOwner(resource.data.userId);
       allow update, delete: if false;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && (!(
+          'coinResetFlag' in request.resource.data ||
+          'role' in request.resource.data
+        ) || request.auth.token.role == 'admin');
+      allow delete: if false;
     }
   }
 }

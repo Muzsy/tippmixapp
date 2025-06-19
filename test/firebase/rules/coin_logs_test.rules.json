@@ -1,0 +1,71 @@
+{
+  "tests": [
+    {
+      "description": "other user coin log write denied",
+      "request": {
+        "uid": "user1",
+        "method": "create",
+        "path": "/databases/(default)/documents/coin_logs/log1",
+        "data": {
+          "userId": "user2",
+          "amount": 10,
+          "type": "debit",
+          "timestamp": "REQUEST_TIME",
+          "transactionId": "t1",
+          "reason": "bet"
+        }
+      },
+      "expect": "permission-denied"
+    },
+    {
+      "description": "invalid amount type",
+      "request": {
+        "uid": "user1",
+        "method": "create",
+        "path": "/databases/(default)/documents/coin_logs/log2",
+        "data": {
+          "userId": "user1",
+          "amount": "10",
+          "type": "debit",
+          "timestamp": "REQUEST_TIME",
+          "transactionId": "t2",
+          "reason": "bet"
+        }
+      },
+      "expect": "invalid-argument"
+    },
+    {
+      "description": "missing transactionId",
+      "request": {
+        "uid": "user1",
+        "method": "create",
+        "path": "/databases/(default)/documents/coin_logs/log3",
+        "data": {
+          "userId": "user1",
+          "amount": 5,
+          "type": "debit",
+          "timestamp": "REQUEST_TIME",
+          "reason": "bet"
+        }
+      },
+      "expect": "invalid-argument"
+    },
+    {
+      "description": "invalid type value",
+      "request": {
+        "uid": "user1",
+        "method": "create",
+        "path": "/databases/(default)/documents/coin_logs/log4",
+        "data": {
+          "userId": "user1",
+          "amount": 5,
+          "type": "bonus",
+          "timestamp": "REQUEST_TIME",
+          "transactionId": "t3",
+          "reason": "bet"
+        }
+      },
+      "expect": "invalid-argument"
+    }
+  ]
+}
