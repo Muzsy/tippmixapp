@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../models/odds_event.dart';
 import '../models/odds_api_response.dart';
 import '../services/odds_api_service.dart';
+import '../services/odds_cache_wrapper.dart';
 
 /// OddsApiProviderState – minden lehetséges állapot külön.
 abstract class OddsApiProviderState {}
@@ -30,15 +31,15 @@ class OddsApiEmpty extends OddsApiProviderState {}
 
 /// OddsApiProvider: minden odds-lista fetch, state-branch, hibakezelés.
 class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
-  final OddsApiService _service;
-  OddsApiProvider(this._service) : super(OddsApiLoading());
+  final OddsCacheWrapper _wrapper;
+  OddsApiProvider(this._wrapper) : super(OddsApiLoading());
 
   /// Események lekérése sport (és később liga/idő) szerint.
   Future<void> fetchOdds({required String sport}) async {
     // ignore: avoid_print
     debugPrint('OddsApiProvider: fetchOdds called sport=$sport');
     state = OddsApiLoading();
-    final response = await _service.getOdds(sport: sport);
+    final response = await _wrapper.getOdds(sport: sport);
 
     // Hibaágak
     if (response.errorType != ApiErrorType.none) {
@@ -63,5 +64,5 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
 
 /// Globális Riverpod provider.
 final oddsApiProvider = StateNotifierProvider<OddsApiProvider, OddsApiProviderState>(
-  (ref) => OddsApiProvider(OddsApiService()),
+  (ref) => OddsApiProvider(OddsCacheWrapper(OddsApiService())),
 );
