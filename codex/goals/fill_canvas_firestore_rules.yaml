@@ -1,0 +1,37 @@
+steps:
+  - name: coin_logs szabályok szigorítása
+    description: A firebase.rules fájlban írd elő, hogy a /coin_logs kollekcióban csak a saját user írhasson dokumentumot. Az írás csak akkor engedélyezett, ha a userId megegyezik az authentikált felhasználóval, a timestamp a szerver által generált idő, az amount egész szám, a type csak "debit" vagy "credit", és update művelet nem engedélyezett.
+    outputs:
+      - firebase.rules
+
+  - name: Frissítés tiltása coin_logs kollekcióban
+    description: Kizárólag új dokumentum létrehozása engedélyezett, meglévő coin_logs dokumentum frissítése tilos. Ezt a szabályban `allow update: if false;` módon deklaráld.
+    outputs:
+      - firebase.rules
+
+  - name: transactionId mező meglétének kikényszerítése
+    description: Követeld meg, hogy minden coin_logs dokumentumban szerepeljen egy transactionId mező. Ezzel együtt a Cloud Function-ök oldalon ellenőrizni kell annak egyediségét.
+    outputs:
+      - firebase.rules
+
+  - name: Valid reason mező biztosítása
+    description: A rules fájlban ellenőrizhető, hogy a reason mező szerepel és string típusú. A konkrét értékek validálása a backend oldali Cloud Function-re hárul.
+    outputs:
+      - firebase.rules
+
+  - name: Admin-only mezők védelme
+    description: Ha a users dokumentum bővül admin-only mezőkkel (pl. coinResetFlag), azok írása csak akkor engedélyezett, ha a request.auth.token.role == "admin". Add hozzá a megfelelő kitételeket a users/{uid} szabályblokkhoz.
+    outputs:
+      - firebase.rules
+
+  - name: Tesztesetek Firebase Emulator Suite-hoz
+    description: Készíts külön teszteset-fájlokat a leggyakoribb jogosultságsértésekhez: más user coin log írása, hibás típusú amount, hiányzó transactionId, érvénytelen type.
+    outputs:
+      - test/firebase/rules/coin_logs_test.rules.json
+
+  - name: Hibák lokalizálása a UI-ban
+    description: A rules által dobott tipikus hibaüzenetekhez rendelj lokalizált, emberi olvasható visszajelzéseket a UI oldalon az AppLocalizations segítségével, angol, magyar és német nyelven.
+    outputs:
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_de.arb
