@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /coin_logs/{logId} {
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.amount is int
+        && (request.resource.data.type in ['debit', 'credit'])
+        && request.resource.data.timestamp == request.time;
+      allow read: if isOwner(resource.data.userId);
+      allow update, delete: if false;
+    }
+  }
+}
+
