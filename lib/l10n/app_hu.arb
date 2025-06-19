@@ -73,4 +73,9 @@
   ,"drawer_title": "Menü"
   ,"errorUserNotFound": "Felhasználó nem található. Jelentkezz be újra."
   ,"go_to_create_ticket": "Szelvény elküldése"
+  ,"insufficient_permissions": "Nincs jogosultság."
+  ,"invalid_transaction_type": "Érvénytelen tranzakció típus."
+  ,"missing_transaction_id": "Hiányzik a tranzakció azonosító."
+  ,"amount_must_be_integer": "Az összegnek egész számnak kell lennie."
+  ,"admin_only_field": "Ezt a mezőt csak admin módosíthatja."
 }
