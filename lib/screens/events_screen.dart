@@ -74,7 +74,11 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                     itemCount: events.length,
                     itemBuilder: (context, index) {
                       final event = events[index];
-                      return _EventCard(event: event, loc: loc);
+                      return _EventCard(
+                        key: ValueKey(event.id),
+                        event: event,
+                        loc: loc,
+                      );
                     },
                   ),
                 ),
