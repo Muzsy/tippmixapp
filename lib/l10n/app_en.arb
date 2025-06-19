@@ -73,4 +73,9 @@
   ,"drawer_title": "Drawer"
   ,"errorUserNotFound": "User not found. Please log in again."
   ,"go_to_create_ticket": "Submit Ticket"
+  ,"insufficient_permissions": "You do not have permission."
+  ,"invalid_transaction_type": "Invalid transaction type."
+  ,"missing_transaction_id": "Transaction ID is required."
+  ,"amount_must_be_integer": "Amount must be an integer."
+  ,"admin_only_field": "Only admin may modify this field."
 }
