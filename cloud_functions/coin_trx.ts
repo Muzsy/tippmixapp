@@ -1,25 +1,24 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-// Logic based on docs/tippmix_app_teljes_adatmodell.md and bonus_policy.md
-
 admin.initializeApp();
 const db = admin.firestore();
 
 interface CoinTrxData {
   userId: string;
   amount: number;
-  type: string; // 'debit' or 'credit'
+  type: 'debit' | 'credit';
   reason: string;
   transactionId: string;
 }
 
-export const coin_trx = functions.https.onCall(async (data: CoinTrxData, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-  }
+export const coin_trx = functions.https.onCall(
+  async (data: CoinTrxData, context: functions.https.CallableContext) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    }
 
-  const { userId, amount, type, reason, transactionId } = data;
+  const { userId, amount, type, reason, transactionId } = data as CoinTrxData;
 
   if (!userId || !transactionId || typeof amount !== 'number') {
     throw new functions.https.HttpsError('invalid-argument', 'Missing parameters');
@@ -52,8 +51,10 @@ export const coin_trx = functions.https.onCall(async (data: CoinTrxData, context
     if (!snap.exists) {
       throw new functions.https.HttpsError('not-found', 'User not found');
     }
+
     const current = snap.get('coins') || 0;
     const newBalance = type === 'debit' ? current - amount : current + amount;
+
     t.update(userRef, { coins: newBalance });
     t.set(logRef, {
       userId,
@@ -67,4 +68,3 @@ export const coin_trx = functions.https.onCall(async (data: CoinTrxData, context
 
   return { success: true };
 });
-
