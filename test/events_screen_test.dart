@@ -9,11 +9,12 @@ import 'package:tippmixapp/models/odds_outcome.dart';
 import 'package:tippmixapp/providers/odds_api_provider.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/services/odds_api_service.dart';
+import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 
 class TestOddsApiProvider extends OddsApiProvider {
   bool fetchCalled = false;
   TestOddsApiProvider(OddsApiProviderState initialState)
-      : super(OddsApiService()) {
+      : super(OddsCacheWrapper(OddsApiService())) {
     state = initialState;
   }
 
