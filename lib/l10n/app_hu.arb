@@ -84,4 +84,13 @@
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Nyerési arány",
   "leaderboard_mode_streak": "Sorozat"
+  ,"settings_title": "Beállítások"
+  ,"settings_theme": "Téma"
+  ,"settings_theme_system": "Rendszer"
+  ,"settings_theme_light": "Világos"
+  ,"settings_theme_dark": "Sötét"
+  ,"settings_language": "Nyelv"
+  ,"settings_logout": "Kijelentkezés"
+  ,"settings_ai_recommendations": "AI ajánlások"
+  ,"settings_push_notifications": "Értesítések"
 }
