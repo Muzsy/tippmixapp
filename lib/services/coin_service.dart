@@ -10,7 +10,7 @@ class CoinService {
   final FirebaseFunctions _functions;
 
   CoinService([FirebaseFunctions? functions])
-      : _functions = functions ?? FirebaseFunctions.instance;
+      : _functions = functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
   /// Deduct coins from a user by calling the `coin_trx` Cloud Function.
   Future<void> debitCoin({

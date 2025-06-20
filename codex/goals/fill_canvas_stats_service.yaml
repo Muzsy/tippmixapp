@@ -1,0 +1,30 @@
+steps:
+  - name: Statisztikai modell létrehozása
+    description: Hozz létre egy UserStatsModel nevű osztályt, amely tartalmazza a rangsorban megjelenítendő statisztikai adatokat.
+    outputs:
+      - lib/models/user_stats_model.dart
+
+  - name: StatsService osztály létrehozása
+    description: Készítsd el a StatsService nevű szervizosztályt, amely LeaderboardMode alapján streameli a felhasználói statisztikákat.
+    outputs:
+      - lib/services/stats_service.dart
+
+  - name: Firestore lekérdezések megírása
+    description: Implementáld a Firestore query logikát a szelvények és felhasználói dokumentumok alapján a statisztikák számításához.
+    outputs:
+      - lib/services/stats_service.dart
+
+  - name: Unit tesztek
+    description: Készíts unit teszteket a különböző LeaderboardMode esetek kezelésére és az adatok helyes kiszámítására.
+    outputs:
+      - test/services/stats_service_test.dart
+
+  - name: BigQuery integráció előkészítése
+    description: Készítsd elő a StatsService absztrakcióját úgy, hogy később BigQuery-alapú backend is választható legyen (pl. ROI, streak számításhoz).
+    outputs:
+      - lib/services/stats_service.dart
+      - lib/models/stats_backend_mode.dart
+
+inputs:
+  - docs/tippmix_app_teljes_adatmodell.md
+  - docs/betting_ticket_data_model.md

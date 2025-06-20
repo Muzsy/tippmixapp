@@ -1,0 +1,35 @@
+steps:
+  - name: Alap ranglista képernyő
+    description: Hozz létre egy LeaderboardScreen widgetet, ami TippCoin alapján rendezi a felhasználókat, és használja a StatsService streamjét az adatokhoz.
+    outputs:
+      - lib/screens/leaderboard/leaderboard_screen.dart
+
+  - name: Statisztikai módok enum
+    description: Készíts egy LeaderboardMode enumot, amely lehetővé teszi több rangsorolási szempont kezelését (byCoin, byWinrate, byStreak).
+    outputs:
+      - lib/models/leaderboard_mode.dart
+
+  - name: User stat modell
+    description: Hozz létre egy UserStatsModel osztályt a megjelenítendő adatok strukturálásához (coin, winrate, totalBets stb.).
+    outputs:
+      - lib/models/user_stats_model.dart
+
+  - name: StatsService implementálása
+    description: Készítsd el a StatsService osztályt, amely streameli a ranglista adatokat a Firestore-ból, különböző LeaderboardMode-ok szerint.
+    outputs:
+      - lib/services/stats_service.dart
+
+  - name: Saját hely kiemelése
+    description: Emeld ki a bejelentkezett felhasználót a ranglistában, "You" jelöléssel és külön stílussal.
+    outputs:
+      - lib/screens/leaderboard/leaderboard_screen.dart
+
+  - name: Widget tesztek
+    description: Írj widget teszteket a LeaderboardScreen működésére (adatbetöltés, üres állapot, váltás a módok között).
+    outputs:
+      - test/screens/leaderboard_screen_test.dart
+
+inputs:
+  - docs/tippmix_app_teljes_adatmodell.md
+  - docs/betting_ticket_data_model.md
+  - docs/canvases_odds_api_integration.md

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "rootDir": "./",
+    "outDir": "lib",
+    "strict": true,
+    "esModuleInterop": true,
+    "noEmit": false,             // <- garantálja az emitet
+    "noEmitOnError": false
+  },
+  "include": ["**/*.ts"]
+}

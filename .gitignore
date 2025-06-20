@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+llama_index/
 
 # IntelliJ related
 *.iml
