@@ -39,9 +39,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authProvider.overrideWith(() => AuthNotifier(authService)),
-          appThemeControllerProvider.overrideWith(() => AppThemeController()),
-          appLocaleControllerProvider.overrideWith(() => AppLocaleController()),
+          authProvider.overrideWith((ref) => AuthNotifier(authService)),
+          appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
+          appLocaleControllerProvider.overrideWith((ref) => AppLocaleController()),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
