@@ -84,4 +84,13 @@
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Win rate",
   "leaderboard_mode_streak": "Win streak"
+  ,"settings_title": "Settings"
+  ,"settings_theme": "Theme"
+  ,"settings_theme_system": "System"
+  ,"settings_theme_light": "Light"
+  ,"settings_theme_dark": "Dark"
+  ,"settings_language": "Language"
+  ,"settings_logout": "Logout"
+  ,"settings_ai_recommendations": "AI recommendations"
+  ,"settings_push_notifications": "Push notifications"
 }
