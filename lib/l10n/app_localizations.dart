@@ -540,6 +540,14 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submit Ticket'**
   String get go_to_create_ticket;
+
+  /// No description provided for @leaderboard_title.
+  String get leaderboard_title;
+  String get leaderboard_you;
+  String get leaderboard_empty;
+  String get leaderboard_mode_coin;
+  String get leaderboard_mode_winrate;
+  String get leaderboard_mode_streak;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
