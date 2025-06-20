@@ -1,0 +1,1 @@
+enum StatsBackendMode { firestore, bigQuery }
