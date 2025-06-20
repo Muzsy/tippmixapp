@@ -548,6 +548,15 @@ abstract class AppLocalizations {
   String get leaderboard_mode_coin;
   String get leaderboard_mode_winrate;
   String get leaderboard_mode_streak;
+  String get settings_title;
+  String get settings_theme;
+  String get settings_theme_system;
+  String get settings_theme_light;
+  String get settings_theme_dark;
+  String get settings_language;
+  String get settings_logout;
+  String get settings_ai_recommendations;
+  String get settings_push_notifications;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

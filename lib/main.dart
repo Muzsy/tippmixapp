@@ -7,6 +7,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'dart:async'; // Szükséges a StreamSubscription-hoz
 
 import 'providers/auth_provider.dart';
+import 'controllers/app_theme_controller.dart';
+import 'controllers/app_locale_controller.dart';
 // import 'screens/login_screen.dart';
 // import 'screens/register_screen.dart';
 import 'screens/login_register_screen.dart';
@@ -75,12 +77,18 @@ class MyApp extends ConsumerWidget {
       ],
     );
 
+    final themeMode = ref.watch(appThemeControllerProvider);
+    final locale = ref.watch(appLocaleControllerProvider);
+
     return MaterialApp.router(
       routerConfig: router,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeMode,
+      locale: locale,
       debugShowCheckedModeBanner: false,
-      // Ide kerülhet még: theme, locale, stb.
     );
   }
 }
