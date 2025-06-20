@@ -1,0 +1,35 @@
+steps:
+  - name: Settings képernyő létrehozása
+    description: Hozz létre egy SettingsScreen widgetet, amely szekciókra bontva tartalmazza a nyelvváltást, témaválasztást és kijelentkezést.
+    outputs:
+      - lib/screens/settings/settings_screen.dart
+
+  - name: Téma és nyelv logika elkülönítése
+    description: Hozz létre külön AppThemeController és AppLocaleController osztályokat az állapotkezeléshez.
+    outputs:
+      - lib/controllers/app_theme_controller.dart
+      - lib/controllers/app_locale_controller.dart
+
+  - name: Funkciókapcsolók előkészítése
+    description: Alakíts ki kapcsolókat az AI ajánlások és push értesítések jövőbeni támogatására, alapértelmezett értékekkel.
+    outputs:
+      - lib/screens/settings/settings_screen.dart
+
+  - name: Kijelentkezés kezelése
+    description: Készítsd el a kijelentkezési folyamatot a FirebaseAuthService segítségével.
+    outputs:
+      - lib/services/auth_service.dart
+
+  - name: Widget tesztek
+    description: Készíts widget teszteket a szekciók interakcióinak ellenőrzésére (téma, nyelv, logout).
+    outputs:
+      - test/screens/settings_screen_test.dart
+
+  - name: Lokalizációs sanity teszt
+    description: Futtass teszteket magyar, angol és német nyelvi környezetben a helyes kulcshasználat ellenőrzésére.
+    outputs:
+      - test/localization/settings_screen_localization_test.dart
+
+inputs:
+  - docs/auth_best_practice.md
+  - docs/tippmix_app_teljes_adatmodell.md
