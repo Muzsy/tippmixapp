@@ -243,4 +243,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboard_mode_winrate => 'Win rate';
   @override
   String get leaderboard_mode_streak => 'Win streak';
+  @override
+  String get settings_title => 'Settings';
+  @override
+  String get settings_theme => 'Theme';
+  @override
+  String get settings_theme_system => 'System';
+  @override
+  String get settings_theme_light => 'Light';
+  @override
+  String get settings_theme_dark => 'Dark';
+  @override
+  String get settings_language => 'Language';
+  @override
+  String get settings_logout => 'Logout';
+  @override
+  String get settings_ai_recommendations => 'AI recommendations';
+  @override
+  String get settings_push_notifications => 'Push notifications';
 }

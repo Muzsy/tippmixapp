@@ -243,4 +243,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get leaderboard_mode_winrate => 'Gewinnrate';
   @override
   String get leaderboard_mode_streak => 'Serie';
+  @override
+  String get settings_title => 'Einstellungen';
+  @override
+  String get settings_theme => 'Thema';
+  @override
+  String get settings_theme_system => 'System';
+  @override
+  String get settings_theme_light => 'Hell';
+  @override
+  String get settings_theme_dark => 'Dunkel';
+  @override
+  String get settings_language => 'Sprache';
+  @override
+  String get settings_logout => 'Abmelden';
+  @override
+  String get settings_ai_recommendations => 'AI-Empfehlungen';
+  @override
+  String get settings_push_notifications => 'Push-Benachrichtigungen';
 }
