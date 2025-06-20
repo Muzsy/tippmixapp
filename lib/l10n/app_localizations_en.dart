@@ -231,4 +231,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get go_to_create_ticket => 'Submit Ticket';
+@override
+  String get leaderboard_title => 'Leaderboard';
+  @override
+  String get leaderboard_you => 'You';
+  @override
+  String get leaderboard_empty => 'No users yet';
+  @override
+  String get leaderboard_mode_coin => 'TippCoin';
+  @override
+  String get leaderboard_mode_winrate => 'Win rate';
+  @override
+  String get leaderboard_mode_streak => 'Win streak';
 }
