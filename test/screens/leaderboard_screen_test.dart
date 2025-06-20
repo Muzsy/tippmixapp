@@ -9,9 +9,36 @@ import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tippmixapp/services/auth_service.dart';
 
-class FakeAuthNotifier extends StateNotifier<User?> {
-  FakeAuthNotifier(User? user) : super(user);
+class FakeAuthService implements AuthService {
+  final _controller = StreamController<User?>.broadcast();
+  User? _current;
+
+  @override
+  Stream<User?> authStateChanges() => _controller.stream;
+
+  @override
+  Future<User?> signInWithEmail(String email, String password) async => null;
+
+  @override
+  Future<User?> registerWithEmail(String email, String password) async => null;
+
+  @override
+  Future<void> signOut() async {
+    _current = null;
+    _controller.add(null);
+  }
+
+  @override
+  User? get currentUser => _current;
+}
+
+class FakeAuthNotifier extends AuthNotifier {
+  FakeAuthNotifier(User? user)
+      : super(FakeAuthService()) {
+    state = user;
+  }
 }
 
 void main() {
@@ -22,7 +49,7 @@ void main() {
       ProviderScope(
         overrides: [
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
-          authProvider.overrideWith(() => FakeAuthNotifier(User(id: 'u1', email: 'a@a.hu', displayName: 'Me'))),
+          authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: 'a@a.hu', displayName: 'Me'))),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -64,7 +91,7 @@ void main() {
       ProviderScope(
         overrides: [
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
-          authProvider.overrideWith(() => FakeAuthNotifier(null)),
+          authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
