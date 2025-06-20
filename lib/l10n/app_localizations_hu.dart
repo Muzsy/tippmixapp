@@ -243,4 +243,22 @@ class AppLocalizationsHu extends AppLocalizations {
   String get leaderboard_mode_winrate => 'Nyerési arány';
   @override
   String get leaderboard_mode_streak => 'Sorozat';
+  @override
+  String get settings_title => 'Beállítások';
+  @override
+  String get settings_theme => 'Téma';
+  @override
+  String get settings_theme_system => 'Rendszer';
+  @override
+  String get settings_theme_light => 'Világos';
+  @override
+  String get settings_theme_dark => 'Sötét';
+  @override
+  String get settings_language => 'Nyelv';
+  @override
+  String get settings_logout => 'Kijelentkezés';
+  @override
+  String get settings_ai_recommendations => 'AI ajánlások';
+  @override
+  String get settings_push_notifications => 'Értesítések';
 }
