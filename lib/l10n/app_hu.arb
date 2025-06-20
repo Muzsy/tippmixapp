@@ -77,5 +77,11 @@
   ,"invalid_transaction_type": "Érvénytelen tranzakció típus."
   ,"missing_transaction_id": "Hiányzik a tranzakció azonosító."
   ,"amount_must_be_integer": "Az összegnek egész számnak kell lennie."
-  ,"admin_only_field": "Ezt a mezőt csak admin módosíthatja."
+  ,"admin_only_field": "Ezt a mezőt csak admin módosíthatja.",
+  "leaderboard_title": "Ranglista",
+  "leaderboard_you": "Te",
+  "leaderboard_empty": "Nincs megjeleníthető felhasználó",
+  "leaderboard_mode_coin": "TippCoin",
+  "leaderboard_mode_winrate": "Nyerési arány",
+  "leaderboard_mode_streak": "Sorozat"
 }

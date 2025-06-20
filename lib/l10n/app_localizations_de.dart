@@ -231,4 +231,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get go_to_create_ticket => 'Wettschein abschicken';
+@override
+  String get leaderboard_title => 'Bestenliste';
+  @override
+  String get leaderboard_you => 'Du';
+  @override
+  String get leaderboard_empty => 'Keine Benutzer vorhanden';
+  @override
+  String get leaderboard_mode_coin => 'TippCoin';
+  @override
+  String get leaderboard_mode_winrate => 'Gewinnrate';
+  @override
+  String get leaderboard_mode_streak => 'Serie';
 }

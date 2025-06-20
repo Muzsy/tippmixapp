@@ -77,5 +77,11 @@
   ,"invalid_transaction_type": "Invalid transaction type."
   ,"missing_transaction_id": "Transaction ID is required."
   ,"amount_must_be_integer": "Amount must be an integer."
-  ,"admin_only_field": "Only admin may modify this field."
+  ,"admin_only_field": "Only admin may modify this field.",
+  "leaderboard_title": "Leaderboard",
+  "leaderboard_you": "You",
+  "leaderboard_empty": "No users yet",
+  "leaderboard_mode_coin": "TippCoin",
+  "leaderboard_mode_winrate": "Win rate",
+  "leaderboard_mode_streak": "Win streak"
 }

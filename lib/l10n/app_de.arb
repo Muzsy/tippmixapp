@@ -77,5 +77,11 @@
   ,"invalid_transaction_type": "Ungültiger Transaktionstyp."
   ,"missing_transaction_id": "TransactionId fehlt."
   ,"amount_must_be_integer": "Betrag muss Ganzzahl sein."
-  ,"admin_only_field": "Dieses Feld darf nur von Admins geändert werden."
+  ,"admin_only_field": "Dieses Feld darf nur von Admins geändert werden.",
+  "leaderboard_title": "Bestenliste",
+  "leaderboard_you": "Du",
+  "leaderboard_empty": "Keine Benutzer vorhanden",
+  "leaderboard_mode_coin": "TippCoin",
+  "leaderboard_mode_winrate": "Gewinnrate",
+  "leaderboard_mode_streak": "Serie"
 }
