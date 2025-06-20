@@ -12,11 +12,13 @@ interface CoinTrxData {
   transactionId: string;
 }
 
-export const coin_trx = functions.https.onCall(
-  async (data: CoinTrxData, context: functions.https.CallableContext) => {
-    if (!context.auth) {
-      throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-    }
+    export const coin_trx = functions
+      .region('europe-central2') // <<< EZT TETTÜK HOZZÁ
+      .https.onCall(
+        async (data: CoinTrxData, context: functions.https.CallableContext) => {
+        if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+        }
 
   const { userId, amount, type, reason, transactionId } = data as CoinTrxData;
 
