@@ -35,3 +35,4 @@ Fixed null return in EventsScreen market lookup and removed dead null check.
 Added unique ValueKey to _EventCard usage to satisfy optional key parameter warning.
 Removed const constructor from CoinService to avoid invalid constant value error.
 Implemented FakeHttpsCallableResult and generic call override in coin_service_test to match HttpsCallable API.
+Fixed provider override closures in leaderboard and settings tests and implemented FakeAuthNotifier with service.
