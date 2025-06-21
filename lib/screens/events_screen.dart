@@ -103,6 +103,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
           ),
           const SizedBox(height: 12),
           FloatingActionButton(
+            key: const Key('refresh_button'),
             heroTag: 'refreshOdds',
             tooltip: loc.events_screen_refresh,
             onPressed: () {
