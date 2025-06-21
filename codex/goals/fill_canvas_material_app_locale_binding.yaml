@@ -1,0 +1,20 @@
+steps:
+  - name: AppLocaleController figyelése a MaterialApp-ban
+    description: A fő widget build metódusában figyeljük a Riverpod alapú appLocaleControllerProvider-t, és annak állapota alapján adjuk meg a MaterialApp `locale` értékét.
+    outputs:
+      - lib/main.dart
+
+  - name: supportedLocales és localizationsDelegates beállítása
+    description: A MaterialApp konfigurációban adjuk meg a `supportedLocales` listát (`hu`, `en`, `de`) és a Flutter lokalizációs delegate-eket.
+    outputs:
+      - lib/main.dart
+
+  - name: localeResolutionCallback implementálása fallback logikával
+    description: Hozzunk létre egy localeResolutionCallback függvényt, amely garantálja, hogy mindig támogatott locale-t kapjon az alkalmazás. Ha nem ismert nyelvvel indul, térjen vissza angol nyelvre.
+    outputs:
+      - lib/main.dart
+
+  - name: Alkalmazás elindítása nyelv betöltése után
+    description: A main() függvényben a runApp előtt hívjuk meg az appLocaleControllerProvider `loadLocale` metódusát, hogy az elmentett nyelv betöltésre kerüljön.
+    outputs:
+      - lib/main.dart
