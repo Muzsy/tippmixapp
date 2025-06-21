@@ -230,6 +230,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuLeaderboard => 'Bestenliste';
 
   @override
+  String get menuSettings => 'Einstellungen';
+
+  @override
   String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
 
   @override
