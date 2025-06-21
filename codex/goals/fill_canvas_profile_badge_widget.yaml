@@ -12,9 +12,9 @@ steps:
   - name: Lokalizáció integrálása
     description: A widget a badge kulcs alapján jelenítse meg a lokalizált címet és leírást az AppLocalizations segítségével.
     outputs:
-      - lib/l10n/intl_en.arb
-      - lib/l10n/intl_hu.arb
-      - lib/l10n/intl_de.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_de.arb
 
   - name: Widget teszt létrehozása
     description: Teszteld, hogy a badge grid helyesen jelenik meg, ikonok, lokalizált címek megjelennek. Üres állapot kezelése is szerepeljen.
