@@ -1,0 +1,12 @@
+steps:
+  - name: Badge modell létrehozása
+    description: Hozd létre a badge.dart fájlban a BadgeCondition enumot (5 típussal) és a BadgeData osztályt (key, iconName, condition mezőkkel).
+    outputs:
+      - lib/models/badge.dart
+
+  - name: Lokalizációs kulcsok előkészítése
+    description: A badge-ekhez tartozó kulcsokat (title, description) vidd fel mindhárom ARB fájlba, például: badge_rookie_title, badge_rookie_description.
+    outputs:
+      - lib/l10n/intl_hu.arb
+      - lib/l10n/intl_en.arb
+      - lib/l10n/intl_de.arb

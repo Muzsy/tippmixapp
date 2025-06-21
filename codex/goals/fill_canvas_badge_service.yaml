@@ -1,0 +1,20 @@
+steps:
+  - name: BadgeService létrehozása
+    description: Hozd létre a badge_service.dart fájlt. A service tartalmazza az evaluateUserBadges és assignNewBadges metódusokat. Az evaluateUserBadges megvizsgálja a badgeConfigs alapján, hogy a megadott statisztikák alapján mely badge-eket kell kiosztani.
+    outputs:
+      - lib/services/badge_service.dart
+
+  - name: Firestore struktúra bevezetése
+    description: A kiosztott badge-ek Firestore-ban tárolódnak a /users/{userId}/badges kollekcióban. Minden badge tartalmazza a kulcsot és a timestampet.
+    outputs:
+      - firebase.rules
+
+  - name: Tesztek létrehozása
+    description: Készítsd el a badge_service.dart fájl egységtesztjeit különféle statisztikai bemenetekre, mockolt Firestore írással.
+    outputs:
+      - test/services/badge_service_test.dart
+
+  - name: BadgeConfig integrálása
+    description: A service a badge_config.dart fájlból olvassa be a badgeConfigs listát, és az alapján dolgozik.
+    outputs:
+      - lib/config/badge_config.dart

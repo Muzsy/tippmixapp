@@ -1,0 +1,22 @@
+steps:
+  - name: Profil badge widget létrehozása
+    description: Hozd létre a profile_badge.dart fájlt, amely reszponzív gridben jeleníti meg a megszerzett badge-eket. A badge ikonja az iconName alapján kerül renderelésre.
+    outputs:
+      - lib/widgets/profile_badge.dart
+
+  - name: Ikonleképezés integrálása
+    description: Készíts külön fájlt vagy függvényt az ikonnevek leképzésére (pl. getIconForBadge), amely stringből visszaad egy IconData típust.
+    outputs:
+      - lib/utils/badge_icon_utils.dart
+
+  - name: Lokalizáció integrálása
+    description: A widget a badge kulcs alapján jelenítse meg a lokalizált címet és leírást az AppLocalizations segítségével.
+    outputs:
+      - lib/l10n/intl_en.arb
+      - lib/l10n/intl_hu.arb
+      - lib/l10n/intl_de.arb
+
+  - name: Widget teszt létrehozása
+    description: Teszteld, hogy a badge grid helyesen jelenik meg, ikonok, lokalizált címek megjelennek. Üres állapot kezelése is szerepeljen.
+    outputs:
+      - test/widgets/profile_badge_test.dart
