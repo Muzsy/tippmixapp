@@ -529,6 +529,9 @@ abstract class AppLocalizations {
   /// **'Drawer'**
   String get drawer_title;
 
+  /// No description provided for @menuLeaderboard.
+  String get menuLeaderboard;
+
   /// No description provided for @errorUserNotFound.
   ///
   /// In en, this message translates to:

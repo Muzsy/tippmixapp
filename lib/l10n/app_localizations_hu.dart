@@ -227,6 +227,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get drawer_title => 'Menü';
 
   @override
+  String get menuLeaderboard => 'Ranglista';
+
+  @override
   String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
 
   @override
