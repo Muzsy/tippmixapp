@@ -22,8 +22,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await dotenv.load();
+  final container = ProviderContainer();
+  await container.read(appLocaleControllerProvider.notifier).loadLocale();
   runApp(
-    ProviderScope(child: MyApp()),
+    UncontrolledProviderScope(
+      container: container,
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -83,7 +88,18 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: router,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      supportedLocales: const [
+        Locale('hu'),
+        Locale('en'),
+        Locale('de'),
+      ],
+      localeResolutionCallback: (Locale? deviceLocale, Iterable<Locale> supported) {
+        if (deviceLocale == null) return const Locale('en');
+        return supported.firstWhere(
+          (l) => l.languageCode == deviceLocale.languageCode,
+          orElse: () => const Locale('en'),
+        );
+      },
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeMode,
