@@ -1,0 +1,86 @@
+# 🧾 codex\_prompt\_builder.yaml – TippmixApp-specifikus Codex promptstratégia
+
+Ez a fájl szabályozza, hogyan épüljenek fel a Codex számára küldött promptok a TippmixApp projektben. Célja, hogy egységes, gépileg értelmezhető, determinisztikus promptokat kapjon a Codex – így elkerülhető az értelmezési hiba, és biztosítható a projekt konzisztenciája.
+
+---
+
+## 🎯 Általános elvek
+
+* A Codex soha nem "találja ki" a kontextust: mindig kap konkrét fájlt, célfeladatot, és DoD elvárást
+* A prompt mindig struktúrált YAML-ből származik (`fill_canvas_*.yaml`)
+* A prompt tartalmaz: kontextust, célt, fájlneveket, és elvárt lépéseket
+
+---
+
+## 🧠 Prompt logika
+
+### Prompt formátum
+
+```yaml
+🧩 Kontextus:
+- Projekt: TippmixApp – mobil sportfogadási szimulátor
+- Sprint: Sprint 1 (Leaderboard, Stats, Settings)
+- Modul: leaderboard_screen
+
+🎯 Feladat:
+- Képernyő létrehozása Firestore leaderboard alapján
+- SegmentedButton alapú szűrés
+- Saját user kiemelése
+
+📎 Fájlok:
+- lib/screens/leaderboard_screen.dart (output)
+- canvases/leaderboard_screen.md (leírás)
+
+✅ DoD:
+- Widget teszt
+- Lokalizáció (AppLocalizationsKey)
+- Navigáció `router.dart`-ban regisztrálva
+```
+
+Ez alapján generált prompt mindig tartalmaz:
+
+1. Cél (🎯)
+2. Kontextus (🧩)
+3. Input/Output fájlok (📎)
+4. DoD elvárások (✅)
+
+---
+
+## 📏 Nyelvi elvárások
+
+* Minden prompt **magyar nyelven** épül fel, kivéve a kódblokkokat
+* A kód **Dart**, **TypeScript**, vagy **YAML** nyelven íródik (a fájltól függően)
+* Ne szerepeljen benne: "találd ki", "képzeld el", "próbálj meg"
+* A Codex mindig "te vagy a fejlesztő" szerepkörben fut
+
+---
+
+## 🛠️ Promptépítő komponensek
+
+* `prompt_header`: projekt és sprint
+* `context`: modulleírás kivonat a canvasból
+* `steps`: YAML `steps:` mező promptosítva (lépésenként)
+* `files`: teljes elérési út minden érintett fájlhoz
+* `outputs`: minden létrejövő fájl vagy módosított fájl
+
+---
+
+## 🔒 Korlátozások
+
+1. A prompt nem tartalmazhat nem dokumentált fájlra vagy osztályra hivatkozást
+2. A Codex nem kérdezhet vissza – minden prompt teljes inputot tartalmaz
+3. A prompt végén mindig szerepelnie kell: "Add meg a végleges fájl teljes tartalmát."
+4. Többfájlos prompt esetén a sorrend: output1, output2, test, router, arb
+5. Csak `canvases/*.md` fájl alapján indulhat promptgenerálás
+
+---
+
+## 🧪 Validáció
+
+* Prompt dry-run a `codex_dry_run_checklist.md` alapján
+* Codex output fájlok összevetése a `outputs:` listával
+* Prompt mindig YAML struktúrát követ: nem szabad HTML, JSON vagy Markdown formátumot használni benne (kivéve kódblokkok)
+
+---
+
+Ez a fájl kötelező referencia a Codex prompt-generálási folyamatban bármely `fill_canvas_*.yaml` értelmezésekor.

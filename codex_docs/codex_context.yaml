@@ -1,0 +1,71 @@
+# 🧠 codex\_context.yaml – TippmixApp-specifikus Codex konfiguráció
+
+Ez a konfigurációs fájl határozza meg, hogyan viselkedjen a Codex a TippmixApp projekt generálási és frissítési feladatai során. Minden projekt-specifikus kontextust, fájlszerkezetet, naming-konvenciót és technikai korlátozást ebben a fájlban deklarálunk.
+
+---
+
+## 📂 Projektstruktúra
+
+* `lib/screens/` – képernyők (UI)
+* `lib/widgets/` – újrafelhasználható UI komponensek
+* `lib/services/` – üzleti logika / backend kapcsolat
+* `lib/models/` – típusdefiníciók
+* `lib/api/` – API wrapper / caching
+* `lib/l10n/` – lokalizációs struktúra (ARB + generált)
+* `lib/controllers/` – provider alapú állapotkezelés (pl. Riverpod)
+* `cloud_functions/` – Firebase Functions TypeScript-ben
+* `canvases/` – Codex vásznak (ember által írt modulleírások)
+* `codex/goals/` – Codex YAML utasításfájlok (feldolgozási input)
+
+---
+
+## 🧱 Kódszervezési elvek
+
+* Egy fájl = egy canvas = egy YAML utasítás (típusbiztos, fájlszintű scope)
+* Nincs globális refaktorálás – csak canvasban leírt fájlokat módosít a Codex
+* Enum-vezérelt lokalizáció (`AppLocalizationsKey`)
+* `GoRouter` alapú named route navigáció (`context.goNamed()`)
+* Riverpod-alapú állapotkezelés (`NotifierProvider`, `StateNotifierProvider`, stb.)
+
+---
+
+## 🛠️ Codex futtatási környezet
+
+* Minden YAML csak a saját canvasban szereplő fájlokat módosíthatja
+* Nem hozhat létre új szolgáltatást a `lib/services/`-ben, ha nincs rá canvas
+* Nevében: `fill_canvas_<modul>.yaml`
+* Az `outputs:` mező kizárólag meglévő fájlra vagy új fájlra mutathat a canvas által deklarált könyvtárban
+
+---
+
+## 📏 Naming konvenciók
+
+* canvas: `leaderboard_screen` ⟶ `canvases/leaderboard_screen.md`
+* yaml: `fill_canvas_leaderboard_screen.yaml` ⟶ `codex/goals/`
+* service: `coin_service.dart`, `badge_service.dart`, `stats_service.dart`
+* widget: `profile_badge.dart`, `home_feed.dart`, `tip_reco_widget.dart`
+* function: `submitTicket()`, `logCoinTransaction()` (camelCase)
+
+---
+
+## 🔒 Technikai korlátozások a Codex számára
+
+1. Ne módosítsa `pubspec.yaml`, `firebase.json`, `l10n.yaml` fájlokat
+2. Ne generáljon új képernyőt, ha nem szerepel canvasban
+3. Ne hozzon létre navigációs route-ot `router.dart`-ba kivéve, ha a canvas ezt deklarálja
+4. Ne hozzon létre új enumot önállóan – csak canvas alapján
+5. Ne nevezzen át létező változót, class-t vagy fájlnevet
+6. Ne hivatkozzon nem létező osztályra, route-ra vagy context-függvényre
+
+---
+
+## ✅ DoD kritériumok (Definition of Done)
+
+* Fájl strukturálisan valid (linter + CI zöld)
+* Widget test minimum 1 db per képernyő
+* Ha új szöveg, akkor `AppLocalizationsKey` enum + ARB bővítés kötelező
+* Ha új service, unit test kötelező (`test/services/` könyvtárba)
+
+---
+
+Ez a fájl globálisan érvényes a teljes Codex-feldolgozási pipeline-ra a TippmixApp projektben. Bármilyen eltéréshez explicit új canvas szükséges.
