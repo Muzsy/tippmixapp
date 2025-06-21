@@ -1,0 +1,27 @@
+steps:
+  - name: GoRouter útvonal hozzáadása a LeaderboardScreen-hez
+    description: A lib/router.dart fájlban regisztráljuk a "/leaderboard" útvonalat, amely a LeaderboardScreen-t jeleníti meg.
+    outputs:
+      - lib/router.dart
+
+  - name: Navigációs menüpont hozzáadása a drawerhez
+    description: A lib/widgets/app_drawer.dart fájlban hozzunk létre egy új ListTile-t, amely a Ranglista menüpontra navigál. Használjunk AppLocalizations kulcsot a címhez.
+    outputs:
+      - lib/widgets/app_drawer.dart
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Adjunk hozzá új kulcsokat az app_hu.arb, app_en.arb és app_de.arb fájlokhoz a "menuLeaderboard" azonosítóval.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Drawer menüpont ikon és route hivatkozás beállítása
+    description: A ListTile elem ikonja legyen Icons.leaderboard, a onTap hívásban pedig context.go('/leaderboard') legyen meghívva.
+    outputs:
+      - lib/widgets/app_drawer.dart
+
+  - name: Manuális sanity teszt javasolt
+    description: Ellenőrizzük, hogy a Ranglista menüpont megjelenik, lokalizálva van, és a megfelelő képernyőre navigál.
+    outputs:
+      - manual test
