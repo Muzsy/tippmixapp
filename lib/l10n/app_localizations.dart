@@ -532,6 +532,9 @@ abstract class AppLocalizations {
   /// No description provided for @menuLeaderboard.
   String get menuLeaderboard;
 
+  /// No description provided for @menuSettings.
+  String get menuSettings;
+
   /// No description provided for @errorUserNotFound.
   ///
   /// In en, this message translates to:
