@@ -230,6 +230,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuLeaderboard => 'Ranglista';
 
   @override
+  String get menuSettings => 'Beállítások';
+
+  @override
   String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
 
   @override
