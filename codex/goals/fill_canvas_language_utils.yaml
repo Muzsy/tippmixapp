@@ -18,3 +18,8 @@ steps:
     description: Ez a metódus lekéri az aktuális platform nyelvét, és visszaadja 'hu', 'en', 'de' közül a megfelelőt. Ha nem támogatott, fallbackként 'en' értéket ad vissza.
     outputs:
       - lib/utils/language_utils.dart
+
+  - name: SharedPreferences try-catch fallback bevezetése
+    description: A SharedPreferences.getInstance hívást csomagoljuk try-catch blokkba, és csak akkor írjunk bele, ha nem dob hibát. Ez lehetővé teszi a Codex számára a feldolgozást környezeti támogatás nélkül is.
+    outputs:
+      - lib/utils/language_utils.dart
