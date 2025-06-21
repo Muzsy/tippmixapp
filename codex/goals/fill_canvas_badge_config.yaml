@@ -12,6 +12,6 @@ steps:
   - name: Lokalizációhoz szükséges kulcsok listázása
     description: Az ARB fájlokban biztosítsd a következő kulcsokat minden nyelven: badge_rookie_title, badge_rookie_description, badge_hot_streak_title stb.
     outputs:
-      - lib/l10n/intl_hu.arb
-      - lib/l10n/intl_en.arb
-      - lib/l10n/intl_de.arb
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb

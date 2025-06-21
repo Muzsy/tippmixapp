@@ -7,6 +7,6 @@ steps:
   - name: Lokalizációs kulcsok előkészítése
     description: A badge-ekhez tartozó kulcsokat (title, description) vidd fel mindhárom ARB fájlba, például: badge_rookie_title, badge_rookie_description.
     outputs:
-      - lib/l10n/intl_hu.arb
-      - lib/l10n/intl_en.arb
-      - lib/l10n/intl_de.arb
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
