@@ -58,11 +58,11 @@ void main() {
         overrides: [
           oddsApiProvider.overrideWith((ref) => provider),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
-          home: const EventsScreen(sportKey: 'soccer'),
+          locale: Locale('en'),
+          home: EventsScreen(sportKey: 'soccer'),
         ),
       ),
     );
@@ -71,7 +71,7 @@ void main() {
 
     expect(find.text('Team A – Team B'), findsOneWidget);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byKey(const Key('refresh_button')));
     await tester.pumpAndSettle();
 
     expect(provider.fetchCalled, isTrue);
