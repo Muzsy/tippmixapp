@@ -83,7 +83,8 @@
   "leaderboard_empty": "No users yet",
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Win rate",
-  "leaderboard_mode_streak": "Win streak"
+  "leaderboard_mode_streak": "Win streak",
+  "menuLeaderboard": "Leaderboard"
   ,"settings_title": "Settings"
   ,"settings_theme": "Theme"
   ,"settings_theme_system": "System"

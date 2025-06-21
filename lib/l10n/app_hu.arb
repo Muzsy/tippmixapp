@@ -83,7 +83,8 @@
   "leaderboard_empty": "Nincs megjeleníthető felhasználó",
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Nyerési arány",
-  "leaderboard_mode_streak": "Sorozat"
+  "leaderboard_mode_streak": "Sorozat",
+  "menuLeaderboard": "Ranglista"
   ,"settings_title": "Beállítások"
   ,"settings_theme": "Téma"
   ,"settings_theme_system": "Rendszer"
