@@ -230,6 +230,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuLeaderboard => 'Leaderboard';
 
   @override
+  String get menuSettings => 'Settings';
+
+  @override
   String get errorUserNotFound => 'User not found. Please log in again.';
 
   @override
