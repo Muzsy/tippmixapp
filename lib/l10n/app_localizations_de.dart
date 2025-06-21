@@ -227,6 +227,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get drawer_title => 'Menü';
 
   @override
+  String get menuLeaderboard => 'Bestenliste';
+
+  @override
   String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
 
   @override

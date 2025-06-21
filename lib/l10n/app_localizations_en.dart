@@ -227,6 +227,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawer_title => 'Drawer';
 
   @override
+  String get menuLeaderboard => 'Leaderboard';
+
+  @override
   String get errorUserNotFound => 'User not found. Please log in again.';
 
   @override
