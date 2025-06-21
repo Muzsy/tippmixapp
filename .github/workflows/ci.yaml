@@ -42,4 +42,4 @@ jobs:
           path: build/
 
       - name: CI Summary
-        run: echo "✅ CI futás sikeres: analyze + test + coverage"
+        run: echo "CI futás sikeres: analyze + test + coverage"
