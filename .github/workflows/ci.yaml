@@ -14,12 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.22.2"
-          channel: "stable"
-          cache: true
+      - name: Install Flutter SDK manually
+        run: |
+          git clone https://github.com/flutter/flutter.git --branch stable --depth 1
+          echo "$(pwd)/flutter/bin" >> $GITHUB_PATH
+
+      - name: Flutter doctor
+        run: flutter doctor -v
 
       - name: Install dependencies
         run: |
