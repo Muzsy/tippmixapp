@@ -1,0 +1,27 @@
+steps:
+  - name: GoRouter útvonal hozzáadása a SettingsScreen-hez
+    description: A lib/router.dart fájlban regisztráljuk a "/settings" útvonalat, amely a SettingsScreen-t jeleníti meg.
+    outputs:
+      - lib/router.dart
+
+  - name: Navigációs menüpont létrehozása a drawerhez
+    description: A lib/widgets/app_drawer.dart fájlban adjunk hozzá egy új ListTile-t a Beállítások menüponthoz, amely a "/settings" route-ra navigál.
+    outputs:
+      - lib/widgets/app_drawer.dart
+
+  - name: Lokalizációs kulcsok hozzáadása a Beállításokhoz
+    description: Az app_hu.arb, app_en.arb és app_de.arb fájlokban adjunk hozzá egy "menuSettings" kulcsot a Beállítások szöveghez mindhárom nyelven.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: onTap esemény és ikon beállítása
+    description: A navigációs ListTile elem tartalmazzon egy settings ikont (Icons.settings), és a context.go('/settings') hívással navigáljon.
+    outputs:
+      - lib/widgets/app_drawer.dart
+
+  - name: Manual sanity teszt elvégzése
+    description: Ellenőrizzük manuálisan, hogy a Beállítások menüpont megjelenik, a nyelv alapján lokalizált, és a megfelelő képernyőre navigál.
+    outputs:
+      - manual test
