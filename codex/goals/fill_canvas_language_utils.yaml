@@ -1,0 +1,20 @@
+steps:
+  - name: LanguageUtils osztály létrehozása
+    description: Hozzunk létre egy LanguageUtils nevű segédosztályt, amely a nyelvi beállítások lekérdezését és mentését végzi.
+    outputs:
+      - lib/utils/language_utils.dart
+
+  - name: getSavedLanguage metódus implementálása
+    description: A metódus lekéri a SharedPreferences-ből a felhasználó által korábban kiválasztott nyelvet. Ha nincs mentett nyelv, null-t ad vissza.
+    outputs:
+      - lib/utils/language_utils.dart
+
+  - name: saveSelectedLanguage metódus implementálása
+    description: Ez a metódus elmenti a kiválasztott nyelv `languageCode` értékét a SharedPreferences-be.
+    outputs:
+      - lib/utils/language_utils.dart
+
+  - name: getCurrentLanguage metódus implementálása fallback logikával
+    description: Ez a metódus lekéri az aktuális platform nyelvét, és visszaadja 'hu', 'en', 'de' közül a megfelelőt. Ha nem támogatott, fallbackként 'en' értéket ad vissza.
+    outputs:
+      - lib/utils/language_utils.dart

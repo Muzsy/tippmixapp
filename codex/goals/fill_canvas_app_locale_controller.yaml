@@ -1,0 +1,20 @@
+steps:
+  - name: AppLocaleController osztály létrehozása
+    description: Hozzunk létre egy Riverpod alapú StateNotifier osztályt, amely Locale típusú állapotot kezel. Ez az osztály fogja irányítani az app aktuális nyelvét.
+    outputs:
+      - lib/controllers/app_locale_controller.dart
+
+  - name: loadLocale és setLocale metódusok implementálása
+    description: Az AppLocaleController tartalmazzon két fő metódust: loadLocale (betölti a mentett vagy rendszer nyelvet) és setLocale (beállítja az új nyelvet és elmenti).
+    outputs:
+      - lib/controllers/app_locale_controller.dart
+
+  - name: Provider létrehozása az AppLocaleController-hez
+    description: Hozzunk létre egy StateNotifierProvider-t appLocaleControllerProvider néven, amely az AppLocaleController példányát biztosítja.
+    outputs:
+      - lib/controllers/app_locale_controller.dart
+
+  - name: Nyelvi util függvények meghívása
+    description: A betöltés és mentés során használjuk a LanguageUtils osztály getSavedLanguage, getCurrentLanguage és saveSelectedLanguage metódusait.
+    outputs:
+      - lib/controllers/app_locale_controller.dart
