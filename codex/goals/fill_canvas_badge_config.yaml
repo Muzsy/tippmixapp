@@ -1,0 +1,17 @@
+steps:
+  - name: Alapértelmezett badge lista létrehozása
+    description: Készítsd el a badge_config.dart fájlt, amely tartalmazza az öt badge konfigurációját (kulcs, ikon, feltétel szerint).
+    outputs:
+      - lib/config/badge_config.dart
+
+  - name: Modellre való hivatkozás beállítása
+    description: A konfiguráció kizárólag a badge.dart fájlban definiált BadgeData típust és BadgeCondition enumot használhatja.
+    outputs:
+      - lib/models/badge.dart
+
+  - name: Lokalizációhoz szükséges kulcsok listázása
+    description: Az ARB fájlokban biztosítsd a következő kulcsokat minden nyelven: badge_rookie_title, badge_rookie_description, badge_hot_streak_title stb.
+    outputs:
+      - lib/l10n/intl_hu.arb
+      - lib/l10n/intl_en.arb
+      - lib/l10n/intl_de.arb
