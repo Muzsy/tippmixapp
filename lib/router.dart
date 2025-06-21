@@ -7,6 +7,7 @@ import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/login_register_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tippmixapp/screens/settings/settings_screen.dart';
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
@@ -60,6 +61,15 @@ final GoRouter router = GoRouter(
           name: 'leaderboard',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const LeaderboardScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          path: '/settings',
+          name: 'settings',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const SettingsScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
