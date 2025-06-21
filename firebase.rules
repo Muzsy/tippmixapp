@@ -25,6 +25,14 @@ service cloud.firestore {
         ) || request.auth.token.role == 'admin');
       allow delete: if false;
     }
+
+    match /users/{uid}/badges/{badgeId} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.key is string
+        && request.resource.data.timestamp == request.time;
+      allow update, delete: if false;
+    }
   }
 }
 
