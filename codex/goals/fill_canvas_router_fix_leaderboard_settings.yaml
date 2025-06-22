@@ -1,11 +1,13 @@
 name: fill_canvas_router_fix_leaderboard_settings
 
 description: >
-  A GoRouter konfiguráció kiegészítése a LeaderboardScreen és SettingsScreen route-okkal.
-  Ezek a képernyők már léteznek, de hiányzik a GoRouter definíció, ezért a navigáció élő buildben hibát dob.
+  A GoRouter konfiguráció kiegészítése a LeaderboardScreen és SettingsScreen route-okkal,
+  valamint az enum alapú named route navigáció teljes visszaállítása. Jelenleg a goNamed()
+  hívások hibát dobnak, mert a route-ok nincsenek név szerint regisztrálva.
 
 inputs:
   - canvases/router.md
+  - canvases/router_routes_named.md
   - codex_docs/routing_integrity.md
   - lib/router/app_router.dart
   - lib/screens/leaderboard/leaderboard_screen.dart
@@ -28,7 +30,14 @@ steps:
     outputs:
       - lib/router/app_router.dart
 
-  - name: goNamed() navigáció ellenőrzése
+  - name: goNamed() navigáció hibák javítása
+    description: >
+      A jelenlegi alkalmazásban a context.goNamed(...) hívások hibát dobnak, mert a GoRouter route-ok
+      nincsenek név szerint regisztrálva. Javítsuk a GoRoute definíciókat, hogy mindegyik tartalmazzon name: mezőt.
+    outputs:
+      - lib/router/app_router.dart
+
+  - name: Navigációs hívások konzisztenciája
     description: >
       Ellenőrizzük, hogy a navigáció a Drawer menüből és más komponensekből is `context.goNamed(...)` formában történik.
       Amennyiben nem, konvertáljuk a hardcoded stringes navigációt enum-alapú `goNamed()` hívásra.
