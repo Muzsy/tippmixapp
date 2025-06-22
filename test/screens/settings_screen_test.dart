@@ -46,8 +46,8 @@ void main() {
           child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
-          home: const SettingsScreen(),
+          locale: Locale('en'),
+          home: SettingsScreen(),
         ),
       ),
     );
