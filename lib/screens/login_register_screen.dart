@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
+import '../router.dart';
 import '../models/user.dart';
 
 class LoginRegisterScreen extends ConsumerStatefulWidget {
@@ -47,7 +48,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
     final loc = AppLocalizations.of(context)!;
 
     ref.listen<User?>(authProvider, (previous, next) {
-      if (next != null) context.go('/');
+      if (next != null) context.goNamed(AppRoute.home.name);
     });
 
     return Scaffold(

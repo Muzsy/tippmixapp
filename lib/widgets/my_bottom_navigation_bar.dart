@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
+import '../router.dart';
 
 class MyBottomNavigationBar extends StatelessWidget {
   const MyBottomNavigationBar({super.key});
@@ -15,13 +16,13 @@ class MyBottomNavigationBar extends StatelessWidget {
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/');
+        context.goNamed(AppRoute.home.name);
         break;
       case 1:
-        context.go('/profile');
+        context.goNamed(AppRoute.profile.name);
         break;
       case 2:
-        context.go('/my-tickets');
+        context.goNamed(AppRoute.myTickets.name);
         break;
     }
   }
