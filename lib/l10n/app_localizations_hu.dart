@@ -227,44 +227,107 @@ class AppLocalizationsHu extends AppLocalizations {
   String get drawer_title => 'Menü';
 
   @override
+  String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
+
+  @override
+  String get go_to_create_ticket => 'Szelvény elküldése';
+
+  @override
+  String get insufficient_permissions => 'Nincs jogosultság.';
+
+  @override
+  String get invalid_transaction_type => 'Érvénytelen tranzakció típus.';
+
+  @override
+  String get missing_transaction_id => 'Hiányzik a tranzakció azonosító.';
+
+  @override
+  String get amount_must_be_integer => 'Az összegnek egész számnak kell lennie.';
+
+  @override
+  String get admin_only_field => 'Ezt a mezőt csak admin módosíthatja.';
+
+  @override
+  String get leaderboard_title => 'Ranglista';
+
+  @override
+  String get leaderboard_you => 'Te';
+
+  @override
+  String get leaderboard_empty => 'Nincs megjeleníthető felhasználó';
+
+  @override
+  String get leaderboard_mode_coin => 'TippCoin';
+
+  @override
+  String get leaderboard_mode_winrate => 'Nyerési arány';
+
+  @override
+  String get leaderboard_mode_streak => 'Sorozat';
+
+  @override
   String get menuLeaderboard => 'Ranglista';
 
   @override
   String get menuSettings => 'Beállítások';
 
   @override
-  String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
+  String get settings_title => 'Beállítások';
 
   @override
-  String get go_to_create_ticket => 'Szelvény elküldése';
-@override
-  String get leaderboard_title => 'Ranglista';
-  @override
-  String get leaderboard_you => 'Te';
-  @override
-  String get leaderboard_empty => 'Nincs megjeleníthető felhasználó';
-  @override
-  String get leaderboard_mode_coin => 'TippCoin';
-  @override
-  String get leaderboard_mode_winrate => 'Nyerési arány';
-  @override
-  String get leaderboard_mode_streak => 'Sorozat';
-  @override
-  String get settings_title => 'Beállítások';
-  @override
   String get settings_theme => 'Téma';
+
   @override
   String get settings_theme_system => 'Rendszer';
+
   @override
   String get settings_theme_light => 'Világos';
+
   @override
   String get settings_theme_dark => 'Sötét';
+
   @override
   String get settings_language => 'Nyelv';
+
   @override
   String get settings_logout => 'Kijelentkezés';
+
   @override
   String get settings_ai_recommendations => 'AI ajánlások';
+
   @override
   String get settings_push_notifications => 'Értesítések';
+
+  @override
+  String get badge_rookie_title => 'Újonc';
+
+  @override
+  String get badge_rookie_description => 'Első nyertes fogadásod.';
+
+  @override
+  String get badge_hot_streak_title => 'Forró széria';
+
+  @override
+  String get badge_hot_streak_description => 'Három egymást követő győzelem.';
+
+  @override
+  String get badge_parlay_pro_title => 'Kombi szakértő';
+
+  @override
+  String get badge_parlay_pro_description => '5+ eseményes kombi szelvény nyerése.';
+
+  @override
+  String get badge_night_owl_title => 'Éjjeli bagoly';
+
+  @override
+  String get badge_night_owl_description => 'Éjfél utáni nyerő szelvény.';
+
+  @override
+  String get badge_comeback_kid_title => 'Visszatérő';
+
+  @override
+  String get badge_comeback_kid_description => 'Három vereség után nyert szelvény.';
+
+  @override
+  String get profile_badges_empty => 'Még nem szereztél badge-et';
 }
