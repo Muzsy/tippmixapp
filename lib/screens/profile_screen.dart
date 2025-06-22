@@ -55,13 +55,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Text('${loc.profile_email}: ${user.email}', style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
             Text('${loc.profile_name}: ${user.displayName}', style: const TextStyle(fontSize: 16)),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             if (_error != null) ...[
-              Text(_error!, style: TextStyle(color: Colors.red)),
-              SizedBox(height: 12),
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 12),
             ],
             _loggingOut
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _loggingOut ? null : _logout,
                     child: Text(loc.profile_logout),
