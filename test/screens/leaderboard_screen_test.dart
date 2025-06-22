@@ -54,8 +54,8 @@ void main() {
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
-          home: const LeaderboardScreen(),
+          locale: Locale('en'),
+          home: LeaderboardScreen(),
         ),
       ),
     );
@@ -96,8 +96,8 @@ void main() {
           child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
-          home: const LeaderboardScreen(),
+          locale: Locale('en'),
+          home: LeaderboardScreen(),
         ),
       ),
     );
