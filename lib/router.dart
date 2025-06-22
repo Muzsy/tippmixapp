@@ -8,6 +8,16 @@ import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/login_register_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
+
+enum AppRoute {
+  home,
+  profile,
+  events,
+  myTickets,
+  leaderboard,
+  settings,
+  login,
+}
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
@@ -20,18 +30,18 @@ final GoRouter router = GoRouter(
     ShellRoute(
       builder: (context, state, child) => HomeScreen(child: child),
       routes: [
-/*      GoRoute(
+        GoRoute(
           path: '/',
-          name: 'home',
+          name: AppRoute.home.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const HomeBodyScreen(),
+            child: const EventsScreen(sportKey: 'soccer'),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
-        ), */
+        ),
         GoRoute(
           path: '/profile',
-          name: 'profile',
+          name: AppRoute.profile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const ProfileScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -40,7 +50,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/events',
-          name: 'events',
+          name: AppRoute.events.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const EventsScreen(sportKey: 'soccer'),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -49,7 +59,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/my-tickets',
-          name: 'my_tickets',
+          name: AppRoute.myTickets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const MyTicketsScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -58,7 +68,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/leaderboard',
-          name: 'leaderboard',
+          name: AppRoute.leaderboard.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const LeaderboardScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -67,7 +77,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/settings',
-          name: 'settings',
+          name: AppRoute.settings.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const SettingsScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -76,7 +86,7 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/login',
-          name: 'login',
+          name: AppRoute.login.name,
           pageBuilder: (context, state) => CustomTransitionPage(
           child: const LoginRegisterScreen(),
           transitionsBuilder: (context, anim, secAnim, child) =>
