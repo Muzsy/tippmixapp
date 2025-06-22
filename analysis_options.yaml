@@ -10,6 +10,12 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+
+  errors:
+    # 🔐 Tiltja a sealed class implementálást – ERROR szintre emelve
+    subtype_of_sealed_class: error
+
+
   exclude:
     - "**/flutter/**"
     - "**/.dart_tool/**"

@@ -1,21 +1,20 @@
 Analyzing tippmixapp...                                         
 
-   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:58:13 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:60:36 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:61:15 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:64:19 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - lib\screens\profile_screen.dart:64:33 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - lib\services\odds_api_service.dart:47:63 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - test\screens\leaderboard_screen_test.dart:54:16 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - test\screens\leaderboard_screen_test.dart:96:16 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - test\screens\settings_screen_test.dart:46:16 - prefer_const_constructors
-warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:6:1 - subtype_of_sealed_class
-warning - The class 'QueryDocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:6:1 - subtype_of_sealed_class
-warning - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:24:1 - subtype_of_sealed_class
+   info - Unnecessary 'const' keyword - test\screens\leaderboard_screen_test.dart:57:19 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\screens\leaderboard_screen_test.dart:58:17 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\screens\leaderboard_screen_test.dart:99:19 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\screens\leaderboard_screen_test.dart:100:17 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\screens\settings_screen_test.dart:49:19 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\screens\settings_screen_test.dart:50:17 - unnecessary_const
+  error - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:6:1 - subtype_of_sealed_class
+  error - The class 'QueryDocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:6:1 - subtype_of_sealed_class
+  error - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:24:1 - subtype_of_sealed_class
    info - The member 'id' overrides an inherited member but isn't annotated with '@override' - test\services\badge_service_test.dart:26:16 - annotate_overrides
-warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:40:1 - subtype_of_sealed_class
-warning - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:61:1 - subtype_of_sealed_class
-warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:73:1 - subtype_of_sealed_class
-   info - Use 'const' with the constructor to improve performance - test\widgets\profile_badge_test.dart:10:7 - prefer_const_constructors
-   info - Use 'const' with the constructor to improve performance - test\widgets\profile_badge_test.dart:34:7 - prefer_const_constructors
+  error - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:40:1 - subtype_of_sealed_class
+  error - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:61:1 - subtype_of_sealed_class
+  error - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\services\badge_service_test.dart:73:1 - subtype_of_sealed_class
+   info - Unnecessary 'const' keyword - test\widgets\profile_badge_test.dart:13:17 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\widgets\profile_badge_test.dart:14:15 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\widgets\profile_badge_test.dart:37:17 - unnecessary_const
+   info - Unnecessary 'const' keyword - test\widgets\profile_badge_test.dart:38:15 - unnecessary_const
 
