@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tippmixapp/services/badge_service.dart';
 import 'package:tippmixapp/models/user_stats_model.dart';
 
-// ignore: subtype_of_sealed_class
 class FakeQueryDocumentSnapshot extends Fake
     implements QueryDocumentSnapshot<Map<String, dynamic>> {
   @override
@@ -14,7 +13,6 @@ class FakeQueryDocumentSnapshot extends Fake
   Map<String, dynamic> data() => _data;
 }
 
-// ignore: subtype_of_sealed_class
 class FakeQuerySnapshot extends Fake
     implements QuerySnapshot<Map<String, dynamic>> {
   final List<FakeQueryDocumentSnapshot> _docs;
@@ -23,10 +21,8 @@ class FakeQuerySnapshot extends Fake
   List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => _docs;
 }
 
-// ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake
     implements DocumentReference<Map<String, dynamic>> {
-  @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
   FakeDocumentReference(this.id, this.store);
@@ -41,7 +37,6 @@ class FakeDocumentReference extends Fake
   }
 }
 
-// ignore: subtype_of_sealed_class
 class FakeCollectionReference extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
@@ -63,7 +58,6 @@ class FakeCollectionReference extends Fake
   }
 }
 
-// ignore: subtype_of_sealed_class
 class FakeUserDocument extends Fake
     implements DocumentReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> badges;
@@ -76,7 +70,6 @@ class FakeUserDocument extends Fake
   }
 }
 
-// ignore: subtype_of_sealed_class
 class FakeUsersCollection extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, Map<String, dynamic>>> data;
