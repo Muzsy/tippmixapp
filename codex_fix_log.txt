@@ -41,3 +41,5 @@ Used const Duration in OddsApiService timeout call.
 Made MaterialApp usages const in leaderboard and settings screen tests.
 Annotated FakeDocumentReference.id with @override and ignored sealed class warnings in badge_service_test.dart.
 Made MaterialApp widgets const in profile_badge_test.
+Reinstated ignore comments for sealed Firestore classes and annotated id in badge_service_test.
+Removed unnecessary const keywords in widget tests.
