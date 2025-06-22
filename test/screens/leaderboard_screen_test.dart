@@ -51,7 +51,7 @@ void main() {
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: 'a@a.hu', displayName: 'Me'))),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
@@ -93,7 +93,7 @@ void main() {
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
         ],
-        child: MaterialApp(
+          child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
