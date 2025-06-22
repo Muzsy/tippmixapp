@@ -1,0 +1,25 @@
+name: fill_canvas_router_named_fix
+
+description: >
+  A GoRouter útvonalakhoz szükséges name: mezők pótlása a router.dart fájlban,
+  hogy a context.goNamed() hívások működjenek és megfeleljenek a routing_integrity.md szabálynak.
+
+inputs:
+  - canvases/router_named_fix.md
+  - codex_docs/routing_integrity.md
+  - lib/router.dart
+
+steps:
+  - name: Named route mezők pótlása
+    description: >
+      Egészítsük ki a GoRoute definíciókat a lib/router.dart fájlban úgy, hogy mindegyik tartalmazza a name: AppRoute.<xyz>.name mezőt.
+      Különösen a '/leaderboard' és '/settings' útvonalakhoz kell name mezőt adni, mivel ezeket context.goNamed()-tel hívjuk.
+    outputs:
+      - lib/router.dart
+
+  - name: context.goNamed() hívások tesztelése
+    description: >
+      A Drawer menüben, illetve egyéb helyeken a context.goNamed(...) hívások jelenleg hibát dobnak,
+      mert a GoRouter route-ok nem tartalmaznak name mezőt. Ennek pótlása után ezek működni fognak.
+    outputs:
+      - lib/widgets/app_drawer.dart
