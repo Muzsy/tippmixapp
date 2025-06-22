@@ -227,44 +227,107 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawer_title => 'Drawer';
 
   @override
+  String get errorUserNotFound => 'User not found. Please log in again.';
+
+  @override
+  String get go_to_create_ticket => 'Submit Ticket';
+
+  @override
+  String get insufficient_permissions => 'You do not have permission.';
+
+  @override
+  String get invalid_transaction_type => 'Invalid transaction type.';
+
+  @override
+  String get missing_transaction_id => 'Transaction ID is required.';
+
+  @override
+  String get amount_must_be_integer => 'Amount must be an integer.';
+
+  @override
+  String get admin_only_field => 'Only admin may modify this field.';
+
+  @override
+  String get leaderboard_title => 'Leaderboard';
+
+  @override
+  String get leaderboard_you => 'You';
+
+  @override
+  String get leaderboard_empty => 'No users yet';
+
+  @override
+  String get leaderboard_mode_coin => 'TippCoin';
+
+  @override
+  String get leaderboard_mode_winrate => 'Win rate';
+
+  @override
+  String get leaderboard_mode_streak => 'Win streak';
+
+  @override
   String get menuLeaderboard => 'Leaderboard';
 
   @override
   String get menuSettings => 'Settings';
 
   @override
-  String get errorUserNotFound => 'User not found. Please log in again.';
+  String get settings_title => 'Settings';
 
   @override
-  String get go_to_create_ticket => 'Submit Ticket';
-@override
-  String get leaderboard_title => 'Leaderboard';
-  @override
-  String get leaderboard_you => 'You';
-  @override
-  String get leaderboard_empty => 'No users yet';
-  @override
-  String get leaderboard_mode_coin => 'TippCoin';
-  @override
-  String get leaderboard_mode_winrate => 'Win rate';
-  @override
-  String get leaderboard_mode_streak => 'Win streak';
-  @override
-  String get settings_title => 'Settings';
-  @override
   String get settings_theme => 'Theme';
+
   @override
   String get settings_theme_system => 'System';
+
   @override
   String get settings_theme_light => 'Light';
+
   @override
   String get settings_theme_dark => 'Dark';
+
   @override
   String get settings_language => 'Language';
+
   @override
   String get settings_logout => 'Logout';
+
   @override
   String get settings_ai_recommendations => 'AI recommendations';
+
   @override
   String get settings_push_notifications => 'Push notifications';
+
+  @override
+  String get badge_rookie_title => 'Rookie';
+
+  @override
+  String get badge_rookie_description => 'First win completed.';
+
+  @override
+  String get badge_hot_streak_title => 'Hot Streak';
+
+  @override
+  String get badge_hot_streak_description => 'Three wins in a row.';
+
+  @override
+  String get badge_parlay_pro_title => 'Parlay Pro';
+
+  @override
+  String get badge_parlay_pro_description => 'Winning a 5+ event parlay.';
+
+  @override
+  String get badge_night_owl_title => 'Night Owl';
+
+  @override
+  String get badge_night_owl_description => 'Ticket won after midnight.';
+
+  @override
+  String get badge_comeback_kid_title => 'Comeback Kid';
+
+  @override
+  String get badge_comeback_kid_description => 'Win after three losses.';
+
+  @override
+  String get profile_badges_empty => 'No badges yet';
 }

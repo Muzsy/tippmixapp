@@ -529,12 +529,6 @@ abstract class AppLocalizations {
   /// **'Drawer'**
   String get drawer_title;
 
-  /// No description provided for @menuLeaderboard.
-  String get menuLeaderboard;
-
-  /// No description provided for @menuSettings.
-  String get menuSettings;
-
   /// No description provided for @errorUserNotFound.
   ///
   /// In en, this message translates to:
@@ -547,22 +541,203 @@ abstract class AppLocalizations {
   /// **'Submit Ticket'**
   String get go_to_create_ticket;
 
+  /// No description provided for @insufficient_permissions.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission.'**
+  String get insufficient_permissions;
+
+  /// No description provided for @invalid_transaction_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid transaction type.'**
+  String get invalid_transaction_type;
+
+  /// No description provided for @missing_transaction_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID is required.'**
+  String get missing_transaction_id;
+
+  /// No description provided for @amount_must_be_integer.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be an integer.'**
+  String get amount_must_be_integer;
+
+  /// No description provided for @admin_only_field.
+  ///
+  /// In en, this message translates to:
+  /// **'Only admin may modify this field.'**
+  String get admin_only_field;
+
   /// No description provided for @leaderboard_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
   String get leaderboard_title;
+
+  /// No description provided for @leaderboard_you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
   String get leaderboard_you;
+
+  /// No description provided for @leaderboard_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No users yet'**
   String get leaderboard_empty;
+
+  /// No description provided for @leaderboard_mode_coin.
+  ///
+  /// In en, this message translates to:
+  /// **'TippCoin'**
   String get leaderboard_mode_coin;
+
+  /// No description provided for @leaderboard_mode_winrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Win rate'**
   String get leaderboard_mode_winrate;
+
+  /// No description provided for @leaderboard_mode_streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Win streak'**
   String get leaderboard_mode_streak;
+
+  /// No description provided for @menuLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get menuLeaderboard;
+
+  /// No description provided for @menuSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get menuSettings;
+
+  /// No description provided for @settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
   String get settings_title;
+
+  /// No description provided for @settings_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
   String get settings_theme;
+
+  /// No description provided for @settings_theme_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
   String get settings_theme_system;
+
+  /// No description provided for @settings_theme_light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
   String get settings_theme_light;
+
+  /// No description provided for @settings_theme_dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
   String get settings_theme_dark;
+
+  /// No description provided for @settings_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
   String get settings_language;
+
+  /// No description provided for @settings_logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
   String get settings_logout;
+
+  /// No description provided for @settings_ai_recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'AI recommendations'**
   String get settings_ai_recommendations;
+
+  /// No description provided for @settings_push_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications'**
   String get settings_push_notifications;
+
+  /// No description provided for @badge_rookie_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rookie'**
+  String get badge_rookie_title;
+
+  /// No description provided for @badge_rookie_description.
+  ///
+  /// In en, this message translates to:
+  /// **'First win completed.'**
+  String get badge_rookie_description;
+
+  /// No description provided for @badge_hot_streak_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot Streak'**
+  String get badge_hot_streak_title;
+
+  /// No description provided for @badge_hot_streak_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Three wins in a row.'**
+  String get badge_hot_streak_description;
+
+  /// No description provided for @badge_parlay_pro_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Parlay Pro'**
+  String get badge_parlay_pro_title;
+
+  /// No description provided for @badge_parlay_pro_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Winning a 5+ event parlay.'**
+  String get badge_parlay_pro_description;
+
+  /// No description provided for @badge_night_owl_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Night Owl'**
+  String get badge_night_owl_title;
+
+  /// No description provided for @badge_night_owl_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket won after midnight.'**
+  String get badge_night_owl_description;
+
+  /// No description provided for @badge_comeback_kid_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Comeback Kid'**
+  String get badge_comeback_kid_title;
+
+  /// No description provided for @badge_comeback_kid_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Win after three losses.'**
+  String get badge_comeback_kid_description;
+
+  /// No description provided for @profile_badges_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet'**
+  String get profile_badges_empty;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

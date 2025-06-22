@@ -227,44 +227,107 @@ class AppLocalizationsDe extends AppLocalizations {
   String get drawer_title => 'Menü';
 
   @override
+  String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
+
+  @override
+  String get go_to_create_ticket => 'Wettschein abschicken';
+
+  @override
+  String get insufficient_permissions => 'Keine Berechtigung.';
+
+  @override
+  String get invalid_transaction_type => 'Ungültiger Transaktionstyp.';
+
+  @override
+  String get missing_transaction_id => 'TransactionId fehlt.';
+
+  @override
+  String get amount_must_be_integer => 'Betrag muss Ganzzahl sein.';
+
+  @override
+  String get admin_only_field => 'Dieses Feld darf nur von Admins geändert werden.';
+
+  @override
+  String get leaderboard_title => 'Bestenliste';
+
+  @override
+  String get leaderboard_you => 'Du';
+
+  @override
+  String get leaderboard_empty => 'Keine Benutzer vorhanden';
+
+  @override
+  String get leaderboard_mode_coin => 'TippCoin';
+
+  @override
+  String get leaderboard_mode_winrate => 'Gewinnrate';
+
+  @override
+  String get leaderboard_mode_streak => 'Serie';
+
+  @override
   String get menuLeaderboard => 'Bestenliste';
 
   @override
   String get menuSettings => 'Einstellungen';
 
   @override
-  String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
+  String get settings_title => 'Einstellungen';
 
   @override
-  String get go_to_create_ticket => 'Wettschein abschicken';
-@override
-  String get leaderboard_title => 'Bestenliste';
-  @override
-  String get leaderboard_you => 'Du';
-  @override
-  String get leaderboard_empty => 'Keine Benutzer vorhanden';
-  @override
-  String get leaderboard_mode_coin => 'TippCoin';
-  @override
-  String get leaderboard_mode_winrate => 'Gewinnrate';
-  @override
-  String get leaderboard_mode_streak => 'Serie';
-  @override
-  String get settings_title => 'Einstellungen';
-  @override
   String get settings_theme => 'Thema';
+
   @override
   String get settings_theme_system => 'System';
+
   @override
   String get settings_theme_light => 'Hell';
+
   @override
   String get settings_theme_dark => 'Dunkel';
+
   @override
   String get settings_language => 'Sprache';
+
   @override
   String get settings_logout => 'Abmelden';
+
   @override
   String get settings_ai_recommendations => 'AI-Empfehlungen';
+
   @override
   String get settings_push_notifications => 'Push-Benachrichtigungen';
+
+  @override
+  String get badge_rookie_title => 'Anfänger';
+
+  @override
+  String get badge_rookie_description => 'Erster Gewinn erzielt.';
+
+  @override
+  String get badge_hot_streak_title => 'Heiße Serie';
+
+  @override
+  String get badge_hot_streak_description => 'Drei Siege in Folge.';
+
+  @override
+  String get badge_parlay_pro_title => 'Parlay-Profi';
+
+  @override
+  String get badge_parlay_pro_description => 'Kombi mit 5+ Ereignissen gewonnen.';
+
+  @override
+  String get badge_night_owl_title => 'Nachteule';
+
+  @override
+  String get badge_night_owl_description => 'Schein nach Mitternacht gewonnen.';
+
+  @override
+  String get badge_comeback_kid_title => 'Comeback-Kid';
+
+  @override
+  String get badge_comeback_kid_description => 'Nach drei Niederlagen gewonnen.';
+
+  @override
+  String get profile_badges_empty => 'Noch keine Abzeichen';
 }
