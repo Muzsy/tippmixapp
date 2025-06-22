@@ -44,7 +44,7 @@ class OddsApiService {
 
         // ignore: avoid_print
         debugPrint('OddsApiService: before http.get url=$url');
-      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 10));
+      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
         // ignore: avoid_print
         debugPrint('OddsApiService: after http.get code=${response.statusCode}');
 

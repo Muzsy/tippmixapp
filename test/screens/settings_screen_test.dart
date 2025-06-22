@@ -37,13 +37,13 @@ void main() {
   testWidgets('Settings interactions update controllers and logout', (tester) async {
     final authService = FakeAuthService();
     await tester.pumpWidget(
-      ProviderScope(
+        ProviderScope(
         overrides: [
           authProvider.overrideWith((ref) => AuthNotifier(authService)),
           appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
           appLocaleControllerProvider.overrideWith((ref) => AppLocaleController()),
         ],
-        child: MaterialApp(
+          child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),

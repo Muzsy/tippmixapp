@@ -36,3 +36,8 @@ Added unique ValueKey to _EventCard usage to satisfy optional key parameter warn
 Removed const constructor from CoinService to avoid invalid constant value error.
 Implemented FakeHttpsCallableResult and generic call override in coin_service_test to match HttpsCallable API.
 Fixed provider override closures in leaderboard and settings tests and implemented FakeAuthNotifier with service.
+Added const constructors in profile_screen.dart to resolve prefer_const_constructors infos.
+Used const Duration in OddsApiService timeout call.
+Made MaterialApp usages const in leaderboard and settings screen tests.
+Annotated FakeDocumentReference.id with @override and ignored sealed class warnings in badge_service_test.dart.
+Made MaterialApp widgets const in profile_badge_test.
