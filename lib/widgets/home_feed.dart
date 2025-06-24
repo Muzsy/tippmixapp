@@ -5,6 +5,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../models/feed_event_type.dart';
 import '../providers/auth_provider.dart';
 import '../providers/feed_provider.dart';
+import '../flows/copy_bet_flow.dart';
+import '../models/tip_model.dart';
 import 'components/comment_modal.dart';
 import 'components/report_dialog.dart';
 
@@ -71,6 +73,36 @@ class HomeFeedWidget extends ConsumerWidget {
                           );
                         },
                       ),
+                      if (item.extraData['ticketId'] != null)
+                        IconButton(
+                          key: const Key('copyButton'),
+                          icon: const Icon(Icons.copy),
+                          tooltip: AppLocalizations.of(context)!.copy_success,
+                          onPressed: () async {
+                            final uid = user?.id;
+                            if (uid == null) return;
+                            final tipsData =
+                                (item.extraData['tips'] as List<dynamic>? ?? [])
+                                    .cast<Map<String, dynamic>>();
+                            final tips = tipsData
+                                .map(TipModel.fromJson)
+                                .toList();
+                            await ref.read(copyTicketProvider)(
+                              userId: uid,
+                              ticketId: item.extraData['ticketId'] as String,
+                              tips: tips,
+                              sourceUserId: item.userId,
+                            );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      AppLocalizations.of(context)!.copy_success),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       IconButton(
                         icon: const Icon(Icons.report),
                         tooltip: AppLocalizations.of(context)!.feed_report,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/tip_model.dart';
 
@@ -23,3 +24,14 @@ Future<String> copyTicket({
   });
   return docRef.id;
 }
+
+typedef CopyTicketFn = Future<String> Function({
+  required String userId,
+  required String ticketId,
+  required List<TipModel> tips,
+  String? sourceUserId,
+  FirebaseFirestore? firestore,
+});
+
+/// Provider exposing the [copyTicket] flow for easier testing.
+final copyTicketProvider = Provider<CopyTicketFn>((ref) => copyTicket);
