@@ -44,6 +44,17 @@ class CoinService {
     );
   }
 
+  /// Convenience helper for the daily bonus job.
+  Future<void> creditDailyBonus(String userId) async {
+    final transactionId = DateTime.now().millisecondsSinceEpoch.toString();
+    await creditCoin(
+      userId: userId,
+      amount: 50,
+      reason: 'daily_bonus',
+      transactionId: transactionId,
+    );
+  }
+
   Future<void> _callCoinTrx({
     required String userId,
     required int amount,
