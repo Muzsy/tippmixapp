@@ -330,4 +330,37 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get profile_badges_empty => 'Noch keine Abzeichen';
+
+  @override
+  String get bonus_daily_received => 'Tagesbonus: +50 TippCoin!';
+
+  @override
+  String get bonus_daily_received_description => 'Danke für deine Aktivität!';
+
+  @override
+  String get feed_event_bet_placed => 'Wette platziert';
+
+  @override
+  String get feed_event_ticket_won => 'Schein gewonnen';
+
+  @override
+  String get feed_event_comment => 'Kommentar';
+
+  @override
+  String get feed_event_like => 'Gefällt mir';
+
+  @override
+  String get feed_report_success => 'Der Beitrag wurde unseren Moderatoren gemeldet.';
+
+  @override
+  String get feed_empty_state => 'Keine Beiträge vorhanden';
+
+  @override
+  String get feed_like => 'Gefällt mir';
+
+  @override
+  String get feed_comment => 'Kommentieren';
+
+  @override
+  String get feed_report => 'Melden';
 }
