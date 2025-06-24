@@ -113,4 +113,8 @@
   ,"feed_event_comment": "Comment"
   ,"feed_event_like": "Like"
   ,"feed_report_success": "The post has been reported."
+  ,"feed_empty_state": "No posts yet"
+  ,"feed_like": "Like"
+  ,"feed_comment": "Comment"
+  ,"feed_report": "Report"
 }
