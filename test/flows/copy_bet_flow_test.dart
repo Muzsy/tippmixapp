@@ -6,6 +6,7 @@ import 'package:tippmixapp/models/tip_model.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
+  @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
   FakeDocumentReference(this.id, this.store);
