@@ -48,7 +48,7 @@ class _CommentModalState extends ConsumerState<CommentModal> {
               message: _controller.text,
               extraData: {'postId': widget.postId},
             );
-            if (!mounted) return;
+            if (!context.mounted) return;
             Navigator.of(context).pop();
           },
           child: const Text('Send'),
