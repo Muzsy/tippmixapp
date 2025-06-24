@@ -3,16 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/feed_event_type.dart';
 import 'package:tippmixapp/models/feed_model.dart';
 import 'package:tippmixapp/models/user.dart';
+import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/widgets/home_feed.dart';
 import 'package:tippmixapp/widgets/components/comment_modal.dart';
 import 'package:tippmixapp/widgets/components/report_dialog.dart';
 import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tippmixapp/flows/copy_bet_flow.dart';
 
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier(User? user) : super(FakeAuthService()) {
@@ -43,6 +46,71 @@ class FakeAuthService implements AuthService {
   User? get currentUser => _current;
 }
 
+// ignore: subtype_of_sealed_class
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
+  @override
+  final String id;
+  final Map<String, Map<String, dynamic>> store;
+  FakeDocumentReference(this.id, this.store);
+
+  @override
+  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
+    store[id] = data;
+  }
+}
+
+// ignore: subtype_of_sealed_class
+class FakeCollectionReference extends Fake
+    implements CollectionReference<Map<String, dynamic>> {
+  final Map<String, Map<String, dynamic>> store;
+  FakeCollectionReference(this.store);
+
+  @override
+  DocumentReference<Map<String, dynamic>> doc([String? id]) {
+    final key = id ?? 'doc${store.length}';
+    store.putIfAbsent(key, () => <String, dynamic>{});
+    return FakeDocumentReference(key, store);
+  }
+}
+
+// ignore: subtype_of_sealed_class
+class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
+  final Map<String, Map<String, Map<String, dynamic>>> data = {};
+
+  @override
+  CollectionReference<Map<String, dynamic>> collection(String path) {
+    data.putIfAbsent(path, () => <String, Map<String, dynamic>>{});
+    return FakeCollectionReference(data[path]!);
+  }
+}
+
+class FakeFeedService extends FeedService {
+  int likeCalls = 0;
+  FakeFeedService() : super(FakeFirebaseFirestore());
+
+  @override
+  Future<void> addFeedEntry({
+    required String userId,
+    required FeedEventType eventType,
+    required String message,
+    Map<String, dynamic>? extraData,
+  }) async {
+    likeCalls++;
+  }
+
+  @override
+  Stream<List<FeedModel>> streamFeed() => const Stream.empty();
+
+  @override
+  Future<void> reportFeedItem({
+    required String userId,
+    required String targetId,
+    required String targetType,
+    required String reason,
+  }) async {}
+}
+
 void main() {
   testWidgets('HomeFeedWidget shimmer and empty state', (tester) async {
     final controller = StreamController<List<FeedModel>>();
@@ -51,6 +119,13 @@ void main() {
         overrides: [
           feedStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
+          copyTicketProvider.overrideWithValue(({
+            required String userId,
+            required String ticketId,
+            required List<TipModel> tips,
+            String? sourceUserId,
+            FirebaseFirestore? firestore,
+          }) async => 'id'),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -82,6 +157,7 @@ void main() {
           feedStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith(
               (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'me'))),
+          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async => 'id'),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -107,5 +183,73 @@ void main() {
     await tester.tap(find.byIcon(Icons.report));
     await tester.pumpAndSettle();
     expect(find.byType(ReportDialog), findsOneWidget);
+  });
+
+  testWidgets('Like and copy actions trigger services', (tester) async {
+    final controller = StreamController<List<FeedModel>>();
+    final feedService = FakeFeedService();
+    var copyCalled = false;
+    final item = FeedModel(
+      userId: 'u2',
+      eventType: FeedEventType.betPlaced,
+      message: 'bet',
+      timestamp: DateTime.now(),
+      extraData: {
+        'ticketId': 't1',
+        'tips': <Map<String, dynamic>>[],
+      },
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          feedStreamProvider.overrideWith((ref) => controller.stream),
+          feedServiceProvider.overrideWithValue(feedService),
+          authProvider.overrideWith(
+              (ref) => FakeAuthNotifier(User(id: 'me', email: '', displayName: 'Me'))),
+          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async {
+            copyCalled = true;
+            return 'c1';
+          }),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('en'),
+          home: Scaffold(body: HomeFeedWidget()),
+        ),
+      ),
+    );
+
+    controller.add([item]);
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.thumb_up));
+    await tester.pump();
+    expect(feedService.likeCalls, 1);
+
+    await tester.tap(find.byKey(const Key('copyButton')));
+    await tester.pump();
+    expect(copyCalled, isTrue);
+  });
+
+  testWidgets('Error state renders safely', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          feedStreamProvider.overrideWith((ref) => Stream.error('err')),
+          authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
+          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async => 'id'),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('en'),
+          home: Scaffold(body: HomeFeedWidget()),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    expect(find.byType(SizedBox), findsOneWidget);
   });
 }
