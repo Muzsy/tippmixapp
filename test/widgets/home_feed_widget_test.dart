@@ -234,8 +234,9 @@ void main() {
     expect(feedService.likeCalls, 1);
 
     await tester.tap(find.byKey(const Key('copyButton')));
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(copyCalled, isTrue);
+    expect(find.text('Ticket copied!'), findsOneWidget);
   });
 
   testWidgets('Error state renders safely', (tester) async {
