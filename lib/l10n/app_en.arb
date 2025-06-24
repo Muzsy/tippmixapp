@@ -116,5 +116,9 @@
   ,"feed_empty_state": "No posts yet"
   ,"feed_like": "Like"
   ,"feed_comment": "Comment"
-  ,"feed_report": "Report"
+   ,"feed_report": "Report",
+  "copy_success": "Ticket copied!",
+  "copy_edit_title": "Edit copied ticket",
+  "copy_submit_button": "Submit ticket",
+  "copy_invalid_state": "Ticket unmodified, cannot submit."
 }
