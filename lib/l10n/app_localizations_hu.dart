@@ -363,4 +363,16 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get feed_report => 'Jelentés';
+
+  @override
+  String get copy_success => 'Szelvény másolva!';
+
+  @override
+  String get copy_edit_title => 'Másolt szelvény szerkesztése';
+
+  @override
+  String get copy_submit_button => 'Szelvény feladása';
+
+  @override
+  String get copy_invalid_state => 'A szelvény nem módosult, így nem adható fel.';
 }

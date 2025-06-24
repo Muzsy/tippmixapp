@@ -363,4 +363,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feed_report => 'Report';
+
+  @override
+  String get copy_success => 'Ticket copied!';
+
+  @override
+  String get copy_edit_title => 'Edit copied ticket';
+
+  @override
+  String get copy_submit_button => 'Submit ticket';
+
+  @override
+  String get copy_invalid_state => 'Ticket unmodified, cannot submit.';
 }
