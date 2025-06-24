@@ -738,6 +738,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No badges yet'**
   String get profile_badges_empty;
+
+  /// No description provided for @bonus_daily_received.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily bonus: +50 TippCoin!'**
+  String get bonus_daily_received;
+
+  /// No description provided for @bonus_daily_received_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for being active!'**
+  String get bonus_daily_received_description;
+
+  /// No description provided for @feed_event_bet_placed.
+  ///
+  /// In en, this message translates to:
+  /// **'Bet placed'**
+  String get feed_event_bet_placed;
+
+  /// No description provided for @feed_event_ticket_won.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket won'**
+  String get feed_event_ticket_won;
+
+  /// No description provided for @feed_event_comment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get feed_event_comment;
+
+  /// No description provided for @feed_event_like.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get feed_event_like;
+
+  /// No description provided for @feed_report_success.
+  ///
+  /// In en, this message translates to:
+  /// **'The post has been reported.'**
+  String get feed_report_success;
+
+  /// No description provided for @feed_empty_state.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet'**
+  String get feed_empty_state;
+
+  /// No description provided for @feed_like.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get feed_like;
+
+  /// No description provided for @feed_comment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get feed_comment;
+
+  /// No description provided for @feed_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get feed_report;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -330,4 +330,37 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get profile_badges_empty => 'Még nem szereztél badge-et';
+
+  @override
+  String get bonus_daily_received => 'Napi bónusz: +50 TippCoin!';
+
+  @override
+  String get bonus_daily_received_description => 'Köszönjük, hogy aktív vagy!';
+
+  @override
+  String get feed_event_bet_placed => 'Fogadást tett';
+
+  @override
+  String get feed_event_ticket_won => 'Szelvényt nyert';
+
+  @override
+  String get feed_event_comment => 'Komment';
+
+  @override
+  String get feed_event_like => 'Lájk';
+
+  @override
+  String get feed_report_success => 'A bejegyzést jelentettük moderátorainknak.';
+
+  @override
+  String get feed_empty_state => 'Nincs megjeleníthető bejegyzés';
+
+  @override
+  String get feed_like => 'Tetszik';
+
+  @override
+  String get feed_comment => 'Hozzászólás';
+
+  @override
+  String get feed_report => 'Jelentés';
 }
