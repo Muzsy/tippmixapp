@@ -43,3 +43,7 @@ Annotated FakeDocumentReference.id with @override and ignored sealed class warni
 Made MaterialApp widgets const in profile_badge_test.
 Reinstated ignore comments for sealed Firestore classes and annotated id in badge_service_test.
 Removed unnecessary const keywords in widget tests.
+Renamed FeedEventType constants to camelCase and updated references.
+Removed unused feed_service imports and added mounted checks in comment and report dialogs.
+Replaced deprecated withOpacity use with withAlpha.
+Annotated FakeDocumentReference.id fields with @override in tests.

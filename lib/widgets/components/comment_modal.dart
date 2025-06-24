@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/feed_event_type.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/feed_provider.dart';
-import '../../services/feed_service.dart';
 
 class CommentModal extends ConsumerStatefulWidget {
   final String postId;
@@ -49,7 +48,8 @@ class _CommentModalState extends ConsumerState<CommentModal> {
               message: _controller.text,
               extraData: {'postId': widget.postId},
             );
-            if (mounted) Navigator.of(context).pop();
+            if (!mounted) return;
+            Navigator.of(context).pop();
           },
           child: const Text('Send'),
         ),

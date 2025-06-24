@@ -25,6 +25,7 @@ class FakeQuerySnapshot extends Fake
 // ignore: subtype_of_sealed_class
 class FakeCoinLogDoc extends Fake
     implements DocumentReference<Map<String, dynamic>> {
+  @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
   FakeCoinLogDoc(this.id, this.store);
