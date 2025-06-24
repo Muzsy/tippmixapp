@@ -363,4 +363,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get feed_report => 'Melden';
+
+  @override
+  String get copy_success => 'Schein kopiert!';
+
+  @override
+  String get copy_edit_title => 'Kopierten Schein bearbeiten';
+
+  @override
+  String get copy_submit_button => 'Schein abgeben';
+
+  @override
+  String get copy_invalid_state => 'Schein wurde nicht geändert, daher kann er nicht abgegeben werden.';
 }
