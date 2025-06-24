@@ -46,28 +46,20 @@ class HomeFeedWidget extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Builder(
-                        builder: (context) {
-                          final isOwnPost = item.userId == user?.id;
-                          return IconButton(
-                            icon: const Icon(Icons.thumb_up),
-                            tooltip: AppLocalizations.of(context)!.feed_like,
-                            onPressed: isOwnPost
-                                ? null
-                                : () {
-                                    final service =
-                                        ref.read(feedServiceProvider);
-                                    service.addFeedEntry(
-                                      userId: user!.id,
-                                      eventType: FeedEventType.like,
-                                      message: '',
-                                      extraData: {
-                                        'targetUserId': item.userId
-                                      },
-                                    );
-                                  },
-                          );
-                        },
+                      IconButton(
+                        icon: const Icon(Icons.thumb_up),
+                        tooltip: AppLocalizations.of(context)!.feed_like,
+                        onPressed: item.userId == user?.id
+                            ? null
+                            : () {
+                                final service = ref.read(feedServiceProvider);
+                                service.addFeedEntry(
+                                  userId: user!.id,
+                                  eventType: FeedEventType.like,
+                                  message: '',
+                                  extraData: {'targetUserId': item.userId},
+                                );
+                              },
                       ),
                       IconButton(
                         icon: const Icon(Icons.comment),
