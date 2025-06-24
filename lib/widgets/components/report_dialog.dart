@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/feed_provider.dart';
-import '../../services/feed_service.dart';
 
 class ReportDialog extends ConsumerStatefulWidget {
   final String postId;
@@ -46,7 +45,8 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
               targetType: 'feed',
               reason: _controller.text,
             );
-            if (mounted) Navigator.of(context).pop();
+            if (!mounted) return;
+            Navigator.of(context).pop();
           },
           child: const Text('Send'),
         ),

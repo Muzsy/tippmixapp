@@ -5,6 +5,7 @@ import 'package:tippmixapp/models/feed_event_type.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
+  @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
   FakeDocumentReference(this.id, this.store);
@@ -53,7 +54,7 @@ void main() {
 
     await service.addFeedEntry(
       userId: 'u1',
-      eventType: FeedEventType.bet_placed,
+      eventType: FeedEventType.betPlaced,
       message: 'msg',
       extraData: {'ticketId': 't1'},
     );
@@ -62,7 +63,7 @@ void main() {
     expect(feed.length, 1);
     final entry = feed.values.first;
     expect(entry['userId'], 'u1');
-    expect(entry['eventType'], 'bet_placed');
+    expect(entry['eventType'], 'betPlaced');
     expect((entry['extraData'] as Map<String, dynamic>)['ticketId'], 't1');
   });
 
