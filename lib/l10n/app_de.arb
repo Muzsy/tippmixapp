@@ -116,5 +116,9 @@
   ,"feed_empty_state": "Keine Beiträge vorhanden"
   ,"feed_like": "Gefällt mir"
   ,"feed_comment": "Kommentieren"
-  ,"feed_report": "Melden"
+   ,"feed_report": "Melden",
+  "copy_success": "Schein kopiert!",
+  "copy_edit_title": "Kopierten Schein bearbeiten",
+  "copy_submit_button": "Schein abgeben",
+  "copy_invalid_state": "Schein wurde nicht geändert, daher kann er nicht abgegeben werden."
 }
