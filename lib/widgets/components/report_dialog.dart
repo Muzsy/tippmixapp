@@ -45,7 +45,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
               targetType: 'feed',
               reason: _controller.text,
             );
-            if (!mounted) return;
+            if (!context.mounted) return;
             Navigator.of(context).pop();
           },
           child: const Text('Send'),
