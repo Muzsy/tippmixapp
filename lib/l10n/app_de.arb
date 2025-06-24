@@ -113,4 +113,8 @@
   ,"feed_event_comment": "Kommentar"
   ,"feed_event_like": "Gefällt mir"
   ,"feed_report_success": "Der Beitrag wurde unseren Moderatoren gemeldet."
+  ,"feed_empty_state": "Keine Beiträge vorhanden"
+  ,"feed_like": "Gefällt mir"
+  ,"feed_comment": "Kommentieren"
+  ,"feed_report": "Melden"
 }
