@@ -116,5 +116,9 @@
   ,"feed_empty_state": "Nincs megjeleníthető bejegyzés"
   ,"feed_like": "Tetszik"
   ,"feed_comment": "Hozzászólás"
-  ,"feed_report": "Jelentés"
+   ,"feed_report": "Jelentés",
+  "copy_success": "Szelvény másolva!",
+  "copy_edit_title": "Másolt szelvény szerkesztése",
+  "copy_submit_button": "Szelvény feladása",
+  "copy_invalid_state": "A szelvény nem módosult, így nem adható fel."
 }
