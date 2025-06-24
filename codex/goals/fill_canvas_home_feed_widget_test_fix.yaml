@@ -2,13 +2,16 @@ steps:
   - name: HomeFeed widget teszt létrehozása
     description: |
       Hozz létre egy átfogó widget tesztet a lib/widgets/home_feed.dart fájlhoz, a következő szempontok alapján:
-      1. **Üres állapot**: ha nincs feed elem, jelenjen meg a megfelelő üres állapot.
+      1. **Üres állapot**: ha nincs feed elem, jelenjen meg a megfelelő üres állapot üzenet vagy kép.
       2. **Betöltő animáció**: ellenőrizd, hogy a shimmer indikátor megjelenik a feed betöltése közben.
       3. **Like gomb**:
-         - Használd `tester.tap(find.byIcon(Icons.thumb_up))` a gomb megnyomásához, ne a `tester.widget<IconButton>(find.byIcon(...))`-t, hogy elkerüld a `Icon` vs `IconButton` típus-cast hibát.
-         - Egy saját poszthoz (`item.userId == user.id`) a gomb `onPressed`-e legyen `null`, ezt a gomb tulajdonságainak lekérdezésével ellenőrizd (például `tester.widget<IconButton>(find.byType(IconButton).at(index)).onPressed`).
-      4. **Copy-Bet gomb** (`Icons.copy`): találja meg a `Key('copyButton')` segítségével, és teszteld, hogy `tester.tap`-pal meghívódik a copy logika, illetve megjelenik a SnackBar (ellenőrizd a `ScaffoldMessenger`-ben).
-      5. **Komment gomb** (`Icons.comment`): `tester.tap(find.byIcon(Icons.comment))` használatával kattints rá, és ellenőrizd, hogy megnyílik a `CommentModal` vagy `ReportDialog`, illetve a megfelelő dialog jelenik meg.
+         - Használd `tester.tap(find.widgetWithIcon(IconButton, Icons.thumb_up))` a gomb megnyomásához.
+         - Ezután a `tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.thumb_up)).onPressed` értékét ellenőrizd: saját poszthoz (`item.userId == user.id`) legyen `null`, más posztoknál legyen nem-null.
+      4. **Copy-Bet gomb**:
+         - A `Key('copyButton')` segítségével találd meg a gombot, majd `tester.tap(find.byKey(Key('copyButton')))`-pal aktiváld.
+         - Ellenőrizd, hogy a `ScaffoldMessenger`-ben megjelenik a megfelelő SnackBar üzenet.
+      5. **Komment gomb**:
+         - Használd `tester.tap(find.widgetWithIcon(IconButton, Icons.comment))`, majd ellenőrizd, hogy megnyílik a `CommentModal` vagy a `ReportDialog`.
     outputs:
       - test/widgets/home_feed_widget_test.dart
 inputs:
@@ -17,6 +20,6 @@ inputs:
   - codex_docs/localization_logic.md
   - codex_docs/routing_integrity.md
   - codex_docs/service_dependencies.md
-  - codex_docs/priority_rules.yaml
+  - codex_docs/priority_rules.md
   - docs/tippmix_app_teljes_adatmodell.md
   - docs/canvases_odds_api_integration.md
