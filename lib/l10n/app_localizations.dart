@@ -804,6 +804,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report'**
   String get feed_report;
+
+  /// No description provided for @copy_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket copied!'**
+  String get copy_success;
+
+  /// No description provided for @copy_edit_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit copied ticket'**
+  String get copy_edit_title;
+
+  /// No description provided for @copy_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit ticket'**
+  String get copy_submit_button;
+
+  /// No description provided for @copy_invalid_state.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket unmodified, cannot submit.'**
+  String get copy_invalid_state;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
