@@ -330,4 +330,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_badges_empty => 'No badges yet';
+
+  @override
+  String get bonus_daily_received => 'Daily bonus: +50 TippCoin!';
+
+  @override
+  String get bonus_daily_received_description => 'Thanks for being active!';
+
+  @override
+  String get feed_event_bet_placed => 'Bet placed';
+
+  @override
+  String get feed_event_ticket_won => 'Ticket won';
+
+  @override
+  String get feed_event_comment => 'Comment';
+
+  @override
+  String get feed_event_like => 'Like';
+
+  @override
+  String get feed_report_success => 'The post has been reported.';
+
+  @override
+  String get feed_empty_state => 'No posts yet';
+
+  @override
+  String get feed_like => 'Like';
+
+  @override
+  String get feed_comment => 'Comment';
+
+  @override
+  String get feed_report => 'Report';
 }
