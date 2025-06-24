@@ -113,4 +113,8 @@
   ,"feed_event_comment": "Komment"
   ,"feed_event_like": "Lájk"
   ,"feed_report_success": "A bejegyzést jelentettük moderátorainknak."
+  ,"feed_empty_state": "Nincs megjeleníthető bejegyzés"
+  ,"feed_like": "Tetszik"
+  ,"feed_comment": "Hozzászólás"
+  ,"feed_report": "Jelentés"
 }
