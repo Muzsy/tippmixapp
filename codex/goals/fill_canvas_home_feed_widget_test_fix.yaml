@@ -1,0 +1,14 @@
+steps:
+  - name: HomeFeed widget teszt létrehozása
+    description: Hozz létre egy átfogó widget tesztet a lib/widgets/home_feed.dart fájlhoz. A teszt ellenőrizze, hogy a feed kártyák helyesen jelennek meg, a like gomb működik, a másolás funkció (copy-bet) aktiválható, és hiba esetén sem omlik össze az UI. Üres állapotot és betöltési animációt is tesztelni kell.
+    outputs:
+      - test/widgets/home_feed_widget_test.dart
+inputs:
+  - canvases/home_feed_widget.md
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.yaml
+  - docs/tippmix_app_teljes_adatmodell.md
+  - docs/canvases_odds_api_integration.md
