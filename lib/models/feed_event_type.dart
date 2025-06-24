@@ -1,1 +1,1 @@
-enum FeedEventType { bet_placed, ticket_won, comment, like }
+enum FeedEventType { betPlaced, ticketWon, comment, like }
