@@ -47,3 +47,4 @@ Renamed FeedEventType constants to camelCase and updated references.
 Removed unused feed_service imports and added mounted checks in comment and report dialogs.
 Replaced deprecated withOpacity use with withAlpha.
 Annotated FakeDocumentReference.id fields with @override in tests.
+Changed mounted checks to context.mounted in comment and report dialogs.
