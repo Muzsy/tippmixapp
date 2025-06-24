@@ -53,4 +53,15 @@ class FeedService {
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
+
+  /// Stream public feed entries ordered by latest first.
+  Stream<List<FeedModel>> streamFeed() {
+    return _firestore
+        .collection('public_feed')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => FeedModel.fromJson(doc.data()))
+            .toList());
+  }
 }
