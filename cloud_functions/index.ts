@@ -1,0 +1,1 @@
+export { coin_trx } from './coin_trx.logic';

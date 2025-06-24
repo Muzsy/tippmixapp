@@ -1,6 +1,6 @@
 {
   "name": "cloud_functions",
-  "main": "index.js",
+  "main": "lib/index.js",
   "engines": {
     "node": "18"
   },

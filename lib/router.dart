@@ -8,6 +8,8 @@ import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/login_register_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tippmixapp/screens/create_ticket_screen.dart';
 
 enum AppRoute {
   home,
@@ -17,19 +19,36 @@ enum AppRoute {
   leaderboard,
   settings,
   login,
+  createTicket,
 }
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
-  // redirect: (context, state) {
-  //   // Auth logika később
-  //   return null;
-  // },
+  redirect: (context, state) {
+    final user = FirebaseAuth.instance.currentUser;
+    final protectedPaths = [
+      '/my-tickets',
+      '/create-ticket',
+      '/settings',
+    ];
+    final accessingProtected = protectedPaths.contains(state.uri.path);
+    if (user == null && accessingProtected) return '/login';
+    return null;
+  },
   routes: [
     ShellRoute(
       builder: (context, state, child) => HomeScreen(child: child),
       routes: [
+        GoRoute(
+          path: '/create-ticket',
+          name: AppRoute.createTicket.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const CreateTicketScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
         GoRoute(
           path: '/',
           name: AppRoute.home.name,

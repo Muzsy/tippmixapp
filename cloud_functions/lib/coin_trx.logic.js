@@ -38,44 +38,55 @@ const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 admin.initializeApp();
 const db = admin.firestore();
+/**
+ * Firestore-triggered function: runs on creation of a ticket document
+ * Moves coin logic from HTTPS callable to Firestore onCreate trigger
+ */
 exports.coin_trx = functions
-    .region('europe-central2') // <<< EZT TETTÜK HOZZÁ
-    .https.onCall(async (data, context) => {
-    if (!context.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
-    }
+    .region('europe-central2')
+    .firestore
+    .document('tickets/{ticketId}')
+    .onCreate(async (snap, context) => {
+    const data = snap.data();
     const { userId, amount, type, reason, transactionId } = data;
+    // Validate required fields
     if (!userId || !transactionId || typeof amount !== 'number') {
-        throw new functions.https.HttpsError('invalid-argument', 'Missing parameters');
+        throw new Error('Missing or invalid parameters');
     }
     if (type !== 'debit' && type !== 'credit') {
-        throw new functions.https.HttpsError('invalid-argument', 'Invalid type');
+        throw new Error('Invalid transaction type');
     }
     if (amount <= 0) {
-        throw new functions.https.HttpsError('invalid-argument', 'Invalid amount');
+        throw new Error('Amount must be positive');
     }
+    // Prevent duplicate processing
     const logRef = db.collection('coin_logs').doc(transactionId);
-    const existing = await logRef.get();
-    if (existing.exists) {
-        throw new functions.https.HttpsError('already-exists', 'Transaction already processed');
+    const existingLog = await logRef.get();
+    if (existingLog.exists) {
+        // Already processed, nothing to do
+        return null;
     }
+    // Optional: enforce known reasons and amounts
     const validReasons = {
         daily_bonus: 50,
         registration_bonus: 100,
     };
     if (reason in validReasons && validReasons[reason] !== amount) {
-        throw new functions.https.HttpsError('invalid-argument', 'Amount mismatch for reason');
+        throw new Error('Amount mismatch for reason');
     }
-    await db.runTransaction(async (t) => {
+    // Transactionally update user balance and log
+    await db.runTransaction(async (tx) => {
         const userRef = db.collection('users').doc(userId);
-        const snap = await t.get(userRef);
-        if (!snap.exists) {
-            throw new functions.https.HttpsError('not-found', 'User not found');
+        const userSnap = await tx.get(userRef);
+        if (!userSnap.exists) {
+            throw new Error('User not found');
         }
-        const current = snap.get('coins') || 0;
-        const newBalance = type === 'debit' ? current - amount : current + amount;
-        t.update(userRef, { coins: newBalance });
-        t.set(logRef, {
+        const currentBalance = userSnap.get('coins') || 0;
+        const newBalance = type === 'debit'
+            ? currentBalance - amount
+            : currentBalance + amount;
+        tx.update(userRef, { coins: newBalance });
+        tx.set(logRef, {
             userId,
             amount,
             type,
@@ -84,5 +95,5 @@ exports.coin_trx = functions
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
     });
-    return { success: true };
+    return null;
 });
