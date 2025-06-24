@@ -1,0 +1,33 @@
+steps:
+  - name: FeedService létrehozása
+    description: Hozd létre a `lib/services/feed_service.dart` fájlt, amely tartalmazza a `addFeedEntry()` metódust feed események írására a `public_feed` kollekcióba. A metódus paraméterezhető `eventType`, `message`, `extraData` mezőkkel.
+    outputs:
+      - lib/services/feed_service.dart
+
+  - name: Eseménytípus enum létrehozása
+    description: Hozd létre a `lib/models/feed_event_type.dart` fájlt, amely egy `FeedEventType` enumot tartalmaz a következő értékekkel: `bet_placed`, `ticket_won`, `comment`, `like`. Az enum bővíthető legyen új típusokkal.
+    outputs:
+      - lib/models/feed_event_type.dart
+
+  - name: Firestore modell és struktúra
+    description: Készíts egy `FeedModel` osztályt a `lib/models/feed_model.dart` fájlban. A modell tartalmazza a szükséges mezőket: `userId`, `eventType`, `message`, `timestamp`, `extraData`, `likes`. Dokumentáld, hogy a kommentek külön alkollekcióban vannak (`comments`).
+    outputs:
+      - lib/models/feed_model.dart
+
+  - name: Moderációs logika bevezetése
+    description: Hozz létre egy `reportFeedItem()` függvényt a FeedService-ben, amely bejegyzést ment a `moderation_reports/` kollekcióba. Az adat tartalmazza a bejelentő `userId`-t, `reason`, `targetId`, `targetType` mezőket.
+    outputs:
+      - lib/services/feed_service.dart (módosul)
+      - firestore struktúra: moderation_reports (nincs fájlhozzárendelés)
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Frissítsd az `app_hu.arb`, `app_en.arb`, `app_de.arb` fájlokat a következő kulcsokkal: `feed_event_bet_placed`, `feed_event_ticket_won`, `feed_event_comment`, `feed_event_like`, `feed_report_success`.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Egységteszt feed logikára
+    description: Készíts teszteket a `test/services/feed_service_test.dart` fájlban a `addFeedEntry()` és `reportFeedItem()` metódusokra. Ellenőrizze az adatok helyes mentését, a saját poszt lájkolásának tilalmát és a komment hossz limitjét (max 250 karakter).
+    outputs:
+      - test/services/feed_service_test.dart

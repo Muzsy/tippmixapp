@@ -1,0 +1,28 @@
+steps:
+  - name: CopyBetFlow létrehozása
+    description: Hozz létre egy új `lib/flows/copy_bet_flow.dart` fájlt, amely tartalmazza a `copyTicket()` függvényt. Ez a feed poszt ticketId-ját lementi a `copied_bets/{userId}/{copyId}` kollekcióba, időbélyeggel és a tippek másolatával.
+    outputs:
+      - lib/flows/copy_bet_flow.dart
+
+  - name: CopiedTicketEditScreen készítése
+    description: Készíts egy új képernyőt `lib/screens/copied_ticket_edit_screen.dart` néven. A képernyő lehetővé teszi a másolt szelvény módosítását, új tippek hozzáadását, és a "Feladás" gombot, ami csak módosított szelvény esetén aktív.
+    outputs:
+      - lib/screens/copied_ticket_edit_screen.dart
+
+  - name: Firestore struktúra
+    description: A másolt szelvények Firestore-ban a `copied_bets/{userId}/{copyId}` kollekcióban tárolódnak. A dokumentum mezői: `ticketId`, `createdAt`, `wasModified`, `tips`, `sourceUserId`. Nincs külön fájl.
+    outputs:
+      - (Firestore struktúra)
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Frissítsd az `app_hu.arb`, `app_en.arb`, `app_de.arb` fájlokat az alábbi kulcsokkal: `copy_success`, `copy_edit_title`, `copy_submit_button`, `copy_invalid_state`.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Egységteszt és widget teszt
+    description: Hozz létre teszteket a `test/flows/copy_bet_flow_test.dart` és `test/screens/copied_ticket_edit_screen_test.dart` fájlokban a másolás működésére, valamint az érvényességi logikára (csak módosított szelvény küldhető).
+    outputs:
+      - test/flows/copy_bet_flow_test.dart
+      - test/screens/copied_ticket_edit_screen_test.dart

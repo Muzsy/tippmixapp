@@ -1,0 +1,23 @@
+steps:
+  - name: Cloud Function létrehozása
+    description: Hozz létre egy új fájlt `cloud_functions/daily_bonus.ts` néven, amely egy `cron(5 0 * * *)` időzítéssel minden nap 00:05 CET időpontban lefut. A függvény listázza az aktív felhasználókat és meghívja a CoinService jóváíró logikáját.
+    outputs:
+      - cloud_functions/daily_bonus.ts
+
+  - name: Coin tranzakció mentése
+    description: A Cloud Function minden felhasználónak +50 TippCoin-t ír jóvá a `users/{userId}/coin_logs` kollekcióba egy új dokumentummal. Használja a CoinService-t, és írja be a tranzakció típusát `daily_bonus` értékkel.
+    outputs:
+      - lib/services/coin_service.dart (módosítás)
+      - lib/models/coin_log_model.dart (ha szükséges)
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Frissítsd az `app_hu.arb`, `app_en.arb`, `app_de.arb` fájlokat az alábbi kulcsokkal: `bonus_daily_received`, `bonus_daily_received_description`. A UI-ban ezek a kulcsok jelennek meg a napi bónusz visszajelzésére.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Egységteszt létrehozása
+    description: Készíts unit testet a `test/functions/daily_bonus_test.dart` fájlban, amely szimulálja a napi bónusz futtatását. Mockold a Firestore-t, ellenőrizd, hogy minden felhasználónál létrejön egy `coin_logs` bejegyzés.
+    outputs:
+      - test/functions/daily_bonus_test.dart
