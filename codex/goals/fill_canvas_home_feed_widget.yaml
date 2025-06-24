@@ -1,0 +1,32 @@
+steps:
+  - name: HomeFeedWidget létrehozása
+    description: Hozd létre a `lib/widgets/home_feed.dart` fájlt, amely megjeleníti a `public_feed` kollekcióból streamelt eseményeket lapozható formában. A komponens tartalmazza a shimmer loadert, feed kártyákat és kezelőgombokat.
+    outputs:
+      - lib/widgets/home_feed.dart
+
+  - name: Shimmer loader és üres állapot
+    description: Implementálj shimmer effectet amíg a feed stream betölt, és jeleníts meg egy üzenetet ha nincs esemény (`feed_empty_state` kulccsal).
+    outputs:
+      - lib/widgets/home_feed.dart
+
+  - name: Komment modal hozzáadása
+    description: Készíts egy `CommentModal` nevű komponenst, amely lehetővé teszi kommentek hozzáadását a poszthoz. A modal karakterlimitje legyen 250 karakter.
+    outputs:
+      - lib/widgets/components/comment_modal.dart
+
+  - name: ReportDialog hozzáadása
+    description: Készíts egy `ReportDialog` nevű widgetet, amely lehetővé teszi a poszt jelentését moderációs célból. A dialog bekéri a jelentés okát és meghívja a `reportFeedItem()` függvényt.
+    outputs:
+      - lib/widgets/components/report_dialog.dart
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Frissítsd az `app_hu.arb`, `app_en.arb`, `app_de.arb` fájlokat a következő kulcsokkal: `feed_empty_state`, `feed_like`, `feed_comment`, `feed_report`.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget tesztek hozzáadása
+    description: Készíts teszteket a `test/widgets/home_feed_widget_test.dart` fájlban a shimmer loader, üres állapot, like tiltás, komment modal és report dialog helyes működésének ellenőrzésére.
+    outputs:
+      - test/widgets/home_feed_widget_test.dart
