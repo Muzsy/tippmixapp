@@ -16,6 +16,7 @@ import 'package:tippmixapp/widgets/components/comment_modal.dart';
 import 'package:tippmixapp/widgets/components/report_dialog.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/flows/copy_bet_flow.dart';
+import 'package:tippmixapp/services/feed_service.dart';
 
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier(User? user) : super(FakeAuthService()) {
@@ -84,10 +85,13 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
     return FakeCollectionReference(data[path]!);
   }
 }
+// Remove the local FeedService definition and just implement the imported one.
 
-class FakeFeedService extends FeedService {
+class FakeFeedService implements FeedService {
   int likeCalls = 0;
-  FakeFeedService() : super(FakeFirebaseFirestore());
+  final FirebaseFirestore firestore;
+
+  FakeFeedService() : firestore = FakeFirebaseFirestore();
 
   @override
   Future<void> addFeedEntry({
@@ -109,6 +113,8 @@ class FakeFeedService extends FeedService {
     required String targetType,
     required String reason,
   }) async {}
+
+  // Add any other members or methods required by FeedService interface here.
 }
 
 void main() {
@@ -203,7 +209,7 @@ void main() {
       ProviderScope(
         overrides: [
           feedStreamProvider.overrideWith((ref) => controller.stream),
-          feedServiceProvider.overrideWithValue(feedService),
+          feedServiceProvider.overrideWithValue(feedService as FeedService),
           authProvider.overrideWith(
               (ref) => FakeAuthNotifier(User(id: 'me', email: '', displayName: 'Me'))),
           copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async {
