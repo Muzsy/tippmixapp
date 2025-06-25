@@ -1,0 +1,25 @@
+steps:
+  - name: Hibakezelés bővítése AuthService-ben
+    description: A signInWithEmail és registerWithEmail metódusokban a FirebaseAuthException kódok átalakítása lokalizálható kódokká (pl. wrong-password, user-not-found).
+    outputs:
+      - AuthServiceException kódok konzisztens listája
+
+  - name: Hibakódok lekezelése az authProvider-ben
+    description: A login() és register() metódus ne csak rethrow-t csináljon, hanem logoljon vagy értelmezett hibát adjon vissza.
+    outputs:
+      - State-ben hibakód vagy hibaüzenet tárolása
+
+  - name: Hívó UI komponens (login_register_screen.dart) frissítése
+    description: A login() és register() hívásokat try-catch blokkba kell tenni, és az AuthServiceException kódok alapján SnackBar-ben megjelenített lokalizált hibaüzenetet mutatni.
+    outputs:
+      - Hibakezelés UI oldalon: SnackBar / AlertDialog
+
+  - name: Tesztek
+    description: AuthProvider tesztelése mock AuthService-szel, hibakódok generálása és helyes visszajelzés ellenőrzése.
+    outputs:
+      - test/providers/auth_provider_test.dart
+
+  - name: Lokalizált hibakódok kezelése
+    description: Enum vagy kulcs alapúján a UI komponens az L10n rendszerrel értelmezett hibaüzenetet jelenítsen meg.
+    outputs:
+      - AppLocalizations.messages.auth.error_<code> kulcsok
