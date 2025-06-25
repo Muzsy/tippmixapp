@@ -177,16 +177,22 @@ void main() {
     controller.add([item]);
     await tester.pump();
 
-    final likeButton = find.byIcon(Icons.thumb_up);
-    expect(tester.widget<IconButton>(likeButton).onPressed, isNull);
+    final likeButtonFinder = find.widgetWithIcon(IconButton, Icons.thumb_up);
+    expect(likeButtonFinder, findsOneWidget);
+    final likeButton = tester.widget<IconButton>(likeButtonFinder);
+    expect(likeButton.onPressed, isNull);
 
-    await tester.tap(find.byIcon(Icons.comment));
+    final commentFinder = find.widgetWithIcon(IconButton, Icons.comment);
+    expect(commentFinder, findsOneWidget);
+    await tester.tap(commentFinder);
     await tester.pumpAndSettle();
     expect(find.byType(CommentModal), findsOneWidget);
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.report));
+    final reportFinder = find.widgetWithIcon(IconButton, Icons.report);
+    expect(reportFinder, findsOneWidget);
+    await tester.tap(reportFinder);
     await tester.pumpAndSettle();
     expect(find.byType(ReportDialog), findsOneWidget);
   });
@@ -229,7 +235,9 @@ void main() {
     controller.add([item]);
     await tester.pump();
 
-    await tester.tap(find.byIcon(Icons.thumb_up));
+    final otherLikeFinder = find.widgetWithIcon(IconButton, Icons.thumb_up);
+    expect(otherLikeFinder, findsWidgets); // vagy .at(index) konkrét pozícióval
+    await tester.tap(otherLikeFinder.first);
     await tester.pump();
     expect(feedService.likeCalls, 1);
 

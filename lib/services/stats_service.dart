@@ -31,7 +31,7 @@ class StatsService {
         final data = userDoc.data();
         final uid = userDoc.id;
         final coins = (data['coins'] as int?) ?? 0;
-        final displayName = data['displayName'] as String? ?? '';
+        final displayName = data['nickname'] as String? ?? '';
 
         final userTickets = await ticketsRef
             .where('userId', isEqualTo: uid)
@@ -66,7 +66,7 @@ class StatsService {
     for (final user in users) {
       final uid = user['uid'] as String;
       final coins = user['coins'] as int? ?? 0;
-      final displayName = user['displayName'] as String? ?? '';
+      final displayName = user['nickname'] as String? ?? '';
       final userTickets =
           tickets.where((t) => t['userId'] == uid).toList();
       final totalBets = userTickets.length;
