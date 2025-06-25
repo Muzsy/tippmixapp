@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 
 class FakeAuthService implements AuthService {
@@ -41,8 +42,8 @@ void main() {
 
     await notifier.login('test@example.com', 'password');
 
-    expect(notifier.state, isNotNull);
-    expect(notifier.state!.email, 'test@example.com');
+    expect(notifier.state.user, isNotNull);
+    expect(notifier.state.user!.email, 'test@example.com');
   });
 
   test('logout clears user state', () async {
@@ -52,6 +53,6 @@ void main() {
 
     await notifier.logout();
 
-    expect(notifier.state, isNull);
+    expect(notifier.state.user, isNull);
   });
 }

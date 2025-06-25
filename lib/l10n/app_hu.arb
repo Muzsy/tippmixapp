@@ -120,5 +120,11 @@
   "copy_success": "Szelvény másolva!",
   "copy_edit_title": "Másolt szelvény szerkesztése",
   "copy_submit_button": "Szelvény feladása",
-  "copy_invalid_state": "A szelvény nem módosult, így nem adható fel."
+  "copy_invalid_state": "A szelvény nem módosult, így nem adható fel.",
+  "auth_error_user_not_found": "Felhasználó nem található",
+  "auth_error_wrong_password": "Hibás jelszó",
+  "auth_error_email_already_in_use": "Az email cím már használatban van",
+  "auth_error_invalid_email": "Érvénytelen email cím",
+  "auth_error_weak_password": "Gyenge jelszó",
+  "auth_error_unknown": "Ismeretlen hiba"
 }

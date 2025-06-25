@@ -7,6 +7,7 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/services/auth_service.dart';
@@ -37,7 +38,7 @@ class FakeAuthService implements AuthService {
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier(User? user)
       : super(FakeAuthService()) {
-    state = user;
+    state = AuthState(user: user);
   }
 }
 

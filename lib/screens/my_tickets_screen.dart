@@ -29,7 +29,7 @@ class MyTicketsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider);
+    final user = ref.watch(authProvider).user;
     final ticketsAsync = ref.watch(ticketsProvider);
     final loc = AppLocalizations.of(context)!;
 
