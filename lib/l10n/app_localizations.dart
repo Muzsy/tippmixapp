@@ -828,6 +828,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ticket unmodified, cannot submit.'**
   String get copy_invalid_state;
+
+  /// No description provided for @auth_error_user_not_found.
+  String get auth_error_user_not_found;
+
+  /// No description provided for @auth_error_wrong_password.
+  String get auth_error_wrong_password;
+
+  /// No description provided for @auth_error_email_already_in_use.
+  String get auth_error_email_already_in_use;
+
+  /// No description provided for @auth_error_invalid_email.
+  String get auth_error_invalid_email;
+
+  /// No description provided for @auth_error_weak_password.
+  String get auth_error_weak_password;
+
+  /// No description provided for @auth_error_unknown.
+  String get auth_error_unknown;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

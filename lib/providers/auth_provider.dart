@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
+import '../models/auth_state.dart';
 import '../services/auth_service.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.read(authServiceProvider));
 });
 
@@ -11,15 +12,15 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
-class AuthNotifier extends StateNotifier<User?> {
+class AuthNotifier extends StateNotifier<AuthState> {
   final AuthService _authService;
   late final Stream<User?> _authStateStream;
   late final StreamSubscription<User?> _streamSub;
 
-  AuthNotifier(this._authService) : super(null) {
+  AuthNotifier(this._authService) : super(const AuthState()) {
     _authStateStream = _authService.authStateChanges();
     _streamSub = _authStateStream.listen((user) {
-      state = user;
+      state = AuthState(user: user);
     });
   }
 
@@ -27,29 +28,33 @@ class AuthNotifier extends StateNotifier<User?> {
   Stream<User?> get authStateStream => _authStateStream;
 
   // Belépés
-  Future<void> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
     try {
       final user = await _authService.signInWithEmail(email, password);
-      state = user;
-    } on AuthServiceException catch (_) {
-      rethrow;
+      state = AuthState(user: user);
+      return null;
+    } on AuthServiceException catch (e) {
+      state = AuthState(errorCode: e.code);
+      return e.code;
     }
   }
 
   // Regisztráció
-  Future<void> register(String email, String password) async {
+  Future<String?> register(String email, String password) async {
     try {
       final user = await _authService.registerWithEmail(email, password);
-      state = user;
-    } on AuthServiceException catch (_) {
-      rethrow;
+      state = AuthState(user: user);
+      return null;
+    } on AuthServiceException catch (e) {
+      state = AuthState(errorCode: e.code);
+      return e.code;
     }
   }
 
   // Kijelentkezés
   Future<void> logout() async {
     await _authService.signOut();
-    state = null;
+    state = const AuthState(user: null);
   }
 
   @override

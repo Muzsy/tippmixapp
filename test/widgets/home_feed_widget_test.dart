@@ -10,6 +10,7 @@ import 'package:tippmixapp/models/feed_model.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/widgets/home_feed.dart';
 import 'package:tippmixapp/widgets/components/comment_modal.dart';
@@ -20,7 +21,7 @@ import 'package:tippmixapp/services/feed_service.dart';
 
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier(User? user) : super(FakeAuthService()) {
-    state = user;
+    state = AuthState(user: user);
   }
 }
 

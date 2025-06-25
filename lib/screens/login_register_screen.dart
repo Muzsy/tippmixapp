@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../router.dart';
 import '../models/user.dart';
+import '../models/auth_state.dart';
 
 class LoginRegisterScreen extends ConsumerStatefulWidget {
   const LoginRegisterScreen({super.key});
@@ -29,17 +30,41 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
   }
 
   Future<void> _submit() async {
+    String? error;
     if (_isLogin) {
-      await ref.read(authProvider.notifier).login(
-            _emailCtrl.text,
-            _passCtrl.text,
-          );
+      error = await ref.read(authProvider.notifier).login(
+        _emailCtrl.text,
+        _passCtrl.text,
+      );
     } else {
       if (_passCtrl.text != _confirmCtrl.text) return;
-      await ref.read(authProvider.notifier).register(
-            _emailCtrl.text,
-            _passCtrl.text,
-          );
+      error = await ref.read(authProvider.notifier).register(
+        _emailCtrl.text,
+        _passCtrl.text,
+      );
+    }
+    if (error != null && mounted) {
+      final loc = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_localizeError(loc, error))),
+      );
+    }
+  }
+
+  String _localizeError(AppLocalizations loc, String code) {
+    switch (code) {
+      case 'auth/user-not-found':
+        return loc.auth_error_user_not_found;
+      case 'auth/wrong-password':
+        return loc.auth_error_wrong_password;
+      case 'auth/email-already-in-use':
+        return loc.auth_error_email_already_in_use;
+      case 'auth/invalid-email':
+        return loc.auth_error_invalid_email;
+      case 'auth/weak-password':
+        return loc.auth_error_weak_password;
+      default:
+        return loc.auth_error_unknown;
     }
   }
 
@@ -47,8 +72,8 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
-    ref.listen<User?>(authProvider, (previous, next) {
-      if (next != null) context.goNamed(AppRoute.home.name);
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.user != null) context.goNamed(AppRoute.home.name);
     });
 
     return Scaffold(
