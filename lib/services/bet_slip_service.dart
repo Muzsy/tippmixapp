@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+
 import 'package:tippmixapp/models/ticket_model.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 import 'coin_service.dart';
@@ -35,6 +38,9 @@ class BetSlipService {
     required String userId,
     required List<TipModel> tips,
     required int stake,
+    CoinService? coinService,
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
   }) async {
     // 1️⃣ Validáció
     if (userId.isEmpty) {
@@ -45,6 +51,14 @@ class BetSlipService {
     }
     if (stake <= 0) {
       throw ArgumentError('invalidStake');
+    }
+
+    final currentUser = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      throw FirebaseAuthException(
+        code: 'unauthenticated',
+        message: 'User not logged in',
+      );
     }
 
     // 2️⃣ Össz‑odds és várható nyeremény
@@ -67,16 +81,24 @@ class BetSlipService {
     );
 
     // 4️⃣ TippCoin levonás
-    final coinService = CoinService();
-    await coinService.debitCoin(
-      userId: userId,
-      amount: stake,
-      reason: 'bet_stake',
-      transactionId: 'ticket_$ticketId',
-    );
+    final cs = coinService ?? CoinService();
+    try {
+      await cs.debitCoin(
+        userId: userId,
+        amount: stake,
+        reason: 'bet_stake',
+        transactionId: 'ticket_$ticketId',
+      );
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'unauthenticated') {
+        debugPrint('CoinService unauthenticated');
+      }
+      rethrow;
+    }
 
     // 5️⃣ Írás Firestore‑ba (transactions nélkül – S2‑3‑ban bővítjük)
-    final ticketsRef = FirebaseFirestore.instance.collection('tickets');
+    final db = firestore ?? FirebaseFirestore.instance;
+    final ticketsRef = db.collection('tickets');
 
     await ticketsRef.doc(ticketId).set(ticket.toJson());
 
