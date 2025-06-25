@@ -375,4 +375,22 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get copy_invalid_state => 'A szelvény nem módosult, így nem adható fel.';
+
+  @override
+  String get auth_error_user_not_found => 'Felhasználó nem található';
+
+  @override
+  String get auth_error_wrong_password => 'Hibás jelszó';
+
+  @override
+  String get auth_error_email_already_in_use => 'Az email cím már használatban van';
+
+  @override
+  String get auth_error_invalid_email => 'Érvénytelen email cím';
+
+  @override
+  String get auth_error_weak_password => 'Gyenge jelszó';
+
+  @override
+  String get auth_error_unknown => 'Ismeretlen hiba';
 }

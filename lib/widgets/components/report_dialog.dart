@@ -36,7 +36,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
         ),
         TextButton(
           onPressed: () async {
-            final user = ref.read(authProvider);
+            final user = ref.read(authProvider).user;
             if (user == null) return;
             final service = ref.read(feedServiceProvider);
             await service.reportFeedItem(

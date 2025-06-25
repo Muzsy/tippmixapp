@@ -17,7 +17,7 @@ class HomeFeedWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final feedAsync = ref.watch(feedStreamProvider);
-    final user = ref.watch(authProvider);
+    final user = ref.watch(authProvider).user;
 
     return feedAsync.when(
       loading: () => const _ShimmerList(),

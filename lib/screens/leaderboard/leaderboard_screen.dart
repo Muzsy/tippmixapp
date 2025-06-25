@@ -18,7 +18,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final me = ref.watch(authProvider);
+    final me = ref.watch(authProvider).user;
     final statsAsync = ref.watch(leaderboardStreamProvider);
     final mode = ref.watch(leaderboardModeProvider);
 
