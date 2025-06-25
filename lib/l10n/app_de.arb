@@ -120,5 +120,11 @@
   "copy_success": "Schein kopiert!",
   "copy_edit_title": "Kopierten Schein bearbeiten",
   "copy_submit_button": "Schein abgeben",
-  "copy_invalid_state": "Schein wurde nicht geändert, daher kann er nicht abgegeben werden."
+  "copy_invalid_state": "Schein wurde nicht geändert, daher kann er nicht abgegeben werden.",
+  "auth_error_user_not_found": "Benutzer nicht gefunden",
+  "auth_error_wrong_password": "Falsches Passwort",
+  "auth_error_email_already_in_use": "E-Mail-Adresse bereits verwendet",
+  "auth_error_invalid_email": "Ungültige E-Mail-Adresse",
+  "auth_error_weak_password": "Schwaches Passwort",
+  "auth_error_unknown": "Unbekannter Authentifizierungsfehler"
 }

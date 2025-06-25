@@ -375,4 +375,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copy_invalid_state => 'Ticket unmodified, cannot submit.';
+
+  @override
+  String get auth_error_user_not_found => 'User not found';
+
+  @override
+  String get auth_error_wrong_password => 'Wrong password';
+
+  @override
+  String get auth_error_email_already_in_use => 'Email already in use';
+
+  @override
+  String get auth_error_invalid_email => 'Invalid email address';
+
+  @override
+  String get auth_error_weak_password => 'Weak password';
+
+  @override
+  String get auth_error_unknown => 'Unknown authentication error';
 }
