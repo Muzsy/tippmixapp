@@ -375,4 +375,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get copy_invalid_state => 'Schein wurde nicht geändert, daher kann er nicht abgegeben werden.';
+
+  @override
+  String get auth_error_user_not_found => 'Benutzer nicht gefunden';
+
+  @override
+  String get auth_error_wrong_password => 'Falsches Passwort';
+
+  @override
+  String get auth_error_email_already_in_use => 'E-Mail-Adresse bereits verwendet';
+
+  @override
+  String get auth_error_invalid_email => 'Ungültige E-Mail-Adresse';
+
+  @override
+  String get auth_error_weak_password => 'Schwaches Passwort';
+
+  @override
+  String get auth_error_unknown => 'Unbekannter Authentifizierungsfehler';
 }
