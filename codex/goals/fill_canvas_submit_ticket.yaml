@@ -1,0 +1,26 @@
+steps:
+  - name: Felhasználó hitelesítés ellenőrzése
+    description: Ellenőrizze, hogy a submitTicket() meghívásakor van-e érvényes FirebaseAuth.instance.currentUser objektum.
+    outputs:
+      - Hibakezelés bevezetése: ha a user null, dobjon kivételt vagy logoljon hibát.
+
+  - name: CoinService integráció
+    description: A fogadási szelvény értékének megfelelő TippCoin levonás a CoinService.debitCoin() meghívásával.
+    outputs:
+      - Hibakezelés: ha a Cloud Functions visszatérése unauthenticated, jelezzen a UI felé.
+
+  - name: Szelvény mentése Firestore-ba
+    description: A tippek alapján új dokumentum létrehozása a tickets kollekcióban a user azonosítójával.
+    outputs:
+      - Kollekció: tickets
+      - Mezők: userId, tips[], submittedAt, status, totalStake stb.
+
+  - name: Firestore szabály validáció
+    description: A firebase.rules fájlban biztosítani kell, hogy csak a saját user menthessen tickets dokumentumot.
+    outputs:
+      - match /tickets/{id} szabály frissítése: allow write: if request.auth != null && request.auth.uid == request.resource.data.userId
+
+  - name: Codex tesztelhetőség javítása
+    description: A submitTicket() metódus tesztelhetővé tétele mock CoinService és Firestore segítségével.
+    outputs:
+      - Tesztfájl: test/services/bet_slip_service_test.dart
