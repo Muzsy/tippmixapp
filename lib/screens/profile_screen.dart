@@ -36,7 +36,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final user = ref.watch(authProvider);
+    final user = ref.watch(authProvider).user;
 
     if (user == null) {
       return Scaffold(
