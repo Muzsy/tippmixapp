@@ -1,0 +1,6 @@
+steps:
+  - name: A submitTicket metódus módosítása
+    description: |
+      A bet_slip_service.dart fájl submitTicket metódusát úgy kell módosítani, hogy ne használjon userId paramétert. A CoinService hívásnál csak amount, reason és transactionId mezőket küldjön. A userId-t a FirebaseAuth.instance.currentUser.uid segítségével vegye, és ezt használja a Ticket példány létrehozásánál is. A callable hívás sikere után mentse el a szelvényt a Firestore tickets kollekcióba.
+    outputs:
+      - lib/services/bet_slip_service.dart
