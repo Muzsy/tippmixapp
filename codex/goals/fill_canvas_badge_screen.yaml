@@ -1,0 +1,39 @@
+# fill_canvas_badge_screen.yaml
+
+canvas: canvases/badge_screen.md
+inputs:
+  - codex_docs/routing_integrity.md
+  - codex_docs/localization_logic.md
+  - lib/widgets/profile_badge_widget.dart
+  - lib/services/badge_service.dart
+  - lib/models/badge_model.dart
+  - lib/models/badge_config.dart
+steps:
+  - name: Új BadgeScreen létrehozása
+    description: Hozz létre egy új BadgeScreen képernyőt, amely listázza az összes badge-et egy grid nézetben. Használd újra a profile_badge_widget grid logikáját.
+    outputs:
+      - lib/screens/badges/badge_screen.dart
+      - lib/widgets/badge_grid_view.dart
+
+  - name: Navigációs pont hozzáadása a drawer menübe
+    description: Add hozzá a BadgeScreen-t a drawer menühöz, `menuBadges` kulccsal, és navigációs útvonalként a `/badges` route-ot használva.
+    outputs:
+      - lib/widgets/main_drawer.dart
+      - lib/router/app_router.dart
+
+  - name: Gomb elhelyezése a profil képernyőn
+    description: A Profile képernyőn jeleníts meg egy „További jelvényeim” gombot, amely átnavigál a BadgeScreen-re.
+    outputs:
+      - lib/screens/profile/profile_screen.dart
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Adj hozzá új ARB kulcsokat a badge képernyőhöz: menuBadges, badgeScreenTitle, badgeFilterAll, badgeFilterOwned, badgeFilterMissing.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt létrehozása
+    description: Készíts widget tesztet, amely ellenőrzi, hogy a BadgeScreen megjeleníti a badge gridet, és helyesen kezeli az üres/már meglévő állapotokat.
+    outputs:
+      - test/screens/badge_screen_test.dart
