@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/badge_config.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/badge.dart';
 import '../../widgets/badge_grid_view.dart';
 
 /// Streams the keys of badges owned by the current user from Firestore.
