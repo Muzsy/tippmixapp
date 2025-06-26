@@ -59,7 +59,6 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         return;
       }
       await BetSlipService.submitTicket(
-        userId: user.id,
         tips: tips,
         stake: stake.toInt(),
       );
