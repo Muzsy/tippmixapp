@@ -8,5 +8,6 @@ enum AppRoute {
   login,
   createTicket,
   badges,
+  rewards,
   feed,
 }
