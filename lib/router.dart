@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
 import 'routes/app_route.dart';
+import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
@@ -25,6 +26,7 @@ final GoRouter router = GoRouter(
       '/my-tickets',
       '/create-ticket',
       '/settings',
+      '/notifications',
     ];
     final accessingProtected = protectedPaths.contains(state.uri.path);
     if (user == null && accessingProtected) return '/login';
@@ -110,6 +112,15 @@ final GoRouter router = GoRouter(
           name: AppRoute.rewards.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const RewardsScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          path: '/notifications',
+          name: AppRoute.notifications.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const NotificationCenterScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
