@@ -1,0 +1,6 @@
+steps:
+  - name: CoinService módosítása callable coin_trx híváshoz
+    description: |
+      A coin_service.dart fájlban a debitCoin és creditCoin metódusokat úgy kell módosítani, hogy ne használják a userId paramétert. A HTTP callable hívásnál csak az amount, reason, transactionId mezőket küldje el, és a válaszban ellenőrizze, hogy success: true. Ha nem, dobjon hibát.
+    outputs:
+      - lib/services/coin_service.dart

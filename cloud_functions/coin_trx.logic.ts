@@ -1,11 +1,25 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
+// Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
 
+/**
+ * Automatically create a user document when a new Auth user is created.
+ */
+export const onUserCreate = functions
+  .region('europe-central2')
+  .auth.user()
+  .onCreate(async (user) => {
+    const userRef = db.collection('users').doc(user.uid);
+    await userRef.set({
+      coins: 0,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  });
+
 interface CoinTrxData {
-  userId: string;
   amount: number;
   type: 'debit' | 'credit';
   reason: string;
@@ -13,57 +27,69 @@ interface CoinTrxData {
 }
 
 /**
- * Firestore-triggered function: runs on creation of a ticket document
- * Moves coin logic from HTTPS callable to Firestore onCreate trigger
+ * HTTPS Callable function to handle coin transactions atomically.
+ * Uses the authenticated user's UID rather than trusting a client-provided ID.
  */
 export const coin_trx = functions
   .region('europe-central2')
-  .firestore
-  .document('tickets/{ticketId}')
-  .onCreate(async (snap, context) => {
-    const data = snap.data() as CoinTrxData;
-    const { userId, amount, type, reason, transactionId } = data;
+  .https.onCall(async (data, context) => {
+    // Ensure the user is authenticated
+    if (!context.auth || !context.auth.uid) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'User must be signed in to perform coin transactions.'
+      );
+    }
+    const userId = context.auth.uid;
 
-    // Validate required fields
-    if (!userId || !transactionId || typeof amount !== 'number') {
-      throw new Error('Missing or invalid parameters');
+    // Unpack and validate parameters
+    const { amount, type, reason, transactionId } = data as CoinTrxData;
+    if (typeof amount !== 'number' || amount <= 0) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'Amount must be a positive number.'
+      );
     }
     if (type !== 'debit' && type !== 'credit') {
-      throw new Error('Invalid transaction type');
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'Transaction type must be "debit" or "credit".'
+      );
     }
-    if (amount <= 0) {
-      throw new Error('Amount must be positive');
+    if (!transactionId) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'A valid transactionId is required.'
+      );
     }
 
-    // Prevent duplicate processing
+    // Prevent duplicate transactions
     const logRef = db.collection('coin_logs').doc(transactionId);
     const existingLog = await logRef.get();
     if (existingLog.exists) {
-      // Already processed, nothing to do
-      return null;
+      return { success: true };
     }
 
-    // Optional: enforce known reasons and amounts
-    const validReasons: Record<string, number> = {
-      daily_bonus: 50,
-      registration_bonus: 100,
-    };
-    if (reason in validReasons && validReasons[reason] !== amount) {
-      throw new Error('Amount mismatch for reason');
-    }
-
-    // Transactionally update user balance and log
+    // Transaction: update user balance and log atomically
     await db.runTransaction(async (tx) => {
       const userRef = db.collection('users').doc(userId);
       const userSnap = await tx.get(userRef);
+
+      // If somehow user doc is missing, initialize with zero balance
+      let currentBalance = 0;
       if (!userSnap.exists) {
-        throw new Error('User not found');
+        tx.set(userRef, { coins: 0, createdAt: admin.firestore.FieldValue.serverTimestamp() });
+      } else {
+        currentBalance = (userSnap.get('coins') as number) || 0;
       }
 
-      const currentBalance = (userSnap.get('coins') as number) || 0;
-      const newBalance = type === 'debit'
-        ? currentBalance - amount
-        : currentBalance + amount;
+      const newBalance = type === 'debit' ? currentBalance - amount : currentBalance + amount;
+      if (newBalance < 0) {
+        throw new functions.https.HttpsError(
+          'failed-precondition',
+          'Insufficient funds.'
+        );
+      }
 
       tx.update(userRef, { coins: newBalance });
       tx.set(logRef, {
@@ -76,5 +102,5 @@ export const coin_trx = functions
       });
     });
 
-    return null;
+    return { success: true };
   });
