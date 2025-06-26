@@ -84,7 +84,6 @@ class BetSlipService {
     final cs = coinService ?? CoinService();
     try {
       await cs.debitCoin(
-        userId: userId,
         amount: stake,
         reason: 'bet_stake',
         transactionId: 'ticket_$ticketId',
