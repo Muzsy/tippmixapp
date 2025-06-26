@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
-import '../router.dart';
+import '../routes/app_route.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -24,6 +24,13 @@ class AppDrawer extends StatelessWidget {
                   .titleLarge
                   ?.copyWith(color: Colors.white),
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dynamic_feed),
+            title: Text(loc.menuFeed),
+            onTap: () {
+              context.goNamed(AppRoute.feed.name);
+            },
           ),
           ListTile(
             leading: const Icon(Icons.leaderboard),
