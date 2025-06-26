@@ -1,0 +1,36 @@
+# File: codex/goals/canvases/fill_canvas_feed_screen.yaml
+name: Feed képernyő megvalósítása
+description: A Sprint3-ban bevezetett FeedWidget köré teljes értékű, önálló képernyőt kell létrehozni. Ez a képernyő a fő navigációs rendszer része lesz, elérhető az alsó menüből és az oldalsó menüből is.
+steps:
+  - name: Új feed képernyő létrehozása
+    description: Hozd létre a lib/screens/feed_screen.dart fájlt, amely a FeedWidget-et jeleníti meg egy Scaffold környezetben.
+    outputs:
+      - lib/screens/feed_screen.dart
+
+  - name: Útvonal regisztrálása
+    description: Vezesd be a /feed route-ot az AppRoute enum-ba és a router.dart GoRouter definícióba.
+    outputs:
+      - lib/router.dart
+      - lib/routes/app_route.dart
+
+  - name: Navigáció kiegészítése – alsó menüsáv
+    description: Adj hozzá egy új tabot a HomeScreen alsó navigációs sávjához Feed néven, megfelelő ikon és lokalizált címke mellett.
+    outputs:
+      - lib/screens/home_screen.dart
+
+  - name: Navigáció kiegészítése – oldalsó menü
+    description: Egészítsd ki az AppDrawer-t egy új menüponttal, amely a /feed képernyőre navigál.
+    outputs:
+      - lib/widgets/app_drawer.dart
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Bővítsd az ARB fájlokat a szükséges új kulcsokkal: menuFeed, home_nav_feed, feed_title.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Teszt létrehozása
+    description: Készíts widget-tesztet a feed képernyőhöz, amely ellenőrzi, hogy a FeedWidget megjelenik és alapvető működése tesztelhető.
+    outputs:
+      - test/screens/feed_screen_test.dart
