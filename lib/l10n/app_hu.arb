@@ -120,7 +120,7 @@
   ,"feed_empty_state": "Nincs megjeleníthető bejegyzés"
   ,"feed_like": "Tetszik"
   ,"feed_comment": "Hozzászólás"
-   ,"feed_report": "Jelentés",
+  ,"feed_report": "Jelentés",
   "copy_success": "Szelvény másolva!",
   "copy_edit_title": "Másolt szelvény szerkesztése",
   "copy_submit_button": "Szelvény feladása",
@@ -131,8 +131,6 @@
   "auth_error_invalid_email": "Érvénytelen email cím",
   "auth_error_weak_password": "Gyenge jelszó",
   "auth_error_unknown": "Ismeretlen hiba"
-}
-
   ,"menuBadges": "Jelvényeim"
   ,"badgeScreenTitle": "Megszerezhető jelvények"
   ,"badgeFilterAll": "Összes"
