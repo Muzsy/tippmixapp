@@ -40,6 +40,13 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.notifications),
+            title: Text(loc.menuNotifications),
+            onTap: () {
+              context.goNamed(AppRoute.notifications.name);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.card_giftcard),
             title: Text(loc.menuRewards),
             onTap: () {

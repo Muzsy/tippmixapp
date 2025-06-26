@@ -142,4 +142,13 @@
   ,"rewardClaimed": "Bereits eingesammelt"
   ,"rewardEmpty": "Keine Belohnungen verfügbar"
 
+  ,"menuNotifications": "Benachrichtigungen",
+  ,"notificationTitle": "Ereignisse",
+  ,"notificationEmpty": "Keine neuen Ereignisse",
+  ,"notificationMarkRead": "Als gelesen markieren",
+  ,"notificationType_reward": "Belohnung",
+  ,"notificationType_badge": "Abzeichen",
+  ,"notificationType_friend": "Freundschaftsanfrage",
+  ,"notificationType_message": "Nachricht",
+  ,"notificationType_challenge": "Herausforderung"
 }

@@ -10,4 +10,5 @@ enum AppRoute {
   badges,
   rewards,
   feed,
+  notifications,
 }
