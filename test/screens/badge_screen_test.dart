@@ -19,7 +19,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
-          home: BadgeScreen(),
+          home: const BadgeScreen(),
         ),
       ),
     );
@@ -40,7 +40,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
-          home: BadgeScreen(),
+          home: const BadgeScreen(),
         ),
       ),
     );
