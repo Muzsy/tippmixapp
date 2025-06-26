@@ -32,11 +32,11 @@ void main() {
 
   testWidgets('BadgeScreen empty state', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
+      ProviderScope(
         overrides: [
           userBadgesProvider.overrideWith((ref) => Stream.empty()),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
