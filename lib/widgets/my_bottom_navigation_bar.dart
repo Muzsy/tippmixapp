@@ -51,7 +51,7 @@ class MyBottomNavigationBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.dynamic_feed),
-          label: AppLocalizations.of(context)!.home_nav_feed,
+          label: AppLocalizations.of(context)!.bottom_nav_feed,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,
