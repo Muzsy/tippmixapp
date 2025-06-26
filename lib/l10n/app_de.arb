@@ -68,6 +68,7 @@
   ,"tips_label": "Tipps"
   ,"ok": "OK"
   ,"not_logged_in": "Du bist nicht angemeldet."
+  ,"errorNotLoggedIn": "Du bist nicht angemeldet."
   ,"profile_email": "E-Mail"
   ,"profile_name": "Name"
   ,"drawer_title": "Menü"
