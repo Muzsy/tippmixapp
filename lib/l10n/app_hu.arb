@@ -132,3 +132,11 @@
   "auth_error_weak_password": "Gyenge jelszó",
   "auth_error_unknown": "Ismeretlen hiba"
 }
+
+  ,"menuBadges": "Jelvényeim"
+  ,"badgeScreenTitle": "Megszerezhető jelvények"
+  ,"badgeFilterAll": "Összes"
+  ,"badgeFilterOwned": "Megvan"
+  ,"badgeFilterMissing": "Hiányzik"
+
+}
