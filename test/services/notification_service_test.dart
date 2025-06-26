@@ -16,9 +16,13 @@ class FakeDocumentReference extends Fake implements DocumentReference<Map<String
   }
 
   @override
-  Future<void> update(Map<String, dynamic> data) async {
+  Future<void> update(Map<Object, Object?> data) async {
     final current = store[id] ?? <String, dynamic>{};
-    data.forEach((key, value) => current[key] = value);
+    data.forEach((key, value) {
+      if (key is String) {
+        current[key] = value;
+      }
+    });
     store[id] = current;
   }
 }

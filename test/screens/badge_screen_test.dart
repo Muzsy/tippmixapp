@@ -19,7 +19,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
-          home: const BadgeScreen(),
+          home: BadgeScreen(),
         ),
       ),
     );
@@ -34,13 +34,13 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          userBadgesProvider.overrideWith((ref) => Stream.empty()),
+          userBadgesProvider.overrideWith((ref) => const Stream.empty()),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
-          home: const BadgeScreen(),
+          home: BadgeScreen(),
         ),
       ),
     );
