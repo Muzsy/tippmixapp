@@ -1,0 +1,25 @@
+steps:
+  - name: Navigációs fül hozzáadása
+    description: Illeszd be a Feed képernyőt a BottomNavigationBar komponensbe új fülként.
+    outputs:
+      - BottomNavigationBar frissítve "Feed" füllel
+
+  - name: Drawer menüpont bővítése
+    description: Adj hozzá új ListTile-t a Drawer-hez "Feed" címmel, amely a FeedScreen-re navigál.
+    outputs:
+      - Drawer tartalmazza a Feed menüpontot
+
+  - name: GoRouter útvonal konfigurálása
+    description: Egészítsd ki a GoRouter definíciót a /feed útvonallal, a FeedScreen komponensre mutatva.
+    outputs:
+      - GoRouter tartalmazza a 'feed' nevű útvonalat
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Add hozzá a szükséges kulcsokat az .arb fájlokhoz: feed_screen_title, drawer_feed, bottom_nav_feed.
+    outputs:
+      - Lokalizációs fájlok frissítve az új kulcsokkal
+
+  - name: Navigációs tesztek létrehozása
+    description: Készíts widget tesztet, amely ellenőrzi, hogy a Feed képernyő elérhető a navigációs fülről és a Drawer-ből is.
+    outputs:
+      - Új widget teszt: feed_navigation_test.dart
