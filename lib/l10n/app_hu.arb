@@ -135,11 +135,11 @@
   ,"badgeScreenTitle": "Megszerezhető jelvények"
   ,"badgeFilterAll": "Összes"
   ,"badgeFilterOwned": "Megvan"
-  ,"badgeFilterMissing": "Hiányzik",
-  ,"menuRewards": "Jutalmaim",
-  ,"rewardTitle": "Átvehető jutalmak",
-  ,"rewardClaim": "Átvétel",
-  ,"rewardClaimed": "Már átvetted",
+  ,"badgeFilterMissing": "Hiányzik"
+  ,"menuRewards": "Jutalmaim"
+  ,"rewardTitle": "Átvehető jutalmak"
+  ,"rewardClaim": "Átvétel"
+  ,"rewardClaimed": "Már átvetted"
   ,"rewardEmpty": "Nincs elérhető jutalom"
 
 }

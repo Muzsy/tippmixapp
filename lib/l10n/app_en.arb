@@ -135,10 +135,10 @@
   ,"badgeScreenTitle": "Available Badges"
   ,"badgeFilterAll": "All"
   ,"badgeFilterOwned": "Owned"
-  ,"badgeFilterMissing": "Missing",
-  ,"menuRewards": "Rewards",
-  ,"rewardTitle": "Available rewards",
-  ,"rewardClaim": "Claim",
-  ,"rewardClaimed": "Claimed",
+  ,"badgeFilterMissing": "Missing"
+  ,"menuRewards": "Rewards"
+  ,"rewardTitle": "Available rewards"
+  ,"rewardClaim": "Claim"
+  ,"rewardClaimed": "Claimed"
   ,"rewardEmpty": "No rewards available"
 }

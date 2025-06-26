@@ -27,7 +27,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          rewardServiceProvider.overrideWith(() => FakeRewardService([reward])),
+          rewardServiceProvider.overrideWith((ref) => FakeRewardService([reward])),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -42,5 +42,5 @@ void main() {
     await tester.tap(find.text('Claim'));
     await tester.pumpAndSettle();
     expect(find.text('Daily'), findsNothing);
-  });
 });
+}
