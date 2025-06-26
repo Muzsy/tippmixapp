@@ -284,9 +284,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuFeed => 'Feed';
 
   @override
-  String get menuBadges => 'Abzeichen';
-
-  @override
   String get settings_title => 'Einstellungen';
 
   @override
@@ -312,18 +309,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settings_push_notifications => 'Push-Benachrichtigungen';
-
-  @override
-  String get badgeScreenTitle => 'Verfügbare Abzeichen';
-
-  @override
-  String get badgeFilterAll => 'Alle';
-
-  @override
-  String get badgeFilterOwned => 'Vorhanden';
-
-  @override
-  String get badgeFilterMissing => 'Fehlend';
 
   @override
   String get badge_rookie_title => 'Anfänger';
@@ -420,4 +405,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get auth_error_unknown => 'Unbekannter Authentifizierungsfehler';
+
+  @override
+  String get menuBadges => 'Abzeichen';
+
+  @override
+  String get badgeScreenTitle => 'Verfügbare Abzeichen';
+
+  @override
+  String get badgeFilterAll => 'Alle';
+
+  @override
+  String get badgeFilterOwned => 'Vorhanden';
+
+  @override
+  String get badgeFilterMissing => 'Fehlend';
 }

@@ -643,12 +643,6 @@ abstract class AppLocalizations {
   /// **'Feed'**
   String get menuFeed;
 
-  /// No description provided for @menuBadges.
-  ///
-  /// In en, this message translates to:
-  /// **'Badges'**
-  String get menuBadges;
-
   /// No description provided for @settings_title.
   ///
   /// In en, this message translates to:
@@ -702,30 +696,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Push notifications'**
   String get settings_push_notifications;
-
-  /// No description provided for @badgeScreenTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Available Badges'**
-  String get badgeScreenTitle;
-
-  /// No description provided for @badgeFilterAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get badgeFilterAll;
-
-  /// No description provided for @badgeFilterOwned.
-  ///
-  /// In en, this message translates to:
-  /// **'Owned'**
-  String get badgeFilterOwned;
-
-  /// No description provided for @badgeFilterMissing.
-  ///
-  /// In en, this message translates to:
-  /// **'Missing'**
-  String get badgeFilterMissing;
 
   /// No description provided for @badge_rookie_title.
   ///
@@ -918,6 +888,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown authentication error'**
   String get auth_error_unknown;
+
+  /// No description provided for @menuBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get menuBadges;
+
+  /// No description provided for @badgeScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Badges'**
+  String get badgeScreenTitle;
+
+  /// No description provided for @badgeFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get badgeFilterAll;
+
+  /// No description provided for @badgeFilterOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Owned'**
+  String get badgeFilterOwned;
+
+  /// No description provided for @badgeFilterMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get badgeFilterMissing;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

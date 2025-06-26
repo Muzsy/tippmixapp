@@ -131,8 +131,6 @@
   "auth_error_invalid_email": "Ungültige E-Mail-Adresse",
   "auth_error_weak_password": "Schwaches Passwort",
   "auth_error_unknown": "Unbekannter Authentifizierungsfehler"
-}
-
   ,"menuBadges": "Abzeichen"
   ,"badgeScreenTitle": "Verfügbare Abzeichen"
   ,"badgeFilterAll": "Alle"
