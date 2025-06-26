@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../models/reward_model.dart';
 import '../../services/reward_service.dart';
 import '../../widgets/reward_card.dart';
 
