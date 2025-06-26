@@ -3,6 +3,7 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
 
+import '../widgets/notification_bell_widget.dart';
 class HomeScreen extends StatelessWidget {
   final Widget child;
   const HomeScreen({super.key, required this.child});
@@ -19,17 +20,8 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         title: Text(AppLocalizations.of(context)!.home_title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {
-              // Ide jöhet később notification logika
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(AppLocalizations.of(context)!.home_nav_messages)),
-              );
-            },
-            tooltip: AppLocalizations.of(context)!.home_nav_messages,
-          ),
+        actions: const [
+          NotificationBellWidget(),
         ],
       ),
       drawer: const AppDrawer(),
