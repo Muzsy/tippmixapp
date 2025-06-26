@@ -435,4 +435,31 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get rewardEmpty => 'Nincs elérhető jutalom';
+
+  @override
+  String get menuNotifications => 'Értesítések';
+
+  @override
+  String get notificationTitle => 'Események';
+
+  @override
+  String get notificationEmpty => 'Nincs új esemény';
+
+  @override
+  String get notificationMarkRead => 'Olvasottként jelölés';
+
+  @override
+  String get notificationType_reward => 'Jutalom';
+
+  @override
+  String get notificationType_badge => 'Jelvény';
+
+  @override
+  String get notificationType_friend => 'Barátkérés';
+
+  @override
+  String get notificationType_message => 'Üzenet';
+
+  @override
+  String get notificationType_challenge => 'Kihívás';
 }
