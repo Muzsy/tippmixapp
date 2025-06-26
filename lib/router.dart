@@ -96,6 +96,14 @@ final GoRouter router = GoRouter(
           ),
         ),
         GoRoute(
+          path: '/badges',
+          name: AppRoute.badges.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const BadgeScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
           path: '/settings',
           name: AppRoute.settings.name,
           pageBuilder: (context, state) => CustomTransitionPage(

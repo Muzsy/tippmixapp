@@ -284,6 +284,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuFeed => 'Feed';
 
   @override
+  String get menuBadges => 'Badges';
+
+  @override
   String get settings_title => 'Settings';
 
   @override
@@ -309,6 +312,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_push_notifications => 'Push notifications';
+
+  @override
+  String get badgeScreenTitle => 'Available Badges';
+
+  @override
+  String get badgeFilterAll => 'All';
+
+  @override
+  String get badgeFilterOwned => 'Owned';
+
+  @override
+  String get badgeFilterMissing => 'Missing';
 
   @override
   String get badge_rookie_title => 'Rookie';

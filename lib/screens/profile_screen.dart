@@ -66,6 +66,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     onPressed: _loggingOut ? null : _logout,
                     child: Text(loc.profile_logout),
                   ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
+                context.goNamed(AppRoute.badges.name);
+              },
+              child: Text(loc.menuBadges),
+            ),
           ],
         ),
       ),

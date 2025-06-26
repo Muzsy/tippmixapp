@@ -132,3 +132,11 @@
   "auth_error_weak_password": "Schwaches Passwort",
   "auth_error_unknown": "Unbekannter Authentifizierungsfehler"
 }
+
+  ,"menuBadges": "Abzeichen"
+  ,"badgeScreenTitle": "Verfügbare Abzeichen"
+  ,"badgeFilterAll": "Alle"
+  ,"badgeFilterOwned": "Vorhanden"
+  ,"badgeFilterMissing": "Fehlend"
+
+}
