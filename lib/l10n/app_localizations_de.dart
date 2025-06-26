@@ -24,7 +24,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_nav_profile => 'Profil';
 
   @override
-  String get home_nav_feed => 'Feed';
+  String get bottom_nav_feed => 'Feed';
 
   @override
   String get home_nav_stats => 'Statistik';
@@ -272,7 +272,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get leaderboard_mode_streak => 'Serie';
 
   @override
-  String get feed_title => 'Feed';
+  String get feed_screen_title => 'Feed';
 
   @override
   String get menuLeaderboard => 'Bestenliste';
@@ -281,7 +281,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuSettings => 'Einstellungen';
 
   @override
-  String get menuFeed => 'Feed';
+  String get drawer_feed => 'Feed';
 
   @override
   String get settings_title => 'Einstellungen';
