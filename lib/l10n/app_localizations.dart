@@ -830,21 +830,39 @@ abstract class AppLocalizations {
   String get copy_invalid_state;
 
   /// No description provided for @auth_error_user_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
   String get auth_error_user_not_found;
 
   /// No description provided for @auth_error_wrong_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
   String get auth_error_wrong_password;
 
   /// No description provided for @auth_error_email_already_in_use.
+  ///
+  /// In en, this message translates to:
+  /// **'Email already in use'**
   String get auth_error_email_already_in_use;
 
   /// No description provided for @auth_error_invalid_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
   String get auth_error_invalid_email;
 
   /// No description provided for @auth_error_weak_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak password'**
   String get auth_error_weak_password;
 
   /// No description provided for @auth_error_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown authentication error'**
   String get auth_error_unknown;
 }
 
