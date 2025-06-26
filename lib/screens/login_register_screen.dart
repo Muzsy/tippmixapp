@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
-import '../router.dart';
+import '../routes/app_route.dart';
 import '../models/user.dart';
 import '../models/auth_state.dart';
 
