@@ -131,4 +131,9 @@
   "auth_error_invalid_email": "Invalid email address",
   "auth_error_weak_password": "Weak password",
   "auth_error_unknown": "Unknown authentication error"
+  ,"menuBadges": "Badges"
+  ,"badgeScreenTitle": "Available Badges"
+  ,"badgeFilterAll": "All"
+  ,"badgeFilterOwned": "Owned"
+  ,"badgeFilterMissing": "Missing"
 }
