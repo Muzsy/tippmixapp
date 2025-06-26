@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
-import '../router.dart';
+import '../routes/app_route.dart';
 
 class MyBottomNavigationBar extends StatelessWidget {
   const MyBottomNavigationBar({super.key});
@@ -10,6 +10,7 @@ class MyBottomNavigationBar extends StatelessWidget {
     final location = GoRouterState.of(context).uri.toString();
     if (location == '/profile') return 1;
     if (location == '/my-tickets') return 2;
+    if (location == '/feed') return 3;
     return 0; // alap: főoldal
   }
 
@@ -23,6 +24,9 @@ class MyBottomNavigationBar extends StatelessWidget {
         break;
       case 2:
         context.goNamed(AppRoute.myTickets.name);
+        break;
+      case 3:
+        context.goNamed(AppRoute.feed.name);
         break;
     }
   }
@@ -44,6 +48,10 @@ class MyBottomNavigationBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: const Icon(Icons.receipt_long),
           label: AppLocalizations.of(context)!.my_tickets_title,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.dynamic_feed),
+          label: AppLocalizations.of(context)!.home_nav_feed,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,
