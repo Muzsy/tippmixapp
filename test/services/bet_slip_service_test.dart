@@ -97,7 +97,6 @@ void main() {
     ];
 
     await BetSlipService.submitTicket(
-      userId: 'u1',
       tips: tips,
       stake: 10,
       coinService: coinService,
@@ -130,7 +129,6 @@ void main() {
 
     expect(
       () => BetSlipService.submitTicket(
-        userId: 'u1',
         tips: tips,
         stake: 10,
         coinService: coinService,
