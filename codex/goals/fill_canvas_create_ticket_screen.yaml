@@ -1,0 +1,41 @@
+name: fill_canvas_create_ticket_screen
+description: >
+  A CreateTicketScreen logikájának módosítása úgy, hogy a FirebaseAuth közvetlen elérése helyett
+  a Riverpod-alapú authProvider-t használja a bejelentkezett felhasználó azonosítására a submitTicket hívás előtt.
+
+inputs:
+  - canvases/create_ticket_screen.md
+  - codex_docs/codex_context.yaml
+  - codex_docs/service_dependencies.md
+  - docs/auth_best_practice.md
+  - docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: FirebaseAuth hivatkozás eltávolítása
+    description: >
+      A `_submitTicket()` metódusban töröld a `FirebaseAuth.instance.currentUser?.uid` sort,
+      és helyettesítsd a `ref.watch(authProvider)` hívással.
+    outputs:
+      - lib/screens/create_ticket_screen.dart
+
+  - name: authProvider használata userId lekéréshez
+    description: >
+      Kérd le a felhasználót `final user = ref.watch(authProvider);`. Ha a `user == null`, akkor
+      jeleníts meg hibaüzenetet és állítsd le a folyamatot. Ellenkező esetben használd a `user.uid`-et
+      a `submitTicket()` metódus hívásához.
+    outputs:
+      - lib/screens/create_ticket_screen.dart
+
+  - name: UI hibaüzenet beállítása, ha nincs bejelentkezve a felhasználó
+    description: >
+      A felhasználó nélküli állapot esetén állítsd be az `_errorMessage` értékét `loc.errorNotLoggedIn` értékre,
+      és állítsd vissza `_isLoading = false` állapotba.
+    outputs:
+      - lib/screens/create_ticket_screen.dart
+
+  - name: Belső logika megtartása
+    description: >
+      A meglévő tip validáció, tét validáció, valamint a `submitTicket` hívás és navigator visszalépés
+      minden más részét változatlanul kell hagyni.
+    outputs:
+      - lib/screens/create_ticket_screen.dart
