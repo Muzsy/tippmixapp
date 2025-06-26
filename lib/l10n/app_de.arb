@@ -135,11 +135,11 @@
   ,"badgeScreenTitle": "Verfügbare Abzeichen"
   ,"badgeFilterAll": "Alle"
   ,"badgeFilterOwned": "Vorhanden"
-  ,"badgeFilterMissing": "Fehlend",
-  ,"menuRewards": "Belohnungen",
-  ,"rewardTitle": "Verfügbare Belohnungen",
-  ,"rewardClaim": "Einsammeln",
-  ,"rewardClaimed": "Bereits eingesammelt",
+  ,"badgeFilterMissing": "Fehlend"
+  ,"menuRewards": "Belohnungen"
+  ,"rewardTitle": "Verfügbare Belohnungen"
+  ,"rewardClaim": "Einsammeln"
+  ,"rewardClaimed": "Bereits eingesammelt"
   ,"rewardEmpty": "Keine Belohnungen verfügbar"
 
 }

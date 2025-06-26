@@ -10,6 +10,7 @@ import '../widgets/ticket_card.dart';
 import '../widgets/empty_ticket_placeholder.dart';
 import '../widgets/ticket_details_dialog.dart';
 
+
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid == null) {
