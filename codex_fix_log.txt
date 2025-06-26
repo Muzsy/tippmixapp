@@ -48,3 +48,9 @@ Removed unused feed_service imports and added mounted checks in comment and repo
 Replaced deprecated withOpacity use with withAlpha.
 Annotated FakeDocumentReference.id fields with @override in tests.
 Changed mounted checks to context.mounted in comment and report dialogs.
+Imported BadgeScreen in router.dart route.
+Removed unused badge.dart and user.dart imports.
+Added missing go_router and AppRoute imports in profile_screen.
+Deleted unused auth_state imports in auth tests.
+Adjusted BadgeScreen test to remove const ProviderScope and use const MaterialApp.
+Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.

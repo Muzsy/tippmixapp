@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 
 class FakeAuthService implements AuthService {
