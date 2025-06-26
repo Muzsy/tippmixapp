@@ -68,6 +68,7 @@
   ,"tips_label": "Tippek"
   ,"ok": "OK"
   ,"not_logged_in": "Nem vagy bejelentkezve."
+  ,"errorNotLoggedIn": "Nem vagy bejelentkezve."
   ,"profile_email": "Email"
   ,"profile_name": "Név"
   ,"drawer_title": "Menü"

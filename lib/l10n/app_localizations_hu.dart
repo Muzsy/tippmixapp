@@ -218,6 +218,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get not_logged_in => 'Nem vagy bejelentkezve.';
 
   @override
+  String get errorNotLoggedIn => 'Nem vagy bejelentkezve.';
+
+  @override
   String get profile_email => 'Email';
 
   @override
