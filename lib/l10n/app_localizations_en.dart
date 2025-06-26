@@ -420,4 +420,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get badgeFilterMissing => 'Missing';
+
+  @override
+  String get menuRewards => 'Rewards';
+
+  @override
+  String get rewardTitle => 'Available rewards';
+
+  @override
+  String get rewardClaim => 'Claim';
+
+  @override
+  String get rewardClaimed => 'Claimed';
+
+  @override
+  String get rewardEmpty => 'No rewards available';
 }
