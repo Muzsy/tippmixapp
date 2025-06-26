@@ -511,6 +511,12 @@ abstract class AppLocalizations {
   /// **'You are not logged in.'**
   String get not_logged_in;
 
+  /// No description provided for @errorNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not logged in.'**
+  String get errorNotLoggedIn;
+
   /// No description provided for @profile_email.
   ///
   /// In en, this message translates to:
