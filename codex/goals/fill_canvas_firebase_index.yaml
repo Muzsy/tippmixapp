@@ -1,0 +1,6 @@
+steps:
+  - name: index.ts frissítése a callable és trigger exportokkal
+    description: |
+      A functions/src/index.ts fájlból töröljük a korábbi coin_trx Firestore trigger exportját, és helyette exportáljuk a functions/src/coin_trx.logic.ts fájlban található coin_trx callable-t és az onUserCreate triggert. Csak ezek maradjanak exportálva a fájlból.
+    outputs:
+      - functions/src/index.ts
