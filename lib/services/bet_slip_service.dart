@@ -28,14 +28,12 @@ class BetSlipService {
 
   /// Ment egy szelvényt a Firestore‑ba.
   ///
-  /// [userId] – kötelező, a bejelentkezett felhasználó azonosítója.  
-  /// [tips] – a kiválasztott tippek listája.  
+  /// [tips] – a kiválasztott tippek listája.
   /// [stake] – TippCoin tét (pozitív egész).
   ///
   /// Dobja: [ArgumentError] ha a bemenet nem valid, illetve
   /// [FirebaseException] ha az írás nem sikerül.
   static Future<void> submitTicket({
-    required String userId,
     required List<TipModel> tips,
     required int stake,
     CoinService? coinService,
@@ -43,9 +41,6 @@ class BetSlipService {
     FirebaseAuth? auth,
   }) async {
     // 1️⃣ Validáció
-    if (userId.isEmpty) {
-      throw ArgumentError('userId cannot be empty');
-    }
     if (tips.isEmpty) {
       throw ArgumentError('emptyBetSlip');
     }
@@ -60,6 +55,7 @@ class BetSlipService {
         message: 'User not logged in',
       );
     }
+    final userId = currentUser.uid;
 
     // 2️⃣ Össz‑odds és várható nyeremény
     final totalOdd = calculateTotalOdd(tips);
