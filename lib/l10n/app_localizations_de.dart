@@ -218,6 +218,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get not_logged_in => 'Du bist nicht angemeldet.';
 
   @override
+  String get errorNotLoggedIn => 'Du bist nicht angemeldet.';
+
+  @override
   String get profile_email => 'E-Mail';
 
   @override
