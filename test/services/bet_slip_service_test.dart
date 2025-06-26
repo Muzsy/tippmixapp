@@ -26,13 +26,11 @@ class FakeCoinService extends Fake implements CoinService {
   Map<String, dynamic>? last;
   @override
   Future<void> debitCoin({
-    required String userId,
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
     last = {
-      'userId': userId,
       'amount': amount,
       'reason': reason,
       'transactionId': transactionId,
