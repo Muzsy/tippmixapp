@@ -12,15 +12,14 @@ class CoinService {
   CoinService([FirebaseFunctions? functions])
       : _functions = functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
-  /// Deduct coins from a user by calling the `coin_trx` Cloud Function.
+  /// Deduct coins from the authenticated user by calling the `coin_trx` Cloud
+  /// Function.
   Future<void> debitCoin({
-    required String userId,
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
     await _callCoinTrx(
-      userId: userId,
       amount: amount,
       type: 'debit',
       reason: reason,
@@ -30,13 +29,11 @@ class CoinService {
 
   /// Credit coins to a user by calling the `coin_trx` Cloud Function.
   Future<void> creditCoin({
-    required String userId,
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
     await _callCoinTrx(
-      userId: userId,
       amount: amount,
       type: 'credit',
       reason: reason,
@@ -45,10 +42,9 @@ class CoinService {
   }
 
   /// Convenience helper for the daily bonus job.
-  Future<void> creditDailyBonus(String userId) async {
+  Future<void> creditDailyBonus() async {
     final transactionId = DateTime.now().millisecondsSinceEpoch.toString();
     await creditCoin(
-      userId: userId,
       amount: 50,
       reason: 'daily_bonus',
       transactionId: transactionId,
@@ -56,7 +52,6 @@ class CoinService {
   }
 
   Future<void> _callCoinTrx({
-    required String userId,
     required int amount,
     required String type,
     required String reason,
@@ -64,13 +59,20 @@ class CoinService {
   }) async {
     final callable = _functions.httpsCallable('coin_trx');
     try {
-      await callable.call(<String, dynamic>{
-        'userId': userId,
+      final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{
         'amount': amount,
         'type': type,
         'reason': reason,
         'transactionId': transactionId,
       });
+      final data = result.data;
+      if (data is! Map || data['success'] != true) {
+        throw FirebaseFunctionsException(
+          code: 'unknown',
+          message: 'coin_trx failed',
+          details: data,
+        );
+      }
     } on FirebaseFunctionsException catch (e, stack) {
       debugPrint('CoinService error: ${e.code}');
       debugPrintStack(stackTrace: stack);

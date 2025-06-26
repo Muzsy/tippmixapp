@@ -16,7 +16,7 @@ class FakeHttpsCallable implements HttpsCallable {
   @override
   Future<HttpsCallableResult<T>> call<T>([dynamic parameters]) async {
     lastData = Map<String, dynamic>.from(parameters as Map);
-    return FakeHttpsCallableResult<T>(null as T);
+    return FakeHttpsCallableResult<T>({'success': true} as T);
   }
 
   @override
@@ -41,7 +41,6 @@ void main() {
     final service = CoinService(functions);
 
     await service.debitCoin(
-      userId: 'u1',
       amount: 10,
       reason: 'bet',
       transactionId: 't1',
@@ -57,7 +56,6 @@ void main() {
     final service = CoinService(functions);
 
     await service.creditCoin(
-      userId: 'u1',
       amount: 20,
       reason: 'bonus',
       transactionId: 't2',
