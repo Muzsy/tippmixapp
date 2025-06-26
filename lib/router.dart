@@ -9,6 +9,7 @@ import 'package:tippmixapp/screens/login_register_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/screens/badges/badge_screen.dart';
+import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
@@ -102,6 +103,15 @@ final GoRouter router = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const BadgeScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          path: '/rewards',
+          name: AppRoute.rewards.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const RewardsScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
