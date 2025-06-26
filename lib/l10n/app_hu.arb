@@ -5,6 +5,7 @@
   "home_stats": "Statisztika",
   "home_nav_profile": "Profil",
   "home_nav_stats": "Statisztika",
+  "home_nav_feed": "Hírfolyam",
   "home_nav_messages": "Üzenetek",
   "home_nav_forum": "Fórum",
   "home_tile_bets": "Fogadás",
@@ -85,8 +86,10 @@
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Nyerési arány",
   "leaderboard_mode_streak": "Sorozat",
+  "feed_title": "Hírfolyam",
   "menuLeaderboard": "Ranglista"
   ,"menuSettings": "Beállítások"
+  ,"menuFeed": "Hírfolyam"
   ,"settings_title": "Beállítások"
   ,"settings_theme": "Téma"
   ,"settings_theme_system": "Rendszer"

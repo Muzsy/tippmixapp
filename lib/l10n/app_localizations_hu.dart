@@ -24,6 +24,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_nav_profile => 'Profil';
 
   @override
+  String get home_nav_feed => 'Hírfolyam';
+
+  @override
   String get home_nav_stats => 'Statisztika';
 
   @override
@@ -269,10 +272,16 @@ class AppLocalizationsHu extends AppLocalizations {
   String get leaderboard_mode_streak => 'Sorozat';
 
   @override
+  String get feed_title => 'Hírfolyam';
+
+  @override
   String get menuLeaderboard => 'Ranglista';
 
   @override
   String get menuSettings => 'Beállítások';
+
+  @override
+  String get menuFeed => 'Hírfolyam';
 
   @override
   String get settings_title => 'Beállítások';

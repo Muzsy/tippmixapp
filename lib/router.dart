@@ -10,17 +10,9 @@ import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
+import 'package:tippmixapp/screens/feed_screen.dart';
+import 'routes/app_route.dart';
 
-enum AppRoute {
-  home,
-  profile,
-  events,
-  myTickets,
-  leaderboard,
-  settings,
-  login,
-  createTicket,
-}
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
@@ -81,6 +73,15 @@ final GoRouter router = GoRouter(
           name: AppRoute.myTickets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const MyTicketsScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          path: '/feed',
+          name: AppRoute.feed.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const FeedScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
