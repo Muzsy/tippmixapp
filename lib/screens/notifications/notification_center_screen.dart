@@ -7,8 +7,8 @@ import '../../providers/notification_provider.dart';
 import '../../routes/app_route.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/notification_item.dart';
-import '../rewards/rewards_screen.dart';
-import '../badges/badge_screen.dart';
+// import '../rewards/rewards_screen.dart';
+// import '../badges/badge_screen.dart';
 import '../../models/notification_model.dart';
 
 class NotificationCenterScreen extends ConsumerWidget {
