@@ -9,6 +9,7 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/notification_item.dart';
 import '../rewards/rewards_screen.dart';
 import '../badges/badge_screen.dart';
+import '../../models/notification_model.dart';
 
 class NotificationCenterScreen extends ConsumerWidget {
   const NotificationCenterScreen({super.key});
