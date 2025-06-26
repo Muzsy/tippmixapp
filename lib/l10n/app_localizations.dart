@@ -918,6 +918,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Missing'**
   String get badgeFilterMissing;
+
+  /// No description provided for @menuRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get menuRewards;
+
+  /// No description provided for @rewardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Available rewards'**
+  String get rewardTitle;
+
+  /// No description provided for @rewardClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim'**
+  String get rewardClaim;
+
+  /// No description provided for @rewardClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get rewardClaimed;
+
+  /// No description provided for @rewardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards available'**
+  String get rewardEmpty;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
