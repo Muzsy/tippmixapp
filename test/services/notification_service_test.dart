@@ -16,7 +16,7 @@ class FakeDocumentReference extends Fake implements DocumentReference<Map<String
   }
 
   @override
-  Future<void> update(Map<String, Object?> data) async {
+  Future<void> update(Map<String, dynamic> data) async {
     final current = store[id] ?? <String, dynamic>{};
     data.forEach((key, value) => current[key] = value);
     store[id] = current;
@@ -52,7 +52,8 @@ void main() {
     final firestore = FakeFirebaseFirestore();
     final service = NotificationService(firestore);
 
-    final collection = firestore.collection('users/u1/notifications');
+      final collection =
+          firestore.collection('users/u1/notifications') as FakeCollectionReference;
     await collection.doc('n1').set({'isRead': false});
 
     await service.markAsRead('u1', 'n1');

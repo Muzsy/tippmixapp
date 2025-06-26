@@ -54,3 +54,8 @@ Added missing go_router and AppRoute imports in profile_screen.
 Deleted unused auth_state imports in auth tests.
 Adjusted BadgeScreen test to remove const ProviderScope and use const MaterialApp.
 Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.
+Added NotificationType import in notification_center_screen.
+Removed unused RewardModel import in rewards_screen.
+Made BadgeScreen constructor const in widget tests.
+Fixed FakeDocumentReference.update signature and cast collection in notification_service_test.
+Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.
