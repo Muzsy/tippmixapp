@@ -1,0 +1,43 @@
+# fill_canvas_rewards_screen.yaml
+
+canvas: canvases/rewards_screen.md
+inputs:
+  - codex_docs/routing_integrity.md
+  - codex_docs/localization_logic.md
+  - lib/services/daily_bonus_service.dart
+  - lib/services/badge_service.dart
+  - lib/l10n/app_hu.arb
+  - lib/l10n/app_en.arb
+  - lib/l10n/app_de.arb
+steps:
+  - name: Új RewardsScreen létrehozása
+    description: Hozz létre egy önálló képernyőt, amely megjeleníti az összes aktuálisan átvehető jutalmat. Használj grid vagy lista megjelenítést, jutalomkártyákkal.
+    outputs:
+      - lib/screens/rewards/rewards_screen.dart
+      - lib/widgets/reward_card.dart
+
+  - name: RewardModel és RewardService létrehozása
+    description: Hozz létre egy egységes RewardModel osztályt és egy RewardService-t, amely összeállítja az aktuális átvehető jutalmak listáját a napi bónusz és badge szolgáltatások alapján.
+    outputs:
+      - lib/models/reward_model.dart
+      - lib/services/reward_service.dart
+
+  - name: Navigációs bekötés
+    description: Add hozzá a RewardsScreen-t a drawer menühöz `menuRewards` kulccsal, és regisztráld a `/rewards` route-ot az AppRoute enumon keresztül.
+    outputs:
+      - lib/router/app_router.dart
+      - lib/widgets/main_drawer.dart
+      - lib/models/app_route.dart
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: Adj hozzá lokalizációs kulcsokat az ARB fájlokhoz: menuRewards, rewardTitle, rewardClaim, rewardClaimed, rewardEmpty.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget és unit tesztek létrehozása
+    description: Készíts teszteket, amelyek validálják, hogy az átvehető jutalmak megjelennek, begyűjtés után eltűnnek, és a helyes szövegek lokalizáltan megjelennek.
+    outputs:
+      - test/screens/rewards_screen_test.dart
+      - test/services/reward_service_test.dart
