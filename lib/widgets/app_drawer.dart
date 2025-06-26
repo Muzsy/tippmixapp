@@ -39,6 +39,13 @@ class AppDrawer extends StatelessWidget {
               context.goNamed(AppRoute.leaderboard.name);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.card_giftcard),
+            title: Text(loc.menuRewards),
+            onTap: () {
+              context.goNamed(AppRoute.rewards.name);
+            },
+          ),
             ListTile(
               leading: const Icon(Icons.badge),
               title: Text(loc.menuBadges),

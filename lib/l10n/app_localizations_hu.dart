@@ -420,4 +420,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get badgeFilterMissing => 'Hiányzik';
+
+  @override
+  String get menuRewards => 'Jutalmaim';
+
+  @override
+  String get rewardTitle => 'Átvehető jutalmak';
+
+  @override
+  String get rewardClaim => 'Átvétel';
+
+  @override
+  String get rewardClaimed => 'Már átvetted';
+
+  @override
+  String get rewardEmpty => 'Nincs elérhető jutalom';
 }
