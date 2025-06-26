@@ -141,13 +141,13 @@
   ,"rewardClaim": "Claim"
   ,"rewardClaimed": "Claimed"
   ,"rewardEmpty": "No rewards available"
-  ,"menuNotifications": "Notifications",
-  ,"notificationTitle": "Events",
-  ,"notificationEmpty": "No new notifications",
-  ,"notificationMarkRead": "Mark read",
-  ,"notificationType_reward": "Reward",
-  ,"notificationType_badge": "Badge",
-  ,"notificationType_friend": "Friend request",
-  ,"notificationType_message": "Message",
+  ,"menuNotifications": "Notifications"
+  ,"notificationTitle": "Events"
+  ,"notificationEmpty": "No new notifications"
+  ,"notificationMarkRead": "Mark read"
+  ,"notificationType_reward": "Reward"
+  ,"notificationType_badge": "Badge"
+  ,"notificationType_friend": "Friend request"
+  ,"notificationType_message": "Message"
   ,"notificationType_challenge": "Challenge"
 }

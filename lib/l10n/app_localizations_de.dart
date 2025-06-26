@@ -435,4 +435,31 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rewardEmpty => 'Keine Belohnungen verfügbar';
+
+  @override
+  String get menuNotifications => 'Benachrichtigungen';
+
+  @override
+  String get notificationTitle => 'Ereignisse';
+
+  @override
+  String get notificationEmpty => 'Keine neuen Ereignisse';
+
+  @override
+  String get notificationMarkRead => 'Als gelesen markieren';
+
+  @override
+  String get notificationType_reward => 'Belohnung';
+
+  @override
+  String get notificationType_badge => 'Abzeichen';
+
+  @override
+  String get notificationType_friend => 'Freundschaftsanfrage';
+
+  @override
+  String get notificationType_message => 'Nachricht';
+
+  @override
+  String get notificationType_challenge => 'Herausforderung';
 }

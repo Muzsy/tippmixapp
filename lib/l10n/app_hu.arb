@@ -141,14 +141,13 @@
   ,"rewardClaim": "Átvétel"
   ,"rewardClaimed": "Már átvetted"
   ,"rewardEmpty": "Nincs elérhető jutalom"
-
-  ,"menuNotifications": "Értesítések",
-  ,"notificationTitle": "Események",
-  ,"notificationEmpty": "Nincs új esemény",
-  ,"notificationMarkRead": "Olvasottként jelölés",
-  ,"notificationType_reward": "Jutalom",
-  ,"notificationType_badge": "Jelvény",
-  ,"notificationType_friend": "Barátkérés",
-  ,"notificationType_message": "Üzenet",
+  ,"menuNotifications": "Értesítések"
+  ,"notificationTitle": "Események"
+  ,"notificationEmpty": "Nincs új esemény"
+  ,"notificationMarkRead": "Olvasottként jelölés"
+  ,"notificationType_reward": "Jutalom"
+  ,"notificationType_badge": "Jelvény"
+  ,"notificationType_friend": "Barátkérés"
+  ,"notificationType_message": "Üzenet"
   ,"notificationType_challenge": "Kihívás"
 }

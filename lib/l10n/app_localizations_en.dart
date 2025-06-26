@@ -435,4 +435,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardEmpty => 'No rewards available';
+
+  @override
+  String get menuNotifications => 'Notifications';
+
+  @override
+  String get notificationTitle => 'Events';
+
+  @override
+  String get notificationEmpty => 'No new notifications';
+
+  @override
+  String get notificationMarkRead => 'Mark read';
+
+  @override
+  String get notificationType_reward => 'Reward';
+
+  @override
+  String get notificationType_badge => 'Badge';
+
+  @override
+  String get notificationType_friend => 'Friend request';
+
+  @override
+  String get notificationType_message => 'Message';
+
+  @override
+  String get notificationType_challenge => 'Challenge';
 }

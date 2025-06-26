@@ -948,6 +948,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No rewards available'**
   String get rewardEmpty;
+
+  /// No description provided for @menuNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get menuNotifications;
+
+  /// No description provided for @notificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get notificationTitle;
+
+  /// No description provided for @notificationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No new notifications'**
+  String get notificationEmpty;
+
+  /// No description provided for @notificationMarkRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark read'**
+  String get notificationMarkRead;
+
+  /// No description provided for @notificationType_reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward'**
+  String get notificationType_reward;
+
+  /// No description provided for @notificationType_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge'**
+  String get notificationType_badge;
+
+  /// No description provided for @notificationType_friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend request'**
+  String get notificationType_friend;
+
+  /// No description provided for @notificationType_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get notificationType_message;
+
+  /// No description provided for @notificationType_challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get notificationType_challenge;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
