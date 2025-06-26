@@ -127,11 +127,11 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get home_nav_profile;
 
-  /// No description provided for @home_nav_feed.
+  /// No description provided for @bottom_nav_feed.
   ///
   /// In en, this message translates to:
   /// **'Feed'**
-  String get home_nav_feed;
+  String get bottom_nav_feed;
 
   /// No description provided for @home_nav_stats.
   ///
@@ -619,11 +619,11 @@ abstract class AppLocalizations {
   /// **'Win streak'**
   String get leaderboard_mode_streak;
 
-  /// No description provided for @feed_title.
+  /// No description provided for @feed_screen_title.
   ///
   /// In en, this message translates to:
   /// **'Feed'**
-  String get feed_title;
+  String get feed_screen_title;
 
   /// No description provided for @menuLeaderboard.
   ///
@@ -637,11 +637,11 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get menuSettings;
 
-  /// No description provided for @menuFeed.
+  /// No description provided for @drawer_feed.
   ///
   /// In en, this message translates to:
   /// **'Feed'**
-  String get menuFeed;
+  String get drawer_feed;
 
   /// No description provided for @settings_title.
   ///
