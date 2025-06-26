@@ -8,7 +8,7 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.feed_title)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.feed_screen_title)),
       body: const HomeFeedWidget(),
     );
   }

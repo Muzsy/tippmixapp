@@ -4,7 +4,6 @@
   "home_coin": "TippCoin",
   "home_stats": "Stats",
   "home_nav_profile": "Profile",
-  "home_nav_feed": "Feed",
   "home_nav_stats": "Stats",
   "home_nav_messages": "Messages",
   "home_nav_forum": "Forum",
@@ -86,10 +85,11 @@
   "leaderboard_mode_coin": "TippCoin",
   "leaderboard_mode_winrate": "Win rate",
   "leaderboard_mode_streak": "Win streak",
-  "feed_title": "Feed",
+  "feed_screen_title": "Feed",
   "menuLeaderboard": "Leaderboard"
   ,"menuSettings": "Settings"
-  ,"menuFeed": "Feed"
+  ,"drawer_feed": "Feed"
+  ,"bottom_nav_feed": "Feed"
   ,"settings_title": "Settings"
   ,"settings_theme": "Theme"
   ,"settings_theme_system": "System"
