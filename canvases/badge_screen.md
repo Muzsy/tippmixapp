@@ -51,3 +51,4 @@ Minden nyelven frissítendő (hu/en/de), `loc()` wrapperrel használandó.
 * `routing_integrity.md` → route + menü konzisztencia
 * `localization_logic.md` → ARB + enum kulcsok kezelése
 * Codex YAML: `fill_canvas_badge_screen.yaml` (következő lépés)
+    

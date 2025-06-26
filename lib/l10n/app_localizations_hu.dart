@@ -284,9 +284,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuFeed => 'Hírfolyam';
 
   @override
-  String get menuBadges => 'Jelvényeim';
-
-  @override
   String get settings_title => 'Beállítások';
 
   @override
@@ -312,18 +309,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get settings_push_notifications => 'Értesítések';
-
-  @override
-  String get badgeScreenTitle => 'Megszerezhető jelvények';
-
-  @override
-  String get badgeFilterAll => 'Összes';
-
-  @override
-  String get badgeFilterOwned => 'Megvan';
-
-  @override
-  String get badgeFilterMissing => 'Hiányzik';
 
   @override
   String get badge_rookie_title => 'Újonc';
@@ -420,4 +405,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get auth_error_unknown => 'Ismeretlen hiba';
+
+  @override
+  String get menuBadges => 'Jelvényeim';
+
+  @override
+  String get badgeScreenTitle => 'Megszerezhető jelvények';
+
+  @override
+  String get badgeFilterAll => 'Összes';
+
+  @override
+  String get badgeFilterOwned => 'Megvan';
+
+  @override
+  String get badgeFilterMissing => 'Hiányzik';
 }
