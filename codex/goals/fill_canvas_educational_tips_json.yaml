@@ -1,0 +1,15 @@
+steps:
+  - name: JSON formátumú edukációs tippek létrehozása
+    description: Hozz létre egy `lib/assets/educational_tips.json` fájlt, amely legalább 3-5 különböző edukációs tippet tartalmaz lokalizált (hu, en, de) szöveggel.
+    outputs:
+      - lib/assets/educational_tips.json
+
+  - name: Betöltési logika implementálása
+    description: A `HomeTileEducationalTip` widget használja a `rootBundle.loadString()` metódust a JSON betöltéséhez, majd az aktuális nyelv szerint szűrje ki és véletlenszerűen válasszon egy tippet.
+    outputs:
+      - lib/widgets/home/home_tile_educational_tip.dart
+
+  - name: Widget teszt JSON alapon
+    description: Ellenőrizd, hogy a JSON fájlból betöltött tippek helyesen megjelennek a csempében, a megfelelő lokalizációval.
+    outputs:
+      - test/widgets/home_tile_educational_tip_test.dart

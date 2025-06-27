@@ -123,6 +123,17 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_educational_tip_cta => 'További tippek';
 
   @override
+  String get home_tile_feed_activity_title => 'Legújabb aktivitás';
+
+  @override
+  String home_tile_feed_activity_text_template(Object username) {
+    return '$username megosztott egy nyertes tippet!';
+  }
+
+  @override
+  String get home_tile_feed_activity_cta => 'Megnézem';
+
+  @override
   String get login_title => 'Bejelentkezés';
 
   @override

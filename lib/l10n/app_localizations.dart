@@ -313,6 +313,24 @@ abstract class AppLocalizations {
   /// **'More tips'**
   String get home_tile_educational_tip_cta;
 
+  /// No description provided for @home_tile_feed_activity_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest activity'**
+  String get home_tile_feed_activity_title;
+
+  /// No description provided for @home_tile_feed_activity_text_template.
+  ///
+  /// In en, this message translates to:
+  /// **'{username} shared a winning tip!'**
+  String home_tile_feed_activity_text_template(Object username);
+
+  /// No description provided for @home_tile_feed_activity_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get home_tile_feed_activity_cta;
+
   /// No description provided for @login_title.
   ///
   /// In en, this message translates to:
