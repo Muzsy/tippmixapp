@@ -9,7 +9,7 @@ import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/screens/home_screen.dart';
+import 'package:tippmixapp/screens/home_screen.dart' show HomeScreen, dailyBonusAvailableProvider, latestBadgeProvider;
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/widgets/home/user_stats_header.dart';
 
@@ -44,7 +44,7 @@ void main() {
       ProviderScope(
         overrides: [
           dailyBonusAvailableProvider.overrideWith((ref) => true),
-          newBadgeAvailableProvider.overrideWith((ref) => false),
+          latestBadgeProvider.overrideWith((ref) => Future.value(null)),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
           authProvider.overrideWith(
               (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
@@ -72,6 +72,6 @@ void main() {
 
     expect(find.byType(UserStatsHeader), findsOneWidget);
     expect(find.text('Daily Bonus'), findsOneWidget);
-    expect(find.text('New Badge'), findsNothing);
+    expect(find.text('Badge Earned'), findsNothing);
   });
 }

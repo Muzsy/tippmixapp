@@ -66,6 +66,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_new_badge_title => 'Új jelvény';
 
   @override
+  String get home_tile_badge_earned_title => 'Új jelvényt szereztél';
+
+  @override
+  String get home_tile_badge_earned_cta => 'Megtekintés';
+
+  @override
   String get home_tile_ai_tip_title => 'AI ajánlás';
 
   @override
