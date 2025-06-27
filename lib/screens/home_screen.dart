@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
@@ -8,14 +9,24 @@ import '../widgets/home/user_stats_header.dart';
 import '../widgets/home/home_tile_daily_bonus.dart';
 import '../widgets/home/home_tile_ai_tip.dart';
 import '../widgets/home/home_tile_top_tipster.dart';
+import '../widgets/home/home_tile_badge_earned.dart';
 import '../providers/leaderboard_provider.dart';
 import '../services/ai_tip_provider.dart';
+import '../services/badge_service.dart';
+import '../models/earned_badge_model.dart';
+import '../providers/auth_provider.dart';
+import '../routes/app_route.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
 
 /// Whether a new badge tile should be shown on the home screen.
-final newBadgeAvailableProvider = StateProvider<bool>((ref) => false);
+/// Provides the latest earned badge of the user if any.
+final latestBadgeProvider = FutureProvider<EarnedBadgeModel?>((ref) async {
+  final uid = ref.watch(authProvider).user?.id;
+  if (uid == null) return null;
+  return BadgeService().getLatestBadge(uid);
+});
 
 /// Provides today's AI tip if available.
 final aiTipFutureProvider = FutureProvider<AiTip?>((ref) async {
@@ -45,12 +56,15 @@ class HomeScreen extends ConsumerWidget {
       if (ref.watch(dailyBonusAvailableProvider)) {
         tiles.add(const HomeTileDailyBonus());
       }
-      if (ref.watch(newBadgeAvailableProvider)) {
-        tiles.add(_HomeTile(
-          title: loc.home_tile_new_badge_title,
-          icon: Icons.badge,
-          onTap: () {},
-        ));
+      final earned = ref.watch(latestBadgeProvider).asData?.value;
+      if (earned != null &&
+          DateTime.now().difference(earned.timestamp).inDays <= 3) {
+        tiles.add(
+          HomeTileBadgeEarned(
+            badge: earned,
+            onTap: () => context.goNamed(AppRoute.badges.name),
+          ),
+        );
       }
       body = Column(
         children: [

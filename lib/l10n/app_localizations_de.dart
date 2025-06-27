@@ -66,6 +66,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_new_badge_title => 'Neues Abzeichen';
 
   @override
+  String get home_tile_badge_earned_title => 'Neues Abzeichen erhalten';
+
+  @override
+  String get home_tile_badge_earned_cta => 'Alle anzeigen';
+
+  @override
   String get home_tile_ai_tip_title => 'AI Tipp';
 
   @override
