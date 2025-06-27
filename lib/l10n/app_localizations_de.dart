@@ -94,6 +94,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_top_tipster_cta => 'Tipps anzeigen';
 
   @override
+  String get home_tile_challenge_title => 'Eine Herausforderung wartet!';
+
+  @override
+  String get home_tile_challenge_daily_description => 'Tagesaufgabe: Gewinne heute 3 Wetten.';
+
+  @override
+  String home_tile_challenge_friend_description(Object username) {
+    return '$username hat dich zu einem Wettduell herausgefordert!';
+  }
+
+  @override
+  String get home_tile_challenge_cta_accept => 'Annehmen';
+
+  @override
   String get login_title => 'Anmelden';
 
   @override
