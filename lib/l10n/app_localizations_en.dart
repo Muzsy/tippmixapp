@@ -108,6 +108,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_challenge_cta_accept => 'Accept';
 
   @override
+  String get home_tile_educational_tip_title => 'Betting tip';
+
+  @override
+  String get home_tile_educational_tip_1 => 'Did you know? Combining bets can increase your odds.';
+
+  @override
+  String get home_tile_educational_tip_2 => 'Single bets carry less risk than accumulators.';
+
+  @override
+  String get home_tile_educational_tip_3 => 'Track your betting history to learn from past results.';
+
+  @override
+  String get home_tile_educational_tip_cta => 'More tips';
+
+  @override
   String get login_title => 'Sign In';
 
   @override
