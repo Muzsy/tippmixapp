@@ -259,6 +259,30 @@ abstract class AppLocalizations {
   /// **'View tips'**
   String get home_tile_top_tipster_cta;
 
+  /// No description provided for @home_tile_challenge_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge awaits!'**
+  String get home_tile_challenge_title;
+
+  /// No description provided for @home_tile_challenge_daily_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily challenge: win 3 bets today.'**
+  String get home_tile_challenge_daily_description;
+
+  /// No description provided for @home_tile_challenge_friend_description.
+  ///
+  /// In en, this message translates to:
+  /// **'{username} challenged you to a betting duel!'**
+  String home_tile_challenge_friend_description(Object username);
+
+  /// No description provided for @home_tile_challenge_cta_accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get home_tile_challenge_cta_accept;
+
   /// No description provided for @login_title.
   ///
   /// In en, this message translates to:
