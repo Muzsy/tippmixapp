@@ -59,3 +59,9 @@ Removed unused RewardModel import in rewards_screen.
 Made BadgeScreen constructor const in widget tests.
 Fixed FakeDocumentReference.update signature and cast collection in notification_service_test.
 Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.
+Removed unused _HomeTile widget from home_screen.dart.
+Moved locale lookup before await in home_tile_educational_tip.dart to avoid use_build_context_synchronously.
+Replaced unused underscore parameters in user_stats_header.dart error handler.
+Implemented fetchLatestEntry stub in FakeFeedService for tests.
+Could not find llama_index/data/pubspec.yaml to resolve missing .env asset warning.
+Could not fully fix FakeCollectionReference overrides in challenge_service_test.dart.

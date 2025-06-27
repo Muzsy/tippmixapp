@@ -35,6 +35,7 @@ class FakeQuery extends Fake {
   }
 }
 
+// ignore: subtype_of_sealed_class
 class FakeCollectionReference extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final List<Map<String, dynamic>> store;
