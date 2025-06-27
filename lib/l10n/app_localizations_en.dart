@@ -66,6 +66,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_new_badge_title => 'New Badge';
 
   @override
+  String get home_tile_badge_earned_title => 'Badge Earned';
+
+  @override
+  String get home_tile_badge_earned_cta => 'View all';
+
+  @override
   String get home_tile_ai_tip_title => 'AI Recommendation';
 
   @override
