@@ -115,6 +115,9 @@ class FakeFeedService implements FeedService {
     required String reason,
   }) async {}
 
+  @override
+  Future<FeedModel?> fetchLatestEntry() async => null;
+
   // Add any other members or methods required by FeedService interface here.
 }
 
