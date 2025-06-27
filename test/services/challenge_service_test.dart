@@ -22,10 +22,11 @@ class FakeQuerySnapshot extends Fake
   List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => _docs;
 }
 
-class FakeQuery extends Fake {
+class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
   final List<Map<String, dynamic>> docs;
   FakeQuery(this.docs);
 
+  @override
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) async {
     final snapshots = <FakeQueryDocumentSnapshot>[];
     for (var i = 0; i < docs.length; i++) {
@@ -41,7 +42,20 @@ class FakeCollectionReference extends Fake
   final List<Map<String, dynamic>> store;
   FakeCollectionReference(this.store);
   @override
-  dynamic where(String field, {dynamic isGreaterThan}) {
+  Query<Map<String, dynamic>> where(
+    Object field, {
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    bool? isNull,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+  }) {
     if (field == 'endTime' && isGreaterThan is Timestamp) {
       final filtered = store
           .where((d) => (d['endTime'] as Timestamp).compareTo(isGreaterThan) > 0)
