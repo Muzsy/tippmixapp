@@ -16,7 +16,7 @@ class UserStatsHeader extends ConsumerWidget {
 
     return statsAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stack) => const SizedBox.shrink(),
       data: (list) {
         final idx = user == null ? -1 : list.indexWhere((s) => s.uid == user.id);
         final stats = idx != -1 ? list[idx] : null;
