@@ -42,4 +42,4 @@ void main() {
     await tester.pumpAndSettle();
     expect(tapped, isTrue);
   });
-});
+}

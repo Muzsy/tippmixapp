@@ -49,7 +49,6 @@ class HomeTileChallengePrompt extends ConsumerWidget {
             challenge.username ?? '');
       case ChallengeType.daily:
       case ChallengeType.weekly:
-      default:
         return loc.home_tile_challenge_daily_description;
     }
   }
