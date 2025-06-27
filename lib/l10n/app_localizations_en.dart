@@ -123,6 +123,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_educational_tip_cta => 'More tips';
 
   @override
+  String get home_tile_feed_activity_title => 'Latest activity';
+
+  @override
+  String home_tile_feed_activity_text_template(Object username) {
+    return '$username shared a winning tip!';
+  }
+
+  @override
+  String get home_tile_feed_activity_cta => 'View';
+
+  @override
   String get login_title => 'Sign In';
 
   @override
