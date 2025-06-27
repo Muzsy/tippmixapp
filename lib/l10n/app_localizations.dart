@@ -283,6 +283,36 @@ abstract class AppLocalizations {
   /// **'Accept'**
   String get home_tile_challenge_cta_accept;
 
+  /// No description provided for @home_tile_educational_tip_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Betting tip'**
+  String get home_tile_educational_tip_title;
+
+  /// No description provided for @home_tile_educational_tip_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Did you know? Combining bets can increase your odds.'**
+  String get home_tile_educational_tip_1;
+
+  /// No description provided for @home_tile_educational_tip_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Single bets carry less risk than accumulators.'**
+  String get home_tile_educational_tip_2;
+
+  /// No description provided for @home_tile_educational_tip_3.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your betting history to learn from past results.'**
+  String get home_tile_educational_tip_3;
+
+  /// No description provided for @home_tile_educational_tip_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'More tips'**
+  String get home_tile_educational_tip_cta;
+
   /// No description provided for @login_title.
   ///
   /// In en, this message translates to:
