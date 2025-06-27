@@ -6,12 +6,19 @@ import 'package:tippmixapp/widgets/app_drawer.dart';
 import '../widgets/notification_bell_widget.dart';
 import '../widgets/home/user_stats_header.dart';
 import '../widgets/home/home_tile_daily_bonus.dart';
+import '../widgets/home/home_tile_ai_tip.dart';
+import '../services/ai_tip_provider.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
 
 /// Whether a new badge tile should be shown on the home screen.
 final newBadgeAvailableProvider = StateProvider<bool>((ref) => false);
+
+/// Provides today's AI tip if available.
+final aiTipFutureProvider = FutureProvider<AiTip?>((ref) async {
+  return AiTipProvider().getDailyTip();
+});
 
 class HomeScreen extends ConsumerWidget {
   final Widget child;
@@ -25,6 +32,10 @@ class HomeScreen extends ConsumerWidget {
     Widget body;
     if (showGrid) {
       final tiles = <Widget>[];
+      final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
+      if (aiTip != null) {
+        tiles.add(HomeTileAiTip(tip: aiTip));
+      }
       if (ref.watch(dailyBonusAvailableProvider)) {
         tiles.add(const HomeTileDailyBonus());
       }
