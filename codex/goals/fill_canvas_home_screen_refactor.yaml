@@ -1,0 +1,27 @@
+steps:
+  - name: Grid-alapú főképernyő felépítése
+    description: A home_screen.dart fájl átalakítása úgy, hogy a tartalom egy GridView csemperácsban jelenjen meg, a korábbi listanézet helyett.
+    outputs:
+      - lib/screens/home_screen.dart
+
+  - name: UserStatsHeader komponens beillesztése
+    description: Hozz létre egy új widgetet a felhasználói avatar, TippCoin egyenleg, nyerési arány és ranglista pozíció megjelenítésére, a képernyő tetején.
+    outputs:
+      - lib/widgets/home/user_stats_header.dart
+
+  - name: Csempehelyek dinamikus megjelenítése
+    description: A főképernyőn csak azok a csempék jelenjenek meg, amelyekhez van aktív adat (pl. napi bónusz, aktív kihívás, új badge, stb.).
+    outputs:
+      - lib/screens/home_screen.dart
+
+  - name: Lokalizációs kulcsok bevezetése
+    description: Minden csempehez szükséges szöveges tartalom (title, description, gombfelirat) kulcsainak hozzáadása az ARB fájlokhoz.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget tesztek létrehozása a főképernyőre
+    description: UI teszt létrehozása, amely ellenőrzi, hogy a főbb csempék megjelennek és megfelelően működnek.
+    outputs:
+      - test/screens/home_screen_test.dart
