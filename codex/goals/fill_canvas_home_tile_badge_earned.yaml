@@ -1,0 +1,27 @@
+steps:
+  - name: Új badge csempe widget létrehozása
+    description: Készítsd el a `HomeTileBadgeEarned` widgetet, amely megjeleníti a legfrissebb megszerzett badge-et ikon + szöveg formájában.
+    outputs:
+      - lib/widgets/home/home_tile_badge_earned.dart
+
+  - name: BadgeService lekérdezés integrációja
+    description: Írj lekérdezést a BadgeService-be, amely visszaadja a legfrissebb badge-et és annak timestampjét, hogy csak új jelvény jelenjen meg.
+    outputs:
+      - lib/services/badge_service.dart
+
+  - name: Lokalizáció beillesztése
+    description: A csempe címe és a gombfelirat kerüljön be az ARB fájlokba, minden badge-hez külön kulcs szükséges (title + description).
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget tesztek
+    description: Ellenőrizd, hogy badge megléte esetén a megfelelő ikon, cím és gomb megjelenik, és a navigáció működik.
+    outputs:
+      - test/widgets/home_tile_badge_earned_test.dart
+
+  - name: Integrálás a főképernyőre
+    description: A `HomeTileBadgeEarned` csak akkor jelenjen meg a `home_screen.dart` GridView-jában, ha van új badge az elmúlt 3 napban.
+    outputs:
+      - lib/screens/home_screen.dart
