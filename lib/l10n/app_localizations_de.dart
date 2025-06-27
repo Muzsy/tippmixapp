@@ -123,6 +123,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_educational_tip_cta => 'Mehr Tipps';
 
   @override
+  String get home_tile_feed_activity_title => 'Neueste Aktivität';
+
+  @override
+  String home_tile_feed_activity_text_template(Object username) {
+    return '$username hat einen Gewinn-Tipp geteilt!';
+  }
+
+  @override
+  String get home_tile_feed_activity_cta => 'Ansehen';
+
+  @override
   String get login_title => 'Anmelden';
 
   @override
