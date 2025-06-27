@@ -241,6 +241,24 @@ abstract class AppLocalizations {
   /// **'View details'**
   String get home_tile_ai_tip_cta;
 
+  /// No description provided for @home_tile_top_tipster_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Player of the Day'**
+  String get home_tile_top_tipster_title;
+
+  /// No description provided for @home_tile_top_tipster_description.
+  ///
+  /// In en, this message translates to:
+  /// **'{username} hit all tips in your club today.'**
+  String home_tile_top_tipster_description(Object username);
+
+  /// No description provided for @home_tile_top_tipster_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'View tips'**
+  String get home_tile_top_tipster_cta;
+
   /// No description provided for @login_title.
   ///
   /// In en, this message translates to:

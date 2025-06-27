@@ -83,6 +83,17 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_ai_tip_cta => 'Részletek';
 
   @override
+  String get home_tile_top_tipster_title => 'A nap játékosa';
+
+  @override
+  String home_tile_top_tipster_description(Object username) {
+    return '$username ma 5/5 tippet talált el a klubodban.';
+  }
+
+  @override
+  String get home_tile_top_tipster_cta => 'Megnézem a tippjeit';
+
+  @override
   String get login_title => 'Bejelentkezés';
 
   @override
