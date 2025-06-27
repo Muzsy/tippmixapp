@@ -108,6 +108,21 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_challenge_cta_accept => 'Elfogadom';
 
   @override
+  String get home_tile_educational_tip_title => 'Fogadási tipp';
+
+  @override
+  String get home_tile_educational_tip_1 => 'Tudtad? Kombinált fogadással magasabb oddsszal nyerhetsz.';
+
+  @override
+  String get home_tile_educational_tip_2 => 'Egyszerűbb fogadással kisebb a kockázat.';
+
+  @override
+  String get home_tile_educational_tip_3 => 'Vezesd a fogadási naplód, hogy tanulhass a múltból.';
+
+  @override
+  String get home_tile_educational_tip_cta => 'További tippek';
+
+  @override
   String get login_title => 'Bejelentkezés';
 
   @override
