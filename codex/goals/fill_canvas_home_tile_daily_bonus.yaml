@@ -1,0 +1,27 @@
+steps:
+  - name: Napi bónusz csempe widget létrehozása
+    description: Készíts egy `HomeTileDailyBonus` nevű widgetet, amely megjeleníti a napi bónusz állapotát, és lehetővé teszi a felhasználó számára, hogy begyűjtse azt.
+    outputs:
+      - lib/widgets/home/home_tile_daily_bonus.dart
+
+  - name: CoinService integráció
+    description: A widget használja a CoinService `hasClaimedToday()` és `claimDailyBonus()` metódusait a státusz megjelenítéséhez és a bónusz begyűjtéséhez.
+    outputs:
+      - lib/services/coin_service.dart
+
+  - name: Lokalizáció bevezetése
+    description: A csempe szövegeihez új lokalizációs kulcsokat kell hozzáadni az összes ARB fájlhoz (hu, en, de).
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt a csempére
+    description: Teszteld a `HomeTileDailyBonus` viselkedését, különösen az állapotváltást, amikor a bónusz begyűjtésre kerül.
+    outputs:
+      - test/widgets/home_tile_daily_bonus_test.dart
+
+  - name: Csempe integrálása a főképernyőre
+    description: A `HomeTileDailyBonus` widget megjelenítése a `home_screen.dart` GridView-jában, feltételesen, ha a napi bónusz elérhető.
+    outputs:
+      - lib/screens/home_screen.dart
