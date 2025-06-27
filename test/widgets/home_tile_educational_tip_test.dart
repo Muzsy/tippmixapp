@@ -34,12 +34,13 @@ class FakeRandom implements Random {
 }
 
 void main() {
-  const jsonData = '{"tips":['
-      '{"id":"tip_1","en":"e1","hu":"h1","de":"d1"},'
-      '{"id":"tip_2","en":"e2","hu":"h2","de":"d2"},'
-      '{"id":"tip_3","en":"e3","hu":"h3","de":"d3"},'
-      '{"id":"tip_4","en":"e4","hu":"h4","de":"d4"}
-    ]}';
+    const jsonData = '''
+  {"tips":[
+    {"id":"tip_1","en":"e1","hu":"h1","de":"d1"},
+    {"id":"tip_2","en":"e2","hu":"h2","de":"d2"},
+    {"id":"tip_3","en":"e3","hu":"h3","de":"d3"},
+    {"id":"tip_4","en":"e4","hu":"h4","de":"d4"}
+  ]}''';
 
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized()
