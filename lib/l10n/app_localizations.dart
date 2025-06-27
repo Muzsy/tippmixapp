@@ -211,6 +211,18 @@ abstract class AppLocalizations {
   /// **'New Badge'**
   String get home_tile_new_badge_title;
 
+  /// No description provided for @home_tile_badge_earned_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge Earned'**
+  String get home_tile_badge_earned_title;
+
+  /// No description provided for @home_tile_badge_earned_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get home_tile_badge_earned_cta;
+
   /// No description provided for @home_tile_ai_tip_title.
   ///
   /// In en, this message translates to:

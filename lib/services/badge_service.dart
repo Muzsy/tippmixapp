@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../config/badge_config.dart';
 import '../models/badge.dart';
+import '../models/earned_badge_model.dart';
 import '../models/user_stats_model.dart';
 
 /// Service responsible for evaluating and assigning badges to a user.
@@ -63,5 +64,25 @@ class BadgeService {
         });
       }
     }
+  }
+
+  /// Returns the latest earned badge for [userId] with timestamp.
+  Future<EarnedBadgeModel?> getLatestBadge(String userId) async {
+    final badgesRef =
+        _firestore.collection('users').doc(userId).collection('badges');
+    final snap = await badgesRef
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+    if (snap.docs.isEmpty) return null;
+    final doc = snap.docs.first;
+    final key = doc.id;
+    final data = badgeConfigs.firstWhere(
+      (b) => b.key == key,
+      orElse: () => throw ArgumentError('unknown badge: $key'),
+    );
+    final ts = doc.data()['timestamp'];
+    if (ts is! Timestamp) return null;
+    return EarnedBadgeModel(badge: data, timestamp: ts.toDate());
   }
 }

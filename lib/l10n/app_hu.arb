@@ -18,6 +18,8 @@
   "home_tile_daily_bonus_collect": "Begyűjtés",
   "home_tile_daily_bonus_claimed": "Begyűjtve",
   "home_tile_new_badge_title": "Új jelvény",
+  "home_tile_badge_earned_title": "Új jelvényt szereztél",
+  "home_tile_badge_earned_cta": "Megtekintés",
   "home_tile_ai_tip_title": "AI ajánlás",
   "home_tile_ai_tip_description": "AI szerint ma a {team} győzelme a legvalószínűbb ({percent}%).",
   "home_tile_ai_tip_cta": "Részletek",

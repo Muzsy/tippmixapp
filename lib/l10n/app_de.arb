@@ -18,6 +18,8 @@
   "home_tile_daily_bonus_collect": "Einsammeln",
   "home_tile_daily_bonus_claimed": "Eingesammelt",
   "home_tile_new_badge_title": "Neues Abzeichen",
+  "home_tile_badge_earned_title": "Neues Abzeichen erhalten",
+  "home_tile_badge_earned_cta": "Alle anzeigen",
   "home_tile_ai_tip_title": "AI Tipp",
   "home_tile_ai_tip_description": "Laut KI ist heute ein Sieg von {team} am wahrscheinlichsten ({percent}%).",
   "home_tile_ai_tip_cta": "Details anzeigen",
