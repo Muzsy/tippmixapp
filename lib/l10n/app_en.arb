@@ -18,6 +18,8 @@
   "home_tile_daily_bonus_collect": "Collect",
   "home_tile_daily_bonus_claimed": "Collected",
   "home_tile_new_badge_title": "New Badge",
+  "home_tile_badge_earned_title": "Badge Earned",
+  "home_tile_badge_earned_cta": "View all",
   "home_tile_ai_tip_title": "AI Recommendation",
   "home_tile_ai_tip_description": "According to AI, {team} is most likely to win today ({percent}%).",
   "home_tile_ai_tip_cta": "View details",
