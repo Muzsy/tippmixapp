@@ -7,6 +7,7 @@ import 'package:tippmixapp/widgets/app_drawer.dart';
 import '../widgets/notification_bell_widget.dart';
 import '../widgets/home/user_stats_header.dart';
 import '../widgets/home/home_tile_daily_bonus.dart';
+import '../widgets/home/home_tile_educational_tip.dart';
 import '../widgets/home/home_tile_ai_tip.dart';
 import '../widgets/home/home_tile_top_tipster.dart';
 import '../widgets/home/home_tile_badge_earned.dart';
@@ -55,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
     Widget body;
     if (showGrid) {
       final tiles = <Widget>[];
+      tiles.add(const HomeTileEducationalTip());
       final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
       final topTipster = ref.watch(topTipsterProvider).asData?.value;
       final challenges = ref.watch(activeChallengesProvider).asData?.value;

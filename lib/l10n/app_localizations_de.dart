@@ -108,6 +108,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_challenge_cta_accept => 'Annehmen';
 
   @override
+  String get home_tile_educational_tip_title => 'Wetttipp';
+
+  @override
+  String get home_tile_educational_tip_1 => 'Wusstest du? Mit Kombiwetten kannst du höhere Quoten erzielen.';
+
+  @override
+  String get home_tile_educational_tip_2 => 'Einzelwetten sind risikoärmer als Kombis.';
+
+  @override
+  String get home_tile_educational_tip_3 => 'Führe ein Wettprotokoll, um aus vergangenen Ergebnissen zu lernen.';
+
+  @override
+  String get home_tile_educational_tip_cta => 'Mehr Tipps';
+
+  @override
   String get login_title => 'Anmelden';
 
   @override
