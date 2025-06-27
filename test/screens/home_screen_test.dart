@@ -43,8 +43,8 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          dailyBonusAvailableProvider.overrideWith((ref) => StateController(true)),
-          newBadgeAvailableProvider.overrideWith((ref) => StateController(false)),
+          dailyBonusAvailableProvider.overrideWith((ref) => true),
+          newBadgeAvailableProvider.overrideWith((ref) => false),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
           authProvider.overrideWith(
               (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
