@@ -7,6 +7,8 @@ import '../widgets/notification_bell_widget.dart';
 import '../widgets/home/user_stats_header.dart';
 import '../widgets/home/home_tile_daily_bonus.dart';
 import '../widgets/home/home_tile_ai_tip.dart';
+import '../widgets/home/home_tile_top_tipster.dart';
+import '../providers/leaderboard_provider.dart';
 import '../services/ai_tip_provider.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
@@ -33,8 +35,12 @@ class HomeScreen extends ConsumerWidget {
     if (showGrid) {
       final tiles = <Widget>[];
       final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
+      final topTipster = ref.watch(topTipsterProvider).asData?.value;
       if (aiTip != null) {
         tiles.add(HomeTileAiTip(tip: aiTip));
+      }
+      if (topTipster != null) {
+        tiles.add(HomeTileTopTipster(stats: topTipster));
       }
       if (ref.watch(dailyBonusAvailableProvider)) {
         tiles.add(const HomeTileDailyBonus());
