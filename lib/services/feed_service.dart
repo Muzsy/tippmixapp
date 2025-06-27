@@ -64,4 +64,15 @@ class FeedService {
             .map((doc) => FeedModel.fromJson(doc.data()))
             .toList());
   }
+
+  /// Fetches the latest feed entry if any exist.
+  Future<FeedModel?> fetchLatestEntry() async {
+    final snap = await _firestore
+        .collection('public_feed')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+    if (snap.docs.isEmpty) return null;
+    return FeedModel.fromJson(snap.docs.first.data());
+  }
 }
