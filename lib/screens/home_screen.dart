@@ -1,15 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
-
 import '../widgets/notification_bell_widget.dart';
-class HomeScreen extends StatelessWidget {
+import '../widgets/home/user_stats_header.dart';
+
+/// Whether the daily bonus tile should be shown on the home screen.
+final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
+
+/// Whether a new badge tile should be shown on the home screen.
+final newBadgeAvailableProvider = StateProvider<bool>((ref) => false);
+
+class HomeScreen extends ConsumerWidget {
   final Widget child;
   const HomeScreen({super.key, required this.child});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context)!;
+    final showGrid = child is SizedBox;
+
+    Widget body;
+    if (showGrid) {
+      final tiles = <Widget>[];
+      if (ref.watch(dailyBonusAvailableProvider)) {
+        tiles.add(_HomeTile(
+          title: loc.home_tile_daily_bonus_title,
+          icon: Icons.card_giftcard,
+          onTap: () {},
+        ));
+      }
+      if (ref.watch(newBadgeAvailableProvider)) {
+        tiles.add(_HomeTile(
+          title: loc.home_tile_new_badge_title,
+          icon: Icons.badge,
+          onTap: () {},
+        ));
+      }
+      body = Column(
+        children: [
+          const UserStatsHeader(),
+          Expanded(
+            child: GridView.count(
+              padding: const EdgeInsets.all(16),
+              crossAxisCount: 2,
+              childAspectRatio: 1.4,
+              children: tiles,
+            ),
+          ),
+        ],
+      );
+    } else {
+      body = child;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -19,14 +64,38 @@ class HomeScreen extends StatelessWidget {
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
         ),
-        title: Text(AppLocalizations.of(context)!.home_title),
-        actions: const [
-          NotificationBellWidget(),
-        ],
+        title: Text(loc.home_title),
+        actions: const [NotificationBellWidget()],
       ),
       drawer: const AppDrawer(),
-      body: child,
+      body: body,
       bottomNavigationBar: const MyBottomNavigationBar(),
+    );
+  }
+}
+
+class _HomeTile extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback? onTap;
+  const _HomeTile({required this.title, required this.icon, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 48),
+              const SizedBox(height: 8),
+              Text(title, textAlign: TextAlign.center),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

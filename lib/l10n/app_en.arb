@@ -14,6 +14,8 @@
   "home_highlight_tip": "Daily Tip: Bayern wins",
   "home_highlight_motivation": "Motivation: Try a new strategy!",
   "home_highlight_coin": "TippCoin: Earn extra coins with activity!",
+  "home_tile_daily_bonus_title": "Daily Bonus",
+  "home_tile_new_badge_title": "New Badge",
   "login_title": "Sign In",
   "login_tab": "Login",
   "register_tab": "Register",
