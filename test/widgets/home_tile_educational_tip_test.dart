@@ -5,11 +5,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/home/home_tile_educational_tip.dart';
 
-class FakeRandom extends Random {
+class FakeRandom implements Random {
   final int value;
   FakeRandom(this.value);
+
   @override
   int nextInt(int max) => value % max;
+
+  @override
+  double nextDouble() => value.toDouble();
+
+  @override
+  bool nextBool() => value.isEven;
+
+  // The following methods are required by the Random interface in Dart SDK >=2.17
+
+  // Not an override in Random, just a helper for testing
+  double nextDoubleInRange(double min, double max) => min + (value.toDouble() % (max - min));
+
+  int nextSign() => value.isEven ? 1 : -1;
+
+  double nextExponential() {
+    // Provide a simple fake implementation
+    return value.toDouble();
+  }
 }
 
 void main() {

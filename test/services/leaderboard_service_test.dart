@@ -36,6 +36,6 @@ void main() {
     final result = await service.fetchTopTipster();
 
     expect(result, isNotNull);
-    expect(result!.uid, 'u1');
+  expect(result!.uid, 'u1');
   });
-});
+}

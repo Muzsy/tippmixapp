@@ -97,7 +97,7 @@ class CoinService {
         'transactionId': transactionId,
       });
       final data = result.data;
-      if (data is! Map || data['success'] != true) {
+      if (data['success'] != true) {
         throw FirebaseFunctionsException(
           code: 'unknown',
           message: 'coin_trx failed',
