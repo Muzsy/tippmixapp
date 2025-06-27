@@ -1,0 +1,22 @@
+steps:
+  - name: Oktató tippcsempe létrehozása
+    description: Készíts egy `HomeTileEducationalTip` nevű widgetet, amely megjelenít egy edukációs szöveget véletlenszerűen egy előre definiált listából.
+    outputs:
+      - lib/widgets/home/home_tile_educational_tip.dart
+
+  - name: Szövegkészlet lokalizációja
+    description: Helyezz el 3–5 edukációs tippet az ARB fájlokba minden nyelvre, kulcsonként elkülönítve (tip_1, tip_2, tip_3...)
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt létrehozása
+    description: Teszteld, hogy minden edukációs szöveg megfelelően jelenik meg, és a véletlenszerű megjelenítés működik.
+    outputs:
+      - test/widgets/home_tile_educational_tip_test.dart
+
+  - name: Főképernyőre integrálás
+    description: A `HomeTileEducationalTip` csempe fixen megjelenhet a `home_screen.dart` csempéi között, nem feltételesen.
+    outputs:
+      - lib/screens/home_screen.dart
