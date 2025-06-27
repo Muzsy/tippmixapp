@@ -94,6 +94,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_top_tipster_cta => 'Megnézem a tippjeit';
 
   @override
+  String get home_tile_challenge_title => 'Kihívás vár rád!';
+
+  @override
+  String get home_tile_challenge_daily_description => 'Napi kihívás: nyerj ma 3 fogadást.';
+
+  @override
+  String home_tile_challenge_friend_description(Object username) {
+    return '$username kihívott egy tipppárbajra!';
+  }
+
+  @override
+  String get home_tile_challenge_cta_accept => 'Elfogadom';
+
+  @override
   String get login_title => 'Bejelentkezés';
 
   @override
