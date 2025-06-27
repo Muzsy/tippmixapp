@@ -1,0 +1,27 @@
+steps:
+  - name: AI tippajánló csempe widget létrehozása
+    description: Hozz létre egy `HomeTileAiTip` nevű widgetet, amely megjeleníti az AI által generált napi ajánlást, és opcionálisan részletező oldalra navigál.
+    outputs:
+      - lib/widgets/home/home_tile_ai_tip.dart
+
+  - name: AiTipProvider logika integrálása
+    description: Készíts egy `AiTipProvider` szolgáltatást, amely egy adott napon belül egyszer ad vissza AI tippet statisztikák és odds-adatok alapján.
+    outputs:
+      - lib/services/ai_tip_provider.dart
+
+  - name: Lokalizáció bevezetése a csempéhez
+    description: Az ARB fájlokban rögzítsd a szükséges kulcsokat a cím, leírás és CTA gomb szövegéhez.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt AI ajánló csempére
+    description: Teszteld, hogy az ajánlás csak akkor jelenik meg, ha a szolgáltatás ad vissza értelmes adatot. Ellenőrizd a CTA működését is.
+    outputs:
+      - test/widgets/home_tile_ai_tip_test.dart
+
+  - name: Csempe beillesztése a főképernyőre
+    description: A `HomeTileAiTip` feltételesen jelenjen meg a `home_screen.dart` csempéi között, ha elérhető ajánlás van.
+    outputs:
+      - lib/screens/home_screen.dart
