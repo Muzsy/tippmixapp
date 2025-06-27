@@ -1,4 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
@@ -50,6 +52,35 @@ class CoinService {
       transactionId: transactionId,
     );
   }
+
+  /// Check if the current user has already claimed today's bonus.
+  Future<bool> hasClaimedToday({
+    FirebaseAuth? auth,
+    FirebaseFirestore? firestore,
+  }) async {
+    final user = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+    if (user == null) return true;
+
+    final db = firestore ?? FirebaseFirestore.instance;
+    final start = DateTime.now();
+    final startOfDay = DateTime(start.year, start.month, start.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final query = await db
+        .collection('users')
+        .doc(user.uid)
+        .collection('coin_logs')
+        .where('reason', isEqualTo: 'daily_bonus')
+        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .where('timestamp', isLessThan: Timestamp.fromDate(endOfDay))
+        .limit(1)
+        .get();
+
+    return query.docs.isNotEmpty;
+  }
+
+  /// Claim today's daily bonus for the authenticated user.
+  Future<void> claimDailyBonus() => creditDailyBonus();
 
   Future<void> _callCoinTrx({
     required int amount,
