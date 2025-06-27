@@ -127,12 +127,6 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get home_nav_profile;
 
-  /// No description provided for @bottom_nav_feed.
-  ///
-  /// In en, this message translates to:
-  /// **'Feed'**
-  String get bottom_nav_feed;
-
   /// No description provided for @home_nav_stats.
   ///
   /// In en, this message translates to:
@@ -192,6 +186,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TippCoin: Earn extra coins with activity!'**
   String get home_highlight_coin;
+
+  /// No description provided for @home_tile_daily_bonus_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Bonus'**
+  String get home_tile_daily_bonus_title;
+
+  /// No description provided for @home_tile_daily_bonus_collect.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect'**
+  String get home_tile_daily_bonus_collect;
+
+  /// No description provided for @home_tile_daily_bonus_claimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get home_tile_daily_bonus_claimed;
+
+  /// No description provided for @home_tile_new_badge_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New Badge'**
+  String get home_tile_new_badge_title;
+
+  /// No description provided for @home_tile_ai_tip_title.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendation'**
+  String get home_tile_ai_tip_title;
+
+  /// No description provided for @home_tile_ai_tip_description.
+  ///
+  /// In en, this message translates to:
+  /// **'According to AI, {team} is most likely to win today ({percent}%).'**
+  String home_tile_ai_tip_description(Object percent, Object team);
+
+  /// No description provided for @home_tile_ai_tip_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get home_tile_ai_tip_cta;
 
   /// No description provided for @login_title.
   ///
@@ -642,6 +678,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feed'**
   String get drawer_feed;
+
+  /// No description provided for @bottom_nav_feed.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get bottom_nav_feed;
 
   /// No description provided for @settings_title.
   ///

@@ -1,0 +1,28 @@
+steps:
+  - name: Top tipster csempe widget létrehozása
+    description: Hozz létre egy `HomeTileTopTipster` nevű widgetet, amely megjeleníti a klub/liga aktuális legjobb tippelőjét, avatarral, névvel és statisztikával.
+    outputs:
+      - lib/widgets/home/home_tile_top_tipster.dart
+
+  - name: LeaderboardService / KlubService integráció
+    description: A widget kapcsolódjon a megfelelő szolgáltatáshoz, amely az adott klub legjobb tippmestereit listázza napi/heti bontásban.
+    outputs:
+      - lib/services/leaderboard_service.dart
+      - lib/services/club_service.dart
+
+  - name: Lokalizáció hozzáadása
+    description: A szövegekhez szükséges kulcsokat vezessük be az összes lokalizációs fájlban (hu, en, de).
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt létrehozása top tipster csempére
+    description: Teszteld, hogy megfelelő adat esetén helyesen jelenik meg a csempe, avatarral, névvel és a statisztikai szöveggel.
+    outputs:
+      - test/widgets/home_tile_top_tipster_test.dart
+
+  - name: Integráció a főképernyőre
+    description: A `HomeTileTopTipster` csak akkor jelenjen meg a főképernyőn, ha a klubban/liga környezetben van elérhető top játékos.
+    outputs:
+      - lib/screens/home_screen.dart

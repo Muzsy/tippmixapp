@@ -21,6 +21,8 @@ void main() {
   testWidgets('renders tip and handles CTA', (tester) async {
     var tapped = false;
     final provider = FakeAiTipProvider(AiTip(team: 'Bayern', percent: 78));
+    final tip = await provider.getDailyTip();
+    expect(tip, isNotNull);
 
     await tester.pumpWidget(
       ProviderScope(
@@ -30,7 +32,7 @@ void main() {
           locale: const Locale('en'),
           home: Scaffold(
             body: HomeTileAiTip(
-              tip: await provider.getDailyTip()!,
+              tip: tip!,
               onTap: () => tapped = true,
             ),
           ),

@@ -24,9 +24,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_nav_profile => 'Profil';
 
   @override
-  String get bottom_nav_feed => 'Hírfolyam';
-
-  @override
   String get home_nav_stats => 'Statisztika';
 
   @override
@@ -55,6 +52,29 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get home_highlight_coin => 'TippCoin: Nyerj extra coinokat aktivitással!';
+
+  @override
+  String get home_tile_daily_bonus_title => 'Napi bónusz';
+
+  @override
+  String get home_tile_daily_bonus_collect => 'Begyűjtés';
+
+  @override
+  String get home_tile_daily_bonus_claimed => 'Begyűjtve';
+
+  @override
+  String get home_tile_new_badge_title => 'Új jelvény';
+
+  @override
+  String get home_tile_ai_tip_title => 'AI ajánlás';
+
+  @override
+  String home_tile_ai_tip_description(Object percent, Object team) {
+    return 'AI szerint ma a $team győzelme a legvalószínűbb ($percent%).';
+  }
+
+  @override
+  String get home_tile_ai_tip_cta => 'Részletek';
 
   @override
   String get login_title => 'Bejelentkezés';
@@ -282,6 +302,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get drawer_feed => 'Hírfolyam';
+
+  @override
+  String get bottom_nav_feed => 'Hírfolyam';
 
   @override
   String get settings_title => 'Beállítások';
