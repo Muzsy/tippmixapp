@@ -1,0 +1,27 @@
+steps:
+  - name: Feed aktivitás csempe létrehozása
+    description: Hozz létre egy `HomeTileFeedActivity` nevű widgetet, amely megjeleníti a FeedService-ből származó legfrissebb közösségi eseményt.
+    outputs:
+      - lib/widgets/home/home_tile_feed_activity.dart
+
+  - name: FeedService lekérdezés
+    description: Lekérdezés készítése, amely visszaadja a legfrissebb feed posztot (komment, megosztás, nyertes tipp, stb.).
+    outputs:
+      - lib/services/feed_service.dart
+
+  - name: Lokalizáció hozzáadása
+    description: Szövegkulcsok bevezetése a csempe címéhez, szöveg sablonjához és CTA gombhoz.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget tesztek
+    description: Tesztelni kell, hogy megjelenik-e a feed esemény, a CTA gomb megfelelően működik, és hiány esetén a csempe nem jelenik meg.
+    outputs:
+      - test/widgets/home_tile_feed_activity_test.dart
+
+  - name: Integrálás a főképernyőre
+    description: A `HomeTileFeedActivity` csak akkor jelenjen meg a főképernyőn, ha a FeedService friss eseményt biztosít.
+    outputs:
+      - lib/screens/home_screen.dart
