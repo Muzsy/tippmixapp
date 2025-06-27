@@ -83,6 +83,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_ai_tip_cta => 'View details';
 
   @override
+  String get home_tile_top_tipster_title => 'Player of the Day';
+
+  @override
+  String home_tile_top_tipster_description(Object username) {
+    return '$username hit all tips in your club today.';
+  }
+
+  @override
+  String get home_tile_top_tipster_cta => 'View tips';
+
+  @override
   String get login_title => 'Sign In';
 
   @override

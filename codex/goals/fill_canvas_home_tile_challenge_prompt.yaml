@@ -1,0 +1,27 @@
+steps:
+  - name: Kihívás csempe widget létrehozása
+    description: Hozz létre egy `HomeTileChallengePrompt` nevű widgetet, amely aktív napi, heti vagy baráti kihívásokat jelenít meg.
+    outputs:
+      - lib/widgets/home/home_tile_challenge_prompt.dart
+
+  - name: ChallengeService integráció
+    description: A csempe kapcsolódjon a ChallengeService-hez, és kérje le a releváns (még aktív) kihívásokat a felhasználó számára.
+    outputs:
+      - lib/services/challenge_service.dart
+
+  - name: Lokalizáció hozzáadása
+    description: A csempe szövegeihez szükséges kulcsokat vidd fel a három ARB fájlba, a napi/baráti kihívások szövegeivel együtt.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Widget teszt a kihívás csempére
+    description: Teszteld a `HomeTileChallengePrompt` widget megjelenését különböző típusú kihívások esetén, valamint a CTA gomb működését.
+    outputs:
+      - test/widgets/home_tile_challenge_prompt_test.dart
+
+  - name: Integrálás a főképernyőre
+    description: A `HomeTileChallengePrompt` csak akkor jelenjen meg a GridView-ban, ha legalább egy aktív kihívás elérhető a ChallengeService szerint.
+    outputs:
+      - lib/screens/home_screen.dart
