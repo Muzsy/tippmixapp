@@ -24,9 +24,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_nav_profile => 'Profile';
 
   @override
-  String get bottom_nav_feed => 'Feed';
-
-  @override
   String get home_nav_stats => 'Stats';
 
   @override
@@ -55,6 +52,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get home_highlight_coin => 'TippCoin: Earn extra coins with activity!';
+
+  @override
+  String get home_tile_daily_bonus_title => 'Daily Bonus';
+
+  @override
+  String get home_tile_daily_bonus_collect => 'Collect';
+
+  @override
+  String get home_tile_daily_bonus_claimed => 'Collected';
+
+  @override
+  String get home_tile_new_badge_title => 'New Badge';
+
+  @override
+  String get home_tile_ai_tip_title => 'AI Recommendation';
+
+  @override
+  String home_tile_ai_tip_description(Object percent, Object team) {
+    return 'According to AI, $team is most likely to win today ($percent%).';
+  }
+
+  @override
+  String get home_tile_ai_tip_cta => 'View details';
 
   @override
   String get login_title => 'Sign In';
@@ -282,6 +302,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawer_feed => 'Feed';
+
+  @override
+  String get bottom_nav_feed => 'Feed';
 
   @override
   String get settings_title => 'Settings';
