@@ -94,6 +94,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_top_tipster_cta => 'View tips';
 
   @override
+  String get home_tile_challenge_title => 'Challenge awaits!';
+
+  @override
+  String get home_tile_challenge_daily_description => 'Daily challenge: win 3 bets today.';
+
+  @override
+  String home_tile_challenge_friend_description(Object username) {
+    return '$username challenged you to a betting duel!';
+  }
+
+  @override
+  String get home_tile_challenge_cta_accept => 'Accept';
+
+  @override
   String get login_title => 'Sign In';
 
   @override
