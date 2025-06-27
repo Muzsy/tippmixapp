@@ -15,6 +15,8 @@
   "home_highlight_motivation": "Motiváció: Próbálj ki egy új stratégiát!",
   "home_highlight_coin": "TippCoin: Nyerj extra coinokat aktivitással!",
   "home_tile_daily_bonus_title": "Napi bónusz",
+  "home_tile_daily_bonus_collect": "Begyűjtés",
+  "home_tile_daily_bonus_claimed": "Begyűjtve",
   "home_tile_new_badge_title": "Új jelvény",
   "login_title": "Bejelentkezés",
   "login_tab": "Belépés",
