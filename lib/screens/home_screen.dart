@@ -5,6 +5,7 @@ import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
 import '../widgets/notification_bell_widget.dart';
 import '../widgets/home/user_stats_header.dart';
+import '../widgets/home/home_tile_daily_bonus.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -25,11 +26,7 @@ class HomeScreen extends ConsumerWidget {
     if (showGrid) {
       final tiles = <Widget>[];
       if (ref.watch(dailyBonusAvailableProvider)) {
-        tiles.add(_HomeTile(
-          title: loc.home_tile_daily_bonus_title,
-          icon: Icons.card_giftcard,
-          onTap: () {},
-        ));
+        tiles.add(const HomeTileDailyBonus());
       }
       if (ref.watch(newBadgeAvailableProvider)) {
         tiles.add(_HomeTile(
