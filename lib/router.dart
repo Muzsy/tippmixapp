@@ -55,7 +55,7 @@ final GoRouter router = GoRouter(
           path: '/profile',
           name: AppRoute.profile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const ProfileScreen(),
+            child: const ProfileScreen(showAppBar: false),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -64,7 +64,7 @@ final GoRouter router = GoRouter(
           path: '/bets',
           name: AppRoute.bets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const EventsScreen(sportKey: 'soccer'),
+            child: const EventsScreen(sportKey: 'soccer', showAppBar: false),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -73,7 +73,7 @@ final GoRouter router = GoRouter(
           path: '/my-tickets',
           name: AppRoute.myTickets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const MyTicketsScreen(),
+            child: const MyTicketsScreen(showAppBar: false),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -82,7 +82,7 @@ final GoRouter router = GoRouter(
           name: AppRoute.feed.name,
           path: '/feed',
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const FeedScreen(),
+            child: const FeedScreen(showAppBar: false),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
