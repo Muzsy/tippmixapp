@@ -92,7 +92,7 @@ void main() {
       ProviderScope(
         overrides: [
           dailyBonusAvailableProvider.overrideWith(
-            (ref) => StateController<bool>(true),
+            (ref) => true,
           ),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
