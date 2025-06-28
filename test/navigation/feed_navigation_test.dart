@@ -64,7 +64,7 @@ class TestOddsApiProvider extends OddsApiProvider {
 void main() {
   testWidgets('navigate to Feed via bottom nav and drawer', (tester) async {
     final router = GoRouter(
-      initialLocation: '/',
+      initialLocation: '/events',
       routes: [
         ShellRoute(
           builder: (context, state, child) => HomeScreen(child: child),
@@ -75,9 +75,9 @@ void main() {
               builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
             ),
             GoRoute(
-              path: '/feed',
-              name: AppRoute.feed.name,
-              builder: (context, state) => const FeedScreen(),
+              path: '/events',
+              name: AppRoute.events.name,
+              builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
             ),
           ],
         ),
@@ -131,7 +131,7 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.dynamic_feed));
     await tester.pumpAndSettle();
-    expect(find.byType(FeedScreen), findsOneWidget);
+    expect(find.byType(EventsScreen), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.home));
     await tester.pumpAndSettle();
@@ -141,6 +141,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, 'Feed'));
     await tester.pumpAndSettle();
-    expect(find.byType(FeedScreen), findsOneWidget);
+    expect(find.byType(EventsScreen), findsOneWidget);
   });
 }

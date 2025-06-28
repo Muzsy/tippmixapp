@@ -9,9 +9,8 @@ class MyBottomNavigationBar extends StatelessWidget {
   int _getSelectedIndex(BuildContext context) {
     final state = GoRouterState.of(context);
     final location = state.uri.toString();
-    if (location == '/profile') return 1;
-    if (location == '/my-tickets') return 2;
-    if (location == '/feed') return 3;
+    if (location == '/events') return 1;
+    if (location == '/profile') return 2;
     return 0; // alap: főoldal
   }
 
@@ -20,9 +19,8 @@ class MyBottomNavigationBar extends StatelessWidget {
     if (router == null) return;
     final routeNames = [
       AppRoute.home.name,
+      AppRoute.events.name,
       AppRoute.profile.name,
-      AppRoute.myTickets.name,
-      AppRoute.feed.name,
     ];
     if (index < routeNames.length) {
       router.goNamed(routeNames[index]);
@@ -40,16 +38,12 @@ class MyBottomNavigationBar extends StatelessWidget {
           label: AppLocalizations.of(context)!.home_title,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.person),
-          label: AppLocalizations.of(context)!.home_nav_profile,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.receipt_long),
-          label: AppLocalizations.of(context)!.my_tickets_title,
-        ),
-        BottomNavigationBarItem(
           icon: const Icon(Icons.dynamic_feed),
           label: AppLocalizations.of(context)!.bottom_nav_feed,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.person),
+          label: AppLocalizations.of(context)!.home_nav_profile,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,
