@@ -1,0 +1,21 @@
+steps:
+  - name: /feed route kijavítása
+    description: A feed útvonal hibásan az EventsScreen-re mutat. Cseréljük le a definíciót úgy, hogy a FeedScreen jelenjen meg.
+    outputs:
+      - router.dart fájl módosítása: /feed útvonal builder helyett pageBuilder-rel definiáljuk
+      - Új komponens: const FeedScreen()
+
+  - name: Transitions hozzáadása
+    description: A Codex szabályzat szerint minden oldalhoz transzíció animációt kell alkalmazni.
+    outputs:
+      - FadeTransition használata a pageBuilder-ben
+
+  - name: AppRoute enum név rögzítése
+    description: Az AppRoute.feed enum nevét használjuk a név mezőben, hogy biztosítsuk a GoRouter-névre hivatkozás lehetőségét.
+    outputs:
+      - name: AppRoute.feed.name
+
+  - name: Widget teszt (opcionális)
+    description: Tesztet írhatunk annak ellenőrzésére, hogy a FeedScreen megjelenik, ha a felhasználó a /feed route-ra navigál.
+    outputs:
+      - Új widget teszt javasolt: route navigáció FeedScreen-re
