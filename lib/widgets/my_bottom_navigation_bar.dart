@@ -18,19 +18,14 @@ class MyBottomNavigationBar extends StatelessWidget {
   void _onItemTapped(BuildContext context, int index) {
     final router = GoRouter.maybeOf(context);
     if (router == null) return;
-    switch (index) {
-      case 0:
-        router.goNamed(AppRoute.home.name);
-        break;
-      case 1:
-        router.goNamed(AppRoute.profile.name);
-        break;
-      case 2:
-        router.goNamed(AppRoute.myTickets.name);
-        break;
-      case 3:
-        router.goNamed(AppRoute.feed.name);
-        break;
+    final routeNames = [
+      AppRoute.home.name,
+      AppRoute.profile.name,
+      AppRoute.myTickets.name,
+      AppRoute.feed.name,
+    ];
+    if (index < routeNames.length) {
+      router.goNamed(routeNames[index]);
     }
   }
 
