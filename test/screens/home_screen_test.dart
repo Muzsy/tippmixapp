@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
@@ -72,22 +70,6 @@ void main() {
 
   testWidgets('HomeScreen shows tiles based on providers', (tester) async {
     final statsController = StreamController<List<UserStatsModel>>();
-    final router = GoRouter(
-      initialLocation: '/',
-      routes: [
-        ShellRoute(
-          builder: (context, state, child) => HomeScreen(child: child),
-          routes: [
-            GoRoute(
-              path: '/',
-              name: AppRoute.home.name,
-              builder: (context, state) => const SizedBox.shrink(),
-            ),
-          ],
-        ),
-      ],
-    );
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -102,14 +84,15 @@ void main() {
             (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me')),
           ),
         ],
-        child: MaterialApp.router(
-          routerConfig: router,
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
+          locale: Locale('en'),
+          home: HomeScreen(child: SizedBox.shrink()),
         ),
       ),
     );
+
     await tester.pumpAndSettle();
 
     statsController.add([
@@ -122,7 +105,7 @@ void main() {
         winRate: 0.5,
       ),
     ]);
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.byType(UserStatsHeader), findsOneWidget);
     expect(find.text('Daily Bonus'), findsOneWidget);
