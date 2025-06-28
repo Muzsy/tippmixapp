@@ -1,0 +1,53 @@
+inputs:
+  canvas:
+    - canvases/fix_feed_navigation.md
+  rules:
+    - codex_docs/routing_integrity.md
+    - codex_docs/codex_context.yaml
+  docs:
+    - docs/navigation_guidelines.md
+
+steps:
+  - description: Add or fix 'feed' route in GoRouter configuration
+    file: lib/navigation/app_router.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/navigation/app_router.dart
+      @@ routes:
+      -    // existing routes
+      +    GoRoute(
+      +      name: 'feed',
+      +      path: '/feed',
+      +      builder: (context, state) => const EventsScreen(),
+      +    ),
+      *** End Patch
+  - description: Ensure BottomNavigationBar maps index to 'feed' route
+    file: lib/widgets/bottom_nav_bar.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/widgets/bottom_nav_bar.dart
+      @@ onTap: (index) {
+      -       final routeNames = ['home', 'profile'];
+      +       final routeNames = ['home', 'feed', 'profile'];
+      *** End Patch
+  - description: Update Drawer ListTile to navigate to 'feed'
+    file: lib/widgets/app_drawer.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/widgets/app_drawer.dart
+      @@
+      - ListTile(
+      -   leading: Icon(Icons.feed),
+      -   title: Text('Feed'),
+      -   onTap: () => context.go('/'),
+      - ),
+      + ListTile(
+      +   leading: Icon(Icons.rss_feed),
+      +   title: Text('Feed'),
+      +   onTap: () => context.goNamed('feed'),
+      + ),
+      *** End Patch
+outputs:
+  - lib/navigation/app_router.dart
+  - lib/widgets/bottom_nav_bar.dart
+  - lib/widgets/app_drawer.dart
