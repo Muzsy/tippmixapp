@@ -12,7 +12,7 @@ import 'package:tippmixapp/screens/badges/badge_screen.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
-// import 'package:tippmixapp/screens/feed_screen.dart';
+import 'package:tippmixapp/screens/feed_screen.dart';
 import 'routes/app_route.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 
@@ -81,7 +81,11 @@ final GoRouter router = GoRouter(
         GoRoute(
           name: AppRoute.feed.name,
           path: '/feed',
-          builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const FeedScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
         ),
         GoRoute(
           path: '/leaderboard',
