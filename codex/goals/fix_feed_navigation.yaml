@@ -1,38 +1,47 @@
-# Feed Navigation Test Failure Enhanced Fix
+# Feed Navigation Test Failure Fix
 
-**Probléma:** A `feed_navigation_test.dart` teszt továbbra sem találja az `EventsScreen` widgetet, mert az útvonal és a név (route name) nem egyezik a teszt elvárásaival.
+**Probléma:** A `feed_navigation_test.dart` teszt futtatásakor az alábbi hiba jelentkezik:
 
-## Frissített Javítási Lépések
-A `feed` helyett a teszt **`events`** route-ot elvárja.
+```
+Expected: exactly one matching candidate
+Actual: Found 0 widgets with type "EventsScreen"
+```
 
-1. **Útvonal hozzáadása vagy korrigálása** a `lib/navigation/app_router.dart` fájlban:
+A teszt az `EventsScreen` widget megjelenését várja, amikor a felhasználó a "Feed" menüpontra navigál alul található navigációs sávon vagy a drawer-en keresztül.
+
+## Javítási lépések
+
+1. **Útvonal hozzáadása/korrigálása** a `lib/navigation/app_router.dart` fájlban:
    ```dart
    GoRoute(
-     name: 'events',    // route név: 'events'
-     path: '/events',    // útvonal: '/events'
+     name: 'feed',
+     path: '/feed',
      builder: (context, state) => const EventsScreen(),
    ),
    ```
-
 2. **BottomNavigationBar mapping frissítése** a `lib/widgets/bottom_nav_bar.dart` fájlban:
    ```dart
-   onTap: (index) {
-     // Index 0: Home, 1: Events, 2: Profile
-     final routeNames = ['home', 'events', 'profile'];
-     context.goNamed(routeNames[index]);
-   },
+   BottomNavigationBar(
+     currentIndex: _selectedIndex,
+     onTap: (index) {
+       final routeNames = ['home', 'feed', 'profile'];
+       context.goNamed(routeNames[index]);
+     },
+     items: const [
+       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+       BottomNavigationBarItem(icon: Icon(Icons.rss_feed), label: 'Feed'),
+       BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+     ],
+   )
    ```
-
 3. **Drawer ListTile módosítása** a `lib/widgets/app_drawer.dart` fájlban:
    ```dart
    ListTile(
      leading: const Icon(Icons.rss_feed),
      title: const Text('Feed'),
-     onTap: () => context.goNamed('events'),  // nevezd át a route nevet
+     onTap: () => context.goNamed('feed'),
    ),
    ```
+4. **Tesztbeállítás ellenőrzése:** Győződj meg róla, hogy a `initialLocation: '/feed'` szerepel a teszt setup-jában.
 
-4. **Tesztbeállítás ellenőrzése:** Győződj meg róla, hogy a `initialLocation: '/events'` szerepel, amikor a teszt navigációs kezdetet állítja be.
-
----
-Ezzel az `EventsScreen` widget a `/events` URL-en és az `events` route-n keresztül jelenik meg, így a `navigate to Feed via bottom nav and drawer` teszt is sikeresen megtalálja a megfelelő widgetet.
+Ezekkel a lépésekkel az `EventsScreen` a `/feed` útvonalon jelenik meg, és a teszt sikeresen megtalálja a megfelelő widgetet.
