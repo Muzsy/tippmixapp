@@ -1,0 +1,27 @@
+steps:
+  - name: Aktuális útvonal lekérdezése
+    description: A HomeScreen constructorban már elérhető a GoRouterState state paraméter. Használjuk annak .uri.path mezőjét az aktuális route meghatározására.
+    outputs:
+      - final currentPath = state.uri.path;
+
+  - name: Cím logika bevezetése
+    description: Készítsünk egy switch vagy map alapú logikát, amely az aktuális route-hoz hozzárendeli a megfelelő lokalizált címet.
+    outputs:
+      - '/' => 'TippmixApp'
+      - '/feed' => loc.feed_title
+      - '/profile' => loc.profile_title
+      - '/my-tickets' => loc.my_tickets_title
+      - '/badges' => loc.badges_title
+      - '/rewards' => loc.rewards_title
+      - '/notifications' => loc.notifications_title
+      - '/settings' => loc.settings_title
+
+  - name: AppBar cím módosítása
+    description: Cseréljük ki a jelenlegi statikus title mezőt a dinamikus titleText változóra.
+    outputs:
+      - AppBar(title: Text(titleText)) módosítás a home_screen.dart fájlban
+
+  - name: Widget teszt hozzáadása (opcionális)
+    description: Teszteljük, hogy különböző route-okra navigálva a megfelelő cím jelenik meg az AppBar közepén.
+    outputs:
+      - expect(find.text('TippmixApp'), findsOneWidget) pl. '/' útvonalnál
