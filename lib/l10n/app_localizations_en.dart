@@ -361,6 +361,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuProfile => 'Profile';
 
   @override
+  String get myTickets => 'My Tickets';
+
+  @override
   String get menuSettings => 'Settings';
 
   @override
