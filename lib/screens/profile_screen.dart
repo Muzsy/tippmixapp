@@ -80,8 +80,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
 
     if (!widget.showAppBar) return content;
 
