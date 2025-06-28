@@ -34,7 +34,7 @@ final GoRouter router = GoRouter(
   },
   routes: [
     ShellRoute(
-      builder: (context, state, child) => HomeScreen(child: child, state: state),
+      builder: (context, state, child) => HomeScreen(state: state, child: child),
       routes: [
         GoRoute(
           path: '/create-ticket',
@@ -49,7 +49,7 @@ final GoRouter router = GoRouter(
           path: '/',
           name: AppRoute.home.name,
           builder: (context, state) =>
-              HomeScreen(state: state, child: const SizedBox.shrink(), showStats: true),
+              HomeScreen(state: state, showStats: true, child: const SizedBox.shrink()),
         ),
         GoRoute(
           path: '/profile',

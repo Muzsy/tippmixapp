@@ -78,7 +78,7 @@ void main() {
       routes: [
         ShellRoute(
           builder: (context, state, child) =>
-              HomeScreen(state: state, child: child, showStats: true),
+              HomeScreen(state: state, showStats: true, child: child),
           routes: [
             GoRoute(
               path: '/',
