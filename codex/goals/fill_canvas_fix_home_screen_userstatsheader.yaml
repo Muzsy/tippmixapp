@@ -1,0 +1,21 @@
+steps:
+  - name: showStats paraméter ellenőrzése
+    description: Győződjünk meg róla, hogy a HomeScreen konstruktorában valóban showStats: true értékkel történik példányosítás a teszt során.
+    outputs:
+      - HomeScreen(state: state, child: ..., showStats: true)
+
+  - name: UserStatsHeader megjelenítési feltétel vizsgálata
+    description: A home_screen.dart fájlban ellenőrizzük, hogy a UserStatsHeader widget megjelenését nem akadályozza-e aszinkron logika, feltételes FutureBuilder vagy hiányzó adat.
+    outputs:
+      - if (showStats) UserStatsHeader(...)
+      - vagy Visibility widget használata helyett direkt megjelenítés
+
+  - name: Tesztkörnyezet előkészítése
+    description: Ellenőrizzük, hogy a teszt során az összes szükséges provider (pl. statsServiceProvider) be van-e állítva, vagy mockolt.
+    outputs:
+      - ProviderScope overrides: statsServiceProvider, authProvider stb.
+
+  - name: Widget teszt javítása
+    description: A teszt assertje maradhat: expect(find.byType(UserStatsHeader), findsOneWidget), de csak ha biztosított a megjelenés logikailag is.
+    outputs:
+      - Teszt: HomeScreen shows tiles based on providers → hibamentesen fusson le
