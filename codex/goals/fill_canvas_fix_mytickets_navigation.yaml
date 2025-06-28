@@ -1,0 +1,49 @@
+# codex/goals/fill_canvas_fix_mytickets_navigation.yaml
+
+name: "MyTickets képernyő navigációs javítása"
+description: |
+  A MyTicketsScreen jelen van a projektben, de sem az oldalsó menüből, sem az alsó navigációból nem érhető el.
+  A cél, hogy a képernyőt a Drawer-ből és a BottomNavigationBar-ból is elérhetővé tegyük.
+  A megoldás lokalizációval és GoRouter bekötéssel együtt történik.
+
+steps:
+  - name: Drawer menüpont hozzáadása
+    description: |
+      Az oldalsó menüben (Drawer) adjunk hozzá egy új ListTile-t a MyTickets képernyőhöz,
+      amely navigál az AppRoute.myTickets.path útvonalra, majd automatikusan bezárja a menüt.
+    outputs:
+      - drawer widget új menüponttal működik
+      - automatikus záródás tap után
+
+  - name: Alsó navigáció bővítése
+    description: |
+      Egészítsük ki a BottomNavigationBar-t egy új elemmel, amely ikonként nyugtát (Icons.receipt_long),
+      feliratként pedig a lokalizált \"myTickets\" kulcsot használja.
+    outputs:
+      - új elem megjelenik az alsó navigációban
+      - kiválasztás esetén a MyTicketsScreen jelenik meg
+
+  - name: GoRouter route konfiguráció ellenőrzése
+    description: |
+      Ellenőrizzük, hogy a '/my-tickets' route szerepel a GoRouter konfigurációban. Ha hiányzik, adjuk hozzá.
+    outputs:
+      - a MyTicketsScreen elérhető route-on keresztül: /my-tickets
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: |
+      Az app_hu.arb, app_en.arb és app_de.arb fájlokba kerüljön be a \"myTickets\" kulcs:
+        hu: \"Szelvényeim\"
+        en: \"My Tickets\"
+        de: \"Meine Scheine\"
+    outputs:
+      - a navigációs menükben megjelenik a helyes lokalizált cím mindhárom nyelven
+
+  - name: Manuális tesztelés
+    description: |
+      Indítsuk el az alkalmazást és ellenőrizzük, hogy a képernyő elérhető-e mindkét útvonalból,
+      és hogy a lokalizáció is megfelelően működik.
+    outputs:
+      - drawer navigáció működik
+      - alsó menü navigáció működik
+      - megfelelő címek mindhárom nyelven
+
