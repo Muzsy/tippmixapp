@@ -9,10 +9,12 @@ import 'package:flutter/foundation.dart';
 /// Service responsible for crediting and debiting TippCoins using
 /// backend Cloud Functions.
 class CoinService {
-  final FirebaseFunctions _functions;
+  final FirebaseFunctions? _functions;
 
-  CoinService([FirebaseFunctions? functions])
-      : _functions = functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
+  CoinService([FirebaseFunctions? functions]) : _functions = functions;
+
+  FirebaseFunctions get _fns =>
+      _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
   /// Deduct coins from the authenticated user by calling the `coin_trx` Cloud
   /// Function.
@@ -88,7 +90,7 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    final callable = _functions.httpsCallable('coin_trx');
+    final callable = _fns.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{
         'amount': amount,
