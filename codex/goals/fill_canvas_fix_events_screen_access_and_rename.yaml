@@ -1,0 +1,28 @@
+steps:
+  - name: Route és enum átnevezése
+    description: Nevezzük át a router.dart fájlban a /events útvonalat /bets-re, és módosítsuk az AppRoute.events enum nevet AppRoute.bets-re.
+    outputs:
+      - path: '/bets'
+      - name: AppRoute.bets
+
+  - name: Menüponthozadás a Drawerben
+    description: Adjunk új ListTile elemet az AppDrawer widgethez, amely a Fogadások képernyőre navigál.
+    outputs:
+      - leading: Icon(Icons.sports_soccer)
+      - title: loc.bets_title
+      - onTap: Navigator.pop + context.goNamed(AppRoute.bets.name)
+
+  - name: Dinamikus AppBar cím módosítása
+    description: Frissítsük a home_screen.dart AppBar címváltozóját úgy, hogy a /bets útvonalnál a loc.bets_title jelenjen meg.
+    outputs:
+      - '/bets' => loc.bets_title
+
+  - name: Lokalizációs kulcs hozzáadása
+    description: Adjunk új lokalizációs kulcsot az app_hu.arb, app_en.arb és app_de.arb fájlokhoz a "Fogadások" képernyőhöz.
+    outputs:
+      - bets_title: Fogadások / Bets / Wetten
+
+  - name: Widget teszt (opcionális)
+    description: Teszteljük, hogy a Drawer-ből elérhető a Fogadások képernyő, és a navigáció után a cím helyesen jelenik meg.
+    outputs:
+      - expect(find.text('Fogadások'), findsOneWidget)
