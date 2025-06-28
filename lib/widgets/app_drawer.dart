@@ -29,7 +29,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.rss_feed),
             title: Text(loc.drawer_feed),
             onTap: () {
-              context.goNamed(AppRoute.feed.name);
+              context.goNamed(AppRoute.events.name);
             },
           ),
           ListTile(
