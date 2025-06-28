@@ -94,8 +94,8 @@ void main() {
             (ref) => true,
           ),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
-          leaderboardStreamProvider.overrideWith(
-            (ref) => Stream.value([
+          userStatsProvider.overrideWith(
+            (ref) => Future.value(
               UserStatsModel(
                 uid: 'u1',
                 displayName: 'Me',
@@ -104,7 +104,7 @@ void main() {
                 totalWins: 1,
                 winRate: 0.5,
               ),
-            ]),
+            ),
           ),
           aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
           topTipsterProvider.overrideWith((ref) => Future.value(null)),
