@@ -355,6 +355,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuLeaderboard => 'Leaderboard';
 
   @override
+  String get menuProfile => 'Profile';
+
+  @override
   String get menuSettings => 'Settings';
 
   @override
