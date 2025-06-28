@@ -37,6 +37,8 @@ class MyBottomNavigationBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: _getSelectedIndex(context),
       onTap: (index) => _onItemTapped(context, index),
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       items: [
         BottomNavigationBarItem(
           icon: const Icon(Icons.home),
@@ -62,7 +64,6 @@ class MyBottomNavigationBar extends StatelessWidget {
       selectedItemColor: Theme.of(context).colorScheme.primary,
       unselectedItemColor: Theme.of(context).unselectedWidgetColor,
       type: BottomNavigationBarType.fixed,
-      showUnselectedLabels: true,
     );
   }
 }
