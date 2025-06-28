@@ -34,7 +34,7 @@ final GoRouter router = GoRouter(
   },
   routes: [
     ShellRoute(
-      builder: (context, state, child) => HomeScreen(child: child),
+      builder: (context, state, child) => HomeScreen(child: child, state: state),
       routes: [
         GoRoute(
           path: '/create-ticket',
@@ -48,11 +48,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: '/',
           name: AppRoute.home.name,
-          pageBuilder: (context, state) => CustomTransitionPage(
-            child: const EventsScreen(sportKey: 'soccer'),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
-          ),
+          builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
         ),
         GoRoute(
           path: '/profile',
