@@ -22,6 +22,8 @@ import 'package:tippmixapp/screens/home_screen.dart'
 import 'package:tippmixapp/providers/leaderboard_provider.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/widgets/home/user_stats_header.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tippmixapp/routes/app_route.dart';
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
@@ -70,10 +72,26 @@ void main() {
 
   testWidgets('HomeScreen shows tiles based on providers', (tester) async {
     final statsController = StreamController<List<UserStatsModel>>();
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) => HomeScreen(child: child),
+          routes: [
+            GoRoute(
+              path: '/',
+              name: AppRoute.home.name,
+              builder: (context, state) => const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ],
+    );
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          dailyBonusAvailableProvider.overrideWith((ref) => true),
+          dailyBonusAvailableProvider.overrideWithValue(StateController(true)),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
           aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
@@ -84,11 +102,11 @@ void main() {
             (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me')),
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: HomeScreen(child: SizedBox.shrink()),
+          locale: const Locale('en'),
         ),
       ),
     );

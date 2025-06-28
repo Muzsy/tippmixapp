@@ -7,7 +7,8 @@ class MyBottomNavigationBar extends StatelessWidget {
   const MyBottomNavigationBar({super.key});
 
   int _getSelectedIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString();
+    final state = GoRouterState.maybeOf(context);
+    final location = state?.uri.toString() ?? '';
     if (location == '/profile') return 1;
     if (location == '/my-tickets') return 2;
     if (location == '/feed') return 3;
@@ -15,18 +16,20 @@ class MyBottomNavigationBar extends StatelessWidget {
   }
 
   void _onItemTapped(BuildContext context, int index) {
+    final router = GoRouter.maybeOf(context);
+    if (router == null) return;
     switch (index) {
       case 0:
-        context.goNamed(AppRoute.home.name);
+        router.goNamed(AppRoute.home.name);
         break;
       case 1:
-        context.goNamed(AppRoute.profile.name);
+        router.goNamed(AppRoute.profile.name);
         break;
       case 2:
-        context.goNamed(AppRoute.myTickets.name);
+        router.goNamed(AppRoute.myTickets.name);
         break;
       case 3:
-        context.goNamed(AppRoute.feed.name);
+        router.goNamed(AppRoute.feed.name);
         break;
     }
   }
