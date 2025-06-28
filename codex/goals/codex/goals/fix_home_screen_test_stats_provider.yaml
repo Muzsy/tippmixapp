@@ -1,0 +1,45 @@
+name: fix_home_screen_test_stats_provider
+description: >
+  A HomeScreen teszt sikertelen, mert a UserStatsHeader widget nem jelenik meg.
+  A megjelenés feltétele, hogy a statsProvider sikeres UserStatsModel adatot szolgáltasson.
+  A Codex korábban hibásan userStatsProvider-t próbált használni, ami nem létezik.
+
+steps:
+  - name: Tesztfájl megnyitása
+    description: Nyisd meg a test/screens/home_screen_test.dart fájlt, és keresd meg a "HomeScreen shows tiles based on providers" nevű tesztet.
+
+  - name: Helyes provider mockolása
+    description: >
+      A tesztkörnyezetben a statsProvider-t kell mockolni, nem a nem létező userStatsProvider-t.
+      A következő override-ot add hozzá a teszthez a pumpWidget előtt:
+    outputs:
+      - >
+        ```dart
+        statsProvider.overrideWith(
+          (ref) => AsyncData(UserStatsModel(
+            uid: 'u1',
+            displayName: 'Me',
+            coins: 1000,
+            totalBets: 0,
+            totalWins: 0,
+            winRate: 0.75,
+          )),
+        )
+        ```
+
+  - name: Tesztkörnyezet frissítése
+    description: >
+      A pumpWidget()-et úgy állítsd be, hogy a ProviderScope-ban a fenti override szerepeljen.
+      Ennek hatására a HomeScreen renderelésében meg fog jelenni a UserStatsHeader widget.
+    outputs:
+      - A teszt assertje (findsOneWidget a UserStatsHeader-re) sikeres lesz.
+
+  - name: Módosítás mentése
+    description: Írd be a módosításokat a test/screens/home_screen_test.dart fájlba.
+    outputs:
+      - A statsProvider helyesen mockolva, a teszt működik.
+
+  - name: Git diff készítése
+    description: Készíts git diff-stílusú változáslistát a tesztfájlról.
+    outputs:
+      - A statsProvider mockolása és a UserStatsHeader sikeres tesztelése megjelenik a diff-ben.
