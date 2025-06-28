@@ -57,7 +57,13 @@ final latestFeedActivityProvider = FutureProvider<FeedModel?>((ref) async {
 class HomeScreen extends ConsumerWidget {
   final Widget child;
   final GoRouterState state;
-  const HomeScreen({super.key, required this.child, required this.state});
+  final bool showStats;
+  const HomeScreen({
+    super.key,
+    required this.child,
+    required this.state,
+    this.showStats = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -116,7 +122,7 @@ class HomeScreen extends ConsumerWidget {
       body = statsAsync.when(
         data: (stats) => Column(
           children: [
-            UserStatsHeader(stats: stats),
+            if (showStats) UserStatsHeader(stats: stats),
             Expanded(
               child: GridView.count(
                 padding: const EdgeInsets.all(16),
