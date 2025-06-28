@@ -42,23 +42,28 @@ class MyBottomNavigationBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: const Icon(Icons.home),
-          label: loc.home_title,
+          label: '',
+          tooltip: loc.home_title,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.dynamic_feed),
-          label: loc.bottom_nav_feed,
+          label: '',
+          tooltip: loc.bottom_nav_feed,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.sports_soccer),
-          label: loc.bets_title,
+          label: '',
+          tooltip: loc.bets_title,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.receipt_long),
-          label: loc.myTickets,
+          label: '',
+          tooltip: loc.myTickets,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),
-          label: loc.home_nav_profile,
+          label: '',
+          tooltip: loc.home_nav_profile,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,
