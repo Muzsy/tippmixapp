@@ -84,3 +84,6 @@ Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/da
 Reordered child arguments in router.dart and navigation tests.
 Renamed unused error parameters in home_screen.
 Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.
+
+Fixed showAppBar reference in ProfileScreen and added widget prefix.
+Nem sikerult javitani a hianyzó .env asset figyelmeztetest a llama_index/data/pubspec.yaml hivatkozasnal.
