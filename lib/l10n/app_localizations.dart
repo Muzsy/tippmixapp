@@ -781,6 +781,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get menuProfile;
 
+  /// No description provided for @myTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'My Tickets'**
+  String get myTickets;
+
   /// No description provided for @menuSettings.
   ///
   /// In en, this message translates to:
