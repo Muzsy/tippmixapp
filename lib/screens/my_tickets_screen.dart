@@ -71,7 +71,9 @@ class MyTicketsScreen extends ConsumerWidget {
     }
 
     if (!showAppBar) return content;
-
+    if (Scaffold.maybeOf(context) != null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(loc.my_tickets_title)),
       body: content,

@@ -90,7 +90,9 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     if (!widget.showAppBar) {
       return body;
     }
-
+    if (Scaffold.maybeOf(context) != null) {
+      return body;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.bets_title),
