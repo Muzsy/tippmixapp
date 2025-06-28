@@ -34,7 +34,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          userBadgesProvider.overrideWith((ref) => const Stream.empty()),
+          userBadgesProvider.overrideWith((ref) => Stream.value(const [])),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
