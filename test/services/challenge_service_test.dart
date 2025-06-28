@@ -22,10 +22,12 @@ class FakeQuerySnapshot extends Fake
   List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => _docs;
 }
 
+// ignore: subtype_of_sealed_class
 class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
   final List<Map<String, dynamic>> docs;
   FakeQuery(this.docs);
 
+  @override
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) async {
     final snapshots = <FakeQueryDocumentSnapshot>[];
     for (var i = 0; i < docs.length; i++) {
@@ -34,8 +36,6 @@ class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
     return FakeQuerySnapshot(snapshots);
   }
 
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 // ignore: subtype_of_sealed_class
