@@ -22,7 +22,7 @@ class FakeQuerySnapshot extends Fake
   List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => _docs;
 }
 
-class FakeQuery extends Fake {
+class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
   final List<Map<String, dynamic>> docs;
   FakeQuery(this.docs);
 
@@ -33,6 +33,9 @@ class FakeQuery extends Fake {
     }
     return FakeQuerySnapshot(snapshots);
   }
+
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 // ignore: subtype_of_sealed_class
@@ -63,7 +66,7 @@ class FakeCollectionReference extends Fake
           .toList();
     }
     // Add more filter logic here if needed for other parameters
-    return FakeQuery(filtered) as Query<Map<String, dynamic>>;
+    return FakeQuery(filtered);
   }
 
   @override
