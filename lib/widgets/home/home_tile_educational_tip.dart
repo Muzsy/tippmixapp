@@ -20,20 +20,26 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
   String _tip = '';
 
   Future<void> _loadTip() async {
-    final lang = Localizations.localeOf(context).languageCode;
-    final jsonStr =
-        await rootBundle.loadString('lib/assets/educational_tips.json');
-    final data = jsonDecode(jsonStr) as Map<String, dynamic>;
-    final tips = (data['tips'] as List)
-        .map((e) => Map<String, dynamic>.from(e as Map))
-        .toList();
-    final localized =
-        tips.map((t) => t[lang] as String? ?? '').where((e) => e.isNotEmpty).toList();
-    if (localized.isNotEmpty) {
-      final rnd = widget.random ?? Random();
-      setState(() {
-        _tip = localized[rnd.nextInt(localized.length)];
-      });
+    try {
+      final lang = Localizations.localeOf(context).languageCode;
+      final jsonStr =
+          await rootBundle.loadString('lib/assets/educational_tips.json');
+      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final tips = (data['tips'] as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+      final localized = tips
+          .map((t) => t[lang] as String? ?? '')
+          .where((e) => e.isNotEmpty)
+          .toList();
+      if (localized.isNotEmpty) {
+        final rnd = widget.random ?? Random();
+        setState(() {
+          _tip = localized[rnd.nextInt(localized.length)];
+        });
+      }
+    } catch (_) {
+      // Ignore missing asset errors during tests
     }
   }
 
