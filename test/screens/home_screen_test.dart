@@ -75,7 +75,7 @@ void main() {
       initialLocation: '/',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => HomeScreen(child: child),
+          builder: (context, state, child) => HomeScreen(state: state, child: child),
           routes: [
             GoRoute(
               path: '/',
@@ -94,8 +94,8 @@ void main() {
             (ref) => true,
           ),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
-          userStatsProvider.overrideWith(
-            (ref) => Future.value(
+          leaderboardStreamProvider.overrideWith(
+            (ref) => Stream.value([
               UserStatsModel(
                 uid: 'u1',
                 displayName: 'Me',
@@ -104,7 +104,7 @@ void main() {
                 totalWins: 1,
                 winRate: 0.5,
               ),
-            ),
+            ]),
           ),
           aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
           topTipsterProvider.overrideWith((ref) => Future.value(null)),
