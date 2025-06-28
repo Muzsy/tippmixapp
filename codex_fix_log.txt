@@ -87,3 +87,5 @@ Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/da
 
 Fixed showAppBar reference in ProfileScreen and added widget prefix.
 Nem sikerult javitani a hianyzó .env asset figyelmeztetest a llama_index/data/pubspec.yaml hivatkozasnal.
+Nem sikerult javitani a missing_identifier hibát a profile_screen.dart 84. sorában.
+Nem sikerult javitani a .env asset hivatkozast a llama_index/data/pubspec.yaml fajlban.
