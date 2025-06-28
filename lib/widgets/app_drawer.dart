@@ -29,13 +29,23 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.dynamic_feed),
             title: Text(loc.drawer_feed),
             onTap: () {
+              Navigator.pop(context);
               context.goNamed(AppRoute.feed.name);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(loc.menuProfile),
+            onTap: () {
+              Navigator.pop(context);
+              context.goNamed(AppRoute.profile.name);
             },
           ),
           ListTile(
             leading: const Icon(Icons.leaderboard),
             title: Text(loc.menuLeaderboard),
             onTap: () {
+              Navigator.pop(context);
               context.goNamed(AppRoute.leaderboard.name);
             },
           ),
@@ -43,6 +53,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.notifications),
             title: Text(loc.menuNotifications),
             onTap: () {
+              Navigator.pop(context);
               context.goNamed(AppRoute.notifications.name);
             },
           ),
@@ -50,6 +61,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.card_giftcard),
             title: Text(loc.menuRewards),
             onTap: () {
+              Navigator.pop(context);
               context.goNamed(AppRoute.rewards.name);
             },
           ),
@@ -57,6 +69,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.badge),
               title: Text(loc.menuBadges),
               onTap: () {
+                Navigator.pop(context);
                 context.goNamed(AppRoute.badges.name);
               },
             ),
@@ -64,6 +77,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: Text(loc.menuSettings),
             onTap: () {
+              Navigator.pop(context);
               context.goNamed(AppRoute.settings.name);
             },
           ),

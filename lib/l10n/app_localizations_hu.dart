@@ -355,6 +355,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuLeaderboard => 'Ranglista';
 
   @override
+  String get menuProfile => 'Profil';
+
+  @override
   String get menuSettings => 'Beállítások';
 
   @override
