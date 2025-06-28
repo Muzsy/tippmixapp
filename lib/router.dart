@@ -48,7 +48,8 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: '/',
           name: AppRoute.home.name,
-          builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
+          builder: (context, state) =>
+              HomeScreen(state: state, child: const SizedBox.shrink(), showStats: true),
         ),
         GoRoute(
           path: '/profile',
