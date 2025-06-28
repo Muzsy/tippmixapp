@@ -110,6 +110,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     statsController.add([
       UserStatsModel(
