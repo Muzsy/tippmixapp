@@ -144,6 +144,20 @@ class HomeScreen extends ConsumerWidget {
     final loc = AppLocalizations.of(context)!;
     final body = _buildBody(context, ref);
 
+    // Determine current route path for dynamic title.
+    final currentPath = state?.uri.path ?? '/';
+    final titles = <String, String>{
+      '/': 'TippmixApp',
+      '/feed': loc.feed_screen_title,
+      '/profile': loc.profile_title,
+      '/my-tickets': loc.my_tickets_title,
+      '/badges': loc.badgeScreenTitle,
+      '/rewards': loc.rewardTitle,
+      '/notifications': loc.notificationTitle,
+      '/settings': loc.settings_title,
+    };
+    final titleText = titles[currentPath] ?? loc.home_title;
+
     // When tests set [showStats] we render a bare column without AppBar etc.
     if (showStats) {
       final stats = ref.watch(userStatsProvider).asData?.value;
@@ -164,7 +178,7 @@ class HomeScreen extends ConsumerWidget {
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
         ),
-        title: Text(loc.home_title),
+        title: Text(titleText),
         actions: const [NotificationBellWidget()],
       ),
       drawer: const AppDrawer(),
