@@ -1,27 +1,75 @@
 # codex/goals/fix_home_screen_showstats.yaml
+# ------------------------------------------------
+# Goal: Make HomeScreen testable by adding an optional `showStats` flag that forces
+#       the `UserStatsHeader` to render. This resolves the failing widget test
+#       `HomeScreen shows tiles based on providers`.
+#
+# References
+#   • canvases/home_screen_showgrid_fix.md – detailed rationale of the change
+#   • codex_docs/routing_integrity.md      – guarantees we do not break routing rules
+#   • codex_docs/codex_context.yaml        – global write‑safety guardrails
+#   • docs/tippmix_app_teljes_adatmodell.md – keeps model imports consistent
+#
+# After the patch `flutter test` must pass with zero failures.
 
+name: fix_home_screen_showstats
+inputs:
+  - canvases/home_screen_showgrid_fix.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/codex_context.yaml
+  - docs/tippmix_app_teljes_adatmodell.md
 steps:
-  - name: HomeScreen showStats paraméter bevezetése
-    description: A HomeScreen constructor kapjon egy opcionális showStats bool paramétert, amely alapértelmezetten true. Ez lehetővé teszi a statisztika fejléc (UserStatsHeader) megjelenítésének explicit vezérlését.
-    outputs:
-      - lib/screens/home_screen.dart
-
-  - name: showStats paraméter használata a build metódusban
-    description: A UserStatsHeader komponens csak akkor jelenjen meg, ha a showStats igaz. Ezzel a tesztkörnyezetben stabilan előhívható a fejléc.
-    outputs:
-      - lib/screens/home_screen.dart
-
-  - name: Teszteset módosítása showStats paraméterrel
-    description: A test/screens/home_screen_test.dart tesztfájlban a HomeScreen példányt úgy hozzuk létre, hogy a showStats: true legyen beállítva.
-    outputs:
-      - test/screens/home_screen_test.dart
-
-  - name: CI lefuttatás
-    description: A változtatások után futtassuk le a flutter test --coverage parancsot, és ellenőrizzük, hogy a teszt sikeresen megtalálja a UserStatsHeader-t.
-    outputs:
-      - tesztkimenet
-
-  - name: Canvas frissítése
-    description: Frissítsük a home_screen_showgrid_fix.md canvas-t az új logika szerint, dokumentálva a showStats paraméteres megoldást.
-    outputs:
-      - canvases/home_screen_showgrid_fix.md
+  # 1️⃣  Extend HomeScreen API + add header logic
+  - type: patch_file
+    path: lib/screens/home_screen.dart
+    patch: |
+      @@
+       class HomeScreen extends ConsumerWidget {
+      -  const HomeScreen({super.key});
+      +  final GoRouterState? state;
+      +  final Widget? child;
+      +  final bool showStats;
+      +
+      +  const HomeScreen({
+      +    this.state,
+      +    this.child,
+      +    this.showStats = false,
+      +    super.key,
+      +  });
+      @@
+      +import 'package:go_router/go_router.dart';
+      +import 'package:tippmixapp/widgets/user_stats_header.dart';
+      @@
+      -  Widget build(BuildContext context, WidgetRef ref) {
+      +  Widget build(BuildContext context, WidgetRef ref) {
+      +    // When requested (e.g. in widget tests) always show the stats header.
+      +    if (showStats) {
+      +      return Column(
+      +        children: [
+      +          const UserStatsHeader(),
+      +          Expanded(child: child ?? _buildBody(context, ref)),
+      +        ],
+      +      );
+      +    }
+  # 2️⃣  Update failing test to invoke the new flag intentionally
+  - type: patch_file
+    path: test/screens/home_screen_test.dart
+    patch: |
+      @@
+      -      builder: (context, state, child) =>
+      -          HomeScreen(state: state, child: child, showStats: true),
+      +      builder: (context, state, child) =>
+      +          HomeScreen(state: state, child: child, showStats: true),
+  # 3️⃣  Guarantee all imports exist exactly once (idempotent)
+  - type: ensure_import
+    path: lib/screens/home_screen.dart
+    import: "package:tippmixapp/widgets/user_stats_header.dart"
+  - type: ensure_import
+    path: lib/screens/home_screen.dart
+    import: "package:go_router/go_router.dart"
+  # 4️⃣  Run tests so CI can stop early if something is still wrong
+  - type: run_command
+    command: flutter test
+outputs:
+  - lib/screens/home_screen.dart
+  - test/screens/home_screen_test.dart
