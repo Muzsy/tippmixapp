@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  final bool showAppBar;
+
+  const ProfileScreen({super.key, this.showAppBar = true});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -41,17 +43,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(authProvider).user;
 
     if (user == null) {
-      return Scaffold(
-        body: Center(child: Text(loc.not_logged_in)),
-      );
+      return showAppBar
+          ? Scaffold(
+              appBar: AppBar(title: Text(loc.profile_title)),
+              body: Center(child: Text(loc.not_logged_in)),
+            )
+          : Center(child: Text(loc.not_logged_in));
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text(loc.profile_title)),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    final content = Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${loc.profile_email}: ${user.email}', style: const TextStyle(fontSize: 16)),
@@ -78,6 +81,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ],
         ),
       ),
+    );
+
+    if (!showAppBar) return content;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(loc.profile_title)),
+      body: content,
     );
   }
 }

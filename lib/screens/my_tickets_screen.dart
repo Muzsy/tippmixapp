@@ -26,7 +26,9 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
 });
 
 class MyTicketsScreen extends ConsumerWidget {
-  const MyTicketsScreen({super.key});
+  final bool showAppBar;
+
+  const MyTicketsScreen({super.key, this.showAppBar = true});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,16 +36,11 @@ class MyTicketsScreen extends ConsumerWidget {
     final ticketsAsync = ref.watch(ticketsProvider);
     final loc = AppLocalizations.of(context)!;
 
+    Widget content;
     if (user == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text(loc.my_tickets_title)),
-        body: const EmptyTicketPlaceholder(),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Text(loc.my_tickets_title)),
-      body: ticketsAsync.when(
+      content = const EmptyTicketPlaceholder();
+    } else {
+      content = ticketsAsync.when(
         data: (tickets) {
           return RefreshIndicator(
               onRefresh: () async {
@@ -70,7 +67,14 @@ class MyTicketsScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
-      ),
+      );
+    }
+
+    if (!showAppBar) return content;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(loc.my_tickets_title)),
+      body: content,
     );
   }
 }
