@@ -4,10 +4,11 @@ import '../models/leaderboard_mode.dart';
 import '../models/stats_backend_mode.dart';
 
 class StatsService {
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
 
-  StatsService([FirebaseFirestore? firestore])
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  StatsService([FirebaseFirestore? firestore]) : _firestore = firestore;
+
+  FirebaseFirestore get _db => _firestore ?? FirebaseFirestore.instance;
 
   Stream<List<UserStatsModel>> streamUserStats({
     LeaderboardMode mode = LeaderboardMode.byCoin,
@@ -22,8 +23,8 @@ class StatsService {
   }
 
   Stream<List<UserStatsModel>> _streamFromFirestore(LeaderboardMode mode) {
-    final usersRef = _firestore.collection('users');
-    final ticketsRef = _firestore.collection('tickets');
+    final usersRef = _db.collection('users');
+    final ticketsRef = _db.collection('tickets');
 
     return usersRef.snapshots().asyncMap((userSnap) async {
       final stats = <UserStatsModel>[];
