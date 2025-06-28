@@ -4,25 +4,25 @@ import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
-import '../widgets/notification_bell_widget.dart';
-import '../widgets/home/user_stats_header.dart';
-import '../widgets/home/home_tile_daily_bonus.dart';
-import '../widgets/home/home_tile_educational_tip.dart';
-import '../widgets/home/home_tile_ai_tip.dart';
-import '../widgets/home/home_tile_top_tipster.dart';
-import '../widgets/home/home_tile_badge_earned.dart';
-import '../widgets/home/home_tile_challenge_prompt.dart';
-import '../widgets/home/home_tile_feed_activity.dart';
-import '../providers/leaderboard_provider.dart';
-import '../providers/stats_provider.dart';
-import '../services/ai_tip_provider.dart';
-import '../services/badge_service.dart';
-import '../services/challenge_service.dart';
-import '../models/earned_badge_model.dart';
-import '../providers/auth_provider.dart';
-import '../routes/app_route.dart';
-import '../providers/feed_provider.dart';
-import '../models/feed_model.dart';
+import 'package:tippmixapp/widgets/notification_bell_widget.dart';
+import 'package:tippmixapp/widgets/home/user_stats_header.dart';
+import 'package:tippmixapp/widgets/home/home_tile_daily_bonus.dart';
+import 'package:tippmixapp/widgets/home/home_tile_educational_tip.dart';
+import 'package:tippmixapp/widgets/home/home_tile_ai_tip.dart';
+import 'package:tippmixapp/widgets/home/home_tile_top_tipster.dart';
+import 'package:tippmixapp/widgets/home/home_tile_badge_earned.dart';
+import 'package:tippmixapp/widgets/home/home_tile_challenge_prompt.dart';
+import 'package:tippmixapp/widgets/home/home_tile_feed_activity.dart';
+import 'package:tippmixapp/providers/leaderboard_provider.dart';
+import 'package:tippmixapp/providers/stats_provider.dart';
+import 'package:tippmixapp/services/ai_tip_provider.dart';
+import 'package:tippmixapp/services/badge_service.dart';
+import 'package:tippmixapp/services/challenge_service.dart';
+import 'package:tippmixapp/models/earned_badge_model.dart';
+import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tippmixapp/providers/feed_provider.dart';
+import 'package:tippmixapp/models/feed_model.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -54,10 +54,13 @@ final latestFeedActivityProvider = FutureProvider<FeedModel?>((ref) async {
   return service.fetchLatestEntry();
 });
 
+/// Home screen root. In tests the [showStats] flag can force the
+/// statistics header to appear independent of routing.
 class HomeScreen extends ConsumerWidget {
   final GoRouterState? state;
   final Widget? child;
   final bool showStats;
+
   const HomeScreen({
     this.state,
     this.child,
@@ -65,85 +68,88 @@ class HomeScreen extends ConsumerWidget {
     super.key,
   });
 
-  Widget _buildBody(BuildContext context, WidgetRef ref) {
-    final showGrid = state?.name == 'home';
+  // --- private helpers -----------------------------------------------------
 
-    if (showGrid) {
-      final statsAsync = ref.watch(userStatsProvider);
-      final tiles = <Widget>[];
-      tiles.add(const HomeTileEducationalTip());
-      final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
-      final topTipster = ref.watch(topTipsterProvider).asData?.value;
-      final feedActivity =
-          ref.watch(latestFeedActivityProvider).asData?.value;
-      final challenges =
-          ref.watch(activeChallengesProvider).asData?.value;
-      if (aiTip != null) {
-        tiles.add(HomeTileAiTip(tip: aiTip));
-      }
-      if (topTipster != null) {
-        tiles.add(HomeTileTopTipster(stats: topTipster));
-      }
-      if (feedActivity != null) {
-        tiles.add(
-          HomeTileFeedActivity(
-            entry: feedActivity,
-            onTap: () => context.goNamed(AppRoute.events.name),
-          ),
-        );
-      }
-      if (challenges != null && challenges.isNotEmpty) {
-        tiles.add(
-          HomeTileChallengePrompt(
-            challenge: challenges.first,
-            onAccept: () => context.goNamed(AppRoute.createTicket.name),
-          ),
-        );
-      }
-      if (ref.watch(dailyBonusAvailableProvider)) {
-        tiles.add(const HomeTileDailyBonus());
-      }
-      final earned = ref.watch(latestBadgeProvider).asData?.value;
-      if (earned != null &&
-          DateTime.now().difference(earned.timestamp).inDays <= 3) {
-        tiles.add(
-          HomeTileBadgeEarned(
-            badge: earned,
-            onTap: () => context.goNamed(AppRoute.badges.name),
-          ),
-        );
-      }
-      return statsAsync.when(
-        data: (stats) => Column(
-          children: [
-            if (!showStats) UserStatsHeader(stats: stats),
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(16),
-                crossAxisCount: 2,
-                childAspectRatio: 1.4,
-                children: tiles,
-              ),
-            ),
-          ],
-        ),
-        loading: () => const SizedBox.shrink(),
-        error: (_, __) => const SizedBox.shrink(),
-      );
+  bool _isRootRoute() => state?.name == AppRoute.home.name;
+
+  Widget _buildBody(BuildContext context, WidgetRef ref) {
+    // In tests showGrid can be forced by the [showStats] flag so that the
+    // header + tiles render without depending on routing.
+    final showGrid = showStats || _isRootRoute();
+
+    if (!showGrid) return child ?? const SizedBox.shrink();
+
+    final statsAsync = ref.watch(userStatsProvider);
+
+    // --- build tile list ---------------------------------------------------
+    final tiles = <Widget>[const HomeTileEducationalTip()];
+
+    final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
+    final topTipster = ref.watch(topTipsterProvider).asData?.value;
+    final feedActivity = ref.watch(latestFeedActivityProvider).asData?.value;
+    final challenges = ref.watch(activeChallengesProvider).asData?.value;
+
+    if (aiTip != null) tiles.add(HomeTileAiTip(tip: aiTip));
+    if (topTipster != null) tiles.add(HomeTileTopTipster(stats: topTipster));
+    if (feedActivity != null) {
+      tiles.add(HomeTileFeedActivity(
+        entry: feedActivity,
+        onTap: () => context.goNamed(AppRoute.events.name),
+      ));
+    }
+    if (challenges != null && challenges.isNotEmpty) {
+      tiles.add(HomeTileChallengePrompt(
+        challenge: challenges.first,
+        onAccept: () => context.goNamed(AppRoute.createTicket.name),
+      ));
+    }
+    if (ref.watch(dailyBonusAvailableProvider)) {
+      tiles.add(const HomeTileDailyBonus());
     }
 
-    return child ?? const SizedBox.shrink();
+    final earned = ref.watch(latestBadgeProvider).asData?.value;
+    if (earned != null &&
+        DateTime.now().difference(earned.timestamp).inDays <= 3) {
+      tiles.add(HomeTileBadgeEarned(
+        badge: earned,
+        onTap: () => context.goNamed(AppRoute.badges.name),
+      ));
+    }
+
+    // --- assemble layout ---------------------------------------------------
+    return statsAsync.when(
+      data: (stats) => Column(
+        children: [
+          // Header *only* here when [showStats] is *false* and we are on root.
+          if (!showStats && _isRootRoute()) UserStatsHeader(stats: stats),
+          Expanded(
+            child: GridView.count(
+              padding: const EdgeInsets.all(16),
+              crossAxisCount: 2,
+              childAspectRatio: 1.4,
+              children: tiles,
+            ),
+          ),
+        ],
+      ),
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
   }
+
+  // --- build ---------------------------------------------------------------
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
     final body = _buildBody(context, ref);
 
+    // When tests set [showStats] we render a bare column without AppBar etc.
     if (showStats) {
+      final stats = ref.watch(userStatsProvider).asData?.value;
       return Column(
         children: [
-          const UserStatsHeader(),
+          if (stats != null) UserStatsHeader(stats: stats),
           Expanded(child: body),
         ],
       );
@@ -167,4 +173,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-

@@ -6,7 +6,7 @@ class User {
   User({
     required this.id,
     required this.email,
-    required this.displayName,
+    required this.displayName, String? photoUrl,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
