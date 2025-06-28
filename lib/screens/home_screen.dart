@@ -80,6 +80,13 @@ class HomeScreen extends ConsumerWidget {
     // header + tiles render without depending on routing.
     final showGrid = showStats || _isRootRoute(context);
 
+    if (_isRootRoute(context) &&
+        !showStats &&
+        child != null &&
+        child is! SizedBox) {
+      return child!;
+    }
+
     if (!showGrid) return child ?? const SizedBox.shrink();
 
     final statsAsync = ref.watch(userStatsProvider);
