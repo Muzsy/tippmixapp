@@ -62,7 +62,8 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
     // … HomeScreen build-metódusában …
-    final showGrid = GoRouterState.of(context).location == '/';
+    final state = GoRouterState.of(context);
+    final showGrid = state.uri.path == '/';
 
     Widget body;
     if (showGrid) {
