@@ -56,7 +56,8 @@ final latestFeedActivityProvider = FutureProvider<FeedModel?>((ref) async {
 
 class HomeScreen extends ConsumerWidget {
   final Widget child;
-  const HomeScreen({super.key, required this.child});
+  final GoRouterState state;
+  const HomeScreen({super.key, required this.child, required this.state});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,8 +65,8 @@ class HomeScreen extends ConsumerWidget {
     // … HomeScreen build-metódusában …
     // Eredeti viselkedés: csak akkor mutatjuk a statisztika-gridet, ha a child egy SizedBox
     // (tesztekben így szimuláljuk)
-    final state = GoRouterState.of(context);
-    final showGrid = state.uri.path == '/';
+    // Only show stats on the 'home' route
+    final showGrid = state.name == 'home';
 
     Widget body;
     if (showGrid) {
