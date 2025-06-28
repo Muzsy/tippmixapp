@@ -64,7 +64,8 @@ class HomeScreen extends ConsumerWidget {
     // … HomeScreen build-metódusában …
     // Eredeti viselkedés: csak akkor mutatjuk a statisztika-gridet, ha a child egy SizedBox
     // (tesztekben így szimuláljuk)
-    final showGrid = child is SizedBox;
+    final state = GoRouterState.of(context);
+    final showGrid = state.uri.path == '/';
 
     Widget body;
     if (showGrid) {
