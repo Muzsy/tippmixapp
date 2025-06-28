@@ -94,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
     if (feedActivity != null) {
       tiles.add(HomeTileFeedActivity(
         entry: feedActivity,
-        onTap: () => context.goNamed(AppRoute.events.name),
+        onTap: () => context.goNamed(AppRoute.bets.name),
       ));
     }
     if (challenges != null && challenges.isNotEmpty) {
@@ -150,6 +150,7 @@ class HomeScreen extends ConsumerWidget {
       '/': 'TippmixApp',
       '/feed': loc.feed_screen_title,
       '/profile': loc.profile_title,
+      '/bets': loc.bets_title,
       '/my-tickets': loc.my_tickets_title,
       '/badges': loc.badgeScreenTitle,
       '/rewards': loc.rewardTitle,

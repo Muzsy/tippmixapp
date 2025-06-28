@@ -72,6 +72,7 @@
   ,"api_error_network": "Netzwerkfehler beim Kontaktieren der Odds API"
   ,"api_error_unknown": "Unbekannter Fehler von der Odds API"
   ,"events_title": "Ereignisse"
+  ,"bets_title": "Wetten"
   ,"events_empty": "Keine Ereignisse verfügbar"
   ,"events_screen_no_events": "Keine Ereignisse gefunden"
   ,"events_screen_quota_warning": "Warnung: API Kontingent fast aufgebraucht"
