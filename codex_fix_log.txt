@@ -77,3 +77,5 @@ Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/pu
 Fixed incorrect GoRouterState lookup in MyBottomNavigationBar.
 Replaced overrideWithValue with overrideWith in home_screen_test.
 Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.
+Fixed dailyBonusAvailableProvider override to return bool.
+Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.
