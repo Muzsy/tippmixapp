@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
@@ -46,8 +50,44 @@ class FakeAuthNotifier extends AuthNotifier {
 }
 
 void main() {
+  const tipsJson = '{"tips": [{"id":"t1","en":"tip"}]}';
+
+  setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .defaultBinaryMessenger
+        .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+      final key = utf8.decode(message!.buffer.asUint8List());
+      if (key == 'lib/assets/educational_tips.json') {
+        return ByteData.view(Uint8List.fromList(utf8.encode(tipsJson)).buffer);
+      }
+      return null;
+    });
+  });
+
+  tearDown(() {
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .defaultBinaryMessenger
+        .setMockMessageHandler('flutter/assets', null);
+  });
+
   testWidgets('HomeScreen shows tiles based on providers', (tester) async {
     final statsController = StreamController<List<UserStatsModel>>();
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) => HomeScreen(child: child),
+          routes: [
+            GoRoute(
+              path: '/',
+              name: AppRoute.home.name,
+              builder: (context, state) => const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ],
+    );
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -59,13 +99,14 @@ void main() {
           activeChallengesProvider.overrideWith((ref) => Future.value([])),
           latestFeedActivityProvider.overrideWith((ref) => Future.value(null)),
           authProvider.overrideWith(
-              (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
+            (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me')),
+          ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: HomeScreen(child: SizedBox.shrink()),
+          locale: const Locale('en'),
         ),
       ),
     );
