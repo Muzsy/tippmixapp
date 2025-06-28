@@ -48,7 +48,7 @@ exports.onUserCreate = functions
     .onCreate(async (user) => {
     const userRef = db.collection('users').doc(user.uid);
     await userRef.set({
-        coins: 0,
+        coins: 50,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 });
