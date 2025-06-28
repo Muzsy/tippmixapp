@@ -71,7 +71,6 @@ void main() {
   });
 
   testWidgets('HomeScreen shows tiles based on providers', (tester) async {
-    final statsController = StreamController<List<UserStatsModel>>();
     final router = GoRouter(
       initialLocation: '/',
       routes: [
@@ -95,7 +94,18 @@ void main() {
             (ref) => true,
           ),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
-          leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
+          leaderboardStreamProvider.overrideWith(
+            (ref) => Stream.value([
+              UserStatsModel(
+                uid: 'u1',
+                displayName: 'Me',
+                coins: 100,
+                totalBets: 2,
+                totalWins: 1,
+                winRate: 0.5,
+              ),
+            ]),
+          ),
           aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
           topTipsterProvider.overrideWith((ref) => Future.value(null)),
           activeChallengesProvider.overrideWith((ref) => Future.value([])),
@@ -113,18 +123,6 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
-
-    statsController.add([
-      UserStatsModel(
-        uid: 'u1',
-        displayName: 'Me',
-        coins: 100,
-        totalBets: 2,
-        totalWins: 1,
-        winRate: 0.5,
-      ),
-    ]);
     await tester.pumpAndSettle();
 
     expect(find.byType(UserStatsHeader), findsOneWidget);
