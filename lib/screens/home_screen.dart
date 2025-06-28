@@ -84,7 +84,7 @@ class HomeScreen extends ConsumerWidget {
         tiles.add(
           HomeTileFeedActivity(
             entry: feedActivity,
-            onTap: () => context.goNamed(AppRoute.feed.name),
+            onTap: () => context.goNamed(AppRoute.events.name),
           ),
         );
       }
