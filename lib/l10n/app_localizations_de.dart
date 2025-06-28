@@ -355,6 +355,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuLeaderboard => 'Bestenliste';
 
   @override
+  String get menuProfile => 'Profil';
+
+  @override
   String get menuSettings => 'Einstellungen';
 
   @override
