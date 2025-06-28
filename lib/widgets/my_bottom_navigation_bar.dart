@@ -9,7 +9,7 @@ class MyBottomNavigationBar extends StatelessWidget {
   int _getSelectedIndex(BuildContext context) {
     final state = GoRouterState.of(context);
     final location = state.uri.toString();
-    if (location == '/events') return 1;
+    if (location == '/feed') return 1;
     if (location == '/profile') return 2;
     return 0; // alap: főoldal
   }
@@ -19,7 +19,7 @@ class MyBottomNavigationBar extends StatelessWidget {
     if (router == null) return;
     final routeNames = [
       AppRoute.home.name,
-      AppRoute.events.name,
+      AppRoute.feed.name,
       AppRoute.profile.name,
     ];
     if (index < routeNames.length) {
