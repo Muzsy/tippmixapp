@@ -1,0 +1,53 @@
+name: refactor_user_stats_provider
+description: >
+  A HomeScreen jelenleg egy nem létező statsProvider-t használ. 
+  Hozzuk létre a userStatsProvider-t a stats_service alapján, és módosítsuk a HomeScreen-t és a hozzá tartozó tesztet ennek megfelelően.
+
+steps:
+  - name: userStatsProvider létrehozása
+    description: >
+      A lib/providers/stats_provider.dart fájlban hozz létre egy új FutureProvider-t userStatsProvider néven,
+      amely a statsServiceProvider-t használva lekéri a UserStatsModel objektumot.
+    outputs:
+      - >
+        ```dart
+        final userStatsProvider = FutureProvider<UserStatsModel>((ref) {
+          final service = ref.watch(statsServiceProvider);
+          return service.getUserStats();
+        });
+        ```
+
+  - name: Hibás statsProvider hivatkozás javítása
+    description: >
+      A lib/screens/home_screen.dart fájlban cseréld le a hibás `ref.watch(statsProvider)` sort `ref.watch(userStatsProvider)`-re.
+      A meglévő `.when(...)` logika változatlan maradhat.
+    outputs:
+      - `final stats = ref.watch(userStatsProvider);`
+
+  - name: Teszt mock frissítése
+    description: >
+      A test/screens/home_screen_test.dart fájlban mockold a userStatsProvider-t AsyncData<UserStatsModel> típussal,
+      hogy a UserStatsHeader meg tudjon jelenni a tesztkörnyezetben.
+    outputs:
+      - >
+        ```dart
+        userStatsProvider.overrideWith((ref) => AsyncData(UserStatsModel(
+          uid: 'u1',
+          displayName: 'Me',
+          coins: 1000,
+          totalBets: 0,
+          totalWins: 0,
+          winRate: 0.75,
+        )));
+        ```
+
+  - name: Módosítások mentése
+    description: Írd be a módosításokat a megfelelő fájlokba: stats_provider.dart, home_screen.dart, home_screen_test.dart.
+    outputs:
+      - A `userStatsProvider` definiálva van és használatba került.
+      - A teszt mockolt providerrel lefut.
+
+  - name: Git diff készítése
+    description: Készíts git diff-stílusú változáslistát a módosított fájlokról.
+    outputs:
+      - Változások a három fájlban: új provider, helyes watch(), mockolt teszt.
