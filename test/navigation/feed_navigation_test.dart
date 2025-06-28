@@ -14,6 +14,8 @@ import 'package:tippmixapp/models/odds_outcome.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/providers/odds_api_provider.dart';
+import 'package:tippmixapp/services/odds_api_service.dart';
+import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';

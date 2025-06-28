@@ -9,7 +9,15 @@ import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/screens/home_screen.dart' show HomeScreen, dailyBonusAvailableProvider, latestBadgeProvider;
+import 'package:tippmixapp/screens/home_screen.dart'
+    show
+        HomeScreen,
+        dailyBonusAvailableProvider,
+        latestBadgeProvider,
+        aiTipFutureProvider,
+        activeChallengesProvider,
+        latestFeedActivityProvider;
+import 'package:tippmixapp/providers/leaderboard_provider.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/widgets/home/user_stats_header.dart';
 
