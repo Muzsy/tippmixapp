@@ -11,7 +11,8 @@ class MyBottomNavigationBar extends StatelessWidget {
     final location = state.uri.toString();
     if (location == '/feed') return 1;
     if (location.startsWith('/bets')) return 2;
-    if (location == '/profile') return 3;
+    if (location == '/my-tickets') return 3;
+    if (location == '/profile') return 4;
     return 0; // alap: főoldal
   }
 
@@ -22,6 +23,7 @@ class MyBottomNavigationBar extends StatelessWidget {
       AppRoute.home.name,
       AppRoute.feed.name,
       AppRoute.bets.name,
+      AppRoute.myTickets.name,
       AppRoute.profile.name,
     ];
     if (index < routeNames.length) {
@@ -46,6 +48,10 @@ class MyBottomNavigationBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: const Icon(Icons.sports_soccer),
           label: AppLocalizations.of(context)!.bets_title,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.receipt_long),
+          label: AppLocalizations.of(context)!.myTickets,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),
