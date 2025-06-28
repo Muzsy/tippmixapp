@@ -535,6 +535,12 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get events_title;
 
+  /// No description provided for @bets_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Bets'**
+  String get bets_title;
+
   /// No description provided for @events_empty.
   ///
   /// In en, this message translates to:

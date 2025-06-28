@@ -72,6 +72,7 @@
   ,"api_error_network": "Network error while contacting Odds API"
   ,"api_error_unknown": "Unknown error from Odds API"
   ,"events_title": "Events"
+  ,"bets_title": "Bets"
   ,"events_empty": "No events available"
   ,"events_screen_no_events": "No events found"
   ,"events_screen_quota_warning": "API quota is nearly exceeded"
