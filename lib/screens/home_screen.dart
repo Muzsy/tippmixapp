@@ -71,8 +71,8 @@ class HomeScreen extends ConsumerWidget {
   // --- private helpers -----------------------------------------------------
 
   bool _isRootRoute(BuildContext context) {
-    final currentName = state?.name ?? GoRouterState.of(context).name;
-    return currentName == AppRoute.home.name;
+    final currentPath = state?.uri.path ?? GoRouterState.of(context).uri.path;
+    return currentPath == '/';
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref) {
