@@ -14,6 +14,7 @@ import '../widgets/home/home_tile_badge_earned.dart';
 import '../widgets/home/home_tile_challenge_prompt.dart';
 import '../widgets/home/home_tile_feed_activity.dart';
 import '../providers/leaderboard_provider.dart';
+import '../providers/stats_provider.dart';
 import '../services/ai_tip_provider.dart';
 import '../services/badge_service.dart';
 import '../services/challenge_service.dart';
@@ -64,6 +65,7 @@ class HomeScreen extends ConsumerWidget {
 
     Widget body;
     if (showGrid) {
+      final statsAsync = ref.watch(userStatsProvider);
       final tiles = <Widget>[];
       tiles.add(const HomeTileEducationalTip());
       final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
@@ -106,18 +108,22 @@ class HomeScreen extends ConsumerWidget {
           ),
         );
       }
-      body = Column(
-        children: [
-          const UserStatsHeader(),
-          Expanded(
-            child: GridView.count(
-              padding: const EdgeInsets.all(16),
-              crossAxisCount: 2,
-              childAspectRatio: 1.4,
-              children: tiles,
+      body = statsAsync.when(
+        data: (stats) => Column(
+          children: [
+            UserStatsHeader(stats: stats),
+            Expanded(
+              child: GridView.count(
+                padding: const EdgeInsets.all(16),
+                crossAxisCount: 2,
+                childAspectRatio: 1.4,
+                children: tiles,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        loading: () => const SizedBox.shrink(),
+        error: (_, __) => const SizedBox.shrink(),
       );
     } else {
       body = child;
