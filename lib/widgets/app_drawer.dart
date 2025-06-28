@@ -34,6 +34,14 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.sports_soccer),
+            title: Text(loc.bets_title),
+            onTap: () {
+              Navigator.pop(context);
+              context.goNamed(AppRoute.bets.name);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.person),
             title: Text(loc.menuProfile),
             onTap: () {
