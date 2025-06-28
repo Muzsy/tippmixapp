@@ -236,6 +236,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get events_title => 'Ereignisse';
 
   @override
+  String get bets_title => 'Wetten';
+
+  @override
   String get events_empty => 'Keine Ereignisse verfügbar';
 
   @override

@@ -72,6 +72,7 @@
   ,"api_error_network": "Hálózati hiba az OddsAPI elérésekor"
   ,"api_error_unknown": "Ismeretlen hiba az OddsAPI-tól"
   ,"events_title": "Események"
+  ,"bets_title": "Fogadások"
   ,"events_empty": "Nincs elérhető esemény"
   ,"events_screen_no_events": "Nincs esemény"
   ,"events_screen_quota_warning": "Figyelem: az API kvóta hamarosan elfogy"
