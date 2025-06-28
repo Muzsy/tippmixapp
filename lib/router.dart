@@ -85,7 +85,7 @@ final GoRouter router = GoRouter(
           path: '/feed',
           name: AppRoute.feed.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const FeedScreen(),
+            child: const EventsScreen(sportKey: 'soccer'),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
