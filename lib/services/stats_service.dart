@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_stats_model.dart';
 import '../models/leaderboard_mode.dart';
 import '../models/stats_backend_mode.dart';
@@ -99,5 +100,41 @@ class StatsService {
               .compareTo(a.currentWinStreak ?? 0);
       }
     });
+  }
+
+  /// Returns aggregated statistics for the currently authenticated user.
+  ///
+  /// When no user is logged in `null` is returned. The [FirebaseAuth] instance
+  /// is injectable for testing similarly to [CoinService.hasClaimedToday].
+  Future<UserStatsModel?> getUserStats({FirebaseAuth? auth}) async {
+    final currentUser = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return null;
+
+    final uid = currentUser.uid;
+    final userDoc = await _db.collection('users').doc(uid).get();
+    if (!userDoc.exists) return null;
+    final userData = userDoc.data() ?? <String, dynamic>{};
+
+    final coins = (userData['coins'] as int?) ?? 0;
+    final displayName = userData['nickname'] as String? ?? '';
+
+    final ticketSnap = await _db
+        .collection('tickets')
+        .where('userId', isEqualTo: uid)
+        .get();
+    final totalBets = ticketSnap.docs.length;
+    final totalWins = ticketSnap.docs
+        .where((t) => t.data()['status'] == 'won')
+        .length;
+    final winRate = totalBets == 0 ? 0.0 : totalWins / totalBets;
+
+    return UserStatsModel(
+      uid: uid,
+      displayName: displayName,
+      coins: coins,
+      totalBets: totalBets,
+      totalWins: totalWins,
+      winRate: winRate,
+    );
   }
 }
