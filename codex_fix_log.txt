@@ -74,3 +74,6 @@ Added missing imports for OddsApiService and OddsCacheWrapper in feed_navigation
 Extended HomeScreen test import list to include AI tip, challenges, and feed activity providers.
 Imported cloud_firestore in notification_center_screen_test to resolve undefined classes.
 Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/pubspec.yaml hivatkozásnál.
+Fixed incorrect GoRouterState lookup in MyBottomNavigationBar.
+Replaced overrideWithValue with overrideWith in home_screen_test.
+Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.

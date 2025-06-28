@@ -7,8 +7,8 @@ class MyBottomNavigationBar extends StatelessWidget {
   const MyBottomNavigationBar({super.key});
 
   int _getSelectedIndex(BuildContext context) {
-    final state = GoRouterState.maybeOf(context);
-    final location = state?.uri.toString() ?? '';
+    final state = GoRouterState.of(context);
+    final location = state.uri.toString();
     if (location == '/profile') return 1;
     if (location == '/my-tickets') return 2;
     if (location == '/feed') return 3;

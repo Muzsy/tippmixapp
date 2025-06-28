@@ -91,7 +91,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          dailyBonusAvailableProvider.overrideWithValue(StateController(true)),
+          dailyBonusAvailableProvider.overrideWith(
+            (ref) => StateController<bool>(true),
+          ),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
           aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
