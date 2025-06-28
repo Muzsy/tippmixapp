@@ -42,13 +42,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
 
-      if (user == null) {
-        return widget.showAppBar
-          ? Scaffold(
-              appBar: AppBar(title: Text(loc.profile_title)),
-              body: Center(child: Text(loc.not_logged_in)),
-            )
-          : Center(child: Text(loc.not_logged_in));
+    if (user == null) {
+      if (!widget.showAppBar || Scaffold.maybeOf(context) != null) {
+        return Center(child: Text(loc.not_logged_in));
+      }
+      return Scaffold(
+        appBar: AppBar(title: Text(loc.profile_title)),
+        body: Center(child: Text(loc.not_logged_in)),
+      );
     }
 
     final content = Padding(
@@ -83,7 +84,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
 
     if (!widget.showAppBar) return content;
-
+    if (Scaffold.maybeOf(context) != null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(loc.profile_title)),
       body: content,
