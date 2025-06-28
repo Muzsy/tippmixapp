@@ -11,8 +11,9 @@ import 'package:go_router/go_router.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
+  final bool showAppBar;
 
-  const EventsScreen({super.key, required this.sportKey});
+  const EventsScreen({super.key, required this.sportKey, this.showAppBar = true});
 
   @override
   ConsumerState<EventsScreen> createState() => _EventsScreenState();
@@ -32,11 +33,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     final oddsState = ref.watch(oddsApiProvider);
     final loc = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.events_title), // ARB kulcs
-      ),
-      body: Builder(
+    final body = Builder(
         builder: (context) {
           if (oddsState is OddsApiLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -88,7 +85,17 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
             return const SizedBox.shrink();
           }
         },
+      );
+
+    if (!widget.showAppBar) {
+      return body;
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.bets_title),
       ),
+      body: body,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
