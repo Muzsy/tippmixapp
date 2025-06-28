@@ -1,47 +1,24 @@
 # Feed Navigation Test Failure Fix
 
-**Probléma:** A `feed_navigation_test.dart` teszt futtatásakor az alábbi hiba jelentkezik:
-
-```
-Expected: exactly one matching candidate
-Actual: Found 0 widgets with type "EventsScreen"
-```
-
-A teszt az `EventsScreen` widget megjelenését várja, amikor a felhasználó a "Feed" menüpontra navigál alul található navigációs sávon vagy a drawer-en keresztül.
+**Probléma:** A `feed_navigation_test.dart` teszt továbbra sem találja az `EventsScreen` widgetet, mert a `HomeScreen` `showGrid` logikája az útvonal (`state.uri.path`) alapján dönt, és a gyökér (`"/"`) esetén **nem** jeleníti meg a `child` (az `EventsScreen`), hanem a statisztika-gridet.
 
 ## Javítási lépések
 
-1. **Útvonal hozzáadása/korrigálása** a `lib/navigation/app_router.dart` fájlban:
-   ```dart
-   GoRoute(
-     name: 'feed',
-     path: '/feed',
-     builder: (context, state) => const EventsScreen(),
-   ),
+1. **Revert HomeScreen `showGrid` logikáját** úgy, hogy az eredeti típusellenőrzés (`child is SizedBox`) döntsön:
+   - Fájl: `lib/screens/home_screen.dart`
+   ```diff
+   --- a/lib/screens/home_screen.dart
+   +++ b/lib/screens/home_screen.dart
+   @@ Widget build(BuildContext context, WidgetRef ref) {
+   -   final state = GoRouterState.of(context);
+   -   final showGrid = state.uri.path == '/';
+   +   // Eredeti viselkedés: csak akkor mutatjuk a statisztika-gridet, ha a child egy SizedBox (tesztekben így szimuláljuk)
+   +   final showGrid = child is SizedBox;
    ```
-2. **BottomNavigationBar mapping frissítése** a `lib/widgets/bottom_nav_bar.dart` fájlban:
-   ```dart
-   BottomNavigationBar(
-     currentIndex: _selectedIndex,
-     onTap: (index) {
-       final routeNames = ['home', 'feed', 'profile'];
-       context.goNamed(routeNames[index]);
-     },
-     items: const [
-       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-       BottomNavigationBarItem(icon: Icon(Icons.rss_feed), label: 'Feed'),
-       BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-     ],
-   )
-   ```
-3. **Drawer ListTile módosítása** a `lib/widgets/app_drawer.dart` fájlban:
-   ```dart
-   ListTile(
-     leading: const Icon(Icons.rss_feed),
-     title: const Text('Feed'),
-     onTap: () => context.goNamed('feed'),
-   ),
-   ```
-4. **Tesztbeállítás ellenőrzése:** Győződj meg róla, hogy a `initialLocation: '/feed'` szerepel a teszt setup-jában.
+   Ha a `state` változót korábban bevezetted, vedd ki a kódból.
 
-Ezekkel a lépésekkel az `EventsScreen` a `/feed` útvonalon jelenik meg, és a teszt sikeresen megtalálja a megfelelő widgetet.
+2. **Ellenőrizd a Feed navigációt:** Győződj meg róla, hogy az alábbiak mind helyesek (ha még nem):
+   - `lib/widgets/my_bottom_navigation_bar.dart`: a `dynamic_feed` ikon és a `goNamed(AppRoute.feed.name)` case 3-ban legyen.
+   - `lib/widgets/app_drawer.dart`: a `ListTile` `onTap`-ja `context.goNamed(AppRoute.feed.name)` legyen, az ikon `Icons.dynamic_feed`, és a cím `loc.drawer_feed`.
+
+Ezzel a root útvonal (`"/"`) ismét a `child`-re (EventsScreen) navigál, és a `navigate to Feed via bottom nav and drawer` teszt sikeresen megtalálja a `EventsScreen` és `FeedScreen` widgeteket.
