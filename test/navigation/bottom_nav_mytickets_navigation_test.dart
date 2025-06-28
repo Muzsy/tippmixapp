@@ -7,12 +7,21 @@ import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/screens/home_screen.dart';
+import 'package:tippmixapp/screens/home_screen.dart'
+    show
+        HomeScreen,
+        dailyBonusAvailableProvider,
+        latestBadgeProvider,
+        aiTipFutureProvider,
+        activeChallengesProvider,
+        latestFeedActivityProvider;
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/providers/auth_provider.dart'
+    show authProvider, authServiceProvider, AuthNotifier;
 import 'package:tippmixapp/models/ticket_model.dart';
 import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tippmixapp/providers/stats_provider.dart';
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
@@ -74,7 +83,14 @@ void main() {
       ProviderScope(
         overrides: [
           ticketsProvider.overrideWith((ref) => Stream.value(const <Ticket>[])),
+          authServiceProvider.overrideWith((ref) => FakeAuthService()),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
+          dailyBonusAvailableProvider.overrideWith((ref) => false),
+          userStatsProvider.overrideWith((ref) async => null),
+          aiTipFutureProvider.overrideWith((ref) async => null),
+          latestBadgeProvider.overrideWith((ref) async => null),
+          activeChallengesProvider.overrideWith((ref) => []),
+          latestFeedActivityProvider.overrideWith((ref) async => null),
         ],
         child: MaterialApp.router(
           routerConfig: router,
