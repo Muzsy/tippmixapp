@@ -69,3 +69,8 @@ Fixed FakeCollectionReference.where signature in challenge_service_test.dart.
 Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.
 Fixed FakeQuery analyzer issues in challenge_service_test: added ignore for sealed class, annotated get with @override, removed unnecessary noSuchMethod.
 Could not fix missing .env asset warning in llama_index/data/pubspec.yaml.
+
+Added missing imports for OddsApiService and OddsCacheWrapper in feed_navigation_test.
+Extended HomeScreen test import list to include AI tip, challenges, and feed activity providers.
+Imported cloud_firestore in notification_center_screen_test to resolve undefined classes.
+Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/pubspec.yaml hivatkozásnál.
