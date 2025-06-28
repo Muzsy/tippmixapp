@@ -61,7 +61,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
-    final showGrid = child is SizedBox;
+    // … HomeScreen build-metódusában …
+    final showGrid = GoRouterState.of(context).location == '/';
 
     Widget body;
     if (showGrid) {
@@ -123,7 +124,7 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
         loading: () => const SizedBox.shrink(),
-        error: (_, __) => const SizedBox.shrink(),
+        error: (_, _) => const SizedBox.shrink(),
       );
     } else {
       body = child;

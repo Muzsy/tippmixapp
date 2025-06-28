@@ -1,0 +1,22 @@
+inputs:
+  canvas:
+    - canvases/home_screen_showgrid_fix.md
+  rules:
+    - codex_docs/routing_integrity.md
+    - codex_docs/codex_context.yaml
+  docs:
+    - docs/canvases_odds_api_integration.md
+
+steps:
+  - description: Update showGrid computation to use GoRouterState URI path
+    file: lib/screens/home_screen.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/screens/home_screen.dart
+      @@ build(BuildContext context, WidgetRef ref) {
+      -   final showGrid = child is SizedBox;
+      +   final state = GoRouterState.of(context);
+      +   final showGrid = state.uri.path == '/';
+      *** End Patch
+outputs:
+  - lib/screens/home_screen.dart
