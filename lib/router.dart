@@ -61,8 +61,8 @@ final GoRouter router = GoRouter(
           ),
         ),
         GoRoute(
-          path: '/events',
-          name: AppRoute.events.name,
+          path: '/bets',
+          name: AppRoute.bets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const EventsScreen(sportKey: 'soccer'),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>

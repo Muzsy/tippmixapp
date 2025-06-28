@@ -1,7 +1,7 @@
 enum AppRoute {
   home,
   profile,
-  events,
+  bets,
   myTickets,
   leaderboard,
   settings,
