@@ -46,6 +46,14 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
   }
 
   @override
+  void didUpdateWidget(covariant HomeTileEducationalTip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.random != oldWidget.random) {
+      _loadTip();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Card(
