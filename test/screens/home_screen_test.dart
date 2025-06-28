@@ -46,6 +46,10 @@ void main() {
           dailyBonusAvailableProvider.overrideWith((ref) => true),
           latestBadgeProvider.overrideWith((ref) => Future.value(null)),
           leaderboardStreamProvider.overrideWith((ref) => statsController.stream),
+          aiTipFutureProvider.overrideWith((ref) => Future.value(null)),
+          topTipsterProvider.overrideWith((ref) => Future.value(null)),
+          activeChallengesProvider.overrideWith((ref) => Future.value([])),
+          latestFeedActivityProvider.overrideWith((ref) => Future.value(null)),
           authProvider.overrideWith(
               (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
         ],
