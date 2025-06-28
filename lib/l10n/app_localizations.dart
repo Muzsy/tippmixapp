@@ -769,6 +769,12 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get menuLeaderboard;
 
+  /// No description provided for @menuProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get menuProfile;
+
   /// No description provided for @menuSettings.
   ///
   /// In en, this message translates to:
