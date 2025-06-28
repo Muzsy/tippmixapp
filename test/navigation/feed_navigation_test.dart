@@ -18,6 +18,7 @@ import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
+import 'package:tippmixapp/screens/feed_screen.dart';
 import 'package:tippmixapp/screens/home_screen.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 
@@ -76,7 +77,12 @@ void main() {
             GoRoute(
               path: '/feed',
               name: AppRoute.feed.name,
-              builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
+              pageBuilder: (context, state) => CustomTransitionPage(
+                child: const FeedScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
+              ),
             ),
           ],
         ),
@@ -126,11 +132,11 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    expect(find.byType(EventsScreen), findsOneWidget);
+    expect(find.byType(FeedScreen), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.dynamic_feed));
     await tester.pumpAndSettle();
-    expect(find.byType(EventsScreen), findsOneWidget);
+    expect(find.byType(FeedScreen), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.home));
     await tester.pumpAndSettle();
@@ -140,6 +146,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, 'Feed'));
     await tester.pumpAndSettle();
-    expect(find.byType(EventsScreen), findsOneWidget);
+    expect(find.byType(FeedScreen), findsOneWidget);
   });
 }
