@@ -33,15 +33,18 @@ class NotificationCenterScreen extends ConsumerWidget {
               return NotificationItem(
                 notification: item,
                 onTap: () {
-                  switch (item.type) {
-                    case NotificationType.reward:
-                      context.goNamed(AppRoute.rewards.name);
-                      break;
-                    case NotificationType.badge:
-                      context.goNamed(AppRoute.badges.name);
-                      break;
-                    default:
-                      context.goNamed(AppRoute.home.name);
+                  final router = GoRouter.maybeOf(context);
+                  if (router != null) {
+                    switch (item.type) {
+                      case NotificationType.reward:
+                        router.goNamed(AppRoute.rewards.name);
+                        break;
+                      case NotificationType.badge:
+                        router.goNamed(AppRoute.badges.name);
+                        break;
+                      default:
+                        router.goNamed(AppRoute.home.name);
+                    }
                   }
                   ref
                       .read(notificationServiceProvider)

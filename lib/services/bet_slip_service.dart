@@ -48,7 +48,8 @@ class BetSlipService {
       throw ArgumentError('invalidStake');
     }
 
-    final currentUser = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+    final firebaseAuth = auth ?? FirebaseAuth.instance;
+    final currentUser = firebaseAuth.currentUser;
     if (currentUser == null) {
       throw FirebaseAuthException(
         code: 'unauthenticated',
