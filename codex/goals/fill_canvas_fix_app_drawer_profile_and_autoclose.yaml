@@ -1,0 +1,22 @@
+steps:
+  - name: Új ListTile a profilmenühöz
+    description: Helyezzünk el egy új ListTile elemet a Drawer komponensben, amely a /profile útvonalra navigál.
+    outputs:
+      - leading: const Icon(Icons.person)
+      - title: Text(loc.menuProfile)
+      - onTap: Navigator.pop(context) + context.goNamed(AppRoute.profile.name)
+
+  - name: Menü bezárása navigáció előtt
+    description: Módosítsuk az összes meglévő ListTile.onTap függvényt úgy, hogy navigáció előtt meghívja a Navigator.pop(context) utasítást.
+    outputs:
+      - context.goNamed előtt: Navigator.pop(context)
+
+  - name: Lokalizációs kulcs ellenőrzése
+    description: Ellenőrizzük, hogy a loc.menuProfile kulcs szerepel-e az ARB fájlokban. Ha hiányzik, pótoljuk.
+    outputs:
+      - menuProfile kulcs hozzáadása az app_hu.arb, app_en.arb, app_de.arb fájlokhoz
+
+  - name: Widget teszt javaslat
+    description: Teszteljük, hogy egy ListTile kiválasztása bezárja a Drawer-t és megjeleníti a célnézetet.
+    outputs:
+      - Teszt: open drawer → tap profile → expect ProfileScreen + drawer bezárva
