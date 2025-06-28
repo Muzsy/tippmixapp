@@ -70,12 +70,15 @@ class HomeScreen extends ConsumerWidget {
 
   // --- private helpers -----------------------------------------------------
 
-  bool _isRootRoute() => state?.name == AppRoute.home.name;
+  bool _isRootRoute(BuildContext context) {
+    final currentName = state?.name ?? GoRouterState.of(context).name;
+    return currentName == AppRoute.home.name;
+  }
 
   Widget _buildBody(BuildContext context, WidgetRef ref) {
     // In tests showGrid can be forced by the [showStats] flag so that the
     // header + tiles render without depending on routing.
-    final showGrid = showStats || _isRootRoute();
+    final showGrid = showStats || _isRootRoute(context);
 
     if (!showGrid) return child ?? const SizedBox.shrink();
 
@@ -121,7 +124,8 @@ class HomeScreen extends ConsumerWidget {
       data: (stats) => Column(
         children: [
           // Header *only* here when [showStats] is *false* and we are on root.
-          if (!showStats && _isRootRoute()) UserStatsHeader(stats: stats),
+          if (!showStats && _isRootRoute(context))
+            UserStatsHeader(stats: stats),
           Expanded(
             child: GridView.count(
               padding: const EdgeInsets.all(16),
@@ -182,7 +186,7 @@ class HomeScreen extends ConsumerWidget {
         title: Text(titleText),
         actions: const [NotificationBellWidget()],
       ),
-      drawer: _isRootRoute() ? const AppDrawer() : null,
+      drawer: _isRootRoute(context) ? const AppDrawer() : null,
       body: body,
       bottomNavigationBar: const MyBottomNavigationBar(),
     );
