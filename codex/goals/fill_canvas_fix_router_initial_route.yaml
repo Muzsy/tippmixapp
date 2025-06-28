@@ -1,0 +1,17 @@
+steps:
+  - name: Kezdőképernyő javítása a router.dart fájlban
+    description: A '/' útvonal jelenleg az EventsScreen-re mutat. Cseréljük ki úgy, hogy a HomeScreen jelenjen meg a főképernyőn.
+    outputs:
+      - router.dart fájl módosítása: '/' route builder mezőjét cseréljük ki
+      - Új builder: HomeScreen(state: state, child: const SizedBox.shrink(), showStats: true)
+
+  - name: Ellenőrizzük, hogy a ShellRoute struktúra megmarad
+    description: A HomeScreen a ShellRoute szülője marad, csak a '/' útvonal célkomponensét módosítjuk.
+    outputs:
+      - A ShellRoute nem változik
+      - A '/' útvonal új builder-t kap
+
+  - name: Widget teszt hozzáadása (ajánlott)
+    description: Opcionálisan egészítsük ki a home_screen_test.dart fájlt egy teszttel, ami ellenőrzi, hogy megjelenik a UserStatsHeader.
+    outputs:
+      - Widget test: expect(find.byType(UserStatsHeader), findsOneWidget)
