@@ -361,6 +361,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuProfile => 'Profil';
 
   @override
+  String get myTickets => 'Szelvényeim';
+
+  @override
   String get menuSettings => 'Beállítások';
 
   @override

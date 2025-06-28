@@ -361,6 +361,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuProfile => 'Profil';
 
   @override
+  String get myTickets => 'Meine Scheine';
+
+  @override
   String get menuSettings => 'Einstellungen';
 
   @override
