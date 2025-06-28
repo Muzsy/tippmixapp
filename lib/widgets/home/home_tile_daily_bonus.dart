@@ -23,12 +23,18 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
   }
 
   Future<void> _load() async {
-    final service = widget.coinService ?? CoinService();
-    final claimed = await service.hasClaimedToday();
-    if (mounted) {
-      setState(() {
-        _claimed = claimed;
-      });
+    try {
+      final service = widget.coinService ?? CoinService();
+      final claimed = await service.hasClaimedToday();
+      if (mounted) {
+        setState(() {
+          _claimed = claimed;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _claimed = false);
+      }
     }
   }
 

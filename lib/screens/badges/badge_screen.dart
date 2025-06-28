@@ -31,7 +31,7 @@ class BadgeScreen extends ConsumerStatefulWidget {
 }
 
 class _BadgeScreenState extends ConsumerState<BadgeScreen> {
-  BadgeFilter _filter = BadgeFilter.all;
+  BadgeFilter _filter = BadgeFilter.owned;
 
   @override
   Widget build(BuildContext context) {
