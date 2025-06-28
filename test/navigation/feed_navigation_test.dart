@@ -18,7 +18,6 @@ import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/feed_screen.dart';
 import 'package:tippmixapp/screens/home_screen.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 
@@ -64,7 +63,7 @@ class TestOddsApiProvider extends OddsApiProvider {
 void main() {
   testWidgets('navigate to Feed via bottom nav and drawer', (tester) async {
     final router = GoRouter(
-      initialLocation: '/events',
+      initialLocation: '/feed',
       routes: [
         ShellRoute(
           builder: (context, state, child) => HomeScreen(child: child),
@@ -75,8 +74,8 @@ void main() {
               builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
             ),
             GoRoute(
-              path: '/events',
-              name: AppRoute.events.name,
+              path: '/feed',
+              name: AppRoute.feed.name,
               builder: (context, state) => const EventsScreen(sportKey: 'soccer'),
             ),
           ],
