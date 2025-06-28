@@ -23,9 +23,15 @@ A `GoRouter` 10.x+ verziókban eltávolították a `location` property-ket mind 
 
    ```dart
    class HomeScreen extends ConsumerWidget {
-     final Widget child;
-     final GoRouterState state;
-     const HomeScreen({ super.key, required this.child, required this.state });
+      final Widget child;
+      final GoRouterState state;
+      final bool showStats;
+      const HomeScreen({
+        super.key,
+        required this.child,
+        required this.state,
+        this.showStats = true,
+      });
 
      @override
      Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +39,15 @@ A `GoRouter` 10.x+ verziókban eltávolították a `location` property-ket mind 
      }
    }
    ```
-3. **`showGrid` logika javítása** a `build` metódusban:
+3. **Statisztika fejléc kapcsolhatóvá tétele**:
+
+   ```dart
+   if (showStats) UserStatsHeader(stats: stats),
+   ```
+
+   A tesztekben a `showStats` paraméterrel tudjuk vezérelni a fejléc megjelenését.
+
+4. **`showGrid` logika javítása** a `build` metódusban:
 
    ```diff
     @override
