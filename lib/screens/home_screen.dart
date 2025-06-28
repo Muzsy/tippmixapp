@@ -55,34 +55,29 @@ final latestFeedActivityProvider = FutureProvider<FeedModel?>((ref) async {
 });
 
 class HomeScreen extends ConsumerWidget {
-  final Widget child;
-  final GoRouterState state;
+  final GoRouterState? state;
+  final Widget? child;
   final bool showStats;
   const HomeScreen({
+    this.state,
+    this.child,
+    this.showStats = false,
     super.key,
-    required this.child,
-    required this.state,
-    this.showStats = true,
   });
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final loc = AppLocalizations.of(context)!;
-    // … HomeScreen build-metódusában …
-    // Eredeti viselkedés: csak akkor mutatjuk a statisztika-gridet, ha a child egy SizedBox
-    // (tesztekben így szimuláljuk)
-    // Only show stats on the 'home' route
-    final showGrid = state.name == 'home';
+  Widget _buildBody(BuildContext context, WidgetRef ref) {
+    final showGrid = state?.name == 'home';
 
-    Widget body;
     if (showGrid) {
       final statsAsync = ref.watch(userStatsProvider);
       final tiles = <Widget>[];
       tiles.add(const HomeTileEducationalTip());
       final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
       final topTipster = ref.watch(topTipsterProvider).asData?.value;
-      final feedActivity = ref.watch(latestFeedActivityProvider).asData?.value;
-      final challenges = ref.watch(activeChallengesProvider).asData?.value;
+      final feedActivity =
+          ref.watch(latestFeedActivityProvider).asData?.value;
+      final challenges =
+          ref.watch(activeChallengesProvider).asData?.value;
       if (aiTip != null) {
         tiles.add(HomeTileAiTip(tip: aiTip));
       }
@@ -101,8 +96,7 @@ class HomeScreen extends ConsumerWidget {
         tiles.add(
           HomeTileChallengePrompt(
             challenge: challenges.first,
-            onAccept: () =>
-                context.goNamed(AppRoute.createTicket.name),
+            onAccept: () => context.goNamed(AppRoute.createTicket.name),
           ),
         );
       }
@@ -119,10 +113,10 @@ class HomeScreen extends ConsumerWidget {
           ),
         );
       }
-      body = statsAsync.when(
+      return statsAsync.when(
         data: (stats) => Column(
           children: [
-            if (showStats) UserStatsHeader(stats: stats),
+            if (!showStats) UserStatsHeader(stats: stats),
             Expanded(
               child: GridView.count(
                 padding: const EdgeInsets.all(16),
@@ -134,10 +128,25 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
         loading: () => const SizedBox.shrink(),
-        error: (_, _) => const SizedBox.shrink(),
+        error: (_, __) => const SizedBox.shrink(),
       );
-    } else {
-      body = child;
+    }
+
+    return child ?? const SizedBox.shrink();
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context)!;
+    final body = _buildBody(context, ref);
+
+    if (showStats) {
+      return Column(
+        children: [
+          const UserStatsHeader(),
+          Expanded(child: body),
+        ],
+      );
     }
 
     return Scaffold(
