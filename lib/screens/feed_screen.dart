@@ -12,7 +12,9 @@ class FeedScreen extends StatelessWidget {
     final content = const HomeFeedWidget();
 
     if (!showAppBar) return content;
-
+    if (Scaffold.maybeOf(context) != null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.feed_screen_title)),
       body: content,
