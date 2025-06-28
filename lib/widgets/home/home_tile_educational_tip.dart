@@ -17,7 +17,7 @@ class HomeTileEducationalTip extends StatefulWidget {
 }
 
 class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
-  String? _tip;
+  String _tip = '';
 
   Future<void> _loadTip() async {
     final lang = Localizations.localeOf(context).languageCode;
@@ -40,7 +40,7 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_tip == null) {
+    if (_tip.isEmpty) {
       _loadTip();
     }
   }
@@ -60,8 +60,7 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
               Text(loc.home_tile_educational_tip_title,
                   textAlign: TextAlign.center),
               const SizedBox(height: 8),
-              if (_tip != null)
-                Text(_tip!, textAlign: TextAlign.center),
+              Text(_tip, textAlign: TextAlign.center),
               const SizedBox(height: 8),
               if (widget.onTap != null)
                 ElevatedButton(
