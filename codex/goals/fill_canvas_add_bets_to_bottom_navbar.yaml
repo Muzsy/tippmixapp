@@ -1,0 +1,21 @@
+steps:
+  - name: Új navigációs elem hozzáadása
+    description: A BottomNavigationBar-hoz adjunk hozzá egy új NavigationDestination elemet Fogadások névvel.
+    outputs:
+      - icon: Icon(Icons.sports_soccer)
+      - label: loc.bets_title
+
+  - name: onDestinationSelected frissítése
+    description: A Fogadások útvonalhoz adjuk hozzá a /bets navigációs logikát a switch case-ben.
+    outputs:
+      - case 2: context.go('/bets');
+
+  - name: selectedIndex kiegészítése
+    description: A jelenlegi útvonal alapján az index meghatározás logikájába vegyük fel a /bets útvonalat.
+    outputs:
+      - if (location.startsWith('/bets')) return 2;
+
+  - name: Widget teszt javaslat
+    description: Teszteljük, hogy az alsó navigációban a Fogadások ikon megnyomása után a képernyő betöltődik.
+    outputs:
+      - expect(find.text('Fogadások'), findsOneWidget)
