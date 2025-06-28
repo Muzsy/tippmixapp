@@ -11,7 +11,6 @@ import 'package:tippmixapp/models/user_stats_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/providers/user_stats_provider.dart';
 import 'package:tippmixapp/screens/home_screen.dart'
     show
         HomeScreen,
@@ -91,18 +90,6 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          userStatsProvider.overrideWith(
-            (ref) => AsyncData(
-              UserStatsModel(
-                uid: 'u1',
-                displayName: 'Me',
-                coins: 1000,
-                totalBets: 0,
-                totalWins: 0,
-                winRate: 0.75,
-              ),
-            ),
-          ),
           dailyBonusAvailableProvider.overrideWith(
             (ref) => true,
           ),
