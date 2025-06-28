@@ -33,29 +33,30 @@ class MyBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return BottomNavigationBar(
       currentIndex: _getSelectedIndex(context),
       onTap: (index) => _onItemTapped(context, index),
       items: [
         BottomNavigationBarItem(
           icon: const Icon(Icons.home),
-          label: AppLocalizations.of(context)!.home_title,
+          label: loc.home_title,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.dynamic_feed),
-          label: AppLocalizations.of(context)!.bottom_nav_feed,
+          label: loc.bottom_nav_feed,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.sports_soccer),
-          label: AppLocalizations.of(context)!.bets_title,
+          label: loc.bets_title,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.receipt_long),
-          label: AppLocalizations.of(context)!.myTickets,
+          label: loc.myTickets,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),
-          label: AppLocalizations.of(context)!.home_nav_profile,
+          label: loc.home_nav_profile,
         ),
       ],
       selectedItemColor: Theme.of(context).colorScheme.primary,
