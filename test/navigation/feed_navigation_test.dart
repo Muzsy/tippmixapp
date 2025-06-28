@@ -66,7 +66,7 @@ void main() {
       initialLocation: '/feed',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => HomeScreen(child: child),
+          builder: (context, state, child) => HomeScreen(child: child, state: state),
           routes: [
             GoRoute(
               path: '/',
