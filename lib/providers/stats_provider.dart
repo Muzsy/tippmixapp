@@ -18,3 +18,9 @@ final leaderboardStreamProvider =
   final mode = ref.watch(leaderboardModeProvider);
   return service.streamUserStats(mode: mode);
 });
+
+/// Fetches statistics for the currently authenticated user.
+final userStatsProvider = FutureProvider<UserStatsModel?>((ref) {
+  final service = ref.watch(statsServiceProvider);
+  return service.getUserStats();
+});
