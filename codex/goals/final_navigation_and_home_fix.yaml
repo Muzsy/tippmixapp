@@ -1,0 +1,66 @@
+inputs:
+  canvas:
+    - canvases/fix_feed_navigation.md
+    - canvases/home_screen_showgrid_fix.md
+  rules:
+    - codex_docs/routing_integrity.md
+    - codex_docs/codex_context.yaml
+  docs:
+    - docs/navigation_guidelines.md
+    - docs/canvases_odds_api_integration.md
+
+steps:
+  - description: Ensure ShellRoute builder passes GoRouterState to HomeScreen
+    file: lib/navigation/app_router.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/navigation/app_router.dart
+      @@
+      - ShellRoute(
+      -   builder: (BuildContext context, Widget child) {
+      -     return HomeScreen(child: child);
+      -   },
+      + ShellRoute(
+      +   builder: (BuildContext context, GoRouterState state, Widget child) {
+      +     return HomeScreen(child: child, state: state);
+      +   },
+      *** End Patch
+  - description: Add 'feed' route and ensure 'home' and 'feed' are declared
+    file: lib/navigation/app_router.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/navigation/app_router.dart
+      @@ routes:
+      -    // existing routes
+      +    GoRoute(
+      +      name: 'home',
+      +      path: '/',
+      +      builder: (context, state) => const HomeScreen(child: SizedBox(), state: state),
+      +    ),
+      +    GoRoute(
+      +      name: 'feed',
+      +      path: '/feed',
+      +      builder: (context, state) => const EventsScreen(),
+      +    ),
+      *** End Patch
+  - description: Update HomeScreen to use state.name for showGrid logic
+    file: lib/screens/home_screen.dart
+    patch: |-
+      *** Begin Patch
+      *** Update File: lib/screens/home_screen.dart
+      @@ class HomeScreen extends ConsumerWidget {
+      -  final Widget child;
+      +  final Widget child;
+      +  final GoRouterState state;
+      @@
+      - const HomeScreen({ super.key, required this.child });
+      + const HomeScreen({ super.key, required this.child, required this.state });
+      @@ Widget build(BuildContext context, WidgetRef ref) {
+      -   final state = GoRouterState.of(context);
+      -   final showGrid = state.uri.path == '/';
+      +   // Only show stats on the 'home' route
+      +   final showGrid = state.name == 'home';
+      *** End Patch
+outputs:
+  - lib/navigation/app_router.dart
+  - lib/screens/home_screen.dart
