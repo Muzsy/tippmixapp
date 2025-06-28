@@ -236,6 +236,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get events_title => 'Események';
 
   @override
+  String get bets_title => 'Fogadások';
+
+  @override
   String get events_empty => 'Nincs elérhető esemény';
 
   @override
