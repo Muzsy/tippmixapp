@@ -538,6 +538,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get notificationMarkRead => 'Olvasottként jelölés';
 
   @override
+  String get notificationFilterAll => 'Összes';
+
+  @override
+  String get notificationFilterUnread => 'Olvasatlan';
+
+  @override
   String get notificationType_reward => 'Jutalom';
 
   @override

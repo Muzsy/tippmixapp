@@ -11,11 +11,20 @@ import '../../widgets/notification_item.dart';
 // import '../badges/badge_screen.dart';
 import '../../models/notification_model.dart';
 
-class NotificationCenterScreen extends ConsumerWidget {
+class NotificationCenterScreen extends ConsumerStatefulWidget {
   const NotificationCenterScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationCenterScreen> createState() =>
+      _NotificationCenterScreenState();
+}
+
+class _NotificationCenterScreenState
+    extends ConsumerState<NotificationCenterScreen> {
+  bool _showUnreadOnly = false;
+
+  @override
+  Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final notificationsAsync = ref.watch(notificationStreamProvider);
 
@@ -23,35 +32,61 @@ class NotificationCenterScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(loc.notificationTitle)),
       body: notificationsAsync.when(
         data: (list) {
-          if (list.isEmpty) {
+          var items = List<NotificationModel>.from(list);
+          if (_showUnreadOnly) {
+            items = items.where((n) => !n.isRead).toList();
+          }
+          items.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+          if (items.isEmpty) {
             return Center(child: Text(loc.notificationEmpty));
           }
-          return ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              final item = list[index];
-              return NotificationItem(
-                notification: item,
-                onTap: () {
-                  final router = GoRouter.maybeOf(context);
-                  if (router != null) {
-                    switch (item.type) {
-                      case NotificationType.reward:
-                        router.goNamed(AppRoute.rewards.name);
-                        break;
-                      case NotificationType.badge:
-                        router.goNamed(AppRoute.badges.name);
-                        break;
-                      default:
-                        router.goNamed(AppRoute.home.name);
-                    }
-                  }
-                  ref
-                      .read(notificationServiceProvider)
-                      .markAsRead(ref.read(authProvider).user!.id, item.id);
-                },
-              );
-            },
+
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => setState(() => _showUnreadOnly = false),
+                    child: Text(loc.notificationFilterAll),
+                  ),
+                  TextButton(
+                    onPressed: () => setState(() => _showUnreadOnly = true),
+                    child: Text(loc.notificationFilterUnread),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return NotificationItem(
+                      notification: item,
+                      onTap: () {
+                        final router = GoRouter.maybeOf(context);
+                        if (router != null) {
+                          switch (item.type) {
+                            case NotificationType.reward:
+                              router.goNamed(AppRoute.rewards.name);
+                              break;
+                            case NotificationType.badge:
+                              router.goNamed(AppRoute.badges.name);
+                              break;
+                            default:
+                              router.goNamed(AppRoute.home.name);
+                          }
+                        }
+                        ref
+                            .read(notificationServiceProvider)
+                            .markAsRead(ref.read(authProvider).user!.id, item.id);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
