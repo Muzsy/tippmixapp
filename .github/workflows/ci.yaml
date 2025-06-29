@@ -33,19 +33,18 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
-      - name: Install lcov-to-json
-        run: npm install -g lcov-to-json
+      # ======= ÚJ: Coverage badge generálása Dart-tal =======
+      - name: Generate coverage badge (Dart-native)
+        run: |
+          dart pub global activate flutter_coverage_badge
+          dart pub global run flutter_coverage_badge
 
-      - name: Convert lcov.info to coverage-summary.json
-        run: lcov-to-json coverage/lcov.info > coverage/coverage-summary.json
+      - name: Move badge to badges/
+        run: |
+          mkdir -p badges
+          mv coverage_badge.svg badges/coverage.svg
 
-      - name: Install coverage-badges-cli
-        run: npm install -g coverage-badges-cli
-
-      - name: Generate coverage badge
-        run: coverage-badges --output badges
-
-      # Automatikus badge commit a fő branchre
+      # ======= Automatikus badge commit =======
       - name: Commit coverage badge
         if: github.ref == 'refs/heads/main'
         run: |
@@ -57,4 +56,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # (Opcionális: coverage summary vagy egyéb jelentés feltöltése)
+      # ======= (Egyéb lépések, ha vannak) =======
