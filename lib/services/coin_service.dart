@@ -2,7 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import '../utils/simple_logger.dart';
 
 import '../utils/transaction_wrapper.dart';
 
@@ -45,7 +45,7 @@ class CoinService {
     required String transactionId,
   }) async {
     final user = _auth.currentUser;
-    if (user == null) throw const FirebaseAuthException(code: 'unauthenticated');
+    if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
     await _wrapper.run<void>((tx) async {
       final doc = _firestore.collection('users').doc(user.uid);
       final snap = await tx.get(doc);
@@ -61,7 +61,7 @@ class CoinService {
     required String transactionId,
   }) async {
     final user = _auth.currentUser;
-    if (user == null) throw const FirebaseAuthException(code: 'unauthenticated');
+    if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
     await _wrapper.run<void>((tx) async {
       final doc = _firestore.collection('users').doc(user.uid);
       final snap = await tx.get(doc);
