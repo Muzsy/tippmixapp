@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/home/home_tile_daily_bonus.dart';
 import 'package:tippmixapp/services/coin_service.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 class FakeCoinService extends CoinService {
+  FakeCoinService({required super.firestore}); // Pass required arguments here if needed
+
   bool claimed = false;
   int claimCalls = 0;
 
@@ -21,7 +24,7 @@ class FakeCoinService extends CoinService {
 
 void main() {
   testWidgets('Daily bonus claim flow', (tester) async {
-    final fakeService = FakeCoinService();
+    final fakeService = FakeCoinService(firestore: FakeFirebaseFirestore());
 
     await tester.pumpWidget(
       ProviderScope(
