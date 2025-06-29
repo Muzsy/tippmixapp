@@ -78,7 +78,7 @@ class BetSlipService {
     );
 
     // 4️⃣ TippCoin levonás
-    final cs = coinService ?? CoinService();
+    final cs = coinService ?? CoinService(firestore: firestore ?? FirebaseFirestore.instance);
     try {
       await cs.debitCoin(
         amount: stake,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../../services/coin_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Tile showing the daily bonus status and allowing the user to claim it.
 class HomeTileDailyBonus extends ConsumerStatefulWidget {
@@ -24,7 +25,7 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
 
   Future<void> _load() async {
     try {
-      final service = widget.coinService ?? CoinService();
+      final service = widget.coinService ?? CoinService(firestore: FirebaseFirestore.instance);
       final claimed = await service.hasClaimedToday();
       if (mounted) {
         setState(() {
@@ -40,7 +41,7 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
 
   Future<void> _claim() async {
     setState(() => _loading = true);
-    final service = widget.coinService ?? CoinService();
+    final service = widget.coinService ?? CoinService(firestore: FirebaseFirestore.instance);
     await service.claimDailyBonus();
     if (mounted) {
       setState(() {
