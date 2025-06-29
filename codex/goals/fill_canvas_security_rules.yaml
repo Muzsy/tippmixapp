@@ -1,0 +1,20 @@
+# Codex goal – Firestore security rules update + tests (T16)
+canvas: canvases/security_rules_coin_logs.md
+
+inputs:
+  - firestore.rules
+  - scripts/test_firebase_rules.sh
+  - pubspec.yaml
+  - fake_cloud_firestore
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: update_firestore_rules
+    description: |
+      Inject/replace the new rules snippet for the `/coin_logs`, `/badges`, and `/notifications` matches in `firestore.rules` exactly as specified in the canvas.
+    output: firestore.rules
+  - name: generate_security_rules_tests
+    description: |
+      Generate `test/integration/security_rules_test.dart` that spins up a FakeFirebaseFirestore emulator context (or uses `firebase_rules_unit_testing` util if available) and implements the 10 test cases (SR-01…SR-10) verifying allow/deny outcomes by asserting throws / completes.
+    output: test/integration/security_rules_test.dart
+    run_tests: false
