@@ -1,0 +1,31 @@
+# Codex goal – generate tests for T13 NotificationCenter
+canvas: canvases/notification_center_test.md
+
+inputs:
+  # Source widget & helpers
+  - lib/screens/notifications/notification_center.dart
+  - lib/screens/notifications/notification_card.dart
+  - lib/services/notification_service.dart
+  - lib/models/notification_model.dart
+  # l10n
+  - lib/l10n/app_localizations.dart
+  - lib/l10n/app_en.arb
+  - lib/l10n/app_hu.arb
+  - lib/l10n/app_de.arb
+  # Testing guidelines
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: generate_notification_center_widget_and_unit_tests
+    description: |
+      1. Create `test/screens/notification_center_test.dart` implementing the 11 widget test cases (NC-01…NC-11) from the canvas.
+         * Override `notificationStreamProvider` with a controllable `StreamController` seeded per test.
+         * Validate ordering, unread indicators, mark‑read state change, filter behaviour, pull‑to‑refresh, push‑insert, empty‑state, localization, error Snackbar, long‑list scroll.
+         * Skip navigation to NotificationDetailsPage if not yet implemented.
+      2. Create `test/services/notification_service_test.dart` with the 3 unit tests (NU‑01…NU‑03).
+         * Test model json parsing, markRead updates, filter helper.
+      * Do **not** run the tests automatically (run_tests: false) – CI pipeline will execute them.
+    output:
+      - test/screens/notification_center_test.dart
+      - test/services/notification_service_test.dart
+    run_tests: false
