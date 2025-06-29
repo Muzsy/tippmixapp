@@ -1,0 +1,28 @@
+# Codex goal – generate tests for T12 RewardsScreen
+canvas: canvases/rewards_screen_test.md
+
+inputs:
+  # For-source widget & helpers
+  - lib/screens/rewards/rewards_screen.dart
+  - lib/widgets/reward_card.dart
+  - lib/services/reward_service.dart
+  - lib/models/reward_model.dart
+  # Localization
+  - lib/l10n/app_localizations.dart
+  - lib/l10n/app_en.arb
+  - lib/l10n/app_hu.arb
+  - lib/l10n/app_de.arb
+  # Global testing conventions
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: generate_rewards_screen_widget_tests
+    description: |
+      Create `test/screens/rewards_screen_test.dart` implementing the eight test cases (RC-01…RC-08) from the canvas.
+      * Provide a `FakeRewardService` that seeds the provider with custom lists per test.
+      * Wrap the widget under test in a `ProviderScope` overriding `rewardServiceProvider`.
+      * Verify list rendering, Claim flow removal, empty-state texts, icon mapping, scroll stability and onClaim callback execution.
+      * Use `Locale('en'|'hu'|'de')` to validate localization keys.
+      * Do **not** include golden tests and do not run the tests automatically (`run_tests: false`).
+    output: test/screens/rewards_screen_test.dart
+    run_tests: false
