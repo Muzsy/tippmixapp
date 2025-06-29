@@ -72,8 +72,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       await service.debitCoin(
         amount: 20,
@@ -98,8 +97,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't2');
 
@@ -120,8 +118,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't3');
 
@@ -142,8 +139,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       expect(
         () => service.debitCoin(amount: 20, reason: 'bet', transactionId: 't4'),
@@ -165,8 +161,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       await Future.wait([
         service.debitCoin(amount: 50, reason: 'bet', transactionId: 't5a'),
@@ -189,8 +184,7 @@ void main() {
         firestore: firestore,
         auth: auth,
         logger: logger,
-        wrapper: wrapper,
-      );
+        );
 
       await Future.wait([
         service.debitCoin(amount: 40, reason: 'bet', transactionId: 't6a'),
