@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:tippmixapp/services/coin_service.dart';
 
@@ -12,7 +13,7 @@ class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
   FakeHttpsCallableResult(this.data);
 }
 
-class FakeHttpsCallable implements HttpsCallable {
+class FakeHttpsCallable extends Fake implements HttpsCallable {
   Map<String, dynamic>? lastData;
   final Map<String, dynamic> response;
 
@@ -26,7 +27,7 @@ class FakeHttpsCallable implements HttpsCallable {
 
 }
 
-class FakeFirebaseFunctions implements FirebaseFunctions {
+class FakeFirebaseFunctions extends Fake implements FirebaseFunctions {
   final FakeHttpsCallable callable;
 
   FakeFirebaseFunctions([FakeHttpsCallable? callable])
