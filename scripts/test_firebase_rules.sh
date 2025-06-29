@@ -1,3 +1,3 @@
 #!/bin/bash
-# Simple wrapper to run security rules tests with Firebase emulator
-firebase emulators:exec --project demo 'dart test test/integration/security_rules_test.dart'
+# Wrapper to run Firestore security rules tests
+npm run test:rules
