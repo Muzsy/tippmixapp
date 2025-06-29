@@ -1,0 +1,36 @@
+# fix_coin_service_and_wrapper.yaml
+canvas: canvases/transaction_wrapper_test.md   # maradhat a meglévőhöz kötve
+
+inputs:
+  - lib/services/coin_service.dart
+  - lib/utils/transaction_wrapper.dart
+  - test/integration/transaction_wrapper_test.dart
+
+steps:
+  - name: strip_static_functions_and_fix_wallet_path
+    description: |
+      1. Töröld a statikus `_fns` mezőt és minden rá hivatkozó sort.
+      2. Bővítsd a konstruktort: CoinService({required FirebaseFirestore firestore, FirebaseFunctions? functions}).
+      3. Tárold: `final FirebaseFunctions? _functions;`
+      4. A `_callCoinTrx` csak akkor hívja a cloud functiont, ha `_functions != null`.
+      5. Módosítsd a wallet útvonalat egységesen: firestore.collection('wallets').doc(uid).
+      6. A `debitCoin`/`creditCoin` tranzakcióban használj `FieldValue.increment(amount)`-et.
+    output:
+      - lib/services/coin_service.dart
+
+  - name: enhance_retry_logic_and_throw_exception
+    description: |
+      A TransactionWrapper:
+        * while (attempts < maxRetries) ↻
+        * csak FirebaseException.code ∈ {aborted, deadline-exceeded} esetén retry-ol.
+        * ha túlléptük, dob `TooManyAttemptsException()`.
+    output:
+      - lib/utils/transaction_wrapper.dart
+
+  - name: inject_null_functions_and_assert_paths_in_tests
+    description: |
+      1. A tesztben CoinService példány: CoinService(firestore: fakeDb, functions: null).
+      2. Ellenőrzések a `wallets/{uid}` dokumentumra mutassanak.
+    output:
+      - test/integration/transaction_wrapper_test.dart
+    run_tests: false
