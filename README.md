@@ -1,5 +1,5 @@
 # TippmixApp
-
+![Coverage](./badges/coverage.svg)
 [![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
 [![Security Rules Coverage](coverage/security_rules_badge.svg)](coverage/security_rules_badge.svg)
 

@@ -12,10 +12,9 @@
     "test:rules:coverage": "nyc --reporter=lcov npm run test:rules:run && npx coverage-badge --input coverage/coverage-final.json --output coverage/security_rules_badge.svg"
   },
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^3.1.0",
+    "@firebase/rules-unit-testing": "^4.0.1",
     "firebase": "^11.0.0",
     "mocha": "^10.0.0",
-    "nyc": "^15.1.0",
-    "coverage-badge": "^1.1.0"
+    "nyc": "^15.1.0"
   }
 }

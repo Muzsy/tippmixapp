@@ -1,3 +1,9 @@
 #!/bin/bash
-# Wrapper to run Firestore security rules tests with coverage output
-npm run test:rules:coverage
+# test_firebase_rules.sh – CI-compatible wrapper for Firestore rules testing
+set -e
+
+echo "📦 Installing dependencies..."
+npm ci --prefer-offline
+
+echo "🧪 Running Firestore security rules tests..."
+npm run test:rules
