@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tippmixapp/utils/simple_logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -31,7 +32,7 @@ class StubFirestore extends FakeFirebaseFirestore {
 
   @override
   Future<T> runTransaction<T>(
-    TransactionHandler<T> transactionHandler, {
+    Future<T> Function(Transaction) transactionHandler, {
     Duration timeout = const Duration(seconds: 5),
     int maxAttempts = 5,
   }) async {
