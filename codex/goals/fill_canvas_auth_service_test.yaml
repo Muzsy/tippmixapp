@@ -1,0 +1,17 @@
+# File: codex/goals/fill_canvas_auth_service_test.yaml
+canvas: canvases/auth_service_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - lib/services/auth_service.dart
+  - lib/utils/secure_storage.dart
+  - lib/providers/auth_provider.dart
+  - test/mocks/http_client_mock.dart  # ha létezik, egyébként Codex generál
+steps:
+  - name: Unit‑teszt létrehozása AuthService‑hez
+    description: >
+      Készíts `test/services/auth_service_test.dart` állományt, amely lefedi az
+      összes vászonban definiált use‑case‑t (sikeres login, refresh token,
+      hibás jelszó, server 500, network error, token timeout). Használj fake
+      HTTP‑klienst és fake SecureStorage‑t; semmilyen valós hálózat ne fusson.
+    outputs:
+      - test/services/auth_service_test.dart
