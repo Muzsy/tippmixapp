@@ -31,12 +31,13 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test
 
       # ====== Dart Coverage Assistant: coverage + badge automatikusan ======
-      - name: Run coverage and badge
+      - name: Run tests and generate badge
         uses: whynotmake-it/dart-coverage-assistant@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           generate_badges: push
-
+          testing_command: 'flutter test --coverage'
+          
       # ====== (Opcionális: ha saját commitlépést akarsz, csak akkor kell, ha a badge nem commitolódik automatikusan) ======
       # - name: Commit coverage badge
       #   if: github.ref == 'refs/heads/main'
