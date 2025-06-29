@@ -6,14 +6,28 @@ service cloud.firestore {
     }
 
     match /coin_logs/{logId} {
-      allow create: if isOwner(request.resource.data.userId)
-        && request.resource.data.amount is int
-        && (request.resource.data.type in ['debit', 'credit'])
-        && request.resource.data.timestamp == request.time
-        && request.resource.data.transactionId is string
-        && request.resource.data.reason is string;
-      allow read: if isOwner(resource.data.userId);
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid &&
+                    request.resource.data.amount is int &&
+                    request.resource.data.timestamp == request.time &&
+                    request.resource.data.type in ['bet', 'deposit', 'withdraw', 'adjust'];
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if false;
+    }
+
+    match /badges/{id} {
+      allow read: if true;
+      allow update: if request.auth != null && request.auth.uid == resource.data.ownerId;
+      allow create, delete: if false;
+    }
+
+    match /rewards/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /notifications/{uid}/{notifId} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid && request.resource.data.read == true;
     }
 
     match /users/{uid} {
