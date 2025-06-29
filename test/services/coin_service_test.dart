@@ -188,7 +188,7 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
 void main() {
   test('debitCoin calls cloud function with correct parameters', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions);
+    final service = CoinService(functions: functions);
 
     await service.debitCoin(
       amount: 10,
@@ -203,7 +203,7 @@ void main() {
 
   test('creditCoin uses credit type', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions);
+    final service = CoinService(functions: functions);
 
     await service.creditCoin(
       amount: 20,
@@ -217,7 +217,7 @@ void main() {
 
   test('creditDailyBonus sends predefined amount and reason', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions);
+    final service = CoinService(functions: functions);
 
     await service.creditDailyBonus();
 
@@ -229,7 +229,7 @@ void main() {
   test('creditCoin throws when backend reports failure', () async {
     final callable = FakeHttpsCallable({'success': false});
     final functions = FakeFirebaseFunctions(callable);
-    final service = CoinService(functions);
+    final service = CoinService(functions: functions);
 
     expect(
       () => service.creditCoin(
