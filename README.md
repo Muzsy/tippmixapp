@@ -1,6 +1,7 @@
 # TippmixApp
 
 [![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
+[![Security Rules Coverage](coverage/security_rules_badge.svg)](coverage/security_rules_badge.svg)
 
 TippmixApp is a minimal Flutter MVP that demonstrates a sports betting workflow.
 It integrates Firebase for authentication and data storage, fetches live event
