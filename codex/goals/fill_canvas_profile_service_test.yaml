@@ -1,0 +1,17 @@
+# File: codex/goals/fill_canvas_profile_service_test.yaml
+canvas: canvases/profile_service_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - lib/services/profile_service.dart
+  - lib/providers/profile_provider.dart
+  - lib/utils/cache.dart            # local profile cache util, if present
+  - lib/utils/connectivity.dart     # connectivity checker, if present
+steps:
+  - name: Generate unit tests for ProfileService
+    description: >
+      Create `test/services/profile_service_test.dart` implementing every use‑case listed in the canvas
+      (online fetch, offline cache fallback, update success, permission error, offline‑update queue).
+      Use `cloud_firestore_mocks` for FakeFirestore, a simple in‑memory FakeCache, and a FakeConnectivity class.
+      All async flows should use `package:clock` to freeze time where timestamps are asserted.
+      Ensure ≥85 % line coverage and that **no real network/Firestore calls** are executed.
+      Only generate the test file – do **not** attempt to run `dart run test`. CI will handle execution.
