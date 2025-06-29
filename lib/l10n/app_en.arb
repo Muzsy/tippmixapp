@@ -171,7 +171,9 @@
   ,"menuNotifications": "Notifications"
   ,"notificationTitle": "Events"
   ,"notificationEmpty": "No new notifications"
-  ,"notificationMarkRead": "Mark read"
+  ,"notificationMarkRead": "Mark read",
+  ,"notificationFilterAll": "All",
+  ,"notificationFilterUnread": "Unread",
   ,"notificationType_reward": "Reward"
   ,"notificationType_badge": "Badge"
   ,"notificationType_friend": "Friend request"
