@@ -52,10 +52,15 @@ class FakeCache<T> implements Cache<T> {
 }
 
 class MutableClock extends Clock {
+  late DateTime _time;
   MutableClock(DateTime start)
-      : _time = start,
-        super(() => _time);
-  DateTime _time;
+      : super(() {
+          throw UnimplementedError();
+        }) {
+    _time = start;
+    // Override the super's now function with a closure that accesses _time
+    (this as dynamic).now = () => _time;
+  }
   void advance(Duration d) => _time = _time.add(d);
 }
 
@@ -75,7 +80,12 @@ class TestOddsApiService extends OddsApiService {
   });
 
   @override
-  Future<OddsApiResponse<List<OddsEvent>>> getOdds({required String sport}) async {
+  Future<OddsApiResponse<List<OddsEvent>>> getOdds({
+    DateTime? from,
+    String? league,
+    required String sport,
+    DateTime? to,
+  }) async {
     final cached = cache.get(sport);
     if (cached != null) return cached;
 
