@@ -1,0 +1,37 @@
+# Codex goal – fix TransactionWrapper tests by removing hard FirebaseFunctions dependency (T15‑fix‑core/no‑app)
+canvas: canvases/transaction_wrapper_test.md
+
+inputs:
+  # Source that needs patching
+  - lib/services/coin_service.dart
+  # Affected tests
+  - test/integration/transaction_wrapper_test.dart
+
+steps:
+  - name: make_firebasefunctions_dependency_optional
+    description: |
+      **Modify `lib/services/coin_service.dart`** so that the service no longer relies on a static `FirebaseFunctions.instanceFor` call during import‑time. Instead:
+      1. Add a constructor parameter `FirebaseFunctions? functions` (nullable). Keep the existing `FirebaseFirestore firestore` injection.
+      2. Store it in an instance variable `_functions` (`final FirebaseFunctions? _functions;`). If null, the service must work in **offline/mock mode** and simply skip the Cloud Functions call in `_callCoinTrx`.
+      3. Replace any reference to the old static `_fns` with `_functions` and guard the call:
+         ```dart
+         if (_functions != null) {
+           await _functions!.httpsCallable('coinTrx').call({'amount': amount});
+         }
+         ```
+      4. Provide a default factory `CoinService.live()` that keeps the old behaviour (uses `FirebaseFunctions.instanceFor(...)`) so production code remains unchanged.
+    output:
+      - lib/services/coin_service.dart
+  - name: inject_null_functions_in_tests
+    description: |
+      **Adjust `test/integration/transaction_wrapper_test.dart`** so that it builds the service with only the fake Firestore:
+      ```dart
+      final coinService = CoinService(
+        firestore: fakeFirestore,
+        functions: null, // skip Cloud Functions in tests
+      );
+      ```
+      This removes the need for Firebase.initializeApp() and prevents the core/no‑app error.
+    output:
+      - test/integration/transaction_wrapper_test.dart
+    run_tests: false
