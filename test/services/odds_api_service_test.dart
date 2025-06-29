@@ -60,6 +60,9 @@ class MutableClock extends Clock {
   void advance(Duration d) {
     _time = _time.add(d);
   }
+
+  @override
+  DateTime now() => _time;
 }
 
 class TestOddsApiService extends OddsApiService {
