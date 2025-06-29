@@ -2,6 +2,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
+
+import '../utils/transaction_wrapper.dart';
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
 // for details about the coin transaction model and integration points.
@@ -10,39 +13,61 @@ import 'package:flutter/foundation.dart';
 /// backend Cloud Functions.
 class CoinService {
   final FirebaseFunctions? _functions;
+  final FirebaseFirestore _firestore;
+  final Logger _logger;
+  final FirebaseAuth _auth;
+  late final TransactionWrapper _wrapper;
 
-  CoinService([FirebaseFunctions? functions]) : _functions = functions;
+  CoinService({
+    FirebaseFunctions? functions,
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+    Logger? logger,
+    TransactionWrapper? wrapper,
+  })  : _functions = functions,
+        _firestore = firestore ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance,
+        _logger = logger ?? Logger('CoinService') {
+    _wrapper = wrapper ??
+        TransactionWrapper(
+          firestore: _firestore,
+          logger: _logger,
+        );
+  }
 
   FirebaseFunctions get _fns =>
       _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
-  /// Deduct coins from the authenticated user by calling the `coin_trx` Cloud
-  /// Function.
+  /// Deduct coins from the authenticated user using a Firestore transaction.
   Future<void> debitCoin({
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
-    await _callCoinTrx(
-      amount: amount,
-      type: 'debit',
-      reason: reason,
-      transactionId: transactionId,
-    );
+    final user = _auth.currentUser;
+    if (user == null) throw const FirebaseAuthException(code: 'unauthenticated');
+    await _wrapper.run<void>((tx) async {
+      final doc = _firestore.collection('users').doc(user.uid);
+      final snap = await tx.get(doc);
+      final current = (snap.data()?['coins'] as int?) ?? 0;
+      tx.update(doc, {'coins': current - amount});
+    });
   }
 
-  /// Credit coins to a user by calling the `coin_trx` Cloud Function.
+  /// Credit coins to a user using a Firestore transaction.
   Future<void> creditCoin({
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
-    await _callCoinTrx(
-      amount: amount,
-      type: 'credit',
-      reason: reason,
-      transactionId: transactionId,
-    );
+    final user = _auth.currentUser;
+    if (user == null) throw const FirebaseAuthException(code: 'unauthenticated');
+    await _wrapper.run<void>((tx) async {
+      final doc = _firestore.collection('users').doc(user.uid);
+      final snap = await tx.get(doc);
+      final current = (snap.data()?['coins'] as int?) ?? 0;
+      tx.update(doc, {'coins': current + amount});
+    });
   }
 
   /// Convenience helper for the daily bonus job.
