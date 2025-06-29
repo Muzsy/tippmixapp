@@ -1,0 +1,26 @@
+# File: codex/goals/fill_canvas_profile_screen_test.yaml
+canvas: canvases/profile_screen_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/localization_logic.md
+  - lib/screens/profile_screen.dart
+  - lib/widgets/profile_badge_widget.dart
+  - lib/widgets/stats_card.dart
+  - lib/providers/auth_provider.dart
+  - lib/providers/badge_provider.dart
+  - lib/providers/stats_provider.dart
+steps:
+  - name: Widget‑teszt létrehozása ProfileScreen‑hez
+    description: |
+      Hozd létre a test/screens/profile_screen_test.dart fájlt a következő követelményekkel:
+        • ProviderScope override‑ok: authProvider (fake), badgesProvider (fake stream), statsProvider (fake stream)
+        • Fake adatok: 5 megszerzett, 2 hiányzó jelvény; stat kártyák (bets, wins, win_ratio)
+        • MaterialApp 3 nyelvvel (hu, en, de) és GoRouter stubbal ("/badge/:id" route) a hero‑transition validálásához.
+        • Három teszteset:
+            1) Badge‑grid helyes megjelenítés (találat szám + overlay)
+            2) Tap jelvényre → hero anim + navigate BadgeScreen; ellenőrizd a transition kulcsát
+            3) StatsCard‑ok a megfelelő értékekkel renderelnek (e.g. 120 fogadás, 65 nyeremény, 54% win rate)
+        • Ne használj flutter parancsot; Codex környezetben a teszt `dart run test` alatt fusson.
+        • Lokál: AppLocalizations.mock() minden nyelvhez.
+    outputs:
+      - test/screens/profile_screen_test.dart
