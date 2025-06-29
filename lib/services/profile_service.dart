@@ -72,6 +72,12 @@ class ProfileService {
         displayName: data['displayName'] ?? cached.displayName,
       );
       cache.set(uid, updated, const Duration(hours: 1));
+    } else {
+      final snap = await firestore.collection('users').doc(uid).get();
+      final newData = snap.data();
+      if (newData != null) {
+        cache.set(uid, UserModel.fromJson(newData), const Duration(hours: 1));
+      }
     }
   }
 
