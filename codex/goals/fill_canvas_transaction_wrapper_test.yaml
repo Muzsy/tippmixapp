@@ -7,7 +7,7 @@ inputs:
   - lib/services/coin_service.dart
   # Dev dependencies
   - pubspec.yaml
-  - cloud_firestore_mocks
+  - fake_cloud_firestore
   - mocktail
   - logger
   # Testing guidelines
@@ -23,7 +23,7 @@ steps:
       - lib/services/coin_service.dart
   - name: generate_transaction_wrapper_integration_tests
     description: |
-      Create `test/integration/transaction_wrapper_test.dart` implementing the six integration test cases (TW-01…TW-06) from the canvas using `FakeFirebaseFirestore` and `mocktail` for the logger. Ensure concurrency scenarios use `Future.wait`. Do not run the tests (`run_tests: false`).
+      Create `test/integration/transaction_wrapper_test.dart` implementing the six integration test cases (TW-01…TW-06) from the canvas using `FakeFirebaseFirestore` from `fake_cloud_firestore` and `mocktail` for the logger. Ensure concurrency scenarios use `Future.wait`. Do not run the tests (`run_tests: false`).
     output:
       - test/integration/transaction_wrapper_test.dart
     run_tests: false
