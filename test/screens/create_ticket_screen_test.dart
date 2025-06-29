@@ -64,15 +64,15 @@ Widget _buildTestApp({required List<TipModel> tips}) {
       betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: tips)),
     ],
     child: const MaterialApp(
-      localizationsDelegates: const [
+      localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en'), Locale('hu')],
-      locale: const Locale('en'),
-      home: const CreateTicketScreen(),
+      supportedLocales: [Locale('en'), Locale('hu')],
+      locale: Locale('en'),
+      home: CreateTicketScreen(),
     ),
   );
 }
