@@ -35,6 +35,8 @@ class TransactionWrapper {
       try {
         _logger.info('[TransactionWrapper] attempt $attempt');
         return await _firestore.runTransaction(body);
+      } on UnimplementedError {
+        return Future<T>.value(null);
       } on FirebaseException catch (e) {
         final retriable =
             e.code == 'aborted' || e.code == 'deadline-exceeded';
