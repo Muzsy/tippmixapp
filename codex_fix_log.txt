@@ -89,3 +89,8 @@ Fixed showAppBar reference in ProfileScreen and added widget prefix.
 Nem sikerult javitani a hianyzó .env asset figyelmeztetest a llama_index/data/pubspec.yaml hivatkozasnal.
 Nem sikerult javitani a missing_identifier hibát a profile_screen.dart 84. sorában.
 Nem sikerult javitani a .env asset hivatkozast a llama_index/data/pubspec.yaml fajlban.
+Fixed MutableClock initializer in odds_api_service_test.dart to avoid accessing instance field before initialization.
+Updated MaterialApp to const and corrected doc comment in create_ticket_screen_test.dart.
+Replaced underscore parameter names with context/state in login_register_screen_test.dart and profile_screen_test.dart.
+Replaced deprecated overrideWithProvider with overrideWith in my_tickets_screen_test.dart.
+Nem sikerült javítani a .env asset figyelmeztetést és a depend_on_referenced_packages üzenetet a clock csomaggal kapcsolatban.
