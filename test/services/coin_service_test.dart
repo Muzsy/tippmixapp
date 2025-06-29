@@ -156,10 +156,10 @@ class FakeUserDocument extends Fake
 }
 
 // ignore: subtype_of_sealed_class
-class FakeUsersCollection extends Fake
+class FakeWalletsCollection extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final Map<String, List<Map<String, dynamic>>> data;
-  FakeUsersCollection(this.data);
+  FakeWalletsCollection(this.data);
 
   @override
   DocumentReference<Map<String, dynamic>> doc([String? id]) {
@@ -170,11 +170,11 @@ class FakeUsersCollection extends Fake
 
 // ignore: subtype_of_sealed_class
 class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
-  final Map<String, List<Map<String, dynamic>>> users = {};
+  final Map<String, List<Map<String, dynamic>>> wallets = {};
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String path) {
-    if (path == 'users') return FakeUsersCollection(users);
+    if (path == 'wallets') return FakeWalletsCollection(wallets);
     throw UnimplementedError();
   }
 }
@@ -182,7 +182,11 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
 void main() {
   test('debitCoin calls cloud function with correct parameters', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions: functions);
+    final service = CoinService(
+      firestore: FakeFirebaseFirestore(),
+      functions: functions,
+      auth: FakeFirebaseAuth(FakeUser('u1')),
+    );
 
     await service.debitCoin(
       amount: 10,
@@ -197,7 +201,11 @@ void main() {
 
   test('creditCoin uses credit type', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions: functions);
+    final service = CoinService(
+      firestore: FakeFirebaseFirestore(),
+      functions: functions,
+      auth: FakeFirebaseAuth(FakeUser('u1')),
+    );
 
     await service.creditCoin(
       amount: 20,
@@ -211,7 +219,11 @@ void main() {
 
   test('creditDailyBonus sends predefined amount and reason', () async {
     final functions = FakeFirebaseFunctions();
-    final service = CoinService(functions: functions);
+    final service = CoinService(
+      firestore: FakeFirebaseFirestore(),
+      functions: functions,
+      auth: FakeFirebaseAuth(FakeUser('u1')),
+    );
 
     await service.creditDailyBonus();
 
@@ -223,7 +235,11 @@ void main() {
   test('creditCoin throws when backend reports failure', () async {
     final callable = FakeHttpsCallable({'success': false});
     final functions = FakeFirebaseFunctions(callable);
-    final service = CoinService(functions: functions);
+    final service = CoinService(
+      firestore: FakeFirebaseFirestore(),
+      functions: functions,
+      auth: FakeFirebaseAuth(FakeUser('u1')),
+    );
 
     expect(
       () => service.creditCoin(
@@ -237,14 +253,14 @@ void main() {
 
   test('hasClaimedToday returns true when log exists', () async {
     final firestore = FakeFirebaseFirestore();
-    firestore.users['u1'] = [
+    firestore.wallets['u1'] = [
       {
         'reason': 'daily_bonus',
         'timestamp': Timestamp.fromDate(DateTime.now()),
       }
     ];
     final auth = FakeFirebaseAuth(FakeUser('u1'));
-    final service = CoinService();
+    final service = CoinService(firestore: firestore);
 
     final result = await service.hasClaimedToday(
       auth: auth,
@@ -256,9 +272,9 @@ void main() {
 
   test('hasClaimedToday returns false when no log', () async {
     final firestore = FakeFirebaseFirestore();
-    firestore.users['u1'] = [];
+    firestore.wallets['u1'] = [];
     final auth = FakeFirebaseAuth(FakeUser('u1'));
-    final service = CoinService();
+    final service = CoinService(firestore: firestore);
 
     final result = await service.hasClaimedToday(
       auth: auth,
