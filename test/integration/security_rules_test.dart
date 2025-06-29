@@ -4,12 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Stubs for missing fake_firebase_security_rules methods.
-extension _FakeSecurityRulesExt on FakeFirebaseFirestore {
-  Future<void> setSecurityRules(String rules) async {}
-  set authUid(String? uid) {}
-}
-
 /// Utility to create an authenticated Firestore context.
 FakeFirebaseFirestore _authed(String? uid) {
   final firestore = FakeFirebaseFirestore();
