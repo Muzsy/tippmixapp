@@ -1,0 +1,18 @@
+# File: codex/goals/fill_canvas_odds_api_service_test.yaml
+canvas: canvases/odds_api_service_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - lib/services/odds_api_service.dart
+  - lib/utils/cache.dart          # memory cache util, ha létezik
+  - lib/providers/odds_provider.dart
+steps:
+  - name: Unit‑tesztek létrehozása OddsApiService‑hez
+    description: >
+      Generálj `test/services/odds_api_service_test.dart` fájlt, amely a vászonban
+      meghatározott öt use‑case‑t lefedi (cache hit, cache miss, retry success,
+      retry failure, rate‑limit). Használj `http/testing.dart` álböngéztető
+      klienst és saját `FakeMemoryCache`‑t a gyorsítótár szimulálására.
+      A tesztnek csak `dart run test`‑tel kell futnia, valódi hálózati hívás
+      nélkül. Gondoskodj a 3 nyelvű (hu/en/de) lokalizációs környezetről,
+      ha a szolgáltatás felület‑specific üzeneteket dob. A lefedettség legyen
+      ≥ 90 %, az összes negatív ág assertálva.
