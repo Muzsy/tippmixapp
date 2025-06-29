@@ -298,7 +298,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get not_logged_in => 'You are not logged in.';
+  String get not_logged_in => 'Not logged in';
 
   @override
   String get errorNotLoggedIn => 'You are not logged in.';
