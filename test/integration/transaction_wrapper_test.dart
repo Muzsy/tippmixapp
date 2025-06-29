@@ -63,11 +63,6 @@ void main() {
     test('TW-01 successful transaction first try', () async {
       final firestore = StubFirestore();
       await firestore.collection('users').doc('u1').set({'coins': 100});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -88,11 +83,6 @@ void main() {
     test('TW-02 retry aborted then success', () async {
       final firestore = StubFirestore(['aborted']);
       await firestore.collection('users').doc('u1').set({'coins': 100});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -109,11 +99,6 @@ void main() {
     test('TW-03 retry deadline-exceeded twice', () async {
       final firestore = StubFirestore(['deadline-exceeded', 'deadline-exceeded']);
       await firestore.collection('users').doc('u1').set({'coins': 100});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -130,11 +115,6 @@ void main() {
     test('TW-04 max retry exceeded', () async {
       final firestore = StubFirestore(['aborted', 'aborted', 'aborted']);
       await firestore.collection('users').doc('u1').set({'coins': 100});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -152,11 +132,6 @@ void main() {
     test('TW-05 concurrent debits', () async {
       final firestore = StubFirestore();
       await firestore.collection('users').doc('u1').set({'coins': 200});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -175,11 +150,6 @@ void main() {
     test('TW-06 concurrent debit and credit', () async {
       final firestore = StubFirestore();
       await firestore.collection('users').doc('u1').set({'coins': 100});
-      final wrapper = TransactionWrapper(
-        firestore: firestore,
-        logger: logger,
-        delayBetweenRetries: const Duration(milliseconds: 10),
-      );
       final service = CoinService(
         firestore: firestore,
         auth: auth,
