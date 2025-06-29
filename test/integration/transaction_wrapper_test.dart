@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
-import 'package:logging/logging.dart';
+import 'package:tippmixapp/utils/simple_logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tippmixapp/utils/transaction_wrapper.dart';

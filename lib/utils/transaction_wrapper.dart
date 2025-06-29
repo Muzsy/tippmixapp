@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logging/logging.dart';
+import 'simple_logger.dart';
 
 class TooManyAttemptsException implements Exception {}
 
