@@ -1,0 +1,21 @@
+# File: codex/goals/fill_canvas_my_tickets_screen_test.yaml
+canvas: canvases/my_tickets_screen_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/localization_logic.md
+  - lib/screens/my_tickets_screen.dart
+  - lib/widgets/empty_ticket_placeholder.dart
+  - lib/widgets/ticket_card.dart
+  - lib/providers/auth_provider.dart
+steps:
+  - name: Widget‑teszt létrehozása MyTicketsScreen‑hez
+    description: |
+      Készíts widget‑tesztet a **MyTicketsScreen** felülethez a vászonban rögzített DoD alapján.
+      A tesztnek három fő esetet kell lefednie (üres állapot, jegy‑lista, pull‑to‑refresh),
+      és a következőket kell betartania:
+        • ProviderScope‑override: fake `authProvider`, illetve fake `ticketsProvider` (a képernyő fájlban definiált provider).
+        • Nincs külső Firebase‑ vagy Firestore‑elérés – minden hálózati hívást mockolj.
+        • A `MaterialApp` `supportedLocales` mezője tartalmazza az `en`, `hu`, `de` Locale‑t.
+        • A tesztet a CI „dart run test” paranccsal fogja futtatni; kerülj minden Flutter‑parancsot.
+    outputs:
+      - test/screens/my_tickets_screen_test.dart
