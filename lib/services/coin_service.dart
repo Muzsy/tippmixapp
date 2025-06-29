@@ -30,8 +30,19 @@ class CoinService {
   FirebaseFirestore get _fs => _firestore ??= FirebaseFirestore.instance;
   FirebaseAuth get _fa => _auth ??= FirebaseAuth.instance;
 
-  FirebaseFunctions get _fns =>
-      _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
+  /// Factory that injects the production Cloud Functions instance.
+  factory CoinService.live({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+    Logger? logger,
+  }) {
+    return CoinService(
+      functions: FirebaseFunctions.instanceFor(region: 'europe-central2'),
+      firestore: firestore,
+      auth: auth,
+      logger: logger,
+    );
+  }
 
   /// Deduct coins from the authenticated user using a Cloud Function.
   Future<void> debitCoin({
@@ -107,7 +118,10 @@ class CoinService {
     required String transactionId,
   }) async {
     _logger.info('coin_trx $type $amount');
-    final callable = _fns.httpsCallable('coin_trx');
+    if (_functions == null) {
+      return;
+    }
+    final callable = _functions!.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{
         'amount': amount,
