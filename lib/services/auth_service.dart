@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../models/user.dart';
 
 class AuthService {
-  final fb.FirebaseAuth _firebaseAuth = fb.FirebaseAuth.instance;
+  final fb.FirebaseAuth _firebaseAuth;
+
+  AuthService({fb.FirebaseAuth? firebaseAuth})
+      : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance;
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
