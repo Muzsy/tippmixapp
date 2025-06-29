@@ -1,0 +1,30 @@
+# Codex goal – implement TippCoinLogModel + tests (T14)
+canvas: canvases/tippcoin_log_model.md
+
+inputs:
+  # Source code locations to create / update
+  - lib/models/tippcoin_log_model.dart
+  - lib/services/tippcoin_log_service.dart
+  # Dev dependencies & mocks
+  - pubspec.yaml
+  - cloud_firestore_mocks
+  # Testing guidelines
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: generate_tippcoin_log_model_and_service
+    description: |
+      Create/overwrite `lib/models/tippcoin_log_model.dart` implementing the TippCoinLogModel as specified in the canvas (fields, fromJson, toJson, copyWith, equatable, factory helpers, static collection getter with placeholder). Then create `lib/services/tippcoin_log_service.dart` exposing `logCredit` and `logDebit` functions that write to the collection (with dependency injection so it can be replaced by a fake in tests).
+    output:
+      - lib/models/tippcoin_log_model.dart
+      - lib/services/tippcoin_log_service.dart
+  - name: generate_tippcoin_log_model_tests
+    description: |
+      1. Create `test/models/tippcoin_log_model_test.dart` covering the three unit test cases (TM-01…TM-03).
+      2. Create `test/integration/tippcoin_log_service_test.dart` covering the three integration test cases (TI-01…TI-03) using `cloud_firestore_mocks`.
+      * Ensure `FakeFirebaseFirestore` is used; do NOT hit the network.
+      * Mark concurrency test as skipped (handled in T15).
+    output:
+      - test/models/tippcoin_log_model_test.dart
+      - test/integration/tippcoin_log_service_test.dart
+    run_tests: false
