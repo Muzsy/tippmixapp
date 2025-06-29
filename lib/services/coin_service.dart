@@ -39,36 +39,32 @@ class CoinService {
   FirebaseFunctions get _fns =>
       _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
-  /// Deduct coins from the authenticated user using a Firestore transaction.
+  /// Deduct coins from the authenticated user using a Cloud Function.
   Future<void> debitCoin({
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
-    final user = _fa.currentUser;
-    if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
-    await _txWrapper.run<void>((tx) async {
-      final doc = _fs.collection('users').doc(user.uid);
-      final snap = await tx.get(doc);
-      final current = (snap.data()?['coins'] as int?) ?? 0;
-      tx.update(doc, {'coins': current - amount});
-    });
+    await _callCoinTrx(
+      amount: amount,
+      type: 'debit',
+      reason: reason,
+      transactionId: transactionId,
+    );
   }
 
-  /// Credit coins to a user using a Firestore transaction.
+  /// Credit coins to a user using a Cloud Function.
   Future<void> creditCoin({
     required int amount,
     required String reason,
     required String transactionId,
   }) async {
-    final user = _fa.currentUser;
-    if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
-    await _txWrapper.run<void>((tx) async {
-      final doc = _fs.collection('users').doc(user.uid);
-      final snap = await tx.get(doc);
-      final current = (snap.data()?['coins'] as int?) ?? 0;
-      tx.update(doc, {'coins': current + amount});
-    });
+    await _callCoinTrx(
+      amount: amount,
+      type: 'credit',
+      reason: reason,
+      transactionId: transactionId,
+    );
   }
 
   /// Convenience helper for the daily bonus job.
