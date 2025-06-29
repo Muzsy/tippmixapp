@@ -1,0 +1,40 @@
+# Codex goal – migrate security‑rules tests to Firebase Rules Emulator (T16‑fix)
+canvas: canvases/security_rules_coin_logs.md
+
+inputs:
+  # Existing sources
+  - firestore.rules
+  - scripts/test_firebase_rules.sh
+  - package.json
+  # Remove faulty Dart test
+  - test/integration/security_rules_test.dart
+  # New Node test target
+  - test/security_rules.test.mjs
+  # Docs / guidelines
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: update_package_json_for_rules_testing
+    description: |
+      Ensure `package.json` contains the following devDependencies (versions can be the latest minor):
+        "@firebase/rules-unit-testing": "^3.1.0",
+        "firebase": "^11.0.0",
+        "mocha": "^10.0.0".
+      Add the npm script `"test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\""` and `"test:rules:run": "mocha --experimental-modules \"test/security_rules.test.mjs\""`.
+    output: package.json
+  - name: remove_faulty_dart_rules_test
+    description: |
+      Delete or empty the file `test/integration/security_rules_test.dart` as it relied on fake_cloud_firestore which does not evaluate security rules.
+    output: test/integration/security_rules_test.dart
+  - name: generate_node_security_rules_tests
+    description: |
+      Produce `test/security_rules.test.mjs` implementing the 10 test cases SR‑01 … SR‑10 using `@firebase/rules-unit-testing`.
+      * Initialise the test environment with `initializeTestEnvironment({ projectId: 'tippmix-test', firestore: { rules } })`.
+      * For each test: create an authenticated or unauthenticated context (`authenticatedContext(uid)` / `unauthenticatedContext()`) and attempt the described Firestore operation, asserting `allow` by expecting the Promise to **fulfil**, and `deny` by expecting `assertFails`.
+      * Use `before` and `after` hooks to set up and clean up the test environment.
+    output: test/security_rules.test.mjs
+    run_tests: false
+  - name: update_emulator_script
+    description: |
+      Create or overwrite `scripts/test_firebase_rules.sh` with a simple wrapper that runs `npm run test:rules`.
+    output: scripts/test_firebase_rules.sh
