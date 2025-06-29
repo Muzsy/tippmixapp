@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clock/clock.dart';
 
 import 'package:tippmixapp/services/profile_service.dart';
@@ -47,14 +47,88 @@ class FakeConnectivity {
   FakeConnectivity({this.online = true});
 }
 
+// ignore: subtype_of_sealed_class
+class FakeDocumentSnapshot extends Fake
+    implements DocumentSnapshot<Map<String, dynamic>> {
+  @override
+  final String id;
+  final Map<String, dynamic>? _data;
+  FakeDocumentSnapshot(this.id, this._data);
+
+  @override
+  Map<String, dynamic>? data() => _data;
+}
+
+// ignore: subtype_of_sealed_class
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
+  final FakeFirebaseFirestore firestore;
+  @override
+  final String id;
+  final Map<String, Map<String, dynamic>> store;
+  FakeDocumentReference(this.firestore, this.id, this.store);
+
+  @override
+  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
+    store[id] = data;
+  }
+
+  @override
+  Future<void> update(Map<Object, Object?> data) async {
+    if (firestore.failNextUpdate) {
+      firestore.failNextUpdate = false;
+      throw FirebaseException(plugin: 'firestore', code: 'permission-denied');
+    }
+    final current = store[id] ?? <String, dynamic>{};
+    data.forEach((key, value) {
+      if (key is String) current[key] = value;
+    });
+    store[id] = current;
+  }
+
+  @override
+  Future<DocumentSnapshot<Map<String, dynamic>>> get([
+    GetOptions? options,
+  ]) async {
+    return FakeDocumentSnapshot(id, store[id]);
+  }
+}
+
+// ignore: subtype_of_sealed_class
+class FakeCollectionReference extends Fake
+    implements CollectionReference<Map<String, dynamic>> {
+  final FakeFirebaseFirestore firestore;
+  final Map<String, Map<String, dynamic>> store;
+  FakeCollectionReference(this.firestore, this.store);
+
+  @override
+  DocumentReference<Map<String, dynamic>> doc([String? id]) {
+    final key = id ?? 'doc${store.length}';
+    store.putIfAbsent(key, () => <String, dynamic>{});
+    return FakeDocumentReference(firestore, key, store);
+  }
+}
+
+// ignore: subtype_of_sealed_class
+class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
+  final Map<String, Map<String, Map<String, dynamic>>> data = {};
+  bool failNextUpdate = false;
+
+  @override
+  CollectionReference<Map<String, dynamic>> collection(String path) {
+    data.putIfAbsent(path, () => <String, Map<String, dynamic>>{});
+    return FakeCollectionReference(this, data[path]!);
+  }
+}
+
 void main() {
   group('ProfileService', () {
-    late MockFirestoreInstance firestore;
+    late FakeFirebaseFirestore firestore;
     late FakeCache<UserModel> cache;
     late FakeConnectivity connectivity;
 
     setUp(() {
-      firestore = MockFirestoreInstance();
+      firestore = FakeFirebaseFirestore();
       cache = FakeCache<UserModel>(Clock.fixed(DateTime(2024)));
       connectivity = FakeConnectivity();
     });

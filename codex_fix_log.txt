@@ -95,3 +95,5 @@ Replaced underscore parameter names with context/state in login_register_screen_
 Replaced deprecated overrideWithProvider with overrideWith in my_tickets_screen_test.dart.
 Nem sikerült javítani a .env asset figyelmeztetést és a depend_on_referenced_packages üzenetet a clock csomaggal kapcsolatban.
 No issues found in analyze_log.txt - nothing to fix.
+Replaced cloud_firestore_mocks usage in profile_service_test with custom FakeFirebaseFirestore and implemented missing ProfileService methods for tests.
+Nem sikerult javitani a hianyzó .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
