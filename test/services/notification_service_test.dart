@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:tippmixapp/services/notification_service.dart';
+import 'package:tippmixapp/models/notification_model.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
@@ -52,6 +53,24 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
 }
 
 void main() {
+  test('NotificationModel.fromJson parses correctly', () {
+    final json = {
+      'type': 'badge',
+      'title': 'Earned',
+      'description': 'desc',
+      'timestamp': DateTime(2021).toIso8601String(),
+      'isRead': true,
+    };
+
+    final model = NotificationModel.fromJson('id1', json);
+
+    expect(model.id, 'id1');
+    expect(model.type, NotificationType.badge);
+    expect(model.title, 'Earned');
+    expect(model.description, 'desc');
+    expect(model.timestamp.year, 2021);
+    expect(model.isRead, isTrue);
+  });
   test('markAsRead updates notification document', () async {
     final firestore = FakeFirebaseFirestore();
     final service = NotificationService(firestore);
@@ -63,5 +82,34 @@ void main() {
     await service.markAsRead('u1', 'n1');
 
     expect(collection.store['n1']?['isRead'], true);
+  });
+
+  test('filterUnread helper keeps only unread items', () {
+    List<NotificationModel> filterUnread(List<NotificationModel> list) {
+      return list.where((n) => !n.isRead).toList();
+    }
+
+    final list = [
+      NotificationModel(
+        id: 'r',
+        type: NotificationType.reward,
+        title: 'r',
+        description: 'd',
+        timestamp: DateTime.now(),
+        isRead: true,
+      ),
+      NotificationModel(
+        id: 'u',
+        type: NotificationType.reward,
+        title: 'u',
+        description: 'd',
+        timestamp: DateTime.now(),
+      ),
+    ];
+
+    final result = filterUnread(list);
+
+    expect(result.length, 1);
+    expect(result.first.id, 'u');
   });
 }
