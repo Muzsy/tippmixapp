@@ -30,7 +30,7 @@ class TransactionWrapper {
 
   Future<T> _runWithRetry<T>(Future<T> Function(Transaction) body) async {
     var attempt = 0;
-    while (true) {
+    while (attempt < maxRetries) {
       attempt++;
       try {
         _logger.info('[TransactionWrapper] attempt $attempt');
@@ -47,5 +47,6 @@ class TransactionWrapper {
         await Future<void>.delayed(delayBetweenRetries);
       }
     }
+    throw TooManyAttemptsException();
   }
 }
