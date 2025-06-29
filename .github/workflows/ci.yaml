@@ -33,16 +33,14 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
-      # ======= ÚJ: Coverage badge generálása Dart-tal =======
-      - name: Generate coverage badge (Dart-native)
-        run: |
-          dart pub global activate flutter_coverage_badge
-          dart pub global run flutter_coverage_badge
+      # ======= ÚJ: genbadge telepítése és badge generálása =======
+      - name: Install genbadge
+        run: pip install genbadge
 
-      - name: Move badge to badges/
+      - name: Generate coverage badge
         run: |
           mkdir -p badges
-          mv coverage_badge.svg badges/coverage.svg
+          genbadge coverage -i coverage/lcov.info -o badges/coverage.svg
 
       # ======= Automatikus badge commit =======
       - name: Commit coverage badge
