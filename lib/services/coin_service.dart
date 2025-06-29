@@ -13,10 +13,10 @@ import '../utils/transaction_wrapper.dart';
 /// backend Cloud Functions.
 class CoinService {
   final FirebaseFunctions? _functions;
-  final FirebaseFirestore _firestore;
   final Logger _logger;
-  final FirebaseAuth _auth;
-  late final TransactionWrapper _wrapper;
+  FirebaseFirestore? _firestore;
+  FirebaseAuth? _auth;
+  TransactionWrapper? _wrapper;
 
   CoinService({
     FirebaseFunctions? functions,
@@ -25,15 +25,16 @@ class CoinService {
     Logger? logger,
     TransactionWrapper? wrapper,
   })  : _functions = functions,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance,
         _logger = logger ?? Logger('CoinService') {
-    _wrapper = wrapper ??
-        TransactionWrapper(
-          firestore: _firestore,
-          logger: _logger,
-        );
+    _firestore = firestore;
+    _auth = auth;
+    _wrapper = wrapper;
   }
+
+  FirebaseFirestore get _fs => _firestore ??= FirebaseFirestore.instance;
+  FirebaseAuth get _fa => _auth ??= FirebaseAuth.instance;
+  TransactionWrapper get _txWrapper =>
+      _wrapper ??= TransactionWrapper(firestore: _fs, logger: _logger);
 
   FirebaseFunctions get _fns =>
       _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
@@ -44,10 +45,10 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    final user = _auth.currentUser;
+    final user = _fa.currentUser;
     if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
-    await _wrapper.run<void>((tx) async {
-      final doc = _firestore.collection('users').doc(user.uid);
+    await _txWrapper.run<void>((tx) async {
+      final doc = _fs.collection('users').doc(user.uid);
       final snap = await tx.get(doc);
       final current = (snap.data()?['coins'] as int?) ?? 0;
       tx.update(doc, {'coins': current - amount});
@@ -60,10 +61,10 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    final user = _auth.currentUser;
+    final user = _fa.currentUser;
     if (user == null) throw FirebaseAuthException(code: 'unauthenticated');
-    await _wrapper.run<void>((tx) async {
-      final doc = _firestore.collection('users').doc(user.uid);
+    await _txWrapper.run<void>((tx) async {
+      final doc = _fs.collection('users').doc(user.uid);
       final snap = await tx.get(doc);
       final current = (snap.data()?['coins'] as int?) ?? 0;
       tx.update(doc, {'coins': current + amount});
@@ -85,10 +86,10 @@ class CoinService {
     FirebaseAuth? auth,
     FirebaseFirestore? firestore,
   }) async {
-    final user = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+    final user = auth?.currentUser ?? _fa.currentUser;
     if (user == null) return true;
 
-    final db = firestore ?? FirebaseFirestore.instance;
+    final db = firestore ?? _fs;
     final start = DateTime.now();
     final startOfDay = DateTime(start.year, start.month, start.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
