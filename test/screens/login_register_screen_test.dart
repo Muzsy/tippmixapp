@@ -64,16 +64,16 @@ Widget _buildTestApp({required _FakeAuthNotifier fakeAuth}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/',
-        name: 'login',
-        builder: (_, __) => const LoginRegisterScreen(),
-      ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (_, __) => const SizedBox.shrink(),
-      ),
+        GoRoute(
+          path: '/',
+          name: 'login',
+          builder: (context, state) => const LoginRegisterScreen(),
+        ),
+        GoRoute(
+          path: '/home',
+          name: 'home',
+          builder: (context, state) => const SizedBox.shrink(),
+        ),
     ],
   );
 
