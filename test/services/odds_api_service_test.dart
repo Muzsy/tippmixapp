@@ -52,16 +52,14 @@ class FakeCache<T> implements Cache<T> {
 }
 
 class MutableClock extends Clock {
-  late DateTime _time;
+  DateTime _time;
   MutableClock(DateTime start)
-      : super(() {
-          throw UnimplementedError();
-        }) {
-    _time = start;
-    // Override the super's now function with a closure that accesses _time
-    (this as dynamic).now = () => _time;
+      : _time = start,
+        super(() => _time);
+
+  void advance(Duration d) {
+    _time = _time.add(d);
   }
-  void advance(Duration d) => _time = _time.add(d);
 }
 
 class TestOddsApiService extends OddsApiService {
