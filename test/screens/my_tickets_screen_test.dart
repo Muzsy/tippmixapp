@@ -52,11 +52,11 @@ final sampleTickets = [
     potentialWin: 350,
     createdAt: DateTime(2025, 6, 15),
     updatedAt: DateTime(2025, 6, 15),
-    status: TicketStatus.open,
+    status: TicketStatus.pending,
   ),
 ];
 
-Widget _buildApp({required ProviderOverride auth, required ProviderOverride tickets}) {
+Widget _buildApp({required Override auth, required Override tickets}) {
   return ProviderScope(
     overrides: [auth, tickets],
     child: const MaterialApp(
