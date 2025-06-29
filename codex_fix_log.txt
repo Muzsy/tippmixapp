@@ -108,3 +108,9 @@ Could not fix missing .env asset warning for llama_index/data/pubspec.yaml.
 Added stub extension methods for setSecurityRules and authUid in security_rules_test.
 Ignored must_be_immutable warning in FakeCollectionReference.
 Removed unnecessary noSuchMethod from FakeQuery in coin_service_test.
+Adjusted catchError usage in TransactionWrapper to remove invalid generic and satisfy analyzer.
+Logged coin_trx calls in CoinService to utilize _logger field.
+Modified FakeHttpsCallable and FakeFirebaseFunctions to extend Fake and added mocktail import.
+Updated ignore comment position in tippcoin_log_service_test to silence sealed class warning.
+Removed obsolete wrapper parameter from transaction_wrapper_test.
+Could not fix missing .env asset warning for llama_index/data/pubspec.yaml.
