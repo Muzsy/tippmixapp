@@ -1,0 +1,26 @@
+# Codex goal – generate tests for T11 BadgeScreen
+canvas: canvases/badge_screen_test.md
+
+inputs:
+  # For‑source widget & helpers
+  - lib/screens/badges/badge_screen.dart
+  - lib/screens/badges/badge_grid_view.dart
+  - lib/screens/badges/badge_detail_dialog.dart  # (placeholder – may not yet exist)
+  # State & data
+  - lib/providers/user_badges_provider.dart
+  # Localization wrapper (3 lang)
+  - lib/l10n/app_localizations.dart
+  # Global testing conventions
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: generate_badge_screen_widget_tests
+    description: |
+      Create `test/screens/badge_screen_test.dart` based on the nine test‑cases (TC‑01…TC‑09) in the canvas.
+      * Wrap the widget under test in a `ProviderScope` that overrides `userBadgesProvider` with a mock `Stream` controller.
+      * Build the widget inside a `MaterialApp` configured with the three supported locales.
+      * Implement the grid, filter, scroll and localization assertions.
+      * Mark TC‑05 and TC‑06 with `skip` because the modal dialog and Hero animation are not yet implemented in the production code.
+      * Do **NOT** execute the tests – CI will run `dart run test`.
+    output: test/screens/badge_screen_test.dart
+    run_tests: false
