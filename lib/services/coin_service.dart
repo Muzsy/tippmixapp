@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/simple_logger.dart';
 
-import '../utils/transaction_wrapper.dart';
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
 // for details about the coin transaction model and integration points.
@@ -16,25 +15,20 @@ class CoinService {
   final Logger _logger;
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;
-  TransactionWrapper? _wrapper;
 
   CoinService({
     FirebaseFunctions? functions,
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     Logger? logger,
-    TransactionWrapper? wrapper,
   })  : _functions = functions,
         _logger = logger ?? Logger('CoinService') {
     _firestore = firestore;
     _auth = auth;
-    _wrapper = wrapper;
   }
 
   FirebaseFirestore get _fs => _firestore ??= FirebaseFirestore.instance;
   FirebaseAuth get _fa => _auth ??= FirebaseAuth.instance;
-  TransactionWrapper get _txWrapper =>
-      _wrapper ??= TransactionWrapper(firestore: _fs, logger: _logger);
 
   FirebaseFunctions get _fns =>
       _functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
