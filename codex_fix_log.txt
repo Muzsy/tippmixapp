@@ -97,3 +97,8 @@ Nem sikerült javítani a .env asset figyelmeztetést és a depend_on_referenced
 No issues found in analyze_log.txt - nothing to fix.
 Replaced cloud_firestore_mocks usage in profile_service_test with custom FakeFirebaseFirestore and implemented missing ProfileService methods for tests.
 Nem sikerult javitani a hianyzó .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
+Replaced logging package with local simple_logger and removed const constructors in coin_service.dart.
+Updated transaction_wrapper.dart and tests to use simple_logger.
+Corrected CoinService constructor calls in coin_service_test.
+Annotated firestore fields with @override in profile_service_test.
+Could not fully resolve integration test dependencies; left unresolved.
