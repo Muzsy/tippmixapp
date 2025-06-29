@@ -202,7 +202,7 @@ void main() {
         maxRetries: 3,
       );
 
-      expect(
+      await expectLater(
         () => withClock(clock, () => service.getOdds(sport: 'soccer')),
         throwsA(isA<OddsApiException>()),
       );
