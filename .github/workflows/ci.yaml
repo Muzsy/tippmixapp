@@ -40,6 +40,26 @@ jobs:
           name: coverage-report
           path: coverage/lcov.info
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Run Firestore security rules tests
+        run: |
+          ./scripts/test_firebase_rules.sh || { echo "Security rules tests failed - A biztonsági szabály tesztek hibásak"; exit 1; }
+
+      - name: Upload security rules coverage badge
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-rules-badge
+          path: coverage/security_rules_badge.svg
+
       - name: CI Summary
         run: |
           echo "CI futás sikeres: analyze + test + coverage"
