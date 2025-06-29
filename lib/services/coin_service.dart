@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/simple_logger.dart';
+import '../utils/transaction_wrapper.dart';
 
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
@@ -12,23 +13,28 @@ import '../utils/simple_logger.dart';
 /// backend Cloud Functions.
 class CoinService {
   final FirebaseFunctions? _functions;
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth? _auth;
   final Logger _logger;
-  FirebaseFirestore? _firestore;
-  FirebaseAuth? _auth;
+  late final TransactionWrapper _wrapper;
 
   CoinService({
+    required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
-    FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     Logger? logger,
   })  : _functions = functions,
+        _firestore = firestore,
+        _auth = auth,
         _logger = logger ?? Logger('CoinService') {
-    _firestore = firestore;
-    _auth = auth;
+    _wrapper = TransactionWrapper(
+      firestore: _firestore,
+      logger: _logger,
+    );
   }
 
-  FirebaseFirestore get _fs => _firestore ??= FirebaseFirestore.instance;
-  FirebaseAuth get _fa => _auth ??= FirebaseAuth.instance;
+  FirebaseFirestore get _fs => _firestore;
+  FirebaseAuth get _fa => _auth ?? FirebaseAuth.instance;
 
   /// Factory that injects the production Cloud Functions instance.
   factory CoinService.live({
@@ -38,7 +44,7 @@ class CoinService {
   }) {
     return CoinService(
       functions: FirebaseFunctions.instanceFor(region: 'europe-central2'),
-      firestore: firestore,
+      firestore: firestore ?? FirebaseFirestore.instance,
       auth: auth,
       logger: logger,
     );
@@ -50,6 +56,11 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
+    await _wrapper.run((txn) async {
+      final uid = _fa.currentUser!.uid;
+      final ref = _fs.collection('wallets').doc(uid);
+      txn.set(ref, {'coins': FieldValue.increment(-amount)}, SetOptions(merge: true));
+    });
     await _callCoinTrx(
       amount: amount,
       type: 'debit',
@@ -64,6 +75,11 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
+    await _wrapper.run((txn) async {
+      final uid = _fa.currentUser!.uid;
+      final ref = _fs.collection('wallets').doc(uid);
+      txn.set(ref, {'coins': FieldValue.increment(amount)}, SetOptions(merge: true));
+    });
     await _callCoinTrx(
       amount: amount,
       type: 'credit',
@@ -96,7 +112,7 @@ class CoinService {
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     final query = await db
-        .collection('users')
+        .collection('wallets')
         .doc(user.uid)
         .collection('coin_logs')
         .where('reason', isEqualTo: 'daily_bonus')
