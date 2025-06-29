@@ -55,10 +55,7 @@ class MutableClock extends Clock {
   DateTime _time;
   MutableClock(DateTime start)
       : _time = start,
-        super(() => start);
-
-  @override
-  DateTime get now => _time;
+        super(() => _time);
 
   void advance(Duration d) {
     _time = _time.add(d);
