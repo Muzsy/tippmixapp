@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Flutter SDK manually
         uses: subosito/flutter-action@v2
@@ -30,28 +30,21 @@ jobs:
       - name: Analyze code
         run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test
 
-      - name: Run tests with coverage
-        run: flutter test --coverage
-
-      # ======= ÚJ: genbadge telepítése és badge generálása =======
-      - name: Install genbadge (with coverage extras)
-        run: pip install "genbadge[coverage]"
-
-      - name: Generate coverage badge
-        run: |
-          mkdir -p badges
-          genbadge coverage -i coverage/lcov.info -o badges/coverage.svg
-
-      # ======= Automatikus badge commit =======
-      - name: Commit coverage badge
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add badges/coverage.svg
-          git commit -m "chore: update coverage badge [skip ci]" || echo "No changes to commit"
-          git push
-        env:
+      # ====== Dart Coverage Assistant: coverage + badge automatikusan ======
+      - name: Run coverage and badge
+        uses: whynotmake-it/dart-coverage-assistant@v1
+        with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          generate_badges: push
 
-      # ======= (Egyéb lépések, ha vannak) =======
+      # ====== (Opcionális: ha saját commitlépést akarsz, csak akkor kell, ha a badge nem commitolódik automatikusan) ======
+      # - name: Commit coverage badge
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add badges/coverage.svg
+      #     git commit -m "chore: update coverage badge [skip ci]" || echo "No changes to commit"
+      #     git push
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
