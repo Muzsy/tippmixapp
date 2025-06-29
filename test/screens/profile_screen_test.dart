@@ -46,16 +46,16 @@ Widget _buildApp({required Override auth}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/',
-        name: AppRoute.profile.name,
-        builder: (_, __) => const ProfileScreen(showAppBar: false),
-      ),
-      GoRoute(
-        path: '/badges',
-        name: AppRoute.badges.name,
-        builder: (_, __) => const BadgeScreen(),
-      ),
+        GoRoute(
+          path: '/',
+          name: AppRoute.profile.name,
+          builder: (context, state) => const ProfileScreen(showAppBar: false),
+        ),
+        GoRoute(
+          path: '/badges',
+          name: AppRoute.badges.name,
+          builder: (context, state) => const BadgeScreen(),
+        ),
     ],
   );
 

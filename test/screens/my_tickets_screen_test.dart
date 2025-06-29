@@ -99,11 +99,11 @@ void main() {
 
   testWidgets('pull to refresh refreshes provider', (tester) async {
     var calls = 0;
-    final override = ticketsProvider.overrideWithProvider(
-      StreamProvider.autoDispose<List<Ticket>>((ref) {
+    final override = ticketsProvider.overrideWith(
+      (ref) {
         calls++;
         return Stream.value(sampleTickets);
-      }),
+      },
     );
 
     await tester.pumpWidget(
