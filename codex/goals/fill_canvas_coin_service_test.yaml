@@ -1,0 +1,17 @@
+# File: codex/goals/fill_canvas_coin_service_test.yaml
+canvas: canvases/coin_service_test.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - lib/services/coin_service.dart
+  - lib/utils/cache.dart              # balance cache util, if present
+  - lib/providers/coin_provider.dart  # provider exposing balance
+  - lib/utils/payment_gateway.dart    # wrapper around payment API, if present
+steps:
+  - name: Generate unit tests for CoinService
+    description: >
+      Create `test/services/coin_service_test.dart` that implements all use‑cases
+      from the canvas (cache‑hit, cache‑miss, successful purchase, declined
+      purchase, network retry). Use a FakeHttpClient from `http/testing.dart`, a
+      FakeBalanceCache (Map‑based) and a mock payment gateway. Inject
+      dependencies through the CoinService constructor or provider overrides.
+      Do NOT execute the tests here – the CI pipeline will run `dart run test`.
