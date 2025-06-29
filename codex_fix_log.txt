@@ -114,3 +114,7 @@ Modified FakeHttpsCallable and FakeFirebaseFunctions to extend Fake and added mo
 Updated ignore comment position in tippcoin_log_service_test to silence sealed class warning.
 Removed obsolete wrapper parameter from transaction_wrapper_test.
 Could not fix missing .env asset warning for llama_index/data/pubspec.yaml.
+Adjusted TransactionWrapper queue logic with onError return.
+Removed unused wrapper variables in transaction_wrapper_test.
+Removed unused mocktail import from coin_service_test.
+Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.

@@ -24,9 +24,7 @@ class TransactionWrapper {
   /// Runs the given transaction [body] with retry logic.
   Future<T> run<T>(Future<T> Function(Transaction) body) {
     final operation = _queue.then((_) => _runWithRetry(body));
-    _queue = operation
-        .whenComplete(() {})
-        .catchError((Object _) {});
+    _queue = operation.then<void>((_) {}, onError: (Object _) {});
     return operation;
   }
 
