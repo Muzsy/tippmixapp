@@ -1,0 +1,13 @@
+steps:
+  - name: "Node-emulátor integrálása a pipeline-ba"
+    description: "A scripts/test_firebase_rules.sh futtatása a CI workflow-ban, Node környezet telepítése és cache-elése, dependency management."
+    outputs: ["CI pipeline sikeresen futtatja a security rules tesztet, dependency cache-elve."]
+  - name: "Coverage badge és riport generálása"
+    description: "A tesztfutás coverage eredményéből coverage badge generálása, automatikus frissítés a README.md-ben."
+    outputs: ["README.md frissült coverage badge-del, eredmény: pass/fail."]
+  - name: "Hibakezelés és merge-blokkolás"
+    description: "A pipeline csak akkor engedi a merge-t, ha a security rules tesztek minden branch-en zöldek. Hiba esetén magyar/angol logüzenet generálódik."
+    outputs: ["CI pipeline stop merge on fail, log magyar/angol üzenettel."]
+  - name: "Tesztjelentés és coverage validálás"
+    description: "Coverage report és CI log kimenet ellenőrzése, szükség esetén fejlesztői értesítés vagy task-nyitás."
+    outputs: ["Coverage report generálva, hiba esetén fejlesztő értesítve."]
