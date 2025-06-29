@@ -102,3 +102,9 @@ Updated transaction_wrapper.dart and tests to use simple_logger.
 Corrected CoinService constructor calls in coin_service_test.
 Annotated firestore fields with @override in profile_service_test.
 Could not fully resolve integration test dependencies; left unresolved.
+Removed unused _txWrapper getter and wrapper parameter from CoinService.
+Adjusted TransactionWrapper.run to specify void catchError return type.
+Could not fix missing .env asset warning for llama_index/data/pubspec.yaml.
+Added stub extension methods for setSecurityRules and authUid in security_rules_test.
+Ignored must_be_immutable warning in FakeCollectionReference.
+Removed unnecessary noSuchMethod from FakeQuery in coin_service_test.
