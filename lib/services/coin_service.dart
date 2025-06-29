@@ -59,7 +59,9 @@ class CoinService {
     await _wrapper.run((txn) async {
       final uid = _fa.currentUser!.uid;
       final ref = _fs.collection('wallets').doc(uid);
-      txn.set(ref, {'coins': FieldValue.increment(-amount)}, SetOptions(merge: true));
+      final snap = await txn.get(ref);
+      final current = (snap.data()?['coins'] as int?) ?? 0;
+      txn.set(ref, {'coins': current - amount}, SetOptions(merge: true));
     });
     await _callCoinTrx(
       amount: amount,
@@ -78,7 +80,9 @@ class CoinService {
     await _wrapper.run((txn) async {
       final uid = _fa.currentUser!.uid;
       final ref = _fs.collection('wallets').doc(uid);
-      txn.set(ref, {'coins': FieldValue.increment(amount)}, SetOptions(merge: true));
+      final snap = await txn.get(ref);
+      final current = (snap.data()?['coins'] as int?) ?? 0;
+      txn.set(ref, {'coins': current + amount}, SetOptions(merge: true));
     });
     await _callCoinTrx(
       amount: amount,
