@@ -24,8 +24,6 @@ class FakeHttpsCallable implements HttpsCallable {
     return FakeHttpsCallableResult<T>(response as T);
   }
 
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class FakeFirebaseFunctions implements FirebaseFunctions {
@@ -39,8 +37,6 @@ class FakeFirebaseFunctions implements FirebaseFunctions {
     return callable;
   }
 
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 // ignore: subtype_of_sealed_class
@@ -144,8 +140,6 @@ class FakeCoinLogsCollection extends Fake
     return FakeQuery(store).get();
   }
 
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 // ignore: subtype_of_sealed_class
