@@ -1,0 +1,29 @@
+# Codex goal – implement TransactionWrapper + integration tests (T15)
+canvas: canvases/transaction_wrapper_test.md
+
+inputs:
+  # Source & service files
+  - lib/utils/transaction_wrapper.dart
+  - lib/services/coin_service.dart
+  # Dev dependencies
+  - pubspec.yaml
+  - cloud_firestore_mocks
+  - mocktail
+  - logger
+  # Testing guidelines
+  - codex_docs/testing_guidelines.md
+
+steps:
+  - name: generate_transaction_wrapper_and_update_coin_service
+    description: |
+      1. Create `lib/utils/transaction_wrapper.dart` implementing TransactionWrapper with configurable maxRetries (default 3) and delayBetweenRetries. The wrapper should accept an instance of FirebaseFirestore and a logger, expose a `run<T>(Future<T> Function(Transaction) body)` method, internally call firestore.runTransaction with retry logic on FirebaseException code `aborted` or `deadline-exceeded`.
+      2. Update `lib/services/coin_service.dart` so that its debit and credit methods execute inside the TransactionWrapper instead of directly calling Firestore.
+    output:
+      - lib/utils/transaction_wrapper.dart
+      - lib/services/coin_service.dart
+  - name: generate_transaction_wrapper_integration_tests
+    description: |
+      Create `test/integration/transaction_wrapper_test.dart` implementing the six integration test cases (TW-01…TW-06) from the canvas using `FakeFirebaseFirestore` and `mocktail` for the logger. Ensure concurrency scenarios use `Future.wait`. Do not run the tests (`run_tests: false`).
+    output:
+      - test/integration/transaction_wrapper_test.dart
+    run_tests: false
