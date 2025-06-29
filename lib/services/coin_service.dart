@@ -106,6 +106,7 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
+    _logger.info('coin_trx $type $amount');
     final callable = _fns.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{

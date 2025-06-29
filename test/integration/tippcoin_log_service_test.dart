@@ -17,8 +17,7 @@ class FakeDocumentReference extends Fake
   }
 }
 
-// ignore: subtype_of_sealed_class
-// ignore: must_be_immutable
+// ignore: subtype_of_sealed_class, must_be_immutable
 class FakeCollectionReference extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
