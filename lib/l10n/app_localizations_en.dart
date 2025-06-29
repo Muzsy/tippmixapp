@@ -538,6 +538,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationMarkRead => 'Mark read';
 
   @override
+  String get notificationFilterAll => 'All';
+
+  @override
+  String get notificationFilterUnread => 'Unread';
+
+  @override
   String get notificationType_reward => 'Reward';
 
   @override
