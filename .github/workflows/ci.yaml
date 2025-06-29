@@ -34,8 +34,8 @@ jobs:
         run: flutter test --coverage
 
       # ======= ÚJ: genbadge telepítése és badge generálása =======
-      - name: Install genbadge
-        run: pip install genbadge
+      - name: Install genbadge (with coverage extras)
+        run: pip install "genbadge[coverage]"
 
       - name: Generate coverage badge
         run: |
