@@ -42,7 +42,7 @@ class _FakeAuthNotifier extends AuthNotifier {
   }
 }
 
-/// Mockolt BetSlipProvider – a projektben StateNotifier<BetSlipProviderState>.
+/// Mockolt BetSlipProvider – a projektben `StateNotifier<BetSlipProviderState>`.
 class _FakeBetSlipProvider extends BetSlipProvider {
   _FakeBetSlipProvider({required List<TipModel> initialTips}) : super() {
     state = BetSlipProviderState(tips: initialTips);
@@ -63,7 +63,7 @@ Widget _buildTestApp({required List<TipModel> tips}) {
       // closure *BetSlipProvider* típust ad vissza, OK a fordítónak
       betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: tips)),
     ],
-    child: MaterialApp(
+    child: const MaterialApp(
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
