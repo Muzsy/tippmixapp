@@ -62,6 +62,7 @@ class FakeDocumentSnapshot extends Fake
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake
     implements DocumentReference<Map<String, dynamic>> {
+  @override
   final FakeFirebaseFirestore firestore;
   @override
   final String id;
@@ -97,6 +98,7 @@ class FakeDocumentReference extends Fake
 // ignore: subtype_of_sealed_class
 class FakeCollectionReference extends Fake
     implements CollectionReference<Map<String, dynamic>> {
+  @override
   final FakeFirebaseFirestore firestore;
   final Map<String, Map<String, dynamic>> store;
   FakeCollectionReference(this.firestore, this.store);
