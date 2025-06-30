@@ -5,5 +5,5 @@ set -e
 echo "📦 Installing dependencies..."
 npm ci --prefer-offline
 
-echo "🧪 Running Firestore security rules tests..."
-npm run test:rules
+echo "🧪 Running Firestore security rules tests with coverage..."
+npm run test:rules:coverage
