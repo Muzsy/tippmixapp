@@ -1,0 +1,20 @@
+steps:
+  - name: "Hero animáció beépítése"
+    description: "A BadgeScreen minden badge elemére Hero widget kerüljön, egyedi tag-gel (badge id vagy típus alapján)."
+    outputs: ["Minden badge Hero-val animálható, animáció smooth, UI/UX-nak megfelelő."]
+
+  - name: "Widget-teszt frissítése, skip törlése"
+    description: "A test/screens/badge_screen_test.dart tesztfájlból minden skip vagy @Skip jelölés eltávolítása, aranykép/golden teszt assetek frissítése."
+    outputs: ["CI-ben a badge_screen_test zöld, minden teszteset ténylegesen fut."]
+
+  - name: "Golden test ellenőrzése"
+    description: "Ha van aranykép teszt, az asseteket frissíteni kell (flutter test --update-goldens), teszt sikerességét assertálni."
+    outputs: ["Golden test pass, referencia képek naprakészek."]
+
+  - name: "Lokalizáció tesztelése"
+    description: "Az animáció és teszt során minden felirat helyesen jelenik meg magyar, angol, német nyelven is."
+    outputs: ["Lokalizáció 100%, hiányzó string tesztfailt okoz."]
+
+  - name: "CI verifikáció"
+    description: "A teljes badge hero animációs teszt pipeline-ban zöld, nincs skip vagy elavult asset."
+    outputs: ["CI zöld, badge hero animáció 100%-ban tesztelt."]
