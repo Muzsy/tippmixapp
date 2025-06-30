@@ -179,4 +179,9 @@
   ,"notificationType_friend": "Freundschaftsanfrage"
   ,"notificationType_message": "Nachricht"
   ,"notificationType_challenge": "Herausforderung"
+  ,"dialog_cancel": "Abbrechen"
+  ,"dialog_send": "Senden"
+  ,"dialog_reason_hint": "Grund"
+  ,"dialog_comment_title": "Kommentar"
+  ,"dialog_add_comment_hint": "Kommentar hinzufügen"
 }
