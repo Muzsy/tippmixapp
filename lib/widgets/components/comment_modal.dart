@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../models/feed_event_type.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/feed_provider.dart';
@@ -24,18 +25,19 @@ class _CommentModalState extends ConsumerState<CommentModal> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Comment'),
+      title: Text(loc.dialog_comment_title),
       content: TextField(
         controller: _controller,
         maxLength: 250,
         maxLines: 3,
-        decoration: const InputDecoration(hintText: 'Add a comment'),
+        decoration: InputDecoration(hintText: loc.dialog_add_comment_hint),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(loc.dialog_cancel),
         ),
         TextButton(
           onPressed: () async {
@@ -51,7 +53,7 @@ class _CommentModalState extends ConsumerState<CommentModal> {
             if (!context.mounted) return;
             Navigator.of(context).pop();
           },
-          child: const Text('Send'),
+          child: Text(loc.dialog_send),
         ),
       ],
     );
