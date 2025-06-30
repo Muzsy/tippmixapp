@@ -81,11 +81,29 @@ void main() {
     expect(find.byType(Tooltip), findsNWidgets(badgeConfigs.length));
   });
 
-  testWidgets('TC-05 opens detail dialog (skipped)', (tester) async {},
-      skip: true);
+  testWidgets('TC-05 opens detail dialog', (tester) async {
+    final controller = StreamController<List<String>>();
+    await _pumpBadgeScreen(tester, controller);
+    controller.add(['badge_rookie']);
+    await tester.pump();
 
-  testWidgets('TC-06 hero animation (skipped)', (tester) async {},
-      skip: true);
+    await tester.tap(find.text(AppLocalizationsEn().badge_rookie_title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
+  testWidgets('TC-06 hero animation', (tester) async {
+    final controller = StreamController<List<String>>();
+    await _pumpBadgeScreen(tester, controller);
+    controller.add(['badge_rookie']);
+    await tester.pump();
+
+    await tester.tap(find.text(AppLocalizationsEn().badge_rookie_title));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Hero), findsWidgets);
+  });
 
   testWidgets('TC-07 localization HU', (tester) async {
     final controller = StreamController<List<String>>();

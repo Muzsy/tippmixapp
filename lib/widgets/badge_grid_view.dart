@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../models/badge.dart';
 import '../utils/badge_icon_utils.dart';
+import 'badge_detail_dialog.dart';
 
 /// Grid displaying all badges, reusable on BadgeScreen.
 class BadgeGridView extends StatelessWidget {
@@ -42,13 +43,24 @@ class BadgeGridView extends StatelessWidget {
         final description = _description(loc, badge.key);
         return Tooltip(
           message: description,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(getIconForBadge(badge.iconName), size: 32),
-              const SizedBox(height: 4),
-              Text(title, textAlign: TextAlign.center),
-            ],
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (_) => BadgeDetailDialog(badge: badge),
+              );
+            },
+            child: Hero(
+              tag: 'badge-${badge.key}',
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(getIconForBadge(badge.iconName), size: 32),
+                  const SizedBox(height: 4),
+                  Text(title, textAlign: TextAlign.center),
+                ],
+              ),
+            ),
           ),
         );
       },
