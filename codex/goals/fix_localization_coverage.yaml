@@ -1,0 +1,22 @@
+steps:
+  - name: ARB diff generálása
+    description: Az összes lokalizációs ARB fájl (hu, en, de) összehasonlítása, hiányzó vagy üres kulcsok kigyűjtése minden képernyőhöz és funkcióhoz.
+    outputs: [arb_diff_lista]
+
+  - name: Hardcoded stringek keresése
+    description: A lib/ és widget/ könyvtárakban minden keményen beírt (nem lokalizált) string kigyűjtése, sorszám, fájlnév, környezeti kódrészlet megjelölésével.
+    outputs: [hardcoded_stringek_lista]
+
+  - name: Hiányzó kulcsok automatikus pótlása
+    description: Az előző lépésben talált hiányzó vagy üres fordítási kulcsok automatikus hozzáadása minden ARB fájlhoz (alapérték üres string vagy “TODO”), mindhárom nyelven.
+    inputs: [arb_diff_lista]
+    outputs: [frissített_arb_fájlok]
+
+  - name: Hardcoded stringek javítása
+    description: Az előző lépésben talált hardcoded stringeket cserélje le új lokalizációs kulcsokra, ahol ez egyértelmű. Ha nem lehet automatikusan javítani (összetett/paraméteres/kontextusfüggő), azt “TODO” kommenttel és naplóval jelezze, de a kódot ne módosítsa automatikusan.
+    inputs: [hardcoded_stringek_lista]
+    outputs: [frissített_forráskód, javítás_napló, todo_napló]
+
+  - name: Naplófájlok generálása
+    description: Minden változtatást (új kulcs, kódmódosítás, kihagyott/“TODO”-s eset) külön naplófájlba ment. Ezeket mellékeli a commithoz.
+    outputs: [változás_napló, todo_napló]
