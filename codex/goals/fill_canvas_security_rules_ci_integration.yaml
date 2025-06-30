@@ -1,0 +1,28 @@
+steps:
+  - name: CI workflow bővítése security rules teszttel
+    description: >
+      Bővítsd ki a .github/workflows/ci.yaml fájlt egy új lépéssel, amely Node környezetben futtatja a scripts/test_firebase_rules.sh scriptet. Gondoskodj az npm dependency telepítésről (npm install), a Firestore emulator elérhetőségéről, és arról, hogy a teszt futása hibára bukjon a pipeline-ban.
+    outputs:
+      - módosított ci.yaml
+      - pipeline futási log
+
+  - name: Dependency cache és optimalizáció
+    description: >
+      Alakítsd ki a dependency cache-elés logikáját a workflow-ban (pl. actions/cache), hogy csak szükség esetén telepítse újra a Node modulokat. Ellenőrizd, hogy a pipeline minél gyorsabban fusson.
+    outputs:
+      - cache szekció a workflow-ban
+      - cache log
+
+  - name: Pipeline badge és log generálása
+    description: >
+      Gondoskodj róla, hogy a security rules teszt eredménye badge formájában automatikusan megjelenjen a README-ben, és a részletes log auditálható legyen (pl. artifacts vagy summary formátumban).
+    outputs:
+      - README frissítés
+      - badge log
+
+  - name: Dokumentáció és visszaellenőrzés
+    description: >
+      Dokumentáld a folyamatot a projekt wiki/jegyzet részében, és fűzd hozzá a workflow működésének leírását. A Codex csak a repository-t, workflow-t és dokumentációt módosítsa, semmit nem futtathat helyben.
+    outputs:
+      - dokumentáció
+      - módosított fájlok listája
