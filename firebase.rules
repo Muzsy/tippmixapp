@@ -1,72 +1,39 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isOwner(uid) {
-      return request.auth != null && request.auth.uid == uid;
-    }
 
+    /* ——— SEGÉDFÜGGVÉNYEK ——— */
+    function signedIn()      { return request.auth != null; }
+    function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+
+    /* ——— coin_logs ——— */
     match /coin_logs/{logId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid &&
-                    request.resource.data.amount is int &&
-                    request.resource.data.timestamp == request.time &&
-                    request.resource.data.type in ['bet', 'deposit', 'withdraw', 'adjust'];
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      function validCoinLog() {
+        return request.resource != null
+          && request.resource.data != null
+          && request.auth.uid == request.resource.data.userId
+          && request.resource.data.amount is int
+          && request.resource.data.type in ['bet','deposit','withdraw','adjust'];
+      }
+      allow create: if signedIn() && validCoinLog();
+      allow read:   if isOwner(resource.data.userId);
       allow update, delete: if false;
     }
 
-    match /badges/{id} {
-      allow read: if true;
-      allow update: if request.auth != null && request.auth.uid == resource.data.ownerId;
-      allow create, delete: if false;
-    }
-
-    match /rewards/{id} {
-      allow read: if true;
+    /* ——— badges (publikus read) ——— */
+    match /badges/{badgeId} {
+      allow read:  if true;
       allow write: if false;
     }
 
-    match /notifications/{uid}/{notifId} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if request.auth != null && request.auth.uid == uid && request.resource.data.read == true;
-    }
-
-    match /users/{uid} {
-      allow read: if isOwner(uid);
-      allow create, update: if isOwner(uid)
-        && (!(
-          'coinResetFlag' in request.resource.data ||
-          'role' in request.resource.data
-        ) || request.auth.token.role == 'admin');
+    /* ——— notifications ——— */
+    match /notifications/{userId}/n/{notifId} {
+      allow create: if false;
+      allow read:   if isOwner(userId);
+      allow update: if isOwner(userId)
+        && request.resource != null
+        && request.resource.data.read == true;
       allow delete: if false;
-    }
-
-    match /users/{uid}/badges/{badgeId} {
-      allow read: if isOwner(uid);
-      allow create: if isOwner(uid)
-        && request.resource.data.key is string
-        && request.resource.data.timestamp == request.time;
-      allow update, delete: if false;
-    }
-
-    match /users/{userId} {
-      allow read, list: if request.auth != null;  // vagy if true, ha vendégeknek is
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-
-
-    match /tickets/{ticketId} {
-      allow read, list: if request.auth != null;
-      allow write: if request.auth != null &&
-        request.auth.uid == request.resource.data.userId;
-    }
-
-    match /users/{document=**} {
-      allow list: if request.auth != null;  // teljes kollekció lekérdezés pl. orderBy-hoz
-    }
-
-    match /user_stats/{statId} {
-      allow read: if request.auth != null;
     }
   }
 }
-
