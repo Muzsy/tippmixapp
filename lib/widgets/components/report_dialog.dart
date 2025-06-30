@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/feed_provider.dart';
 
@@ -23,16 +24,17 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Report'),
+      title: Text(loc.feed_report),
       content: TextField(
         controller: _controller,
-        decoration: const InputDecoration(hintText: 'Reason'),
+        decoration: InputDecoration(hintText: loc.dialog_reason_hint),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(loc.dialog_cancel),
         ),
         TextButton(
           onPressed: () async {
@@ -48,7 +50,7 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
             if (!context.mounted) return;
             Navigator.of(context).pop();
           },
-          child: const Text('Send'),
+          child: Text(loc.dialog_send),
         ),
       ],
     );
