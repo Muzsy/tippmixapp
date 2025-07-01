@@ -2,13 +2,14 @@ inputs:
   - /docs/tippmix_app_teljes_adatmodell.md
 
 steps:
-  - name: Default avatar asset bevezetése
+  - name: Default avatar logika kialakítása
     description: >
-      Hozd létre az asset könyvtárban a nemsemleges default avatar képet (minimum 1 db).
-      Új felhasználó regisztrációjakor ezt állítsd be profilképként, ha a user nem választ mást.
+      A profilkép inicializálásakor az assets/avatar/default_avatar.png képfájlt használja a rendszer alapértelmezett avatarként, ha a felhasználó nem választ mást.
+      Az asset fájl elhelyezéséről a fejlesztőnek manuálisan kell gondoskodnia.
+      A Codex NEM hozhat létre, nem commitolhat bináris assetet!
     outputs:
-      - Default avatar asset file az assets/avatar könyvtárban
-      - Alapértelmezett avatar beállítás logikája regisztrációkor
+      - Avatar inicializációs logika
+      - Default avatar asset elérési út dokumentációja
 
   - name: Firestore user dokumentum bővítése
     description: >
@@ -29,10 +30,10 @@ steps:
       - Nickname egyediség validáció logikája a backendben
       - Hibakezelés/nem engedélyezett duplikált nickname
 
-  - name: Adatmodell és asset egység tesztjei
+  - name: Adatmodell és asset logika tesztjei
     description: >
       Készíts alap tesztet, amely ellenőrzi:
-        - a default avatar automatikusan beállításra kerül,
+        - a default avatar inicializációja csak akkor fut le, ha az asset ténylegesen elérhető,
         - az új mezők helyesen mentődnek Firestore-ban,
         - a nickname valóban egyedi.
       (A tényleges tesztek implementálása később, itt csak a logika vázlatos előkészítése szükséges.)
