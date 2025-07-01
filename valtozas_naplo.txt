@@ -1,2 +1,4 @@
-- Added localization keys: dialog_cancel, dialog_send, dialog_reason_hint, dialog_comment_title, dialog_add_comment_hint to all ARB files.
-- Replaced hardcoded strings in report_dialog.dart and comment_modal.dart with localized versions.
+2024-04-15 Localization coverage check executed.
+- ARB diff checked: no missing or empty keys.
+- Hardcoded strings scanned; results written to hardcoded_stringek_lista.txt.
+- No automatic code changes applied.

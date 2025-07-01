@@ -1,1 +1,1 @@
-No missing or empty keys found.
+All keys present with non-empty values in all languages
