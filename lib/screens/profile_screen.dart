@@ -4,7 +4,7 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
-import '../models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
@@ -45,14 +45,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             setState(() => _avatarUrl = path);
             try {
               await ProfileService.updateProfile(
-                uid: user.id,
+                uid: user.uid,
                 data: {'avatarUrl': path},
                 firestore: FirebaseFirestore.instance,
                 cache: _dummyCache,
                 connectivity: _dummyConnectivity,
               );
             } catch (_) {
-              if (!context.mounted) return;
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(loc.profile_avatar_error)),
               );
@@ -122,14 +122,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && _avatarUrl == null) {
+      _avatarUrl = user.photoURL;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final firebaseUser = FirebaseAuth.instance.currentUser;
     final user = ref.watch(authProvider).user;
-    if (user != null && _avatarUrl == null) {
-      _avatarUrl = kDefaultAvatarPath;
-    }
 
-    if (user == null) {
+    if (firebaseUser == null || user == null) {
       if (!widget.showAppBar || Scaffold.maybeOf(context) != null) {
         return Center(child: Text(loc.not_logged_in));
       }
@@ -146,7 +153,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => _showAvatarGallery(user),
+            onTap: () => _showAvatarGallery(firebaseUser),
             child: CircleAvatar(
               radius: 40,
               backgroundImage: _avatarUrl != null && _avatarUrl!.startsWith('http')
@@ -155,7 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           TextButton(
-            onPressed: () => _pickPhoto(user),
+            onPressed: () => _pickPhoto(firebaseUser),
             child: Text(loc.profileUploadPhoto),
           ),
           FutureBuilder<bool>(
@@ -166,7 +173,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onPressed: () async {
                   setState(() => _avatarUrl = kDefaultAvatarPath);
                   await ProfileService.updateProfile(
-                    uid: user.id,
+                    uid: firebaseUser.uid,
                     data: {'avatarUrl': kDefaultAvatarPath},
                     firestore: FirebaseFirestore.instance,
                     cache: _dummyCache,
@@ -190,7 +197,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onChanged: (v) async {
               setState(() => _isPrivate = v);
               await ProfileService.updateProfile(
-                uid: user.id,
+                uid: firebaseUser.uid,
                 data: {'isPrivate': v},
                 firestore: FirebaseFirestore.instance,
                 cache: _dummyCache,
@@ -206,7 +213,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               onChanged: (v) async {
                 setState(() => _fieldVisibility[key] = v);
                 await ProfileService.updateProfile(
-                  uid: user.id,
+                  uid: firebaseUser.uid,
                   data: {
                     'fieldVisibility': {key: v}
                   },
