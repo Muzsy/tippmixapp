@@ -4,10 +4,11 @@ inputs:
 steps:
   - name: Avatar galéria UI implementálása
     description: >
-      Készíts profil szerkesztő UI komponenst, amely a assets/avatar/ könyvtárban található avatar PNG-kből grid nézetben választható galériát jelenít meg.
-      Assetek kézi feltöltése szükséges, ezt ne próbáld automatikusan generálni!
+      Készíts profil szerkesztő UI komponenst, amely kizárólag az assets/avatar/ könyvtárban (kézi feltöltéssel) elhelyezett avatar PNG/JPG képekből grid nézetben választható galériát jelenít meg.
+      A Codex vagy bármilyen automatizmus számára SZIGORÚAN TILTOTT bármilyen avatar asset, így a default_avatar.png generálása, commitolása vagy feltöltése!
+      Csak a logikát és az asset elérési út dokumentációját implementáld!
     outputs:
-      - Avatar galéria UI
+      - Avatar galéria UI komponens
       - Dokumentált asset elérési út (README vagy fejlesztői leírás)
 
   - name: Saját kép feltöltés és crop/feldolgozás
@@ -22,15 +23,17 @@ steps:
 
   - name: Default avatar logika és visszaállítás
     description: >
-      Új regisztrációnál automatikusan állítsd be a default_avatar.png assetet.
-      Profil szerkesztőben legyen lehetőség visszaállítani az alapértelmezett avatarra bármikor.
+      Új regisztrációnál csak akkor állítsd be az alapértelmezett avatart, ha az assets/avatar/default_avatar.png asset ténylegesen létezik.
+      A profil szerkesztő UI-ban is csak akkor kínáld fel a visszaállítást, ha az asset elérhető.
+      A Codex vagy bármilyen automatizmus számára SZIGORÚAN TILTOTT a default_avatar.png vagy bármilyen avatar asset generálása, commitolása vagy feltöltése!
+      Csak a logikát implementáld, assetkezelés manuális!
     outputs:
-      - Default avatar logika az appban
-      - Alap avatar visszaállító gomb/funkció
+      - Default avatar logika az appban (asset létezésének ellenőrzésével)
+      - Alap avatar visszaállító funkció
 
   - name: Hibakezelés és UX feedback
     description: >
-      Gondoskodj arról, hogy asset hiány, feltöltési hiba, vagy storage elérés probléma esetén a user mindig kapjon megfelelő hibaüzenetet, és a művelet ne álljon meg csendben.
+      Gondoskodj arról, hogy asset hiány, feltöltési hiba vagy storage elérés probléma esetén a user mindig kapjon megfelelő hibaüzenetet, és a művelet ne álljon meg csendben.
       A hibákra lokalizációs kulcsokat használj.
     outputs:
       - UX feedback minden hibalehetőségre
