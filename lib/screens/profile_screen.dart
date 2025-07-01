@@ -228,6 +228,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               },
           ),
           const Divider(),
+          ElevatedButton(
+            onPressed: () {
+              context.goNamed(AppRoute.badges.name);
+            },
+            child: Text(loc.menuBadges),
+          ),
           ..._fieldVisibility.keys.map((key) {
             return SwitchListTile(
               dense: true,
@@ -261,12 +267,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Text(loc.profile_logout),
                   ),
             const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () {
-                context.goNamed(AppRoute.badges.name);
-              },
-              child: Text(loc.menuBadges),
-            ),
           ],
         ),
       );
