@@ -4,7 +4,7 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../models/user.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
@@ -45,13 +45,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             setState(() => _avatarUrl = path);
             try {
               await ProfileService.updateProfile(
-                uid: user.uid,
+                uid: user.id,
                 data: {'avatarUrl': path},
                 firestore: FirebaseFirestore.instance,
                 cache: _dummyCache,
                 connectivity: _dummyConnectivity,
               );
             } catch (_) {
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(loc.profile_avatar_error)),
               );
@@ -125,7 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
     if (user != null && _avatarUrl == null) {
-      _avatarUrl = user.photoURL;
+      _avatarUrl = kDefaultAvatarPath;
     }
 
     if (user == null) {
@@ -165,7 +166,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onPressed: () async {
                   setState(() => _avatarUrl = kDefaultAvatarPath);
                   await ProfileService.updateProfile(
-                    uid: user.uid,
+                    uid: user.id,
                     data: {'avatarUrl': kDefaultAvatarPath},
                     firestore: FirebaseFirestore.instance,
                     cache: _dummyCache,
@@ -189,7 +190,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onChanged: (v) async {
               setState(() => _isPrivate = v);
               await ProfileService.updateProfile(
-                uid: user.uid,
+                uid: user.id,
                 data: {'isPrivate': v},
                 firestore: FirebaseFirestore.instance,
                 cache: _dummyCache,
@@ -205,7 +206,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               onChanged: (v) async {
                 setState(() => _fieldVisibility[key] = v);
                 await ProfileService.updateProfile(
-                  uid: user.uid,
+                  uid: user.id,
                   data: {
                     'fieldVisibility': {key: v}
                   },
