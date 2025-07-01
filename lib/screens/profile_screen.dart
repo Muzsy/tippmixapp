@@ -5,6 +5,8 @@ import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/profile_service.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -26,6 +28,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   };
   bool _loggingOut = false;
   String? _error;
+
+  // Minimal cache/connectivity for ProfileService calls
+  static final _dummyCache = _NoCache();
+  static final _dummyConnectivity = _AlwaysOnline();
 
   String _labelForKey(AppLocalizations loc, String key) {
     switch (key) {
@@ -95,16 +101,36 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 32),
           SwitchListTile(
-            title: Text(loc.profile_is_private),
+            title: Text(loc.profile_global_privacy),
             value: _isPrivate,
-            onChanged: (v) => setState(() => _isPrivate = v),
+            onChanged: (v) async {
+              setState(() => _isPrivate = v);
+              await ProfileService.updateProfile(
+                uid: user.uid,
+                data: {'isPrivate': v},
+                firestore: FirebaseFirestore.instance,
+                cache: _dummyCache,
+                connectivity: _dummyConnectivity,
+              );
+            },
           ),
           const Divider(),
           ..._fieldVisibility.keys.map((key) {
             return SwitchListTile(
               title: Text(_labelForKey(loc, key)),
               value: _fieldVisibility[key]!,
-              onChanged: (v) => setState(() => _fieldVisibility[key] = v),
+              onChanged: (v) async {
+                setState(() => _fieldVisibility[key] = v);
+                await ProfileService.updateProfile(
+                  uid: user.uid,
+                  data: {
+                    'fieldVisibility': {key: v}
+                  },
+                  firestore: FirebaseFirestore.instance,
+                  cache: _dummyCache,
+                  connectivity: _dummyConnectivity,
+                );
+              },
             );
           }),
           const SizedBox(height: 32),
@@ -138,4 +164,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: content,
     );
   }
+}
+
+class _NoCache {
+  dynamic get(String key) => null;
+  void set(String key, dynamic value, Duration ttl) {}
+  void invalidate(String key) {}
+}
+
+class _AlwaysOnline {
+  bool get online => true;
 }
