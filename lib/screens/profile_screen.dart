@@ -270,10 +270,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
       );
 
-    if (!widget.showAppBar) return content;
-    if (Scaffold.maybeOf(context) != null) {
-      return content;
-    }
+      if (!widget.showAppBar) {
+        return Material(
+          child: content,
+        );
+      }
+      if (Scaffold.maybeOf(context) != null) {
+        return content;
+      }
     return Scaffold(
       appBar: AppBar(title: Text(loc.profile_title)),
       body: content,
