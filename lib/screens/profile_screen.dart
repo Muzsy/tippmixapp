@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
@@ -124,16 +125,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null && _avatarUrl == null) {
-      _avatarUrl = user.photoURL;
+    if (Firebase.apps.isNotEmpty) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && _avatarUrl == null) {
+        _avatarUrl = user.photoURL;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final firebaseUser =
+        Firebase.apps.isNotEmpty ? FirebaseAuth.instance.currentUser : null;
     final user = ref.watch(authProvider).user;
 
     if (firebaseUser == null || user == null) {
