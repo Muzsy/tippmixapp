@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
@@ -44,15 +44,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           onAvatarSelected: (path) async {
             Navigator.pop(context);
             setState(() => _avatarUrl = path);
-            try {
-              await ProfileService.updateProfile(
-                uid: user.uid,
-                data: {'avatarUrl': path},
-                firestore: FirebaseFirestore.instance,
-                cache: _dummyCache,
-                connectivity: _dummyConnectivity,
-              );
-            } catch (_) {
+              try {
+                if (Firebase.apps.isNotEmpty) {
+                  await ProfileService.updateProfile(
+                    uid: user.uid,
+                    data: {'avatarUrl': path},
+                    firestore: FirebaseFirestore.instance,
+                    cache: _dummyCache,
+                    connectivity: _dummyConnectivity,
+                  );
+                }
+              } catch (_) {
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(loc.profile_avatar_error)),
@@ -182,17 +184,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 if (snapshot.data != true || firebaseUser == null) {
                   return const SizedBox.shrink();
                 }
-                return TextButton(
-                  onPressed: () async {
-                    setState(() => _avatarUrl = kDefaultAvatarPath);
-                    await ProfileService.updateProfile(
-                      uid: uid,
-                      data: {'avatarUrl': kDefaultAvatarPath},
-                      firestore: FirebaseFirestore.instance,
-                      cache: _dummyCache,
-                      connectivity: _dummyConnectivity,
-                    );
-                },
+                  return TextButton(
+                    onPressed: () async {
+                      setState(() => _avatarUrl = kDefaultAvatarPath);
+                      if (Firebase.apps.isNotEmpty) {
+                        await ProfileService.updateProfile(
+                          uid: uid,
+                          data: {'avatarUrl': kDefaultAvatarPath},
+                          firestore: FirebaseFirestore.instance,
+                          cache: _dummyCache,
+                          connectivity: _dummyConnectivity,
+                        );
+                      }
+                  },
                 child: Text(loc.profileResetAvatar),
               );
             },
@@ -207,16 +211,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           SwitchListTile(
             title: Text(loc.profile_global_privacy),
             value: _isPrivate,
-            onChanged: (v) async {
-              setState(() => _isPrivate = v);
-              await ProfileService.updateProfile(
-                uid: uid,
-                data: {'isPrivate': v},
-                firestore: FirebaseFirestore.instance,
-                cache: _dummyCache,
-                connectivity: _dummyConnectivity,
-              );
-            },
+              onChanged: (v) async {
+                setState(() => _isPrivate = v);
+                if (Firebase.apps.isNotEmpty) {
+                  await ProfileService.updateProfile(
+                    uid: uid,
+                    data: {'isPrivate': v},
+                    firestore: FirebaseFirestore.instance,
+                    cache: _dummyCache,
+                    connectivity: _dummyConnectivity,
+                  );
+                }
+              },
           ),
           const Divider(),
           ..._fieldVisibility.keys.map((key) {
@@ -225,15 +231,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               value: _fieldVisibility[key]!,
               onChanged: (v) async {
                 setState(() => _fieldVisibility[key] = v);
-                await ProfileService.updateProfile(
-                  uid: uid,
-                  data: {
-                    'fieldVisibility': {key: v}
-                  },
-                  firestore: FirebaseFirestore.instance,
-                  cache: _dummyCache,
-                  connectivity: _dummyConnectivity,
-                );
+                if (Firebase.apps.isNotEmpty) {
+                  await ProfileService.updateProfile(
+                    uid: uid,
+                    data: {
+                      'fieldVisibility': {key: v}
+                    },
+                    firestore: FirebaseFirestore.instance,
+                    cache: _dummyCache,
+                    connectivity: _dummyConnectivity,
+                  );
+                }
               },
             );
           }),
