@@ -171,9 +171,9 @@
   ,"menuNotifications": "Értesítések"
   ,"notificationTitle": "Események"
   ,"notificationEmpty": "Nincs új esemény"
-  ,"notificationMarkRead": "Olvasottként jelölés",
-  ,"notificationFilterAll": "Összes",
-  ,"notificationFilterUnread": "Olvasatlan",
+  ,"notificationMarkRead": "Olvasottként jelölés"
+  ,"notificationFilterAll": "Összes"
+  ,"notificationFilterUnread": "Olvasatlan"
   ,"notificationType_reward": "Jutalom"
   ,"notificationType_badge": "Jelvény"
   ,"notificationType_friend": "Barátkérés"

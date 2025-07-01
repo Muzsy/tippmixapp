@@ -557,4 +557,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get notificationType_challenge => 'Kihívás';
+
+  @override
+  String get dialog_cancel => 'Mégse';
+
+  @override
+  String get dialog_send => 'Küldés';
+
+  @override
+  String get dialog_reason_hint => 'Indok';
+
+  @override
+  String get dialog_comment_title => 'Hozzászólás';
+
+  @override
+  String get dialog_add_comment_hint => 'Adj hozzá megjegyzést';
 }
