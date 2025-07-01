@@ -331,6 +331,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profile_favorite_teams => 'Lieblingsteams';
 
   @override
+  String get profile_public => 'Öffentlich';
+
+  @override
+  String get profile_private => 'Privat';
+
+  @override
+  String get profile_toggle_visibility => 'Sichtbarkeit umschalten';
+
+  @override
+  String get profile_global_privacy => 'Globaler Privatschalter';
+
+  @override
   String get drawer_title => 'Menü';
 
   @override
@@ -593,4 +605,34 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dialog_add_comment_hint => 'Kommentar hinzufügen';
+
+  @override
+  String get profile_stats => 'Statistiken';
+
+  @override
+  String get profile_badges => 'Abzeichen';
+
+  @override
+  String get profile_level => 'Stufe';
+
+  @override
+  String get profile_coins => 'TippCoin';
+
+  @override
+  String get profileAvatarGallery => 'Avatar Galerie';
+
+  @override
+  String get profileUploadPhoto => 'Eigenes Foto hochladen';
+
+  @override
+  String get profileResetAvatar => 'Standardavatar wiederherstellen';
+
+  @override
+  String get profileChooseAvatar => 'Avatar auswählen';
+
+  @override
+  String get profileCropImage => 'Bild zuschneiden';
+
+  @override
+  String get profile_avatar_error => 'Fehler beim Aktualisieren des Avatars';
 }

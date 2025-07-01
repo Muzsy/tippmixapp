@@ -721,6 +721,30 @@ abstract class AppLocalizations {
   /// **'Favorite teams'**
   String get profile_favorite_teams;
 
+  /// No description provided for @profile_public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get profile_public;
+
+  /// No description provided for @profile_private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get profile_private;
+
+  /// No description provided for @profile_toggle_visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle visibility'**
+  String get profile_toggle_visibility;
+
+  /// No description provided for @profile_global_privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Global privacy switch'**
+  String get profile_global_privacy;
+
   /// No description provided for @drawer_title.
   ///
   /// In en, this message translates to:
@@ -1248,6 +1272,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add a comment'**
   String get dialog_add_comment_hint;
+
+  /// No description provided for @profile_stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get profile_stats;
+
+  /// No description provided for @profile_badges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get profile_badges;
+
+  /// No description provided for @profile_level.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get profile_level;
+
+  /// No description provided for @profile_coins.
+  ///
+  /// In en, this message translates to:
+  /// **'TippCoin'**
+  String get profile_coins;
+
+  /// No description provided for @profileAvatarGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar gallery'**
+  String get profileAvatarGallery;
+
+  /// No description provided for @profileUploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your own photo'**
+  String get profileUploadPhoto;
+
+  /// No description provided for @profileResetAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to default avatar'**
+  String get profileResetAvatar;
+
+  /// No description provided for @profileChooseAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose avatar'**
+  String get profileChooseAvatar;
+
+  /// No description provided for @profileCropImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop image'**
+  String get profileCropImage;
+
+  /// No description provided for @profile_avatar_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating avatar'**
+  String get profile_avatar_error;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
