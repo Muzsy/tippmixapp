@@ -1,0 +1,40 @@
+inputs:
+  - /docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: Default avatar asset bevezetése
+    description: >
+      Hozd létre az asset könyvtárban a nemsemleges default avatar képet (minimum 1 db).
+      Új felhasználó regisztrációjakor ezt állítsd be profilképként, ha a user nem választ mást.
+    outputs:
+      - Default avatar asset file az assets/avatar könyvtárban
+      - Alapértelmezett avatar beállítás logikája regisztrációkor
+
+  - name: Firestore user dokumentum bővítése
+    description: >
+      Bővítsd a felhasználói adatbázis (Firestore user dokumentum) szerkezetét a következő mezőkkel:
+        - isPrivate: boolean (globális privát profil flag)
+        - fieldVisibility: object (mezőnkénti publikus/privát flags)
+        - nickname: string (egyedi, kötelező minden usernél)
+      Dokumentáld a szerkezetet, igazodva az adatmodell forrásfájlhoz.
+    outputs:
+      - Adatmodell kiegészítése (isPrivate, fieldVisibility, nickname)
+      - Dokumentáció frissítése a projekt adatmodelljében
+
+  - name: Nickname egyediség validáció
+    description: >
+      Implementáld backend oldalon, hogy regisztráció/szerkesztés előtt a nickname egyediségét ellenőrizze a rendszer.
+      Sikeres ellenőrzés esetén menthető az új nickname.
+    outputs:
+      - Nickname egyediség validáció logikája a backendben
+      - Hibakezelés/nem engedélyezett duplikált nickname
+
+  - name: Adatmodell és asset egység tesztjei
+    description: >
+      Készíts alap tesztet, amely ellenőrzi:
+        - a default avatar automatikusan beállításra kerül,
+        - az új mezők helyesen mentődnek Firestore-ban,
+        - a nickname valóban egyedi.
+      (A tényleges tesztek implementálása később, itt csak a logika vázlatos előkészítése szükséges.)
+    outputs:
+      - Adatmodell/asset backend tesztváz
