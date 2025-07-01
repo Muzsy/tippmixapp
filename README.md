@@ -46,3 +46,7 @@ state management.
 This MVP focuses on providing a simple end‑to‑end flow using live odds data and
 Firebase backend services. Further information about the data models and
 architecture can be found in the documentation under `docs/`.
+
+## CI: Firestore security rules
+
+A GitHub Actions workflow automatikusan futtatja a `scripts/test_firebase_rules.sh` szkriptet minden PR-en es a `main` branchre torteno pushoknal. A szkript elinditja a Firestore Emulatort es lefuttatja a `test/security_rules.test.mjs` tesztjeit. A futas eredmenye a `security_rules_test.log` fajlban elerheto, amely `security-rules-log` artifactkent toltodik fel.
