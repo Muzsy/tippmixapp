@@ -132,3 +132,5 @@ Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/da
 Renamed unused catch variable in CoinService._callCoinTrx.
 Replaced photo picker implementation in ProfileScreen with stub and switched to FirebaseAuth User.
 Nem sikerult javitani az image_picker, image_cropper es firebase_storage csomag hianyzo dependenciait.
+Fixed mismatched user model usage in profile_screen.dart.
+Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
