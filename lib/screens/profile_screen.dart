@@ -170,7 +170,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               radius: 40,
               backgroundImage: _avatarUrl != null && _avatarUrl!.startsWith('http')
                   ? NetworkImage(_avatarUrl!) as ImageProvider
-                  : AssetImage(_avatarUrl ?? kDefaultAvatarPath),
+                  : _avatarUrl != null
+                      ? AssetImage(_avatarUrl!)
+                      : null,
+              child: _avatarUrl == null ? const Icon(Icons.person) : null,
             ),
           ),
           TextButton(
