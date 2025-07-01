@@ -4,9 +4,7 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
@@ -65,34 +63,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _pickPhoto(User user) async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
-    // TODO: crop/resize using image_cropper
-    final file = XFile(picked.path);
-    if (await file.length() > 1024 * 1024) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.profile_avatar_error)),
-      );
-      return;
-    }
-    try {
-      final ref = FirebaseStorage.instance.ref('avatars/${user.uid}.png');
-      await ref.putData(await file.readAsBytes());
-      final url = await ref.getDownloadURL();
-      setState(() => _avatarUrl = url);
-      await ProfileService.updateProfile(
-        uid: user.uid,
-        data: {'avatarUrl': url},
-        firestore: FirebaseFirestore.instance,
-        cache: _dummyCache,
-        connectivity: _dummyConnectivity,
-      );
-    } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.profile_avatar_error)),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)!.profile_avatar_error,
+        ),
+      ),
+    );
   }
 
   Future<bool> _defaultExists() async {
@@ -148,7 +125,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
     if (user != null && _avatarUrl == null) {
-      _avatarUrl = user.avatarUrl;
+      _avatarUrl = user.photoURL;
     }
 
     if (user == null) {
