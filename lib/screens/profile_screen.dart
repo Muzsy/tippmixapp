@@ -178,7 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           TextButton(
             onPressed: () => _pickPhoto(user),
-            child: Text(loc.profile_upload_photo),
+            child: Text(loc.profileUploadPhoto),
           ),
           FutureBuilder<bool>(
             future: _defaultExists(),
@@ -195,7 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     connectivity: _dummyConnectivity,
                   );
                 },
-                child: Text(loc.profile_reset_avatar),
+                child: Text(loc.profileResetAvatar),
               );
             },
           ),
