@@ -679,6 +679,48 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get profile_name;
 
+  /// No description provided for @profile_nickname.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get profile_nickname;
+
+  /// No description provided for @profile_is_private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private profile'**
+  String get profile_is_private;
+
+  /// No description provided for @profile_city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get profile_city;
+
+  /// No description provided for @profile_country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get profile_country;
+
+  /// No description provided for @profile_friends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get profile_friends;
+
+  /// No description provided for @profile_favorite_sports.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite sports'**
+  String get profile_favorite_sports;
+
+  /// No description provided for @profile_favorite_teams.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite teams'**
+  String get profile_favorite_teams;
+
   /// No description provided for @drawer_title.
   ///
   /// In en, this message translates to:
