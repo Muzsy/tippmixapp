@@ -199,4 +199,10 @@
   ,"profile_badges": "Badges",
   ,"profile_level": "Level",
   ,"profile_coins": "TippCoin"
+  ,"profile.avatar_gallery": "Avatar gallery"
+  ,"profile.upload_photo": "Upload your own photo"
+  ,"profile.reset_avatar": "Reset to default avatar"
+  ,"profile.choose_avatar": "Choose avatar"
+  ,"profile.crop_image": "Crop image"
+  ,"profile.avatar_error": "Error updating avatar"
 }
