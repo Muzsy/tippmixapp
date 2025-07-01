@@ -1,0 +1,16 @@
+steps:
+  - name: Emulator cache integrálása
+    description: A Firestore emulator binárisokat és npm package cache-t integrálja a CI pipeline-ba a gyorsabb tesztfutás érdekében.
+    outputs: [ci_cache_steps]
+
+  - name: Teszt script automatikus futtatásának ellenőrzése
+    description: Biztosítsa, hogy a scripts/test_firebase_rules.sh minden PR/branch buildben automatikusan lefusson, a szükséges függőségek installja, jogosultságok beállítása, és minden log mentése megtörténjen.
+    outputs: [frissített_ci_yaml, test_log_path]
+
+  - name: Teszteredmény artifact mentés
+    description: A security rules teszt futásának minden kimenetét (log, pass/fail állapot) mentse CI artifactként vagy külön fájlként (pl. security_rules_test.log).
+    outputs: [ci_artifact_path, security_rules_test_log]
+
+  - name: Dokumentáció naprakészítése
+    description: Frissítse a fejlesztői dokumentációt magyar leírással, hogy a security rules CI pipeline működése, logika, tesztelés és hibakezelés teljesen átlátható legyen.
+    outputs: [readme_update, devdoc_update]
