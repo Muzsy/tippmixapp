@@ -331,6 +331,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile_favorite_teams => 'Favorite teams';
 
   @override
+  String get profile_public => 'Public';
+
+  @override
+  String get profile_private => 'Private';
+
+  @override
+  String get profile_toggle_visibility => 'Toggle visibility';
+
+  @override
+  String get profile_global_privacy => 'Global privacy switch';
+
+  @override
   String get drawer_title => 'Drawer';
 
   @override
@@ -593,4 +605,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dialog_add_comment_hint => 'Add a comment';
+
+  @override
+  String get profile_stats => 'Stats';
+
+  @override
+  String get profile_badges => 'Badges';
+
+  @override
+  String get profile_level => 'Level';
+
+  @override
+  String get profile_coins => 'TippCoin';
+
+  @override
+  String get profileAvatarGallery => 'Avatar gallery';
+
+  @override
+  String get profileUploadPhoto => 'Upload your own photo';
+
+  @override
+  String get profileResetAvatar => 'Reset to default avatar';
+
+  @override
+  String get profileChooseAvatar => 'Choose avatar';
+
+  @override
+  String get profileCropImage => 'Crop image';
+
+  @override
+  String get profile_avatar_error => 'Error updating avatar';
 }

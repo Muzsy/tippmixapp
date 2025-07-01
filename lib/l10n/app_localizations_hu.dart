@@ -331,6 +331,18 @@ class AppLocalizationsHu extends AppLocalizations {
   String get profile_favorite_teams => 'Kedvenc csapatok';
 
   @override
+  String get profile_public => 'Publikus';
+
+  @override
+  String get profile_private => 'Privát';
+
+  @override
+  String get profile_toggle_visibility => 'Mező láthatósága';
+
+  @override
+  String get profile_global_privacy => 'Globális privát kapcsoló';
+
+  @override
   String get drawer_title => 'Menü';
 
   @override
@@ -593,4 +605,34 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get dialog_add_comment_hint => 'Adj hozzá megjegyzést';
+
+  @override
+  String get profile_stats => 'Statisztikák';
+
+  @override
+  String get profile_badges => 'Kitüntetések';
+
+  @override
+  String get profile_level => 'Szint';
+
+  @override
+  String get profile_coins => 'TippCoin';
+
+  @override
+  String get profileAvatarGallery => 'Avatar galéria';
+
+  @override
+  String get profileUploadPhoto => 'Saját kép feltöltése';
+
+  @override
+  String get profileResetAvatar => 'Alap avatar visszaállítása';
+
+  @override
+  String get profileChooseAvatar => 'Válassz avatart';
+
+  @override
+  String get profileCropImage => 'Kép kivágása';
+
+  @override
+  String get profile_avatar_error => 'Hiba történt az avatar beállításakor';
 }
