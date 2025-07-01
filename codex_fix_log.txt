@@ -134,3 +134,5 @@ Replaced photo picker implementation in ProfileScreen with stub and switched to 
 Nem sikerult javitani az image_picker, image_cropper es firebase_storage csomag hianyzo dependenciait.
 Fixed mismatched user model usage in profile_screen.dart.
 Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
+Replaced mounted check with context.mounted in profile_screen.dart error handler.
+Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
