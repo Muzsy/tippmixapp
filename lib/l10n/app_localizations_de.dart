@@ -310,6 +310,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profile_name => 'Name';
 
   @override
+  String get profile_nickname => 'Spitzname';
+
+  @override
+  String get profile_is_private => 'Privates Profil';
+
+  @override
+  String get profile_city => 'Stadt';
+
+  @override
+  String get profile_country => 'Land';
+
+  @override
+  String get profile_friends => 'Freunde';
+
+  @override
+  String get profile_favorite_sports => 'Lieblingssportarten';
+
+  @override
+  String get profile_favorite_teams => 'Lieblingsteams';
+
+  @override
   String get drawer_title => 'Menü';
 
   @override

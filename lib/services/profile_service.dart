@@ -6,6 +6,15 @@ class ProfileService {
 
   static final List<_QueuedUpdate> _queued = [];
 
+  static Future<bool> isNicknameUnique(String nickname,
+      {required FirebaseFirestore firestore}) async {
+    final query = await firestore
+        .collection('users')
+        .where('nickname', isEqualTo: nickname)
+        .get();
+    return query.docs.isEmpty;
+  }
+
   static Future<void> createUserProfile(UserModel user) async {
     return FirebaseFirestore.instance
         .collection('users')
@@ -70,6 +79,13 @@ class ProfileService {
         uid: cached.uid,
         email: data['email'] ?? cached.email,
         displayName: data['displayName'] ?? cached.displayName,
+        nickname: data['nickname'] ?? cached.nickname,
+        avatarUrl: data['avatarUrl'] ?? cached.avatarUrl,
+        isPrivate: data['isPrivate'] ?? cached.isPrivate,
+        fieldVisibility:
+            Map<String, bool>.from(cached.fieldVisibility)..addAll(
+                (data['fieldVisibility'] as Map<String, dynamic>? ?? {})
+                    .map((k, v) => MapEntry(k, v as bool))),
       );
       cache.set(uid, updated, const Duration(hours: 1));
     } else {
@@ -95,6 +111,13 @@ class ProfileService {
           uid: cached.uid,
           email: q.data['email'] ?? cached.email,
           displayName: q.data['displayName'] ?? cached.displayName,
+          nickname: q.data['nickname'] ?? cached.nickname,
+          avatarUrl: q.data['avatarUrl'] ?? cached.avatarUrl,
+          isPrivate: q.data['isPrivate'] ?? cached.isPrivate,
+          fieldVisibility:
+              Map<String, bool>.from(cached.fieldVisibility)..addAll(
+                  (q.data['fieldVisibility'] as Map<String, dynamic>? ?? {})
+                      .map((k, v) => MapEntry(k, v as bool))),
         );
         cache.set(q.uid, updated, const Duration(hours: 1));
       }
