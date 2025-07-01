@@ -85,7 +85,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           const CircleAvatar(
             radius: 40,
-            backgroundImage: const AssetImage(kDefaultAvatarPath),
+            backgroundImage: AssetImage(kDefaultAvatarPath),
           ),
           const SizedBox(height: 12),
           Text('${loc.profile_nickname}: ${user.displayName}',
