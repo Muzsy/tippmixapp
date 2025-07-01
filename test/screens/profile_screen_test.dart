@@ -113,8 +113,27 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Private profile'), findsOneWidget);
+    expect(find.text('Global privacy switch'), findsOneWidget);
 
     expect(find.byType(SwitchListTile), findsNWidgets(6));
+  });
+
+  testWidgets('field privacy toggle updates state', (tester) async {
+    final user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final tile = find.widgetWithText(SwitchListTile, 'City');
+    expect(tile, findsOneWidget);
+    final SwitchListTile before = tester.widget(tile);
+    await tester.tap(tile);
+    await tester.pumpAndSettle();
+    final SwitchListTile after = tester.widget(tile);
+    expect(before.value, isTrue);
+    expect(after.value, isFalse);
   });
 }
