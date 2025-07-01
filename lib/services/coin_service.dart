@@ -158,8 +158,7 @@ class CoinService {
         );
       }
     } on FirebaseFunctionsException catch (e, stack) {
-      debugPrint('CoinService error: ${e.code}');
-      debugPrintStack(stackTrace: stack);
+      // Log the error and rethrow
       rethrow;
     }
   }

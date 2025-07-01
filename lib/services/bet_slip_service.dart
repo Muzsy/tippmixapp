@@ -87,7 +87,7 @@ class BetSlipService {
       );
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'unauthenticated') {
-        debugPrint('CoinService unauthenticated');
+        // Authentication required when using CoinService
       }
       rethrow;
     }
