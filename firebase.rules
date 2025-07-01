@@ -15,7 +15,7 @@ service cloud.firestore {
           && request.resource.data.amount is int
           && request.resource.data.type in ['bet','deposit','withdraw','adjust'];
       }
-      allow create: if signedIn() && validCoinLog();
+      allow create: if false;
       allow read:   if isOwner(resource.data.userId);
       allow update, delete: if false;
     }
