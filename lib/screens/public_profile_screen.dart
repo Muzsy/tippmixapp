@@ -36,8 +36,12 @@ class PublicProfileScreen extends StatelessWidget {
               child: user.avatarUrl.isEmpty ? const Icon(Icons.person) : null,
             ),
             const SizedBox(height: 12),
-            Text('${loc.profile_nickname}: ${user.nickname}',
-                style: const TextStyle(fontSize: 16)),
+            Text(
+              user.isPrivate
+                  ? user.nickname
+                  : '${loc.profile_nickname}: ${user.nickname}',
+              style: const TextStyle(fontSize: 16),
+            ),
             if (!user.isPrivate) ...[
               for (final entry in fields.entries)
                 if (user.fieldVisibility[entry.key] ?? false) ...[
