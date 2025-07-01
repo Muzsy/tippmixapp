@@ -1,9 +1,17 @@
-# Firestore Security Rules CI Integration
+# Firestore Security Rules CI folyamat
 
-This document describes the continuous integration step that verifies Firestore security rules.
+A TippmixApp minden PR es `main` branch push eseten automatikusan ellenorzi a Firestore biztonsagi szabalyokat.
+A `.github/workflows/ci.yaml` workflow a kovetkezo lepeseit hajtja vegre:
 
-The `ci.yaml` workflow installs Node.js, restores dependencies, then runs `scripts/test_firebase_rules.sh` which executes `npm run test:rules:coverage`. The command starts the Firestore emulator and runs the Mocha test suite under `test/security_rules.test.mjs`.
+1. Node.js 20 kornyezetet allit fel es cache-eli az `~/.npm` valamint
+   `~/.cache/firebase/emulators` mappakat a gyorsabb futas erdekeben.
+2. A `scripts/test_firebase_rules.sh` script telepiti az npm fuggosegeket
+   (`npm ci --prefer-offline`), majd a Firestore Emulator inditasaval lefuttatja
+   a `npm run test:rules:coverage` parancsot.
+3. A tesztek kimenete a `security_rules_test.log` fajlba kerul, amit a CI
+   `security-rules-log` nevu artifactkent tarol.
+4. Sikeres lefutas eseten frissul a `coverage/security_rules_badge.svg`
+   jelveny. Hibas szabaly eseten a pipeline azonnal megszakad es a logban
+   olvashatok a reszletek.
 
-Test output is saved to `security_rules_test.log` and uploaded as a workflow artifact. Coverage results generate `coverage/security_rules_badge.svg` that surfaces in the README.
-
-The workflow fails on any security rules violation, preventing merges until the tests pass.
+A logfajlok es a generalt badge a GitHub Actions feluleten erheto el.
