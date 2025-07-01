@@ -50,3 +50,7 @@ architecture can be found in the documentation under `docs/`.
 ## CI: Firestore security rules
 
 A GitHub Actions workflow automatikusan futtatja a `scripts/test_firebase_rules.sh` szkriptet minden PR-en es a `main` branchre torteno pushoknal. A szkript elinditja a Firestore Emulatort es lefuttatja a `test/security_rules.test.mjs` tesztjeit. A futas eredmenye a `security_rules_test.log` fajlban elerheto, amely `security-rules-log` artifactkent toltodik fel.
+
+## Avatar Assets
+
+All avatar images must be manually placed in `assets/avatar/`. The default avatar file is `assets/avatar/default_avatar.png` if provided. Do not commit any avatar image files to the repository.

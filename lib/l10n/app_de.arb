@@ -199,4 +199,10 @@
   ,"profile_badges": "Abzeichen",
   ,"profile_level": "Stufe",
   ,"profile_coins": "TippCoin"
+  ,"profile.avatar_gallery": "Avatar Galerie"
+  ,"profile.upload_photo": "Eigenes Foto hochladen"
+  ,"profile.reset_avatar": "Standardavatar wiederherstellen"
+  ,"profile.choose_avatar": "Avatar auswählen"
+  ,"profile.crop_image": "Bild zuschneiden"
+  ,"profile.avatar_error": "Fehler beim Aktualisieren des Avatars"
 }
