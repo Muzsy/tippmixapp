@@ -195,4 +195,8 @@
   ,"dialog_reason_hint": "Reason"
   ,"dialog_comment_title": "Comment"
   ,"dialog_add_comment_hint": "Add a comment"
+  ,"profile_stats": "Stats",
+  ,"profile_badges": "Badges",
+  ,"profile_level": "Level",
+  ,"profile_coins": "TippCoin"
 }
