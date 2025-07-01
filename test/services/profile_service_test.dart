@@ -162,7 +162,7 @@ void main() {
           uid: 'u1',
           email: 'cache@a.com',
           displayName: 'Cached',
-          nickname: '',
+          nickname: 'CachedNick',
           avatarUrl: '',
           isPrivate: false,
           fieldVisibility: const {},
