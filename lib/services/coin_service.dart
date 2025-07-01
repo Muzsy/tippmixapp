@@ -1,7 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import '../utils/simple_logger.dart';
 import '../utils/transaction_wrapper.dart';
 
@@ -157,9 +156,9 @@ class CoinService {
           details: data,
         );
       }
-    } on FirebaseFunctionsException catch (e, stack) {
-      // Log the error and rethrow
-      rethrow;
+      } on FirebaseFunctionsException catch (e) {
+        // Log the error and rethrow
+        rethrow;
     }
   }
 }
