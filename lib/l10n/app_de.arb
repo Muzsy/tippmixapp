@@ -195,14 +195,14 @@
   ,"dialog_reason_hint": "Grund"
   ,"dialog_comment_title": "Kommentar"
   ,"dialog_add_comment_hint": "Kommentar hinzufügen"
-  ,"profile_stats": "Statistiken",
-  ,"profile_badges": "Abzeichen",
-  ,"profile_level": "Stufe",
+  ,"profile_stats": "Statistiken"
+  ,"profile_badges": "Abzeichen"
+  ,"profile_level": "Stufe"
   ,"profile_coins": "TippCoin"
   ,"profile.avatar_gallery": "Avatar Galerie"
   ,"profile.upload_photo": "Eigenes Foto hochladen"
   ,"profile.reset_avatar": "Standardavatar wiederherstellen"
   ,"profile.choose_avatar": "Avatar auswählen"
   ,"profile.crop_image": "Bild zuschneiden"
-  ,"profile.avatar_error": "Fehler beim Aktualisieren des Avatars"
+  ,"profile_avatar_error": "Fehler beim Aktualisieren des Avatars"
 }
