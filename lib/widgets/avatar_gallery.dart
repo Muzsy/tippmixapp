@@ -6,7 +6,7 @@ import '../l10n/app_localizations.dart';
 /// Displays selectable avatar images from assets/avatar/.
 class AvatarGallery extends StatefulWidget {
   final ValueChanged<String> onAvatarSelected;
-  const AvatarGallery({Key? key, required this.onAvatarSelected}) : super(key: key);
+  const AvatarGallery({super.key, required this.onAvatarSelected});
 
   @override
   State<AvatarGallery> createState() => _AvatarGalleryState();
