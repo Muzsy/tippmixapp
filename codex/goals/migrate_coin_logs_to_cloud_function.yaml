@@ -1,0 +1,20 @@
+steps:
+  - name: Cloud Function létrehozása
+    description: Új szerveroldali Cloud Function implementálása coin_logs naplózására, hitelesítéssel és paraméterellenőrzéssel.
+    outputs: [cloud_function_kód]
+
+  - name: Kliensoldali logolás refaktor
+    description: Az összes kliensoldali Firestore coin_logs írás átalakítása function hívásra a coin_service.dart-ban.
+    outputs: [frissített_kliens_kód]
+
+  - name: Firestore szabályok módosítása
+    description: A coin_logs kollekció írási jogosultságainak módosítása, hogy csak a function írhasson, kliensoldali írás kizárva.
+    outputs: [frissített_firebase_rules]
+
+  - name: Tesztek implementálása
+    description: Cloud Function unit és integrációs tesztek írása (success, error, jogosultság), pipeline-ba integrálva.
+    outputs: [function_teszt, integrációs_teszt]
+
+  - name: Dokumentáció frissítése
+    description: A fejlesztői dokumentáció naprakészítése a migrációról, function endpoint, kliens használat, biztonsági logika rövid magyar leírásával.
+    outputs: [devdoc_update, readme_update]
