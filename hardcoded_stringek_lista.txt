@@ -1,0 +1,10 @@
+lib/screens/events_screen.dart:156: Text('${event.homeTeam} – ${event.awayTeam}'
+lib/screens/events_screen.dart:166: Text('${event.homeTeam} – ${event.awayTeam}'
+lib/screens/events_screen.dart:182: Text('${event.homeTeam} – ${event.awayTeam}'
+lib/screens/leaderboard/leaderboard_screen.dart:56: Text('${index + 1}.'
+lib/screens/settings/settings_screen.dart:69: Text('HU'
+lib/screens/settings/settings_screen.dart:70: Text('EN'
+lib/screens/settings/settings_screen.dart:71: Text('DE'
+lib/widgets/ticket_card.dart:23: Text('x${ticket.totalOdd.toStringAsFixed(2)}'
+lib/widgets/home/user_stats_header.dart:43: Text('${(stats?.winRate ?? 0) * 100}%'
+Total: 9
