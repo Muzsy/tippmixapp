@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
+import '../widgets/avatar_gallery.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,6 +33,76 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   };
   bool _loggingOut = false;
   String? _error;
+  String? _avatarUrl;
+
+  Future<void> _showAvatarGallery(User user) async {
+    final loc = AppLocalizations.of(context)!;
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 400,
+        child: AvatarGallery(
+          onAvatarSelected: (path) async {
+            Navigator.pop(context);
+            setState(() => _avatarUrl = path);
+            try {
+              await ProfileService.updateProfile(
+                uid: user.uid,
+                data: {'avatarUrl': path},
+                firestore: FirebaseFirestore.instance,
+                cache: _dummyCache,
+                connectivity: _dummyConnectivity,
+              );
+            } catch (_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(loc.profile_avatar_error)),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickPhoto(User user) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+    // TODO: crop/resize using image_cropper
+    final file = XFile(picked.path);
+    if (await file.length() > 1024 * 1024) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.profile_avatar_error)),
+      );
+      return;
+    }
+    try {
+      final ref = FirebaseStorage.instance.ref('avatars/${user.uid}.png');
+      await ref.putData(await file.readAsBytes());
+      final url = await ref.getDownloadURL();
+      setState(() => _avatarUrl = url);
+      await ProfileService.updateProfile(
+        uid: user.uid,
+        data: {'avatarUrl': url},
+        firestore: FirebaseFirestore.instance,
+        cache: _dummyCache,
+        connectivity: _dummyConnectivity,
+      );
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.profile_avatar_error)),
+      );
+    }
+  }
+
+  Future<bool> _defaultExists() async {
+    try {
+      await rootBundle.load(kDefaultAvatarPath);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 
   // Minimal cache/connectivity for ProfileService calls
   static final _dummyCache = _NoCache();
@@ -72,6 +147,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
+    if (user != null && _avatarUrl == null) {
+      _avatarUrl = user.avatarUrl;
+    }
 
     if (user == null) {
       if (!widget.showAppBar || Scaffold.maybeOf(context) != null) {
@@ -89,9 +167,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            radius: 40,
-            backgroundImage: AssetImage(kDefaultAvatarPath),
+          GestureDetector(
+            onTap: () => _showAvatarGallery(user),
+            child: CircleAvatar(
+              radius: 40,
+              backgroundImage: _avatarUrl != null && _avatarUrl!.startsWith('http')
+                  ? NetworkImage(_avatarUrl!) as ImageProvider
+                  : AssetImage(_avatarUrl ?? kDefaultAvatarPath),
+            ),
+          ),
+          TextButton(
+            onPressed: () => _pickPhoto(user),
+            child: Text(loc.profile_upload_photo),
+          ),
+          FutureBuilder<bool>(
+            future: _defaultExists(),
+            builder: (context, snapshot) {
+              if (snapshot.data != true) return const SizedBox.shrink();
+              return TextButton(
+                onPressed: () async {
+                  setState(() => _avatarUrl = kDefaultAvatarPath);
+                  await ProfileService.updateProfile(
+                    uid: user.uid,
+                    data: {'avatarUrl': kDefaultAvatarPath},
+                    firestore: FirebaseFirestore.instance,
+                    cache: _dummyCache,
+                    connectivity: _dummyConnectivity,
+                  );
+                },
+                child: Text(loc.profile_reset_avatar),
+              );
+            },
           ),
           const SizedBox(height: 12),
           Text('${loc.profile_nickname}: ${user.displayName}',
