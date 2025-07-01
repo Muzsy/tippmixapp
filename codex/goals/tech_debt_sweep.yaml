@@ -1,0 +1,20 @@
+steps:
+  - name: Automatikus linter és fixer futtatása
+    description: A teljes projekten automatikusan futtasd a lint/fix parancsot (pl. dart fix --apply), javíts minden warningot, formázási hibát, felesleges importot.
+    outputs: [lint_fix_report]
+
+  - name: DebugPrint-ek és halott kód eltávolítása
+    description: Keresd meg és töröld az összes debugPrint-et, nem használt változót, függvényt, importot a lib/ és test/ könyvtárakban.
+    outputs: [cleaned_source_report]
+
+  - name: Golden tesztek un-skip és frissítés
+    description: Az összes skipelt golden/widget snapshot tesztet kapcsold vissza, szükség esetén frissítsd a snapshot/golden reference fájlokat.
+    outputs: [golden_test_update_report]
+
+  - name: Kommentezetlen TODO/FIXME keresése
+    description: Minden félbehagyott vagy nem dokumentált TODO/FIXME sor felderítése, automatikus naplózása (külön todo_report fájl).
+    outputs: [todo_report]
+
+  - name: Változások naplózása és PR előkészítés
+    description: Minden automatikus változtatás és nem automatikusan javítható tétel külön naplófájlban, PR-ba csatolva.
+    outputs: [pr_changelog, todo_report]
