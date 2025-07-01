@@ -195,4 +195,8 @@
   ,"dialog_reason_hint": "Indok"
   ,"dialog_comment_title": "Hozzászólás"
   ,"dialog_add_comment_hint": "Adj hozzá megjegyzést"
+  ,"profile_stats": "Statisztikák",
+  ,"profile_badges": "Kitüntetések",
+  ,"profile_level": "Szint",
+  ,"profile_coins": "TippCoin"
 }
