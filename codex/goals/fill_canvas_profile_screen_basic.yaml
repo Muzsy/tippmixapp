@@ -1,0 +1,56 @@
+inputs:
+  - /docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: Default avatar bevezetése
+    description: >
+      Új regisztráció esetén automatikusan állítsd be a nemsemleges default avatar asset-et a profilhoz.
+      A default avatar asset könyvtárat a projekt assets mappájában hozd létre.
+    outputs:
+      - Default avatar asset file
+      - Alapértelmezett avatar beállítása új user regisztrációnál
+
+  - name: Nickname megjelenítése és egyediség biztosítása
+    description: >
+      Minden profilnál jelenjen meg a nickname, ez legyen kötelezően egyedi.
+      A regisztráció/szerkesztés során ellenőrizd az egyediséget.
+    outputs:
+      - Egyedi nickname validáció backend oldalon
+      - Nickname mező a felhasználói profilnézetben
+
+  - name: Publikus/privát kapcsolók minden mezőhöz
+    description: >
+      A város, ország, barátlista, kedvenc sport/csapat mezőknél jelenjen meg publikus/privát toggle.
+      Ezek beállítása határozza meg, hogy az adott mező látható-e más felhasználóknak.
+    outputs:
+      - fieldVisibility mező a Firestore user dokumentumban
+      - Publikus/privát toggle minden érintett mező UI-ján
+
+  - name: Globális privát kapcsoló
+    description: >
+      Készíts globális privát kapcsolót, amely letilt minden mező publikus megjelenítését kivéve az avatar-t és a nickname-et.
+      Ha aktív, más felhasználók csak az avatar-t és a nickname-et látják.
+    outputs:
+      - isPrivate mező a Firestore user dokumentumban
+      - Globális privát toggle a profil szerkesztő UI-ban
+      - Megjelenítési logika más profil megtekintésekor
+
+  - name: Profilnézet komponens kialakítása
+    description: >
+      Készíts külön profilnézet képernyőt: ha saját profilját nézi a user, minden mezőt lát és szerkeszthet;
+      ha más felhasználóét nézi, csak a publikus adatokat látja az adatvédelmi szabályok szerint.
+    outputs:
+      - ProfilPage komponens saját profilhoz
+      - ProfilPage komponens más felhasználóhoz, publikusság szerint szűrve
+
+  - name: Lokalizációs kulcsok bővítése
+    description: >
+      Vezesd be az új mezőkhöz és kapcsolókhoz szükséges fordítási kulcsokat az app lokalizációs rendszerében.
+    outputs:
+      - Új lokalizációs kulcsok hozzáadva a projekt fordítási fájljaihoz
+
+  - name: Tesztek implementálása
+    description: >
+      Implementáld az összes új funkcióra az egység- és integrációs teszteket (publikus/privát logika, globális privát kapcsoló, nickname validáció).
+    outputs:
+      - Új widget és backend tesztek
