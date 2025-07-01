@@ -1,0 +1,42 @@
+inputs:
+  - /docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: Publikus/privát toggle UI minden érintett mezőhöz
+    description: >
+      Implementáld a profil szerkesztőben minden, az adatmodell alapján privát/publikussá tehető mezőhöz a publikus/privát toggle UI-t.
+      (Város, ország, barátlista, kedvenc sport/csapat.)
+    outputs:
+      - Privacy toggle komponensek minden érintett mezőhöz
+      - Toggle állapot mentése/küldése a backendnek
+
+  - name: Globális privát kapcsoló UI implementálása
+    description: >
+      Készíts egy globális privát kapcsolót, amely ha aktív, elrejti minden mezőt (kivéve avatar+nickname).
+      A kapcsoló állapota minden egyes publikus/privát toggle felett felülírja a megjelenítési logikát.
+    outputs:
+      - Globális privát toggle a profil szerkesztő UI-ban
+      - Megjelenítési logika: csak avatar+nickname látszik, ha aktív
+
+  - name: Public profilnézet komponens
+    description: >
+      Implementáld a publikus profilnézetet külön komponensként (PublicProfileScreen).
+      Más felhasználó profiljának megtekintésekor csak a privacy szabályok szerint engedélyezett adatokat jeleníti meg.
+      (Ha a globális privát kapcsoló aktív, csak avatar+nickname.)
+    outputs:
+      - PublicProfileScreen komponens privacy logika alapján
+      - Megjelenítési logika: public és saját profil UI szétválasztása
+
+  - name: Tesztek a privacy UI-ra
+    description: >
+      Készíts alap tesztet, amely ellenőrzi, hogy a privacy toggle-ok állapota helyesen frissül a UI-ban,
+      és a public profilnézet csak a publikusra állított adatokat jeleníti meg.
+    outputs:
+      - Privacy toggle UI tesztváz
+      - PublicProfileScreen logikai tesztváz
+
+  - name: Lokalizációs kulcsok hozzáadása
+    description: >
+      Add hozzá az új privacy logikához szükséges UI szövegek lokalizációs kulcsait a fordítási fájlokhoz.
+    outputs:
+      - Lokalizációs kulcsok privacy UI-hoz
