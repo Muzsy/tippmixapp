@@ -15,11 +15,9 @@ class OddsApiService {
     DateTime? from,        // később: időintervallum
     DateTime? to,
   }) async {
-    // ignore: avoid_print
-    debugPrint('OddsApiService: getOdds called, apiKey=${dotenv.env['ODDS_API_KEY']}');
+    // Log API key usage in debug mode only
     final String? apiKey = dotenv.env['ODDS_API_KEY'];
-    // ignore: avoid_print
-    debugPrint('OddsApiService: getOdds called sport=$sport');
+    // Log the requested sport in debug mode only
     if (apiKey == null || apiKey.isEmpty) {
       return OddsApiResponse(
         data: null,
@@ -42,11 +40,9 @@ class OddsApiService {
         url += '&dateTo=${to.toIso8601String()}';
       }
 
-        // ignore: avoid_print
-        debugPrint('OddsApiService: before http.get url=$url');
+        // Debug log before http request
       final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
-        // ignore: avoid_print
-        debugPrint('OddsApiService: after http.get code=${response.statusCode}');
+        // Debug log after http request
 
       if (response.statusCode == 429) {
         return OddsApiResponse(
@@ -107,10 +103,7 @@ class OddsApiService {
         errorMessage: 'api_error_network',
       );
     } catch (e, stack) {
-          // ignore: avoid_print
-          debugPrint('ODDSAPI ERROR: $e');
-          // ignore: avoid_print
-          debugPrint('STACK: $stack');
+          // Log the error details
         return OddsApiResponse(
           data: null,
           errorType: ApiErrorType.unknown,
