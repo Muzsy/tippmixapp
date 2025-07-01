@@ -156,10 +156,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final displayName = user?.displayName ?? firebaseUser?.displayName ?? '';
     final email = user?.email ?? firebaseUser?.email ?? '';
 
-    final content = Padding(
-      padding: const EdgeInsets.all(24),
+    final content = SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
@@ -204,14 +203,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               );
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
             Text('${loc.profile_nickname}: $displayName',
                 style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
             Text('${loc.profile_email}: $email',
                 style: const TextStyle(fontSize: 16)),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           SwitchListTile(
+            dense: true,
             title: Text(loc.profile_global_privacy),
             value: _isPrivate,
               onChanged: (v) async {
@@ -230,6 +230,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const Divider(),
           ..._fieldVisibility.keys.map((key) {
             return SwitchListTile(
+              dense: true,
               title: Text(_labelForKey(loc, key)),
               value: _fieldVisibility[key]!,
               onChanged: (v) async {
@@ -248,7 +249,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               },
             );
           }),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
             if (_error != null) ...[
               Text(_error!, style: const TextStyle(color: Colors.red)),
               const SizedBox(height: 12),
@@ -259,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     onPressed: _loggingOut ? null : _logout,
                     child: Text(loc.profile_logout),
                   ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
                 context.goNamed(AppRoute.badges.name);
