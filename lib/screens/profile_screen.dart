@@ -140,7 +140,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Firebase.apps.isNotEmpty ? FirebaseAuth.instance.currentUser : null;
     final user = ref.watch(authProvider).user;
 
-    if (firebaseUser == null || user == null) {
+    if (firebaseUser == null && user == null) {
       if (!widget.showAppBar || Scaffold.maybeOf(context) != null) {
         return Center(child: Text(loc.not_logged_in));
       }
@@ -150,6 +150,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
     }
 
+    final uid = firebaseUser?.uid ?? user!.id;
+    final displayName = user?.displayName ?? firebaseUser?.displayName ?? '';
+    final email = user?.email ?? firebaseUser?.email ?? '';
+
     final content = Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -157,7 +161,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => _showAvatarGallery(firebaseUser),
+            onTap: firebaseUser != null
+                ? () => _showAvatarGallery(firebaseUser)
+                : null,
             child: CircleAvatar(
               radius: 40,
               backgroundImage: _avatarUrl != null && _avatarUrl!.startsWith('http')
@@ -166,34 +172,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           TextButton(
-            onPressed: () => _pickPhoto(firebaseUser),
+            onPressed:
+                firebaseUser != null ? () => _pickPhoto(firebaseUser) : null,
             child: Text(loc.profileUploadPhoto),
           ),
-          FutureBuilder<bool>(
-            future: _defaultExists(),
-            builder: (context, snapshot) {
-              if (snapshot.data != true) return const SizedBox.shrink();
-              return TextButton(
-                onPressed: () async {
-                  setState(() => _avatarUrl = kDefaultAvatarPath);
-                  await ProfileService.updateProfile(
-                    uid: firebaseUser.uid,
-                    data: {'avatarUrl': kDefaultAvatarPath},
-                    firestore: FirebaseFirestore.instance,
-                    cache: _dummyCache,
-                    connectivity: _dummyConnectivity,
-                  );
+            FutureBuilder<bool>(
+              future: _defaultExists(),
+              builder: (context, snapshot) {
+                if (snapshot.data != true || firebaseUser == null) {
+                  return const SizedBox.shrink();
+                }
+                return TextButton(
+                  onPressed: () async {
+                    setState(() => _avatarUrl = kDefaultAvatarPath);
+                    await ProfileService.updateProfile(
+                      uid: uid,
+                      data: {'avatarUrl': kDefaultAvatarPath},
+                      firestore: FirebaseFirestore.instance,
+                      cache: _dummyCache,
+                      connectivity: _dummyConnectivity,
+                    );
                 },
                 child: Text(loc.profileResetAvatar),
               );
             },
           ),
           const SizedBox(height: 12),
-          Text('${loc.profile_nickname}: ${user.displayName}',
-              style: const TextStyle(fontSize: 16)),
+            Text('${loc.profile_nickname}: $displayName',
+                style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
-          Text('${loc.profile_email}: ${user.email}',
-              style: const TextStyle(fontSize: 16)),
+            Text('${loc.profile_email}: $email',
+                style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 32),
           SwitchListTile(
             title: Text(loc.profile_global_privacy),
@@ -201,7 +210,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onChanged: (v) async {
               setState(() => _isPrivate = v);
               await ProfileService.updateProfile(
-                uid: firebaseUser.uid,
+                uid: uid,
                 data: {'isPrivate': v},
                 firestore: FirebaseFirestore.instance,
                 cache: _dummyCache,
@@ -217,7 +226,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               onChanged: (v) async {
                 setState(() => _fieldVisibility[key] = v);
                 await ProfileService.updateProfile(
-                  uid: firebaseUser.uid,
+                  uid: uid,
                   data: {
                     'fieldVisibility': {key: v}
                   },
