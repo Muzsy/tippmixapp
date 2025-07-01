@@ -171,9 +171,9 @@
   ,"menuNotifications": "Benachrichtigungen"
   ,"notificationTitle": "Ereignisse"
   ,"notificationEmpty": "Keine neuen Ereignisse"
-  ,"notificationMarkRead": "Als gelesen markieren",
-  ,"notificationFilterAll": "Alle",
-  ,"notificationFilterUnread": "Ungelesen",
+  ,"notificationMarkRead": "Als gelesen markieren"
+  ,"notificationFilterAll": "Alle"
+  ,"notificationFilterUnread": "Ungelesen"
   ,"notificationType_reward": "Belohnung"
   ,"notificationType_badge": "Abzeichen"
   ,"notificationType_friend": "Freundschaftsanfrage"

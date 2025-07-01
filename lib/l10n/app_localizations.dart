@@ -658,7 +658,7 @@ abstract class AppLocalizations {
   /// No description provided for @not_logged_in.
   ///
   /// In en, this message translates to:
-  /// **'You are not logged in.'**
+  /// **'Not logged in'**
   String get not_logged_in;
 
   /// No description provided for @errorNotLoggedIn.
@@ -1176,6 +1176,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Challenge'**
   String get notificationType_challenge;
+
+  /// No description provided for @dialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dialog_cancel;
+
+  /// No description provided for @dialog_send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get dialog_send;
+
+  /// No description provided for @dialog_reason_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get dialog_reason_hint;
+
+  /// No description provided for @dialog_comment_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get dialog_comment_title;
+
+  /// No description provided for @dialog_add_comment_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment'**
+  String get dialog_add_comment_hint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

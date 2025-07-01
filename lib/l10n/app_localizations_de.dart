@@ -557,4 +557,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notificationType_challenge => 'Herausforderung';
+
+  @override
+  String get dialog_cancel => 'Abbrechen';
+
+  @override
+  String get dialog_send => 'Senden';
+
+  @override
+  String get dialog_reason_hint => 'Grund';
+
+  @override
+  String get dialog_comment_title => 'Kommentar';
+
+  @override
+  String get dialog_add_comment_hint => 'Kommentar hinzufügen';
 }
