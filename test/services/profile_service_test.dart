@@ -158,7 +158,15 @@ void main() {
     test('offline cache fallback', () async {
       cache.set(
         'u1',
-        UserModel(uid: 'u1', email: 'cache@a.com', displayName: 'Cached'),
+        UserModel(
+          uid: 'u1',
+          email: 'cache@a.com',
+          displayName: 'Cached',
+          nickname: '',
+          avatarUrl: '',
+          isPrivate: false,
+          fieldVisibility: const {},
+        ),
         const Duration(hours: 1),
       );
       connectivity.online = false;

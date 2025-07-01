@@ -83,7 +83,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 40,
             backgroundImage: const AssetImage(kDefaultAvatarPath),
           ),
@@ -106,7 +106,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               value: _fieldVisibility[key]!,
               onChanged: (v) => setState(() => _fieldVisibility[key] = v),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 32),
             if (_error != null) ...[
               Text(_error!, style: const TextStyle(color: Colors.red)),
