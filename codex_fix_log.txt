@@ -136,3 +136,6 @@ Fixed mismatched user model usage in profile_screen.dart.
 Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
 Replaced mounted check with context.mounted in profile_screen.dart error handler.
 Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
+Replaced mounted check with context.mounted in profile_screen.dart.
+Removed unused constants.dart import in public_profile_screen.dart.
+Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
