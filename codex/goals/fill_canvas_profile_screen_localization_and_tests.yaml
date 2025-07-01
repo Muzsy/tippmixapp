@@ -1,0 +1,26 @@
+inputs:
+  - /docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: Lokalizációs kulcsok beillesztése
+    description: >
+      Vezesd be az összes új privacy logikához és UI elemhez szükséges lokalizációs kulcsot a projekt fordítási fájljaiba,
+      minden támogatott nyelven (pl. hu, en).
+      Dokumentáld, hogy minden mezőhöz külön fordítási kulcs tartozik.
+    outputs:
+      - Új lokalizációs kulcsok a projekt minden fordítási fájljában
+
+  - name: Privacy logika UI tesztvázak elkészítése
+    description: >
+      Készíts egység- és widget-teszt vázlatokat, amelyek a privacy toggle-k, globális privát kapcsoló,
+      és a public profilnézet logikáját ellenőrzik. (Nem kell tényleges asset, vagy teljes implementáció!)
+    outputs:
+      - Widget tesztvázak privacy toggle UI-ra
+      - Logikai tesztvázak a globális privát kapcsoló működésére
+      - Logikai tesztvázak a public profilnézet privacy szabályaira
+
+  - name: Dokumentáció bővítése
+    description: >
+      Rögzítsd a fenti fejlesztések dokumentációját a projekt fejlesztői leírásában, hogy minden új kulcs és tesztváz naprakész legyen.
+    outputs:
+      - Dokumentáció frissítése a projektben
