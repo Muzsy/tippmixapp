@@ -103,4 +103,18 @@ void main() {
 
     expect(find.byType(BadgeScreen), findsOneWidget);
   });
+
+  testWidgets('shows global privacy toggle', (tester) async {
+    final user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Private profile'), findsOneWidget);
+
+    expect(find.byType(SwitchListTile), findsNWidgets(6));
+  });
 }
