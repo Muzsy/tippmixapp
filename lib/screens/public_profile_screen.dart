@@ -26,9 +26,14 @@ class PublicProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
+             CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage(kDefaultAvatarPath),
+              backgroundImage: user.avatarUrl.isNotEmpty
+                  ? (user.avatarUrl.startsWith('http')
+                      ? NetworkImage(user.avatarUrl)
+                      : AssetImage(user.avatarUrl) as ImageProvider)
+                  : null,
+              child: user.avatarUrl.isEmpty ? const Icon(Icons.person) : null,
             ),
             const SizedBox(height: 12),
             Text('${loc.profile_nickname}: ${user.nickname}',
