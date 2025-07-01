@@ -122,3 +122,9 @@ Nem sikerült javítani a .env asset hiányára vonatkozó figyelmeztetést, mer
 Removed redundant null assertion on _functions in CoinService._callCoinTrx.
 Added ignore comments for sealed class warnings in log_coin_test and fixed closing brace.
 Nem sikerült javítani a .env asset hiányára vonatkozó figyelmeztetést, mert a llama_index/data/pubspec.yaml nem található.
+Removed unused flutter foundation import from odds_api_provider.
+Made CircleAvatar const and removed unnecessary toList call in profile_screen.
+Removed unused foundation import and stack trace variable in coin_service.
+Removed unused foundation import and stack trace variable in odds_api_service.
+Provided required arguments in profile_service_test UserModel creation.
+Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.

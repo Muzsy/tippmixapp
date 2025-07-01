@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 
 import '../models/odds_event.dart';
 import '../models/odds_api_response.dart';
@@ -102,8 +101,8 @@ class OddsApiService {
         errorType: ApiErrorType.network,
         errorMessage: 'api_error_network',
       );
-    } catch (e, stack) {
-          // Log the error details
+      } catch (e) {
+            // Log the error details
         return OddsApiResponse(
           data: null,
           errorType: ApiErrorType.unknown,
