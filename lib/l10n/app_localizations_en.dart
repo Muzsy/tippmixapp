@@ -310,6 +310,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile_name => 'Name';
 
   @override
+  String get profile_nickname => 'Nickname';
+
+  @override
+  String get profile_is_private => 'Private profile';
+
+  @override
+  String get profile_city => 'City';
+
+  @override
+  String get profile_country => 'Country';
+
+  @override
+  String get profile_friends => 'Friends';
+
+  @override
+  String get profile_favorite_sports => 'Favorite sports';
+
+  @override
+  String get profile_favorite_teams => 'Favorite teams';
+
+  @override
   String get drawer_title => 'Drawer';
 
   @override
