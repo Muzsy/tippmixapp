@@ -36,8 +36,7 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
 
   /// Események lekérése sport (és később liga/idő) szerint.
   Future<void> fetchOdds({required String sport}) async {
-    // ignore: avoid_print
-    debugPrint('OddsApiProvider: fetchOdds called sport=$sport');
+    // Fetch odds for the selected sport
     state = OddsApiLoading();
     final response = await _wrapper.getOdds(sport: sport);
 
