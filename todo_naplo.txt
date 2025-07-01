@@ -1,1 +1,6 @@
-No TODO left.
+A vizsgalat soran nem talaltunk potendo lokalizacios kulcsokat.
+A kovetkezo hardcoded stringek kontextusfuggoek, javitasuk nem egyertelmu:
+- events_screen.dart sor 156, 166, 182: csapatnevek megjelenitese
+- leaderboard_screen.dart sor 56: index szama
+- settings_screen.dart sor 69-71: nyelvi roviditesek
+- ticket_card.dart sor 23: 'x' prefix ertekhez
