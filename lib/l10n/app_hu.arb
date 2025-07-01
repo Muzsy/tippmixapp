@@ -195,14 +195,14 @@
   ,"dialog_reason_hint": "Indok"
   ,"dialog_comment_title": "Hozzászólás"
   ,"dialog_add_comment_hint": "Adj hozzá megjegyzést"
-  ,"profile_stats": "Statisztikák",
-  ,"profile_badges": "Kitüntetések",
-  ,"profile_level": "Szint",
+  ,"profile_stats": "Statisztikák"
+  ,"profile_badges": "Kitüntetések"
+  ,"profile_level": "Szint"
   ,"profile_coins": "TippCoin"
   ,"profile.avatar_gallery": "Avatar galéria"
   ,"profile.upload_photo": "Saját kép feltöltése"
   ,"profile.reset_avatar": "Alap avatar visszaállítása"
   ,"profile.choose_avatar": "Válassz avatart"
   ,"profile.crop_image": "Kép kivágása"
-  ,"profile.avatar_error": "Hiba történt az avatar beállításakor"
+  ,"profile_avatar_error": "Hiba történt az avatar beállításakor"
 }
