@@ -1,0 +1,44 @@
+inputs:
+  - /docs/tippmix_app_teljes_adatmodell.md
+
+steps:
+  - name: Avatar galéria UI implementálása
+    description: >
+      Készíts profil szerkesztő UI komponenst, amely a assets/avatar/ könyvtárban található avatar PNG-kből grid nézetben választható galériát jelenít meg.
+      Assetek kézi feltöltése szükséges, ezt ne próbáld automatikusan generálni!
+    outputs:
+      - Avatar galéria UI
+      - Dokumentált asset elérési út (README vagy fejlesztői leírás)
+
+  - name: Saját kép feltöltés és crop/feldolgozás
+    description: >
+      Tedd lehetővé, hogy a felhasználó saját képet töltsön fel (galériából vagy kamerával).
+      Kép feltöltés előtt biztosíts automatikus crop-ot/resize-t.
+      A feltöltött képet mentsd Firebase Storage-ba, avatarUrl mutasson az URL-re.
+      Fájlformátum és méret ellenőrzés szükséges.
+    outputs:
+      - Saját kép feltöltő UI, crop funkcióval
+      - Storage integráció, avatarUrl mentés
+
+  - name: Default avatar logika és visszaállítás
+    description: >
+      Új regisztrációnál automatikusan állítsd be a default_avatar.png assetet.
+      Profil szerkesztőben legyen lehetőség visszaállítani az alapértelmezett avatarra bármikor.
+    outputs:
+      - Default avatar logika az appban
+      - Alap avatar visszaállító gomb/funkció
+
+  - name: Hibakezelés és UX feedback
+    description: >
+      Gondoskodj arról, hogy asset hiány, feltöltési hiba, vagy storage elérés probléma esetén a user mindig kapjon megfelelő hibaüzenetet, és a művelet ne álljon meg csendben.
+      A hibákra lokalizációs kulcsokat használj.
+    outputs:
+      - UX feedback minden hibalehetőségre
+      - Lokalizációs kulcsok hibaüzenetekhez
+
+  - name: Avatar galéria tesztelése
+    description: >
+      Készíts alap tesztvázakat az avatar galéria, saját kép feltöltés és default avatar logika helyes működésére.
+      (A tényleges asset/feltöltési logika implementációja lehet későbbi fázisban.)
+    outputs:
+      - Widget/logikai tesztváz az avatar galériára és feltöltésre
