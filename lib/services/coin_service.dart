@@ -141,7 +141,7 @@ class CoinService {
     if (_functions == null) {
       return;
     }
-    final callable = _functions!.httpsCallable('coin_trx');
+    final callable = _functions.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{
         'amount': amount,

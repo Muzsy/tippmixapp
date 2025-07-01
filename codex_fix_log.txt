@@ -119,3 +119,6 @@ Removed unused wrapper variables in transaction_wrapper_test.
 Removed unused mocktail import from coin_service_test.
 Nem sikerült javítani a hiányzó .env asset figyelmeztetést a llama_index/data/pubspec.yaml hivatkozásnál.
 Nem sikerült javítani a .env asset hiányára vonatkozó figyelmeztetést, mert a llama_index/data/pubspec.yaml nem található.
+Removed redundant null assertion on _functions in CoinService._callCoinTrx.
+Added ignore comments for sealed class warnings in log_coin_test and fixed closing brace.
+Nem sikerült javítani a .env asset hiányára vonatkozó figyelmeztetést, mert a llama_index/data/pubspec.yaml nem található.

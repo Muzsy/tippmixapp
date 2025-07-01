@@ -27,6 +27,7 @@ Future<Map<String, dynamic>> callLogCoin(
 }
 
 // Firestore fakes
+// ignore: subtype_of_sealed_class
 class FakeLogDoc extends Fake implements DocumentReference<Map<String, dynamic>> {
   @override
   final String id;
@@ -38,6 +39,7 @@ class FakeLogDoc extends Fake implements DocumentReference<Map<String, dynamic>>
   }
 }
 
+// ignore: subtype_of_sealed_class
 class FakeLogCollection extends Fake implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
   FakeLogCollection(this.store);
@@ -78,4 +80,4 @@ void main() {
       'transactionId': 't2',
     }), throwsA('unauthenticated'));
   });
-});
+}
