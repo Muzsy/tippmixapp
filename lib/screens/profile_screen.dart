@@ -55,11 +55,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   );
                 }
               } catch (_) {
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(loc.profile_avatar_error)),
-              );
-            }
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(loc.profile_avatar_error)),
+                );
+              }
           },
         ),
       ),

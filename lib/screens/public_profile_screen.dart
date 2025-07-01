@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
-import '../constants.dart';
 import '../l10n/app_localizations.dart';
 
 /// Displays another user's profile applying privacy rules.
