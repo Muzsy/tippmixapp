@@ -109,6 +109,18 @@ Fordítási kulcsok formája: `"select_language": "Nyelv választás"`, stb.
 - Nyelvváltás után a főképernyőn is megfelelő nyelvű szövegek jelennek meg
 
 ---
+### Privacy kulcsok frissítése
+A profiloldal uj privacy logikájához a következő fordítási kulcsok kerültek be:
+- `profile_stats`
+- `profile_badges`
+- `profile_level`
+- `profile_coins`
+Ezek minden nyelvi fájlban megtalálhatók.
+
+### Tesztvázak
+A privacy toggle UI és publikus profilnézet ellenőrzésére alap widget- és egységteszt vázakat adtunk hozzá:
+`test/screens/profile_privacy_widget_test.dart`, `test/models/public_profile_privacy_logic_test.dart`.
+
 
 Ez a dokumentum a Codex és fejlesztői csapat számára kötelező referenciaként szolgál a lokalizációs logika bővítésekor vagy módosításakor.
 
