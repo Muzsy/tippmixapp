@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 import '../models/tippcoin_log_model.dart';
 
 class TippCoinLogService {
-  final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
 
-  TippCoinLogService([FirebaseFirestore? firestore])
-      : _firestore = firestore ?? FirebaseFirestore.instance;
-
-  CollectionReference<Map<String, dynamic>> get _ref =>
-      _firestore.collection('coin_logs');
+  TippCoinLogService([FirebaseFunctions? functions])
+      : _functions =
+            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
   Future<TippCoinLogModel> logCredit({
     required String userId,
@@ -18,17 +16,21 @@ class TippCoinLogService {
     String? txId,
     Map<String, dynamic>? meta,
   }) async {
-    final doc = _ref.doc();
-    final log = TippCoinLogModel.newCredit(
-      id: doc.id,
+    final callable = _functions.httpsCallable('log_coin');
+    await callable.call(<String, dynamic>{
+      'amount': amount,
+      'type': type,
+      'meta': meta,
+      'transactionId': txId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+    });
+    return TippCoinLogModel.newCredit(
+      id: txId ?? '',
       userId: userId,
       amount: amount,
       type: type,
       txId: txId,
       meta: meta,
     );
-    await doc.set(log.toJson());
-    return log;
   }
 
   Future<TippCoinLogModel> logDebit({
@@ -38,16 +40,20 @@ class TippCoinLogService {
     String? txId,
     Map<String, dynamic>? meta,
   }) async {
-    final doc = _ref.doc();
-    final log = TippCoinLogModel.newDebit(
-      id: doc.id,
+    final callable = _functions.httpsCallable('log_coin');
+    await callable.call(<String, dynamic>{
+      'amount': amount,
+      'type': type,
+      'meta': meta,
+      'transactionId': txId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+    });
+    return TippCoinLogModel.newDebit(
+      id: txId ?? '',
       userId: userId,
       amount: amount,
       type: type,
       txId: txId,
       meta: meta,
     );
-    await doc.set(log.toJson());
-    return log;
   }
 }

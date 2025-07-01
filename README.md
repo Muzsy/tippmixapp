@@ -40,7 +40,7 @@ state management.
 ## Repository structure
 
 - `lib/` – application code: screens, widgets, services and providers.
-- `docs/` – additional design documents for data models and API integration.
+- `docs/` – additional design documents for data models and API integration. Lásd még: `docs/coin_logs_cloud_function.md` a coin naplózás működéséről.
 - `test/` – example widget tests.
 
 This MVP focuses on providing a simple end‑to‑end flow using live odds data and
