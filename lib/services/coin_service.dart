@@ -156,7 +156,7 @@ class CoinService {
           details: data,
         );
       }
-      } on FirebaseFunctionsException catch (e) {
+      } on FirebaseFunctionsException catch (_) {
         // Log the error and rethrow
         rethrow;
     }
