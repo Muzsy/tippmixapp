@@ -1,0 +1,42 @@
+# fill_canvas_localization_key_fix.yaml
+steps:
+  - name: "Nem szabványos lokalizációs kulcsok felderítése"
+    description: |
+      Keresd meg az összes .arb lokalizációs fájlban azokat a kulcsokat, amelyek pontot (.), kötőjelet (-), vagy egyéb nem engedélyezett karaktert tartalmaznak. 
+      Ezeket gyűjtsd ki egy listába a gyorsabb feldolgozás érdekében.
+    outputs:
+      - "list_of_invalid_keys.txt"
+
+  - name: "Kulcsok átírása camelCase szintaktikára"
+    description: |
+      Minden hibás kulcsot írj át camelCase formátumra. Például: 'profile.avatar_gallery' -> 'profileAvatarGallery'.
+      Különösen figyelj arra, hogy egyedi, nem ütköző neveket adj.
+      Írd át a .arb fájlokban, de csak a valóban hibás kulcsokat!
+    inputs:
+      - "list_of_invalid_keys.txt"
+    outputs:
+      - "corrected_arb_files"
+
+  - name: "Kulcsok módosításának átvezetése a kódban"
+    description: |
+      Minden helyen, ahol a régi kulcsnév szerepel a kódban (pl. AppLocalizations.of(context).profile.avatar_gallery), cseréld le az új camelCase kulcsra.
+      Ne hagyj el semmilyen hivatkozást!
+    inputs:
+      - "corrected_arb_files"
+    outputs:
+      - "updated_source_code"
+
+  - name: "Generálásra előkészítés és kézi ellenőrzés"
+    description: |
+      A .arb fájlok módosítása után a fejlesztő futtassa le manuálisan a 'flutter gen-l10n' parancsot, és ellenőrizze, hogy megszűnt-e minden szintaktikai hiba.
+      Amennyiben marad hibás kulcs, javítsd újra a megfelelő lépésben!
+    outputs:
+      - "l10n_generation_manual_check.txt"
+
+  - name: "Tesztelés"
+    description: |
+      Indítsd el az alkalmazás főbb képernyőit, és manuálisan ellenőrizd, hogy a lokalizált szövegek megfelelően jelennek-e meg.
+      Különösen ellenőrizd azokat a szövegeket, amelyekhez kulcsot módosítottunk.
+      Ezt a lépést manuálisan kell végrehajtani, a Codex nem tudja automatikusan tesztelni.
+    outputs:
+      - "localization_test_report.txt"
