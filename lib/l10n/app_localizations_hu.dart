@@ -310,6 +310,27 @@ class AppLocalizationsHu extends AppLocalizations {
   String get profile_name => 'Név';
 
   @override
+  String get profile_nickname => 'Becenév';
+
+  @override
+  String get profile_is_private => 'Privát profil';
+
+  @override
+  String get profile_city => 'Város';
+
+  @override
+  String get profile_country => 'Ország';
+
+  @override
+  String get profile_friends => 'Barátok';
+
+  @override
+  String get profile_favorite_sports => 'Kedvenc sportok';
+
+  @override
+  String get profile_favorite_teams => 'Kedvenc csapatok';
+
+  @override
   String get drawer_title => 'Menü';
 
   @override
