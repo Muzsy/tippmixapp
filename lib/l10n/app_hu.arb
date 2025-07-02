@@ -49,6 +49,8 @@
   "register_button": "Regisztráció",
   "forgot_password": "Elfelejtett jelszó?",
   "google_login": "Folytatás Google-lel"
+  ,"apple_login": "Folytatás Apple-lel"
+  ,"facebook_login": "Folytatás Facebookkal"
   ,"profile_title": "Profil"
   ,"profile_logout": "Kijelentkezés"
   ,"profile_language": "Nyelv"
