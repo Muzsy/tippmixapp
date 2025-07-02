@@ -20,6 +20,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
   final TextEditingController _passCtrl = TextEditingController();
   final TextEditingController _confirmCtrl = TextEditingController();
   bool _isLogin = true;
+  bool _dialogOpen = false;
 
   @override
   void dispose() {
@@ -62,6 +63,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
   Future<void> _forgotPassword() async {
     final loc = AppLocalizations.of(context)!;
     final ctrl = TextEditingController();
+    setState(() => _dialogOpen = true);
     await showDialog<void>(
       context: context,
       builder: (context) {
@@ -92,6 +94,9 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
         );
       },
     );
+    if (mounted) {
+      setState(() => _dialogOpen = false);
+    }
   }
 
   String _localizeError(AppLocalizations loc, String code) {
@@ -123,14 +128,16 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.login_title)),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(loc.login_welcome,
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center),
+        child: Offstage(
+          offstage: _dialogOpen,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(loc.login_welcome,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  textAlign: TextAlign.center),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -201,6 +208,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
               child: Text(loc.forgot_password),
             ),
           ],
+          ),
         ),
       ),
     );
