@@ -1,0 +1,37 @@
+# Codex YAML – LoginRegisterScreen Sprint 4 (háromnyelvű, bináris tiltás)
+
+steps:
+
+* name: Teljes tesztlefedettség minden login-regisztrációs flow-ra
+  description: |
+  Írj átfogó widget, integrációs és end-to-end teszteket az összes emailes, social, verifikációs és jelszó-visszaállítási folyamatra. Szimuláld a sikeres, hibás, edge-case, visszalépési szcenáriókat is. Bináris állomány (pl. kép, pdf, ikon, hang, stb.) semmilyen formában nem jöhet létre, nem kerülhet commithoz.
+  outputs:
+
+  * Tesztfájl minden flow-ra (HU/EN/DE)
+  * Bináris állomány tiltása mindenhol
+
+* name: Hibakezelés és accessibility vizsgálata
+  description: |
+  Minden hibaüzenet, státusz, siker-visszajelzés jelenjen meg háromnyelvűen. Vizsgáld a hibakezelés UI-t, valamint az accessibility-t (képernyőolvasó támogatás, kontraszt, billentyűzet navigáció). Bináris állomány tiltása továbbra is érvényes.
+  outputs:
+
+  * Minden hibaüzenet, státusz háromnyelvűen jelenik meg
+  * Accessibility teszt (billentyűzet, képernyőolvasó, kontraszt)
+  * Nincs bináris állomány
+
+* name: Lokalizáció véglegesítése és tesztelése
+  description: |
+  Véglegesítsd a lokalizációs fájlt minden új szöveggel, ellenőrizd háromnyelvű megjelenését minden folyamatban, minden tesztben. Bináris állomány tiltása minden lépésnél.
+  outputs:
+
+  * Végleges lokalizációs fájl (HU/EN/DE)
+  * Háromnyelvű megjelenés minden tesztben
+  * Bináris állomány tiltva
+
+* name: Felhasználói visszajelzések szerinti finomhangolás
+  description: |
+  A tesztekből és felhasználói visszajelzésekből származó problémák javítása: UI, hibaüzenetek, accessibility. Bináris fájl továbbra sem jöhet létre.
+  outputs:
+
+  * Minden hibát, problémát javító commitek
+  * Nincs bináris fájl semmilyen formában
