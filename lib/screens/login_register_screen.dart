@@ -58,9 +58,6 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
     if (error != null && mounted) {
       final message = _localizeError(loc, error);
       setState(() => _errorMessage = message);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
     }
   }
 
