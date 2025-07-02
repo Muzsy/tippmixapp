@@ -62,6 +62,22 @@ class AuthService {
     await _firebaseAuth.signOut();
   }
 
+  // Verifikációs email küldése
+  Future<void> sendEmailVerification() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
+  }
+
+  // Jelszó visszaállító email küldése
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  // Email cím ellenőrzöttsége
+  bool get isEmailVerified => _firebaseAuth.currentUser?.emailVerified ?? false;
+
   // Aktuális user lekérdezése (ha van)
   User? get currentUser {
     final user = _firebaseAuth.currentUser;

@@ -48,6 +48,15 @@ class FakeAuthService implements AuthService {
     _current = null;
     _controller.add(null);
   }
+
+  @override
+  Future<void> sendEmailVerification() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+
+  @override
+  bool get isEmailVerified => true;
 }
 
 void main() {
