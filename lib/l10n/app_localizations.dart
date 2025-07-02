@@ -1368,6 +1368,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error updating avatar'**
   String get profile_avatar_error;
+
+  /// No description provided for @profile_avatar_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar updated'**
+  String get profile_avatar_updated;
+
+  /// No description provided for @profile_avatar_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar upload cancelled'**
+  String get profile_avatar_cancelled;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

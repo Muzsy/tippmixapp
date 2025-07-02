@@ -653,4 +653,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_avatar_error => 'Error updating avatar';
+
+  @override
+  String get profile_avatar_updated => 'Avatar updated';
+
+  @override
+  String get profile_avatar_cancelled => 'Avatar upload cancelled';
 }

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 import '../models/user_model.dart';
 
 class ProfileService {
@@ -97,6 +99,31 @@ class ProfileService {
     }
   }
 
+  static Future<String> uploadAvatar({
+    required String uid,
+    required File file,
+    required FirebaseStorage storage,
+    required FirebaseFirestore firestore,
+    required dynamic cache,
+    required dynamic connectivity,
+  }) async {
+    try {
+      final ref = storage.ref().child('avatars/$uid');
+      await ref.putFile(file);
+      final url = await ref.getDownloadURL();
+      await updateProfile(
+        uid: uid,
+        data: {'avatarUrl': url},
+        firestore: firestore,
+        cache: cache,
+        connectivity: connectivity,
+      );
+      return url;
+    } on FirebaseException catch (_) {
+      throw AvatarUploadFailure();
+    }
+  }
+
   static Future<void> flushQueuedUpdates({
     required FirebaseFirestore firestore,
     required dynamic cache,
@@ -133,6 +160,8 @@ class _QueuedUpdate {
 }
 
 class ProfileUpdateFailure implements Exception {}
+
+class AvatarUploadFailure implements Exception {}
 
 class ProfileServiceException implements Exception {
   const ProfileServiceException.noCache();
