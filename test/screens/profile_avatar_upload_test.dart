@@ -22,7 +22,14 @@ class FakeImagePicker extends Fake implements ImagePicker {
   FakeImagePicker(this.result);
   final XFile? result;
   @override
-  Future<XFile?> pickImage({required ImageSource source}) async => result;
+  Future<XFile?> pickImage({
+    int? imageQuality,
+    double? maxHeight,
+    double? maxWidth,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    bool requestFullMetadata = false,
+    required ImageSource source,
+  }) async => result;
 }
 
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
@@ -46,7 +53,7 @@ void main() {
       firestore = FakeFirebaseFirestore();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any())).thenAnswer((_) async => task);
+      when(() => reference.putFile(any())).thenReturn(task);
       when(() => reference.getDownloadURL())
           .thenAnswer((_) async => 'http://download');
       user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
@@ -58,11 +65,11 @@ void main() {
           overrides: [
             authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: const [Locale('en'), Locale('hu'), Locale('de')],
-            locale: const Locale('en'),
-            home: const ProfileScreen(showAppBar: false),
+            supportedLocales: [Locale('en'), Locale('hu'), Locale('de')],
+            locale: Locale('en'),
+            home: ProfileScreen(showAppBar: false),
           ),
         ),
       );
@@ -88,11 +95,11 @@ void main() {
           overrides: [
             authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: const [Locale('en'), Locale('hu'), Locale('de')],
-            locale: const Locale('en'),
-            home: const ProfileScreen(showAppBar: false),
+            supportedLocales: [Locale('en'), Locale('hu'), Locale('de')],
+            locale: Locale('en'),
+            home: ProfileScreen(showAppBar: false),
           ),
         ),
       );
