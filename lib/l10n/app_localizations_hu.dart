@@ -155,7 +155,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get confirm_password_hint => 'Confirm Password';
 
   @override
-  String get login_button => 'Belépés';
+  String get login_button => 'Login';
 
   @override
   String get register_button => 'Regisztráció';
