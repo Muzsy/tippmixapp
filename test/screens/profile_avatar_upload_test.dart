@@ -5,15 +5,50 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
+import 'package:tippmixapp/services/auth_service.dart';
+import 'dart:async';
+
+class FakeAuthService implements AuthService {
+  final _controller = StreamController<User?>.broadcast();
+  User? _current;
+
+  @override
+  Stream<User?> authStateChanges() => _controller.stream;
+
+  @override
+  Future<User?> signInWithEmail(String email, String password) async => null;
+
+  @override
+  Future<User?> registerWithEmail(String email, String password) async => null;
+
+  @override
+  Future<void> signOut() async {
+    _current = null;
+    _controller.add(null);
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+
+  @override
+  bool get isEmailVerified => true;
+
+  @override
+  User? get currentUser => _current;
+}
 
 class FakeAuthNotifier extends AuthNotifier {
-  FakeAuthNotifier(User user) : super(null) {
+  FakeAuthNotifier(User user) : super(FakeAuthService()) {
     state = AuthState(user: user);
   }
 }
@@ -59,7 +94,7 @@ void main() {
       user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
     });
 
-    Future<void> _pump(WidgetTester tester) async {
+    Future<void> pumpWidget(WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -82,7 +117,7 @@ void main() {
     }
 
     testWidgets('successful upload shows snackbar', (tester) async {
-      await _pump(tester);
+      await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pump();
@@ -115,7 +150,7 @@ void main() {
 
     testWidgets('error shows snackbar', (tester) async {
       when(() => reference.putFile(any())).thenThrow(FirebaseException(plugin: 'storage'));
-      await _pump(tester);
+      await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pump();
