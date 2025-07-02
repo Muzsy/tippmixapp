@@ -7,6 +7,9 @@ import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +26,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isPrivate = false;
+  ImagePicker imagePicker = ImagePicker();
+  FirebaseStorage storage = FirebaseStorage.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final Map<String, bool> _fieldVisibility = {
     "city": true,
     "country": true,
@@ -67,13 +73,48 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _pickPhoto(User user) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.profile_avatar_error,
-        ),
-      ),
-    );
+    final loc = AppLocalizations.of(context)!;
+    final picked = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (picked == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.profile_avatar_cancelled)),
+      );
+      return;
+    }
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        final url = await ProfileService.uploadAvatar(
+          uid: user.uid,
+          file: File(picked.path),
+          storage: storage,
+          firestore: firestore,
+          cache: _dummyCache,
+          connectivity: _dummyConnectivity,
+        );
+        if (!mounted) return;
+        setState(() => _avatarUrl = url);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.profile_avatar_updated)),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.profile_avatar_error)),
+      );
+    }
+  }
+
+  @visibleForTesting
+  Future<void> pickPhoto(User user,
+          {ImagePicker? picker,
+          FirebaseStorage? storage,
+          FirebaseFirestore? firestore}) {
+    if (picker != null) imagePicker = picker;
+    if (storage != null) this.storage = storage;
+    if (firestore != null) this.firestore = firestore;
+    return _pickPhoto(user);
   }
 
   Future<bool> _defaultExists() async {
@@ -177,7 +218,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           TextButton(
             onPressed:
-                firebaseUser != null ? () => _pickPhoto(firebaseUser) : null,
+                firebaseUser != null ? () => pickPhoto(firebaseUser) : null,
             child: Text(loc.profileUploadPhoto),
           ),
             FutureBuilder<bool>(
