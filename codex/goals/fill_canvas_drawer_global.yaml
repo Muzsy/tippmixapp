@@ -1,0 +1,20 @@
+steps:
+
+* name: Drawer minden képernyőn
+  description: |
+  A főmenü (Drawer) jelenleg csak a főképernyőről érhető el. Alakítsd át a HomeScreen vagy a fő shell widget kódját úgy, hogy a Drawer minden fő route-on, azaz minden belső képernyőn elérhető legyen.
+  outputs:
+
+  * A lib/screens/home\_screen.dart (vagy shell widget) módosítása, hogy a drawer mindenhol megjelenjen
+* name: Tesztek módosítása
+  description: |
+  Frissítsd a kapcsolódó widget teszteket, hogy a Drawer jelenlétét és működését minden route-on ellenőrizzék, ne csak a főképernyőn.
+  outputs:
+
+  * Módosított vagy új widget tesztek, amelyek minden route-on validálják a drawer meglétét és működését
+* name: UX/QA manuális ellenőrzés
+  description: |
+  Manuálisan ellenőrizd, hogy a Drawer ikon minden képernyőn jelen van, swipe-pal és gombnyomásra is nyitható, illetve a menüpontok helyesen működnek.
+  outputs:
+
+  * Manuális tesztjegyzőkönyv, amely igazolja a globális drawer működését
