@@ -1,14 +1,8 @@
 steps:
 
-* name: Függőségek hozzáadása
-  description: |
-  Add hozzá az 'image\_picker' és a 'firebase\_storage' csomagokat a pubspec.yaml-hoz, ha még nem szerepelnek. Ellenőrizd a szükséges mobil permissionöket is (Android, iOS).
-  outputs:
-
-  * Frissített pubspec.yaml, mobil permission beállítások
 * name: Avatar feltöltési logika
   description: |
-  Implementáld a profilképernyőn az avatar feltöltését: a felhasználó kiválaszthat képet, az feltöltődik a Firebase Storage-ba, majd az avatarUrl frissül a Firestore user doksiban. Hibakezelés, sikeres feltöltés utáni visszajelzés, lemondás kezelése.
+  Implementáld a profilképernyőn az avatar feltöltését: a felhasználó kiválaszthat képet, az feltöltődik a Firebase Storage-ba, majd az avatarUrl frissül a Firestore user doksiban. Hibakezelés, sikeres feltöltés utáni visszajelzés, lemondás kezelése. Feltételezd, hogy az összes szükséges függőség (image\_picker, firebase\_storage stb.) már telepítve és konfigurálva van a projektben.
   outputs:
 
   * Módosított profile\_screen.dart és profile\_service.dart, feltöltési és avatarUrl frissítési logikával
