@@ -76,7 +76,7 @@ class TestOddsApiProvider extends OddsApiProvider {
 void main() {
   testWidgets('drawer bets item closes drawer and navigates with title', (tester) async {
     final router = GoRouter(
-      initialLocation: '/',
+      initialLocation: '/profile',
       routes: [
         ShellRoute(
           builder: (context, state, child) => HomeScreen(state: state, child: child),
@@ -94,6 +94,11 @@ void main() {
                 transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
               ),
+            ),
+            GoRoute(
+              path: '/profile',
+              name: AppRoute.profile.name,
+              builder: (context, state) => const SizedBox.shrink(),
             ),
           ],
         ),
