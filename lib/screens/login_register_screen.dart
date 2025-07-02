@@ -82,11 +82,10 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
             TextButton(
               onPressed: () async {
                 await ref.read(authProvider.notifier).sendPasswordReset(ctrl.text);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(loc.password_reset_email_sent)),
-                  );
-                }
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(loc.password_reset_email_sent)),
+                );
                 Navigator.of(context).pop();
               },
               child: Text(loc.dialog_send),
