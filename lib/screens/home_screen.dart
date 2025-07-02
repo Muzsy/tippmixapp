@@ -193,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
         title: Text(titleText),
         actions: const [NotificationBellWidget()],
       ),
-      drawer: _isRootRoute(context) ? const AppDrawer() : null,
+      drawer: const AppDrawer(),
       body: body,
       bottomNavigationBar: const MyBottomNavigationBar(),
     );
