@@ -45,7 +45,7 @@
   "email_hint": "Email",
   "password_hint": "Password",
   "confirm_password_hint": "Confirm Password",
-  "login_button": "Belépés",
+  "login_button": "Login",
   "register_button": "Regisztráció",
   "forgot_password": "Elfelejtett jelszó?",
   "verification_email_sent": "Megerősítő email elküldve",
