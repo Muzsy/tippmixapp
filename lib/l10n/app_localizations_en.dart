@@ -134,6 +134,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_feed_activity_cta => 'View';
 
   @override
+  String get login_welcome => 'Welcome to Tippmix!';
+
+  @override
   String get login_title => 'Sign In';
 
   @override
