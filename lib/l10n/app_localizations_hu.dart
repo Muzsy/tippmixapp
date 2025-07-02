@@ -134,6 +134,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_feed_activity_cta => 'Megnézem';
 
   @override
+  String get login_welcome => 'Üdvözlünk a Tippmixen!';
+
+  @override
   String get login_title => 'Bejelentkezés';
 
   @override
