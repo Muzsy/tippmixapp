@@ -1,0 +1,40 @@
+# Codex YAML – LoginRegisterScreen Sprint 3 (háromnyelvű, bináris tiltás)
+
+steps:
+
+* name: Emailes regisztráció és belépés továbbfejlesztése
+  description: |
+  Fejleszd tovább az email-alapú regisztráció és belépés UI-t és logikát. Gondoskodj a kötelező mezők validációjáról, hibakezelésről, minden szöveg háromnyelvű lokalizációjáról. Bináris (kép, pdf, stb.) fájl létrehozása, generálása, vagy commithoz adása TILOS.
+  outputs:
+
+  * Validált, UX szempontból javított emailes regisztráció/belépés
+  * Minden üzenet lokalizációval (HU/EN/DE)
+  * NINCS bináris fájl (pl. kép, pdf, ikon) létrehozva
+
+* name: Email-cím megerősítési (verifikációs) flow beépítése
+  description: |
+  Implementáld az email-verifikációs folyamatot: regisztráció után verifikációs email küldése, státusz visszajelzés, megerősítés UI és logika háromnyelvűen. Bináris fájl létrehozása vagy módosítása továbbra is TILOS.
+  outputs:
+
+  * Működő verifikációs email flow
+  * Státuszkezelés és vizuális visszajelzés
+  * Minden visszajelzés háromnyelvűen
+  * NINCS bináris fájl
+
+* name: Jelszó-visszaállítási funkció fejlesztése
+  description: |
+  Készíts jelszó-visszaállítási lehetőséget: elfelejtett jelszó link, emailes reset flow, hibakezelés, minden szöveg háromnyelvűen. Bináris fájl létrehozása TILOS.
+  outputs:
+
+  * Jelszó-visszaállítási flow teljes UI + logika
+  * Hibakezelés, visszajelzés háromnyelvűen
+  * NINCS bináris fájl
+
+* name: Tesztelés és lokalizáció ellenőrzése
+  description: |
+  Írj UI widget teszteket és flow teszteket: regisztráció, email-verifikáció, jelszó-visszaállítás, minden hiba és siker háromnyelvűen. Ellenőrizd, hogy NEM keletkezik bináris állomány.
+  outputs:
+
+  * Minden emailes flow teljes tesztlefedettséggel
+  * Lokalizáció tesztje három nyelven
+  * Bináris fájl NEM keletkezhet
