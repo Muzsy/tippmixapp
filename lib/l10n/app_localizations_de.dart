@@ -653,4 +653,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get profile_avatar_error => 'Fehler beim Aktualisieren des Avatars';
+
+  @override
+  String get profile_avatar_updated => 'Avatar aktualisiert';
+
+  @override
+  String get profile_avatar_cancelled => 'Avatar-Upload abgebrochen';
 }
