@@ -149,10 +149,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get email_hint => 'E-Mail';
 
   @override
-  String get password_hint => 'Passwort';
+  String get password_hint => 'Password';
 
   @override
-  String get confirm_password_hint => 'Passwort erneut';
+  String get confirm_password_hint => 'Confirm Password';
 
   @override
   String get login_button => 'Login';
