@@ -1,0 +1,38 @@
+# Codex YAML – LoginRegisterScreen Sprint 1 (háromnyelvű)
+
+steps:
+
+* name: UI szerkezet áttervezése csempés logikára
+  description: |
+  A jelenlegi login\_register\_screen.dart újratervezése úgy, hogy vizuálisan tagolt, csempés (tile-based) elrendezést kapjon, a ProfileScreen struktúrája alapján. Kiemelten figyelj a logó/köszöntő blokkra, középső csempés blokkra (login/regisztráció), alsó visszaállítás/help linkekre. Szerkezetileg készíts külön widgeteket (pl. CustomLoginTile, CustomInputField) minden fő funkcióhoz.
+  outputs:
+
+  * Átstrukturált login\_register\_screen.dart, külön komponensekre bontva
+  * Legalább két csempe (login, regisztráció)
+  * Üdvözlő fejléc szekció
+  * Helyek az SSO csempék számára (egyelőre inaktívak)
+
+* name: Material Design inputok és animációk
+  description: |
+  A login/regisztrációs inputmezőket cseréld le letisztult, Material Design alapú TextFormField widgetekre. Gondoskodj a csempék közötti animált váltásról (login/regisztráció választás animációval, pl. slide/fade), és vizuális visszajelzőről hiba esetén (snackbar vagy dialog).
+  outputs:
+
+  * Material Design inputmezők a csempékben
+  * Csempék közötti animált váltás
+  * Snackbar vagy dialog alapú hibaüzenet
+
+* name: Lokalizáció előkészítése (három nyelv)
+  description: |
+  Minden új szöveg/felirat kerüljön bele a projekt lokalizációs rendszerébe (HU, EN, DE kulcsokkal), a felhasználói nyelvnek megfelelően jelenjen meg minden szöveg. Három nyelv támogatása legyen tesztelve és elérhető a képernyőn.
+  outputs:
+
+  * Lokalizációs fájl frissítése új kulcsokkal (HU/EN/DE)
+  * A képernyőn minden szöveg már a lokalizációs rendszerből jöjjön
+  * Lokalizációs tesztek három nyelvre (HU/EN/DE)
+
+* name: Alap widget tesztek (három nyelven)
+  description: |
+  Készíts UI widget teszteket az új login/regisztrációs csempékre, inputokra, navigációs flow-ra, és a legalapabb hibakezelésre (pl. hiányzó mező). A tesztek három nyelven is ellenőrizzék a megjelenő szövegeket.
+  outputs:
+
+  * Widget tesztek: login csempe, regisztráció csempe, hibaüzenet, navigáció, lokalizáció váltás (három nyelven)
