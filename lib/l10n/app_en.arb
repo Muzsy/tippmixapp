@@ -48,6 +48,9 @@
   "login_button": "Login",
   "register_button": "Register",
   "forgot_password": "Forgot password?",
+  "verification_email_sent": "Verification email sent",
+  "password_reset_title": "Reset Password",
+  "password_reset_email_sent": "Password reset email sent",
   "google_login": "Continue with Google"
   ,"apple_login": "Continue with Apple"
   ,"facebook_login": "Continue with Facebook"

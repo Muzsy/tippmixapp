@@ -34,6 +34,12 @@ class _FakeAuthService implements AuthService {
   Future<User?> registerWithEmail(String email, String password) async => null;
   @override
   Future<void> signOut() async {}
+  @override
+  Future<void> sendEmailVerification() async {}
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+  @override
+  bool get isEmailVerified => true;
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
@@ -41,6 +47,8 @@ class _FakeAuthNotifier extends AuthNotifier {
 
   bool loginCalled = false;
   bool registerCalled = false;
+  bool resetCalled = false;
+  bool verifyCalled = false;
 
   @override
   Future<String?> login(String email, String password) async {
@@ -54,6 +62,16 @@ class _FakeAuthNotifier extends AuthNotifier {
     registerCalled = true;
     state = AuthState(user: User(id: 'u', email: email, displayName: 'Demo'));
     return null;
+  }
+
+  @override
+  Future<void> sendPasswordReset(String email) async {
+    resetCalled = true;
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    verifyCalled = true;
   }
 }
 
@@ -135,6 +153,39 @@ void main() {
 
       expect(fakeAuth.loginCalled, isTrue);
       expect(fakeAuth.registerCalled, isFalse);
+    });
+
+    testWidgets('Register flow verification emailt küld', (tester) async {
+      await tester.pumpWidget(_buildTestApp(fakeAuth: fakeAuth));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Register'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'a@b.c');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'pw');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Confirm Password'), 'pw');
+
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Register'));
+      await tester.pumpAndSettle();
+
+      expect(fakeAuth.registerCalled, isTrue);
+      expect(fakeAuth.verifyCalled, isTrue);
+    });
+
+    testWidgets('Forgot password gomb resetet küld', (tester) async {
+      await tester.pumpWidget(_buildTestApp(fakeAuth: fakeAuth));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'reset@test.com');
+
+      await tester.tap(find.widgetWithText(TextButton, 'Send').last);
+      await tester.pumpAndSettle();
+
+      expect(fakeAuth.resetCalled, isTrue);
     });
 
     testWidgets('Welcome text lokalizált minden nyelven', (tester) async {

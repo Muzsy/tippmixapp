@@ -164,6 +164,15 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forgot_password => 'Elfelejtett jelszó?';
 
   @override
+  String get verification_email_sent => 'Meger\u0151s\u00edt\u0151 email elk\u00fcldve';
+
+  @override
+  String get password_reset_title => 'Jelsz\u00f3 vissza\u00e1ll\u00edt\u00e1sa';
+
+  @override
+  String get password_reset_email_sent => 'Jelsz\u00f3 vissza\u00e1ll\u00edt\u00f3 email elk\u00fcldve';
+
+  @override
   String get google_login => 'Folytatás Google-lel';
 
   @override

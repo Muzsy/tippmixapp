@@ -164,6 +164,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgot_password => 'Forgot password?';
 
   @override
+  String get verification_email_sent => 'Verification email sent';
+
+  @override
+  String get password_reset_title => 'Reset Password';
+
+  @override
+  String get password_reset_email_sent => 'Password reset email sent';
+
+  @override
   String get google_login => 'Continue with Google';
 
   @override
