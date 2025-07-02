@@ -68,6 +68,8 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -122,6 +124,33 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
                       onSubmit: _submit,
                       loc: loc,
                     ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _SocialLoginButton(
+                  key: const Key('google_login_button'),
+                  label: loc.google_login,
+                  icon: Icons.g_mobiledata,
+                  color: Colors.red,
+                  onPressed: null,
+                ),
+                _SocialLoginButton(
+                  key: const Key('apple_login_button'),
+                  label: loc.apple_login,
+                  icon: Icons.apple,
+                  color: Colors.black,
+                  onPressed: null,
+                ),
+                _SocialLoginButton(
+                  key: const Key('facebook_login_button'),
+                  label: loc.facebook_login,
+                  icon: Icons.facebook,
+                  color: Colors.blue,
+                  onPressed: null,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             TextButton(
@@ -223,6 +252,36 @@ class _RegisterForm extends StatelessWidget {
               child: Text(loc.register_button),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialLoginButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onPressed;
+
+  const _SocialLoginButton({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: Icon(icon, color: Colors.white),
+          label: Text(label),
+          style: ElevatedButton.styleFrom(backgroundColor: color),
         ),
       ),
     );
