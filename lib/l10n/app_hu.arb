@@ -48,6 +48,9 @@
   "login_button": "Belépés",
   "register_button": "Regisztráció",
   "forgot_password": "Elfelejtett jelszó?",
+  "verification_email_sent": "Megerősítő email elküldve",
+  "password_reset_title": "Jelszó visszaállítása",
+  "password_reset_email_sent": "Jelszó visszaállító email elküldve",
   "google_login": "Folytatás Google-lel"
   ,"apple_login": "Folytatás Apple-lel"
   ,"facebook_login": "Folytatás Facebookkal"

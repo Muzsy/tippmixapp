@@ -44,6 +44,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await _authService.registerWithEmail(email, password);
       state = AuthState(user: user);
+      await _authService.sendEmailVerification();
       return null;
     } on AuthServiceException catch (e) {
       state = AuthState(errorCode: e.code);
@@ -56,6 +57,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _authService.signOut();
     state = const AuthState(user: null);
   }
+
+  Future<void> sendPasswordReset(String email) async {
+    await _authService.sendPasswordResetEmail(email);
+  }
+
+  Future<void> sendEmailVerification() async {
+    await _authService.sendEmailVerification();
+  }
+
+  bool get isEmailVerified => _authService.isEmailVerified;
 
   @override
   void dispose() {

@@ -26,6 +26,15 @@ class ThrowingAuthService implements AuthService {
 
   @override
   User? get currentUser => null;
+
+  @override
+  Future<void> sendEmailVerification() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+
+  @override
+  bool get isEmailVerified => true;
 }
 
 void main() {
