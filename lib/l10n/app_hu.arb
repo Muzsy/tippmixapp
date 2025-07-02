@@ -211,4 +211,6 @@
   ,"profileChooseAvatar": "Válassz avatart"
   ,"profileCropImage": "Kép kivágása"
   ,"profile_avatar_error": "Hiba történt az avatar beállításakor"
+  ,"profile_avatar_updated": "Avatar frissítve"
+  ,"profile_avatar_cancelled": "Avatar feltöltés megszakítva"
 }
