@@ -49,10 +49,15 @@ class _FakeAuthNotifier extends AuthNotifier {
   bool registerCalled = false;
   bool resetCalled = false;
   bool verifyCalled = false;
+  String? loginErrorCode;
+  String? registerErrorCode;
 
   @override
   Future<String?> login(String email, String password) async {
     loginCalled = true;
+    if (loginErrorCode != null) {
+      return loginErrorCode;
+    }
     state = AuthState(user: User(id: 'u', email: email, displayName: 'Demo'));
     return null;
   }
@@ -60,6 +65,9 @@ class _FakeAuthNotifier extends AuthNotifier {
   @override
   Future<String?> register(String email, String password) async {
     registerCalled = true;
+    if (registerErrorCode != null) {
+      return registerErrorCode;
+    }
     state = AuthState(user: User(id: 'u', email: email, displayName: 'Demo'));
     return null;
   }
@@ -197,6 +205,31 @@ void main() {
         await tester.pumpAndSettle();
         final loc = await AppLocalizations.delegate.load(locale);
         expect(find.text(loc.login_welcome), findsOneWidget);
+      }
+    });
+
+    testWidgets('Login hibakódok lokalizálva minden nyelven', (tester) async {
+      for (final locale in AppLocalizations.supportedLocales) {
+        fakeAuth = _FakeAuthNotifier()..loginErrorCode = 'auth/user-not-found';
+        await tester.pumpWidget(
+          _buildTestApp(fakeAuth: fakeAuth, locale: locale),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextFormField, 'Email'),
+          'a@b.c',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextFormField, 'Password'),
+          'pw',
+        );
+
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+        await tester.pumpAndSettle();
+
+        final loc = await AppLocalizations.delegate.load(locale);
+        expect(find.text(loc.auth_error_user_not_found), findsOneWidget);
       }
     });
   });
