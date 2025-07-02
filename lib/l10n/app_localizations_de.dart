@@ -167,6 +167,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get google_login => 'Weiter mit Google';
 
   @override
+  String get apple_login => 'Weiter mit Apple';
+
+  @override
+  String get facebook_login => 'Weiter mit Facebook';
+
+  @override
   String get profile_title => 'Profil';
 
   @override

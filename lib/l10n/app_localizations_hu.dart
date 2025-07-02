@@ -167,6 +167,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get google_login => 'Folytatás Google-lel';
 
   @override
+  String get apple_login => 'Folytatás Apple-lel';
+
+  @override
+  String get facebook_login => 'Folytatás Facebookkal';
+
+  @override
   String get profile_title => 'Profil';
 
   @override

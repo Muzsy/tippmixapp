@@ -49,6 +49,8 @@
   "register_button": "Registrieren",
   "forgot_password": "Passwort vergessen?",
   "google_login": "Weiter mit Google"
+  ,"apple_login": "Weiter mit Apple"
+  ,"facebook_login": "Weiter mit Facebook"
   ,"profile_title": "Profil"
   ,"profile_logout": "Abmelden"
   ,"profile_language": "Sprache"

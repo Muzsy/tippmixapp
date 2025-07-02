@@ -397,6 +397,18 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get google_login;
 
+  /// No description provided for @apple_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get apple_login;
+
+  /// No description provided for @facebook_login.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Facebook'**
+  String get facebook_login;
+
   /// No description provided for @profile_title.
   ///
   /// In en, this message translates to:
