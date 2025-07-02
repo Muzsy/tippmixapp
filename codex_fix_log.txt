@@ -139,3 +139,9 @@ Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.ya
 Replaced mounted check with context.mounted in profile_screen.dart.
 Removed unused constants.dart import in public_profile_screen.dart.
 Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
+
+Replaced mounted check with context.mounted in forgot password dialog.
+Removed unused flutter_localizations import in login_register_screen_test.
+Implemented FakeAuthService and fixed FakeAuthNotifier constructor in profile_avatar_upload_test; imported fake_cloud_firestore and renamed pumpWidget function.
+Added fake_cloud_firestore import and corrected mock expectation in profile_service_avatar_test.
+Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
