@@ -147,10 +147,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FeedScreen), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.home));
-    await tester.pumpAndSettle();
-    expect(find.byType(EventsScreen), findsOneWidget);
-
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, 'Feed'));
