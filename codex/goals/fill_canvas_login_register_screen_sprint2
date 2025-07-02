@@ -1,0 +1,46 @@
+# Codex YAML – LoginRegisterScreen Sprint 2 (háromnyelvű)
+
+steps:
+
+* name: Social login csempék hozzáadása
+  description: |
+  Add hozzá a login\_register\_screen.dart középső szekciójához három új csempét/gombot: Google, Apple és Facebook login számára. Mindegyik egyértelmű natív ikonokkal, stílusban, színben jól elkülönítve jelenjen meg. Legyen minden csempe inaktív, ha a social login funkció éppen tölt vagy hibás.
+  outputs:
+
+  * Google login csempe/gomb
+  * Apple login csempe/gomb
+  * Facebook login csempe/gomb
+  * Natív ikonok, színkódolás
+
+* name: Social login flow megvalósítása (Firebase Auth)
+  description: |
+  Implementáld a Google, Apple, Facebook social login flow-t Firebase Auth segítségével. Gondoskodj a sikeres loginról, hibakezelésről, visszalépés/cancel kezeléséről is. Social loginból érkező adatokat (avatar, displayName, email) mentsd el a backend user profilba.
+  outputs:
+
+  * Működő social login flow mindhárom szolgáltatóval
+  * Adatok mentése a backend felhasználói profilba
+  * Minden flow-hoz hibakezelés
+
+* name: Hiányzó profiladat bekérése
+  description: |
+  Ha social login során bármely kulcsprofil adat (pl. becenév, avatar) hiányzik, jeleníts meg egy modális ablakot/csempét, ahol a felhasználó pótolhatja ezeket a regisztráció végén. Ügyelj a háromnyelvűségre.
+  outputs:
+
+  * Felugró ablak/csempe hiányzó profiladat bekéréséhez
+  * Mentés a user profilba
+  * Lokalizáció mindhárom nyelven
+
+* name: Lokalizáció bővítése social login flow-ra (háromnyelvű)
+  description: |
+  Minden új social loginhoz kapcsolódó szöveg, gomb, hibaüzenet jelenjen meg HU/EN/DE nyelven, a lokalizációs fájlban is. Teszteld a teljes flow-t mindhárom nyelven.
+  outputs:
+
+  * Lokalizációs fájl bővítése minden social login szöveggel (HU/EN/DE)
+  * Teljes flow háromnyelvű tesztelése
+
+* name: Social login flow tesztelése UI és adat szinten
+  description: |
+  Írj teszteket minden közösségi login flow-ra (sikeres login, hibák, cancel), a UI, backend mentés, és lokalizáció is legyen tesztelve (háromnyelven).
+  outputs:
+
+  * Minden social login flow tesztelve: UI, adatmentés, hiba, háromnyelvűség
