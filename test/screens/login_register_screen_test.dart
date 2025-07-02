@@ -60,7 +60,7 @@ class _FakeAuthNotifier extends AuthNotifier {
 // -------------------------
 // 2. Segédfüggvény a pump-hoz
 // -------------------------
-Widget _buildTestApp({required _FakeAuthNotifier fakeAuth}) {
+Widget _buildTestApp({required _FakeAuthNotifier fakeAuth, Locale? locale}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -83,13 +83,9 @@ Widget _buildTestApp({required _FakeAuthNotifier fakeAuth}) {
     ],
     child: MaterialApp.router(
       routerConfig: router,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en'), Locale('hu')],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: locale,
     ),
   );
 }
@@ -131,14 +127,26 @@ void main() {
       await tester.pumpAndSettle();
 
       // Mezők kitöltése
-      await tester.enterText(find.widgetWithText(TextField, 'Email'), 'user@example.com');
-      await tester.enterText(find.widgetWithText(TextField, 'Password'), 'secret');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'user@example.com');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secret');
 
       await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
       await tester.pumpAndSettle();
 
       expect(fakeAuth.loginCalled, isTrue);
       expect(fakeAuth.registerCalled, isFalse);
+    });
+
+    testWidgets('Welcome text lokalizált minden nyelven', (tester) async {
+      for (final locale in AppLocalizations.supportedLocales) {
+        fakeAuth = _FakeAuthNotifier();
+        await tester.pumpWidget(
+          _buildTestApp(fakeAuth: fakeAuth, locale: locale),
+        );
+        await tester.pumpAndSettle();
+        final loc = await AppLocalizations.delegate.load(locale);
+        expect(find.text(loc.login_welcome), findsOneWidget);
+      }
     });
   });
 }
