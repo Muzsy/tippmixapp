@@ -42,7 +42,7 @@
   "login_title": "Anmelden",
   "login_tab": "Login",
   "register_tab": "Registrieren",
-  "email_hint": "E-Mail",
+  "email_hint": "Email",
   "password_hint": "Password",
   "confirm_password_hint": "Confirm Password",
   "login_button": "Login",
