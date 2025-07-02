@@ -149,10 +149,10 @@ class AppLocalizationsHu extends AppLocalizations {
   String get email_hint => 'Email';
 
   @override
-  String get password_hint => 'Jelszó';
+  String get password_hint => 'Password';
 
   @override
-  String get confirm_password_hint => 'Jelszó újra';
+  String get confirm_password_hint => 'Confirm Password';
 
   @override
   String get login_button => 'Belépés';
