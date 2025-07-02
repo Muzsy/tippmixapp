@@ -21,6 +21,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
   final TextEditingController _confirmCtrl = TextEditingController();
   bool _isLogin = true;
   bool _dialogOpen = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -32,6 +33,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
 
   Future<void> _submit() async {
     final loc = AppLocalizations.of(context)!;
+    setState(() => _errorMessage = null);
     String? error;
     if (_isLogin) {
       error = await ref.read(authProvider.notifier).login(
@@ -54,8 +56,10 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
       }
     }
     if (error != null && mounted) {
+      final message = _localizeError(loc, error);
+      setState(() => _errorMessage = message);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_localizeError(loc, error))),
+        SnackBar(content: Text(message)),
       );
     }
   }
@@ -156,6 +160,15 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
               ],
             ),
             const SizedBox(height: 24),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _isLogin
