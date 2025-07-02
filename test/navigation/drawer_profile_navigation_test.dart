@@ -63,7 +63,7 @@ class FakeAuthNotifier extends AuthNotifier {
 void main() {
   testWidgets('drawer profile item closes drawer and navigates', (tester) async {
     final router = GoRouter(
-      initialLocation: '/',
+      initialLocation: '/my-tickets',
       routes: [
         ShellRoute(
           builder: (context, state, child) => HomeScreen(state: state, child: child),
@@ -81,6 +81,11 @@ void main() {
                 transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
               ),
+            ),
+            GoRoute(
+              path: '/my-tickets',
+              name: AppRoute.myTickets.name,
+              builder: (context, state) => const SizedBox.shrink(),
             ),
           ],
         ),
