@@ -653,4 +653,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get profile_avatar_error => 'Hiba történt az avatar beállításakor';
+
+  @override
+  String get profile_avatar_updated => 'Avatar frissítve';
+
+  @override
+  String get profile_avatar_cancelled => 'Avatar feltöltés megszakítva';
 }
