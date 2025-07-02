@@ -331,6 +331,12 @@ abstract class AppLocalizations {
   /// **'View'**
   String get home_tile_feed_activity_cta;
 
+  /// No description provided for @login_welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Tippmix!'**
+  String get login_welcome;
+
   /// No description provided for @login_title.
   ///
   /// In en, this message translates to:

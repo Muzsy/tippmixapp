@@ -38,6 +38,7 @@
   "home_tile_feed_activity_title": "Legújabb aktivitás",
   "home_tile_feed_activity_text_template": "{username} megosztott egy nyertes tippet!",
   "home_tile_feed_activity_cta": "Megnézem",
+  "login_welcome": "Üdvözlünk a Tippmixen!",
   "login_title": "Bejelentkezés",
   "login_tab": "Belépés",
   "register_tab": "Regisztráció",

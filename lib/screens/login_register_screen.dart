@@ -14,7 +14,8 @@ class LoginRegisterScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginRegisterScreen> createState() => _LoginRegisterScreenState();
 }
 
-class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
+class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passCtrl = TextEditingController();
   final TextEditingController _confirmCtrl = TextEditingController();
@@ -80,7 +81,12 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(loc.login_welcome,
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -98,28 +104,123 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
               ],
             ),
             const SizedBox(height: 24),
-              TextField(
-                controller: _emailCtrl,
-                decoration: InputDecoration(labelText: loc.email_hint),
-              ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _isLogin
+                  ? _LoginForm(
+                      key: const ValueKey('login'),
+                      emailCtrl: _emailCtrl,
+                      passCtrl: _passCtrl,
+                      onSubmit: _submit,
+                      loc: loc,
+                    )
+                  : _RegisterForm(
+                      key: const ValueKey('register'),
+                      emailCtrl: _emailCtrl,
+                      passCtrl: _passCtrl,
+                      confirmCtrl: _confirmCtrl,
+                      onSubmit: _submit,
+                      loc: loc,
+                    ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {},
+              child: Text(loc.forgot_password),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginForm extends StatelessWidget {
+  final TextEditingController emailCtrl;
+  final TextEditingController passCtrl;
+  final VoidCallback onSubmit;
+  final AppLocalizations loc;
+
+  const _LoginForm({
+    super.key,
+    required this.emailCtrl,
+    required this.passCtrl,
+    required this.onSubmit,
+    required this.loc,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: emailCtrl,
+              decoration: InputDecoration(labelText: loc.email_hint),
+            ),
             const SizedBox(height: 8),
-              TextField(
-                controller: _passCtrl,
-                decoration: InputDecoration(labelText: loc.password_hint),
-                obscureText: true,
-              ),
-            if (!_isLogin) ...[
-              const SizedBox(height: 8),
-              TextField(
-                controller: _confirmCtrl,
-                decoration: InputDecoration(labelText: loc.confirm_password_hint),
-                obscureText: true,
-              ),
-            ],
-            const SizedBox(height: 24),
+            TextFormField(
+              controller: passCtrl,
+              decoration: InputDecoration(labelText: loc.password_hint),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _submit,
-              child: Text(_isLogin ? loc.login_button : loc.register_button),
+              onPressed: onSubmit,
+              child: Text(loc.login_button),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RegisterForm extends StatelessWidget {
+  final TextEditingController emailCtrl;
+  final TextEditingController passCtrl;
+  final TextEditingController confirmCtrl;
+  final VoidCallback onSubmit;
+  final AppLocalizations loc;
+
+  const _RegisterForm({
+    super.key,
+    required this.emailCtrl,
+    required this.passCtrl,
+    required this.confirmCtrl,
+    required this.onSubmit,
+    required this.loc,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: emailCtrl,
+              decoration: InputDecoration(labelText: loc.email_hint),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: passCtrl,
+              decoration: InputDecoration(labelText: loc.password_hint),
+              obscureText: true,
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: confirmCtrl,
+              decoration: InputDecoration(labelText: loc.confirm_password_hint),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: onSubmit,
+              child: Text(loc.register_button),
             ),
           ],
         ),

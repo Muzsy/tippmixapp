@@ -38,6 +38,7 @@
   "home_tile_feed_activity_title": "Neueste Aktivität",
   "home_tile_feed_activity_text_template": "{username} hat einen Gewinn-Tipp geteilt!",
   "home_tile_feed_activity_cta": "Ansehen",
+  "login_welcome": "Willkommen bei Tippmix!",
   "login_title": "Anmelden",
   "login_tab": "Login",
   "register_tab": "Registrieren",
