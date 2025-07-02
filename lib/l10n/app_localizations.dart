@@ -391,6 +391,24 @@ abstract class AppLocalizations {
   /// **'Forgot password?'**
   String get forgot_password;
 
+  /// No description provided for @verification_email_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent'**
+  String get verification_email_sent;
+
+  /// No description provided for @password_reset_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get password_reset_title;
+
+  /// No description provided for @password_reset_email_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent'**
+  String get password_reset_email_sent;
+
   /// No description provided for @google_login.
   ///
   /// In en, this message translates to:
