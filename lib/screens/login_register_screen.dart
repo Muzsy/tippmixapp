@@ -30,6 +30,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
   }
 
   Future<void> _submit() async {
+    final loc = AppLocalizations.of(context)!;
     String? error;
     if (_isLogin) {
       error = await ref.read(authProvider.notifier).login(
@@ -42,13 +43,55 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
         _emailCtrl.text,
         _passCtrl.text,
       );
+      if (error == null) {
+        await ref.read(authProvider.notifier).sendEmailVerification();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(loc.verification_email_sent)),
+          );
+        }
+      }
     }
     if (error != null && mounted) {
-      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_localizeError(loc, error))),
       );
     }
+  }
+
+  Future<void> _forgotPassword() async {
+    final loc = AppLocalizations.of(context)!;
+    final ctrl = TextEditingController();
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.password_reset_title),
+          content: TextField(
+            controller: ctrl,
+            decoration: InputDecoration(labelText: loc.email_hint),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(loc.dialog_cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                await ref.read(authProvider.notifier).sendPasswordReset(ctrl.text);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.password_reset_email_sent)),
+                  );
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text(loc.dialog_send),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _localizeError(AppLocalizations loc, String code) {
@@ -154,7 +197,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
             ),
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () {},
+              onPressed: _forgotPassword,
               child: Text(loc.forgot_password),
             ),
           ],

@@ -34,6 +34,12 @@ class _FakeAuthService implements AuthService {
   Future<m.User?> registerWithEmail(String email, String password) async => null;
   @override
   Future<void> signOut() async {}
+  @override
+  Future<void> sendEmailVerification() async {}
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+  @override
+  bool get isEmailVerified => true;
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
