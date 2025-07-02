@@ -1,0 +1,26 @@
+steps:
+
+* name: Függőségek hozzáadása
+  description: |
+  Add hozzá az 'image\_picker' és a 'firebase\_storage' csomagokat a pubspec.yaml-hoz, ha még nem szerepelnek. Ellenőrizd a szükséges mobil permissionöket is (Android, iOS).
+  outputs:
+
+  * Frissített pubspec.yaml, mobil permission beállítások
+* name: Avatar feltöltési logika
+  description: |
+  Implementáld a profilképernyőn az avatar feltöltését: a felhasználó kiválaszthat képet, az feltöltődik a Firebase Storage-ba, majd az avatarUrl frissül a Firestore user doksiban. Hibakezelés, sikeres feltöltés utáni visszajelzés, lemondás kezelése.
+  outputs:
+
+  * Módosított profile\_screen.dart és profile\_service.dart, feltöltési és avatarUrl frissítési logikával
+* name: Widget és unit tesztek
+  description: |
+  Készíts vagy frissíts teszteket, amelyek mock ImagePicker-rel és mock Storage-dzsal ellenőrzik, hogy a feltöltés sikeres, hibás és megszakított esetben is helyesen működik.
+  outputs:
+
+  * Tesztelési jegyzőkönyv vagy módosított tesztfájlok
+* name: Lokalizációs ellenőrzés
+  description: |
+  Ellenőrizd, hogy minden hiba- és sikerüzenet lokalizált. Szükség esetén egészítsd ki a nyelvi fájlokat.
+  outputs:
+
+  * Lokalizációs fájl(ok) módosítása, frissített szövegek
