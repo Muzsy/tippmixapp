@@ -146,7 +146,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get register_tab => 'Registrieren';
 
   @override
-  String get email_hint => 'E-Mail';
+  String get email_hint => 'Email';
 
   @override
   String get password_hint => 'Password';
