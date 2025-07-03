@@ -10,10 +10,21 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mocktail/mocktail.dart' show registerFallbackValue;
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/profile_service.dart';
+
+void _registerFileFallback() {
+  assert(() {
+    registerFallbackValue<File>(File(''));
+    return true;
+  }());
+}
+
+// Trigger fallback registration when the file is loaded in tests.
+final _fileFallbackTrigger = _registerFileFallback();
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
