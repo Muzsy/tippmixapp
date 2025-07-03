@@ -1,0 +1,26 @@
+steps:
+
+* name: Szelvény feladási lehetőség megjelenítése
+  description: |
+  Módosítsd az EventsScreen kódját úgy, hogy amikor van legalább egy tipp a szelvényen, akkor egy úszó gomb (FloatingActionButton) vagy egyértelmű feladási gomb jelenjen meg. A gomb lenyomására a felhasználó a szelvény feladás képernyőre navigál.
+  outputs:
+
+  * Módosított events\_screen.dart, ahol a feladási gomb helyesen jelenik meg
+* name: Navigáció ellenőrzése
+  description: |
+  Győződj meg róla, hogy a feladási gomb valóban elnavigál a /create-ticket (vagy megfelelő) route-ra, ahol a szelvényt véglegesíteni lehet.
+  outputs:
+
+  * Módosított router.dart, ha szükséges
+* name: Tesztek frissítése
+  description: |
+  Frissítsd vagy készíts új widget teszteket, amelyek ellenőrzik, hogy a feladási gomb csak akkor látható, ha van tipp, illetve a gomb működését és a navigációt is validálják.
+  outputs:
+
+  * Módosított vagy új tesztfájlok
+* name: Lokalizációs ellenőrzés
+  description: |
+  Ellenőrizd, hogy a gomb felirata, visszajelzések és hibaüzenetek minden támogatott nyelven elérhetőek.
+  outputs:
+
+  * Lokalizációs fájl(ok) frissítése, ha szükséges
