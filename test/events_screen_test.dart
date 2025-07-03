@@ -12,6 +12,7 @@ import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
+import 'package:go_router/go_router.dart';
 
 class TestOddsApiProvider extends OddsApiProvider {
   bool fetchCalled = false;
@@ -86,7 +87,7 @@ void main() {
   });
 
   testWidgets('create ticket button hidden when no tips', (tester) async {
-    final provider = TestOddsApiProvider(const OddsApiData([]));
+    final provider = TestOddsApiProvider(OddsApiData([]));
 
     await tester.pumpWidget(
       ProviderScope(
@@ -126,7 +127,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          oddsApiProvider.overrideWith((ref) => TestOddsApiProvider(const OddsApiData([]))),
+          oddsApiProvider.overrideWith((ref) => TestOddsApiProvider(OddsApiData([]))),
           betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: [
                 TipModel(
                   eventId: 'e1',
