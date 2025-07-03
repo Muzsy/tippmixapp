@@ -47,15 +47,19 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
       if (error == null) {
         await ref.read(authProvider.notifier).sendEmailVerification();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          final messenger = ScaffoldMessenger.of(context);
+          messenger.hideCurrentSnackBar();
+          messenger.showSnackBar(
             SnackBar(content: Text(loc.verification_email_sent)),
           );
         }
       }
     }
     if (error != null && mounted) {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.hideCurrentSnackBar();
       final message = _localizeError(loc, error);
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text(message)),
       );
     }
@@ -83,9 +87,11 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
               onPressed: () async {
                 await ref.read(authProvider.notifier).sendPasswordReset(ctrl.text);
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(loc.password_reset_email_sent)),
-                );
+                  final messenger = ScaffoldMessenger.of(context);
+                  messenger.hideCurrentSnackBar();
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(loc.password_reset_email_sent)),
+                  );
                 Navigator.of(context).pop();
               },
               child: Text(loc.dialog_send),
