@@ -164,13 +164,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get forgot_password => 'Passwort vergessen?';
 
   @override
-  String get verification_email_sent => 'Best\u00e4tigungs-E-Mail gesendet';
+  String get verification_email_sent => 'Bestätigungs-E-Mail gesendet';
 
   @override
-  String get password_reset_title => 'Passwort zur\u00fccksetzen';
+  String get password_reset_title => 'Passwort zurücksetzen';
 
   @override
-  String get password_reset_email_sent => 'Passwort-Zur\u00fccksetzen-E-Mail gesendet';
+  String get password_reset_email_sent => 'Passwort-Zurücksetzen-E-Mail gesendet';
 
   @override
   String get google_login => 'Weiter mit Google';
