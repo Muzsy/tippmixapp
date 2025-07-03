@@ -1,0 +1,44 @@
+steps:
+
+* name: "Refaktor branch létrehozása és CI baseline biztosítása"
+  description: |
+  Hozd létre a 'theme\_refactor\_start' nevű fejlesztői branch-et a main/master ágból. Győződj meg róla, hogy a CI pipeline legalább 90%-os teszt sikerességet mutat. Ha bármelyik lépés sikertelen, a branch ne induljon el a következő sprintig.
+  outputs:
+
+  * "theme\_refactor\_start nevű branch látható a remote repository-ban"
+  * "CI badge zöld, ≥ 90% teszt passzálással"
+
+* name: "Automata szín-audit futtatása"
+  description: |
+  Futtasd le a Dart szkriptet, amely regex segítségével (pl. 0xFF\[0-9A-F]{6}) minden hardcoded hex színt kikeres a teljes lib/ alatt. Az eredményt exportáld color\_audit.csv fájlba, tartalmazza: hex, fájl, sor, előfordulás számát.
+  outputs:
+
+  * "tools/reports/color\_audit.csv tartalmaz minden hex, fájl, sor, előfordulás adatot"
+
+* name: "Talált színek manuális kategorizálása és címkézése"
+  description: |
+  Ellenőrizd a color\_audit.csv tartalmát, minden hex értéket sorolj be kategóriákba (brand, grey, error, misc). Egészítsd ki a CSV-t a kategória címkékkel, hogy a további lépésekben automatizáltan lehessen kezelni őket.
+  outputs:
+
+  * "Frissített color\_audit.csv kategória oszloppal, minden hex címkézve"
+
+* name: "Színhasználat vizualizációja"
+  description: |
+  Generálj pie/bar chartot a frissített color\_audit.csv alapján, hogy átlátható legyen a színek megoszlása. Az ábrát mentsd el color\_usage\_chart.png néven a tools/reports/ mappába.
+  outputs:
+
+  * "tools/reports/color\_usage\_chart.png – tartalmazza a színek eloszlását vizuálisan"
+
+* name: "AppColors baseline dokumentum készítése"
+  description: |
+  Gyűjtsd össze a jelenlegi AppColors definíciókat, akár screenshot, akár markdown formában. Ezekből készíts baseline dokumentumot AppColors\_baseline.md néven a /docs mappába, hogy a további refaktor során legyen viszonyítási alap.
+  outputs:
+
+  * "/docs/AppColors\_baseline.md tartalmaz minden aktuális szín-definíciót"
+
+* name: "Canvas és YAML lépéslista elkészítése"
+  description: |
+  A sprint végén készítsd el a teljes audit eredményének összefoglalóját sprint0\_color\_audit.canvas néven, valamint a lépésekből álló yaml fájlt (sprint0\_steps.yaml) a codex\_canvases és codex\_steps könyvtárakba. Ezek szolgálnak kiindulási pontként minden további automatizált fejlesztési sprinthez.
+  outputs:
+
+  * "codex\_canvases/sprint0\_color\_audit.canvas és codex\_steps/sprint0\_steps.yaml elérhető, teljesen kitöltve"
