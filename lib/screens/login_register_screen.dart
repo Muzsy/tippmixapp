@@ -21,10 +21,10 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
   final TextEditingController _confirmCtrl = TextEditingController();
   bool _isLogin = true;
   bool _dialogOpen = false;
-  String? _errorMessage;
 
   @override
   void dispose() {
+    ScaffoldMessenger.of(context).clearSnackBars();
     _emailCtrl.dispose();
     _passCtrl.dispose();
     _confirmCtrl.dispose();
@@ -33,7 +33,6 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
 
   Future<void> _submit() async {
     final loc = AppLocalizations.of(context)!;
-    setState(() => _errorMessage = null);
     String? error;
     if (_isLogin) {
       error = await ref.read(authProvider.notifier).login(
@@ -49,15 +48,21 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
       if (error == null) {
         await ref.read(authProvider.notifier).sendEmailVerification();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          final messenger = ScaffoldMessenger.of(context);
+          messenger.clearSnackBars();
+          messenger.showSnackBar(
             SnackBar(content: Text(loc.verification_email_sent)),
           );
         }
       }
     }
     if (error != null && mounted) {
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.clearSnackBars();
       final message = _localizeError(loc, error);
-      setState(() => _errorMessage = message);
+      messenger.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
   }
 
@@ -83,9 +88,11 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
               onPressed: () async {
                 await ref.read(authProvider.notifier).sendPasswordReset(ctrl.text);
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(loc.password_reset_email_sent)),
-                );
+                  final messenger = ScaffoldMessenger.of(context);
+                  messenger.clearSnackBars();
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(loc.password_reset_email_sent)),
+                  );
                 Navigator.of(context).pop();
               },
               child: Text(loc.dialog_send),
@@ -156,15 +163,6 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
               ],
             ),
             const SizedBox(height: 24),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-              ),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _isLogin
