@@ -24,6 +24,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
 
   @override
   void dispose() {
+    ScaffoldMessenger.of(context).clearSnackBars();
     _emailCtrl.dispose();
     _passCtrl.dispose();
     _confirmCtrl.dispose();
@@ -48,7 +49,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
         await ref.read(authProvider.notifier).sendEmailVerification();
         if (mounted) {
           final messenger = ScaffoldMessenger.of(context);
-          messenger.hideCurrentSnackBar();
+          messenger.clearSnackBars();
           messenger.showSnackBar(
             SnackBar(content: Text(loc.verification_email_sent)),
           );
@@ -57,7 +58,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
     }
     if (error != null && mounted) {
       final messenger = ScaffoldMessenger.of(context);
-      messenger.hideCurrentSnackBar();
+      messenger.clearSnackBars();
       final message = _localizeError(loc, error);
       messenger.showSnackBar(
         SnackBar(content: Text(message)),
@@ -88,7 +89,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
                 await ref.read(authProvider.notifier).sendPasswordReset(ctrl.text);
                 if (!context.mounted) return;
                   final messenger = ScaffoldMessenger.of(context);
-                  messenger.hideCurrentSnackBar();
+                  messenger.clearSnackBars();
                   messenger.showSnackBar(
                     SnackBar(content: Text(loc.password_reset_email_sent)),
                   );
