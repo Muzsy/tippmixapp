@@ -33,6 +33,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     final oddsState = ref.watch(oddsApiProvider);
     final loc = AppLocalizations.of(context)!;
 
+    final hasTips = ref.watch(betSlipProvider).tips.isNotEmpty;
+
     final body = Builder(
         builder: (context) {
           if (oddsState is OddsApiLoading) {
@@ -102,15 +104,17 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            heroTag: 'createTicket',
-            tooltip: loc.go_to_create_ticket,
-            child: const Icon(Icons.check),
-            onPressed: () {
-              GoRouter.of(context).push('/create-ticket');
-            },
-          ),
-          const SizedBox(height: 12),
+          if (hasTips)
+            FloatingActionButton(
+              key: const Key('create_ticket_button'),
+              heroTag: 'createTicket',
+              tooltip: loc.go_to_create_ticket,
+              child: const Icon(Icons.check),
+              onPressed: () {
+                GoRouter.of(context).push('/create-ticket');
+              },
+            ),
+          if (hasTips) const SizedBox(height: 12),
           FloatingActionButton(
             key: const Key('refresh_button'),
             heroTag: 'refreshOdds',
