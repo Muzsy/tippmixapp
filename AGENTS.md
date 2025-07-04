@@ -1,4 +1,4 @@
-# 🧠 Agent.md – TippmixApp Codex szerepleírás
+# 🧠 Agents.md – TippmixApp Codex szerepleírás
 
 Ez a fájl a Codex működését szabályozó, mindig automatikusan betöltendő globális háttérleírás.
 
@@ -62,6 +62,9 @@ Tilos:
 - CI pipeline futtatása: `flutter test --coverage` zöld
 
 ---
+
+## Codex defaults
+target_branch: theme_refactor_start
 
 Ez a fájl automatikusan érvényes minden Codex-generálásra.  
 Ha bármely szabály vagy dokumentum nem kerül figyelembevételre, a generált kód **érvénytelen**.
