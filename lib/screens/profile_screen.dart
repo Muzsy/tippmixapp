@@ -44,8 +44,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isPrivate = false;
   ImagePicker imagePicker = ImagePicker();
-  FirebaseStorage storage = FirebaseStorage.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage? storage;
+  FirebaseFirestore? firestore;
   final Map<String, bool> _fieldVisibility = {
     "city": true,
     "country": true,
@@ -104,8 +104,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         final url = await ProfileService.uploadAvatar(
           uid: user.uid,
           file: File(picked.path),
-          storage: storage,
-          firestore: firestore,
+          storage: storage!,
+          firestore: firestore!,
           cache: _dummyCache,
           connectivity: _dummyConnectivity,
         );
@@ -186,6 +186,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void initState() {
     super.initState();
     if (Firebase.apps.isNotEmpty) {
+      storage = FirebaseStorage.instance;
+      firestore = FirebaseFirestore.instance;
       final user = FirebaseAuth.instance.currentUser;
       if (user != null && _avatarUrl == null) {
         _avatarUrl = user.photoURL;
