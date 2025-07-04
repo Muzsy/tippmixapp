@@ -23,8 +23,6 @@ void _registerFileFallback() {
   }());
 }
 
-// Ensure fallback registration when this file loads in tests.
-final _ = _registerFileFallback();
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -32,7 +30,10 @@ class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key, this.showAppBar = true});
 
   @override
-  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() {
+    _registerFileFallback();
+    return _ProfileScreenState();
+  }
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
