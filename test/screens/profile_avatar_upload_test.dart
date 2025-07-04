@@ -14,6 +14,11 @@ import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'dart:async';
+import 'dart:io';
+import 'package:mocktail/mocktail.dart';
+
+class FakeFile extends Fake implements File {}
+
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
@@ -72,6 +77,10 @@ class MockReference extends Mock implements Reference {}
 class MockUploadTask extends Mock implements UploadTask {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeFile());
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('ProfileScreen.pickPhoto', () {
@@ -88,7 +97,7 @@ void main() {
       firestore = FakeFirebaseFirestore();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any())).thenReturn(task);
+      when(() => reference.putFile(any())).thenAnswer((_) => task);
       when(() => reference.getDownloadURL())
           .thenAnswer((_) async => 'http://download');
       user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
