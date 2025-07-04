@@ -18,7 +18,7 @@ import '../services/profile_service.dart';
 
 void _registerFileFallback() {
   assert(() {
-    registerFallbackValue<File>(File('dummy'));
+    registerFallbackValue(File('dummy'));
     return true;
   }());
 }
