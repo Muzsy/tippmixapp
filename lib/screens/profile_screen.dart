@@ -23,6 +23,12 @@ void _registerFileFallback() {
   }());
 }
 
+// Ensure fallback is registered when this file is imported
+final _fileFallbackRegistered = (() {
+  _registerFileFallback();
+  return true;
+})();
+
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -31,7 +37,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ProfileScreen> createState() {
-    _registerFileFallback();
     return _ProfileScreenState();
   }
 }
