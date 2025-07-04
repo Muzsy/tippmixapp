@@ -5,7 +5,8 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import '../models/user.dart' as app_user;
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -57,8 +58,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String? _error;
   String? _avatarUrl;
 
-  Future<void> _showAvatarGallery(User user) async {
+  Future<void> _showAvatarGallery(dynamic user) async {
     final loc = AppLocalizations.of(context)!;
+    final uid = user is firebase_auth.User ? user.uid : (user as app_user.User).id;
     await showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
@@ -70,7 +72,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               try {
                 if (Firebase.apps.isNotEmpty) {
                   await ProfileService.updateProfile(
-                    uid: user.uid,
+                    uid: uid,
                     data: {'avatarUrl': path},
                     firestore: FirebaseFirestore.instance,
                     cache: _dummyCache,
@@ -89,7 +91,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Future<void> _pickPhoto(User user) async {
+  Future<void> _pickPhoto(dynamic user) async {
     final loc = AppLocalizations.of(context)!;
     final picked = await imagePicker.pickImage(source: ImageSource.gallery);
     if (picked == null) {
@@ -102,7 +104,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     try {
       if (Firebase.apps.isNotEmpty) {
         final url = await ProfileService.uploadAvatar(
-          uid: user.uid,
+          uid: user is firebase_auth.User ? user.uid : (user as app_user.User).id,
           file: File(picked.path),
           storage: storage!,
           firestore: firestore!,
@@ -124,7 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   @visibleForTesting
-  Future<void> pickPhoto(User user,
+  Future<void> pickPhoto(dynamic user,
           {ImagePicker? picker,
           FirebaseStorage? storage,
           FirebaseFirestore? firestore}) {
@@ -188,7 +190,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (Firebase.apps.isNotEmpty) {
       storage = FirebaseStorage.instance;
       firestore = FirebaseFirestore.instance;
-      final user = FirebaseAuth.instance.currentUser;
+      final user = firebase_auth.FirebaseAuth.instance.currentUser;
       if (user != null && _avatarUrl == null) {
         _avatarUrl = user.photoURL;
       }
@@ -199,7 +201,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final firebaseUser =
-        Firebase.apps.isNotEmpty ? FirebaseAuth.instance.currentUser : null;
+        Firebase.apps.isNotEmpty ? firebase_auth.FirebaseAuth.instance.currentUser : null;
     final user = ref.watch(authProvider).user;
 
     if (firebaseUser == null && user == null) {
