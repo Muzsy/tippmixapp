@@ -18,13 +18,13 @@ import '../services/profile_service.dart';
 
 void _registerFileFallback() {
   assert(() {
-    registerFallbackValue<File>(File(''));
+    registerFallbackValue<File>(File('dummy'));
     return true;
   }());
 }
 
-// Trigger fallback registration when the file is loaded in tests.
-final _fileFallbackTrigger = _registerFileFallback();
+// Ensure fallback registration when this file loads in tests.
+final _ = _registerFileFallback();
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
