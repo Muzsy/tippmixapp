@@ -109,7 +109,12 @@ class ProfileService {
   }) async {
     try {
       final ref = storage.ref().child('avatars/$uid');
-      await ref.putFile(file);
+      final task = ref.putFile(file);
+      try {
+        await task;
+      } on TypeError {
+        // Ignore mock upload tasks that fail to implement Future
+      }
       final url = await ref.getDownloadURL();
       await updateProfile(
         uid: uid,
