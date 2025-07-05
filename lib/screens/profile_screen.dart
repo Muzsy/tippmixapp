@@ -102,7 +102,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       return;
     }
     try {
-      if (Firebase.apps.isNotEmpty) {
+      if (storage != null && firestore != null) {
         final url = await ProfileService.uploadAvatar(
           uid: user is firebase_auth.User ? user.uid : (user as app_user.User).id,
           file: File(picked.path),
@@ -334,9 +334,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
 
       if (!widget.showAppBar) {
-        return Material(
-          child: content,
-        );
+        if (Scaffold.maybeOf(context) != null) {
+          return content;
+        }
+        return Scaffold(body: content);
       }
       if (Scaffold.maybeOf(context) != null) {
         return content;
