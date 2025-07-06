@@ -1,0 +1,15 @@
+steps:
+  - name: "Golden és accessibility tesztek manuális frissítése"
+    description: |
+      Gondoskodj róla, hogy minden skin × light/dark kombinációra friss golden screenshot baseline és accessibility audit készüljön.
+      - Minden golden PNG baseline-t manuálisan generálj és commitolj a /test/goldens/ mappába (ezt Codex nem automatizálhatja).
+      - Futtasd az accessibility_tools csomagot, generálj audit riportot (pl. a11y_report.html), ezt is csak manuálisan commitolhatod.
+      - Ellenőrizd, hogy minden skin és mód auditálva, hiba nélkül működik.
+      - A CI pipeline csak akkor enged át PR-t, ha minden golden és accessibility teszt manuálisan zöld.
+      - A linter avoid-hard-coded-colors szabálya legyen aktív.
+      - Checklist: minden kombináció coverage, tesztleírás és screenshot/riport elérhető.
+    outputs:
+      - "Friss golden baseline minden képernyő × skin × mód kombinációra."
+      - "Accessibility_tools audit riport minden képernyőre, minden skin/mód mellett, hiba nélkül."
+      - "CI pipeline minden lépésen manuálisan zöld."
+      - "Codex sem PNG-t, sem audit riportot nem commitolhat – csak a workflow dokumentációját."
