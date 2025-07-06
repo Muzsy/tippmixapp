@@ -1,0 +1,2 @@
+- Social login buttons use brand colors (Google red, Apple black, Facebook blue). These require manual review to determine final theming.
+- Home feed shimmer uses dynamic grey alpha; needs manual refactor to use themed color with opacity.
