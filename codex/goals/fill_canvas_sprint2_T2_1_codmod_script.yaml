@@ -1,0 +1,12 @@
+steps:
+  - name: "Codemod script létrehozása hard-coded hex színek cseréjére"
+    description: |
+      Hozz létre egy új Dart scriptet tools/codemods/codemod_replace_hex.dart néven.
+      A script keresse meg regex-szel az összes 0xFF[0-9A-F]{6} mintát a lib/ könyvtárban és minden találatnál próbálja a hex értéket heurisztikusan a megfelelő Theme-referenciára (pl. Theme.of(context).colorScheme.primary, secondary, error, grey, stb.) cserélni.
+      A script támogassa a --dry-run és --apply parancssori opciókat.
+      A --dry-run csak logot generáljon a várható cserékről, az --apply módosítsa is a fájlokat.
+      Implementáld a --help parancsot, amely kiírja az elérhető opciókat és használati példákat.
+    outputs:
+      - tools/codemods/codemod_replace_hex.dart
+      - dry-run és apply log fájlok (pl. codemod_dryrun.log)
+      - --help parancsra helyes dokumentációs output
