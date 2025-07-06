@@ -1,0 +1,29 @@
+steps:
+  - name: "ThemeService implementáció (Riverpod Notifier)"
+    description: |
+      Hozd létre a lib/services/theme_service.dart fájlt.
+      Implementálj egy ThemeService osztályt Riverpod StateNotifier vagy Notifier alapon, amely kezeli a skin indexet (schemeIndex), a világos/sötét módot (isDark), és a fő metódusokat (toggleTheme, toggleDarkMode, setScheme).
+      Az osztály csak theme állapotkezeléssel foglalkozzon, ne tartalmazzon UI logikát.
+      Dokumentáld a használatot.
+    outputs:
+      - lib/services/theme_service.dart
+
+  - name: "Provider deklaráció"
+    description: |
+      Hozd létre a ThemeService-hez tartozó providert (StateNotifierProvider vagy NotifierProvider), amit az app egészében használhatunk.
+      Legyen minden fő képernyőn elérhető a theme state.
+    outputs:
+      - lib/services/theme_service.dart
+
+  - name: "Tesztelés"
+    description: |
+      Írj unit-teszteket a theme_service.dart-hoz (pl. theme váltás, skin váltás, dark mode váltás, state notification).
+      Legalább 90% coverage szükséges.
+    outputs:
+      - test/services/theme_service_test.dart
+
+  - name: "Dokumentáció, használati példa"
+    description: |
+      Adj példát a dokumentációban, hogyan lehet a ThemeService-t használni egy widgetből (pl. watch/read, váltás hívása).
+    outputs:
+      - docs/ThemeService_hasznalat.md
