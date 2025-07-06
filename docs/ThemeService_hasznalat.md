@@ -23,3 +23,29 @@ class ThemeToggle extends ConsumerWidget {
 
 A skin váltásához hívd meg a `toggleTheme()` vagy `setScheme(index)` metódust a
 `themeServiceProvider.notifier`-en keresztül.
+
+## main.dart integráció
+
+A fő alkalmazásban a `MaterialApp` theme paramétereit is a ThemeService állapota generálja
+a `ThemeBuilder` segítségével:
+
+```dart
+class MyApp extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeServiceProvider);
+    return MaterialApp.router(
+      theme: buildTheme(
+        scheme: FlexScheme.values[theme.schemeIndex],
+        brightness: Brightness.light,
+      ),
+      darkTheme: buildTheme(
+        scheme: FlexScheme.values[theme.schemeIndex],
+        brightness: Brightness.dark,
+      ),
+      themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
+      routerConfig: router,
+    );
+  }
+}
+```
