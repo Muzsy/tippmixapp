@@ -18,20 +18,19 @@ flutter test --update-goldens
 
 ## 2. Accessibility audit
 
-1. Telepítsd az `accessibility_tools` csomagot, ha még nincs:
+Az alkalmazás témáinak kontrasztvizsgálatát az automatizált
+`accessibility_test` csomag végzi. A `test/accessibility_test.dart` fájl
+tartalmazza a megfelelő teszteket, amelyek minden skin light és dark módú
+témájára lefutnak.
+
+Futtasd a következő parancsot a teljes audithoz:
 
 ```bash
-flutter pub global activate accessibility_tools
+flutter test test/accessibility_test.dart
 ```
 
-2. Futtasd az auditot az alkalmazásra:
-
-```bash
-flutter pub global run accessibility_tools:accessibility_tools --outfile a11y_report.html
-```
-
-3. A generált `a11y_report.html` fájlt nézd át, és győződj meg róla, hogy minden hiba javítva lett.
-4. A riportot a projekt gyökerében, illetve a testkörnyezetben tárolhatod és commitolhatod.
+A teszt hibával tér vissza, ha bármely színkombináció nem felel meg a WCAG
+előírásainak.
 
 ## 3. CI ellenőrzés
 
