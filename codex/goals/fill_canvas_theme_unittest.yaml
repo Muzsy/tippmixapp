@@ -1,0 +1,29 @@
+steps:
+  - name: "ThemeBuilder unit-teszt írása"
+    description: |
+      Hozd létre a test/theme/theme_builder_test.dart fájlt.
+      Teszteld, hogy a buildTheme() helyesen generálja a ThemeData-t különböző scheme indexek, dark/light mód, és BrandColors preset esetén is.
+    outputs:
+      - test/theme/theme_builder_test.dart
+
+  - name: "ThemeService unit-teszt írása"
+    description: |
+      Hozd létre a test/services/theme_service_test.dart fájlt.
+      Teszteld a skin váltást, dark/light mód váltást, schemeIndex helyes beállítását, state notification működését.
+    outputs:
+      - test/services/theme_service_test.dart
+
+  - name: "BrandColors ThemeExtension unit-teszt"
+    description: |
+      Hozd létre a test/theme/brand_colors_test.dart fájlt.
+      Ellenőrizd, hogy a ThemeExtension példány minden property-je elérhető, és minden widgetből Theme.of(context).extension<BrandColors>()-on keresztül helyes értéket ad vissza.
+    outputs:
+      - test/theme/brand_colors_test.dart
+
+  - name: "Tesztek futtatása és coverage"
+    description: |
+      Futtasd le az összes theme/skin/unit/widget tesztet.
+      Ellenőrizd, hogy legalább 90% coverage elérésre kerül minden új theme-architektúra modulnál.
+    outputs:
+      - test/theme/
+      - test/services/
