@@ -9,6 +9,7 @@ import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/theme/theme_builder.dart';
 
 // ------------------------------------------------------------
 // LoginRegisterScreen – végleges widget-teszt (Sprint5 / T03)
@@ -108,6 +109,8 @@ Widget _buildTestApp({required _FakeAuthNotifier fakeAuth, Locale? locale}) {
     ],
     child: MaterialApp.router(
       routerConfig: router,
+      theme: buildTheme(),
+      darkTheme: buildTheme(brightness: Brightness.dark),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale,
