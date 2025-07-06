@@ -43,3 +43,10 @@ A Sprint 1 célja egy új, modern, bővíthető és auditálható színséma-arc
 - Minden további sprint a canvas szerkezetét követi.
 
 ---
+
+## Verziókövetés és sablonhasználat
+
+- A canvas és a hozzá tartozó yaml minden jövőbeli theme-architektúra feladat kiindulópontja.
+- Új sprint vagy fejezet esetén másold a dokumentum felépítését (Funkció, Fejlesztési részletek, Tesztállapot, Lokalizáció, Kapcsolódások) és nevezd el a megfelelő sorszámmal.
+- A `codex/goals` mappában ugyanilyen névkonvencióval készítsd el a yaml lépéslistát (például `fill_canvas_sprint2_new_feature.yaml`).
+- Tüntesd fel az összes kapcsolódó fájlt, tesztet és dokumentációt, hogy a következő fejlesztők könnyen követhessék.
