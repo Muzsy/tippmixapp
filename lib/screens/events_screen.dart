@@ -53,16 +53,25 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               children: [
                 if (quotaWarn)
                   Container(
-                    color: Colors.yellow.shade700,
+                    color:
+                        Theme.of(context).colorScheme.tertiaryContainer,
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        const Icon(Icons.warning, color: Colors.black),
+                        Icon(
+                          Icons.warning,
+                          color:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             loc.events_screen_quota_warning,
-                            style: const TextStyle(color: Colors.black),
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onTertiaryContainer,
+                            ),
                           ),
                         ),
                       ],
