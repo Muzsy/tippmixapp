@@ -1,49 +1,27 @@
 steps:
-  - name: "Sprint1 feladatok listázása és ütemezése"
+  - name: "Canvas összefoglaló elkészítése"
     description: |
-      Gyűjtsd össze a Sprint1-hez tartozó összes részfeladatot a projekt dokumentáció és a színséma sprintterv alapján. Rendszerezd a feladatokat logikus sorrendben, az előfeltételek figyelembevételével. Készítsd elő a fejlesztési sorrendet a Codex számára.
+      Hozd létre a canvases/sprint1_core_theme.md fájlt, amely részletesen összegzi a Sprint 1 minden fejlesztési lépését, architektúra döntéseit, kódvázait és mintáit, magyar nyelven.
     outputs:
-      - "Sprint1 részfeladatok és fejlesztési sorrend listája"
+      - canvases/sprint1_core_theme.md
 
-  - name: "ThemeBuilder implementálása"
+  - name: "Codex yaml automatizáció dokumentálása"
     description: |
-      Hozd létre a lib/theme/theme_builder.dart fájlt, amely tartalmazza a buildTheme függvényt. A függvény a FlexThemeData.light és FlexThemeData.dark alapján, Material 3 támogatással generálja a theme-et.
+      Hozd létre a codex/goals/fill_canvas_sprint1_core_theme.yaml fájlt, amely minden Sprint 1-hez kapcsolódó automatizált lépést, elfogadási kritériumot, output fájlt és kapcsolódást tartalmaz.
     outputs:
-      - "theme_builder.dart létrejött és működő buildTheme függvény"
+      - codex/goals/fill_canvas_sprint1_core_theme.yaml
 
-  - name: "BrandColors ThemeExtension kialakítása"
+  - name: "Kapcsolatok és metaadatok rendezése"
     description: |
-      Hozd létre a lib/theme/brand_colors.dart fájlt, benne a BrandColors ThemeExtension-nel. Legalább két Tippmix-specifikus színt definiálj (pl. betSlipGradientStart, betSlipGradientEnd), amelyeket a főbb widgetek használhatnak majd.
+      Ellenőrizd, hogy minden lépésnél szerepel a megfelelő kapcsolódó fájl, teszt, modul, dokumentáció hivatkozás.
+      Frissítsd a canvas metaadatait, hogy megfeleljen a projekt standardnak.
     outputs:
-      - "brand_colors.dart létrejött, benne ThemeExtension"
+      - canvases/sprint1_core_theme.md
+      - codex/goals/fill_canvas_sprint1_core_theme.yaml
 
-  - name: "ThemeService állapotkezelés"
+  - name: "Verziókövetés, utókövetés"
     description: |
-      Hozd létre a lib/services/theme_service.dart fájlt, amely egy Riverpod Notifier (vagy megfelelő state management) segítségével kezeli az aktuális skint (currentSchemeIndex) és a dark módot (isDark). Implementáld a szükséges váltófüggvényeket: toggleTheme, toggleDarkMode, setScheme.
+      A kész canvas és yaml minden jövőbeli theme-architektúra fejlesztés, audit, refaktor kiindulópontja.
+      Dokumentáld, hogyan kell további sprintekhez/fejezetekhez sablont készíteni.
     outputs:
-      - "theme_service.dart, benne Riverpod Notifier és állapotváltó függvények"
-
-  - name: "main.dart migráció és ThemeService bekötése"
-    description: |
-      Módosítsd a lib/main.dart fájlt, hogy a MaterialApp a ThemeBuilder által generált theme-et és darkTheme-et használja. Kösd be a ThemeService state management-et úgy, hogy az app újraindításkor is a kiválasztott skin legyen aktív.
-    outputs:
-      - "main.dart frissítve, ThemeBuilder és ThemeService integrálva"
-
-  - name: "AppColors deprecate és refaktor"
-    description: |
-      Az AppColors.dart fájlt helyezd át a /legacy könyvtárba, lássad el @Deprecated annotációval. Töröld az összes régi importot az új theme-architektúra mellett.
-    outputs:
-      - "AppColors.dart @deprecated, minden referencia törölve az új kódból"
-
-  - name: "Unit tesztek létrehozása/frissítése"
-    description: |
-      Készítsd el vagy frissítsd a teszteket a ThemeBuilder és ThemeService helyes működésének ellenőrzésére a /test könyvtárban. Minimum 90%-os lefedettséget érj el.
-    outputs:
-      - "theme_test.dart, minimum 90% teszt coverage"
-
-  - name: "Canvas és YAML kitöltése"
-    description: |
-      Töltsd ki a sprint1_core_theme.md vásznat, és generáld hozzá a fill_canvas_sprint1_core_theme.yaml lépéslistát, a projekt konvenciók szerint.
-    outputs:
-      - "canvases/sprint1_core_theme.md kitöltve"
-      - "codex/goals/canvases/fill_canvas_sprint1_core_theme.yaml generálva"
+      - canvases/sprint1_core_theme.md
