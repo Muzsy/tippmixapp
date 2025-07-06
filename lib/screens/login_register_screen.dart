@@ -24,7 +24,7 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
 
   @override
   void dispose() {
-    ScaffoldMessenger.of(context).clearSnackBars();
+    // No context-dependent logic allowed here to avoid disposed-context errors
     _emailCtrl.dispose();
     _passCtrl.dispose();
     _confirmCtrl.dispose();
