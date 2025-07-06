@@ -1,0 +1,13 @@
+steps:
+  - name: "UI és ThemeService összekötése – élő skin- és dark mode váltás"
+    description: |
+      Biztosítsd, hogy a skin-választó UI (skin selector) és a dark mode kapcsoló teljesen élő módon összekapcsolódjon a ThemeService-szel.
+      - Használj Consumer/Provider (vagy Riverpod) mintát, hogy a UI minden state-változásnál (skin vagy dark mode) automatikusan frissüljön.
+      - A skin elem vagy kapcsoló onTap/onChanged eseménye hívja meg a ThemeService megfelelő metódusát (setScheme, toggleDarkMode).
+      - Gondoskodj arról, hogy a MaterialApp theme és darkTheme értékei is a ThemeService aktuális állapotát tükrözzék – bármilyen váltás után a teljes app megjelenése frissüljön.
+      - Ellenőrizd, hogy minden képernyőn (route) azonnal érvényesül a váltás, nincs szükség újraindításra.
+      - Készíts widget/integrációs tesztet, amely igazolja, hogy a skin- és dark mode-váltás globálisan működik.
+    outputs:
+      - "A skin/dark mode váltás az egész appban azonnal érvényesül."
+      - "A ThemeService state minden UI elemben tükröződik."
+      - "CI pipeline minden kapcsolódó tesztet sikeresen lefuttat."
