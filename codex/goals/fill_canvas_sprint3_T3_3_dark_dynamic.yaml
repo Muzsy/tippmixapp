@@ -1,0 +1,16 @@
+steps:
+  - name: "Skin selector UI megvalósítása a Beállítások képernyőn"
+    description: |
+      Készíts a Beállítások (settings) képernyőre egy skin-választó felületet, ahol a felhasználó az előre definiált FlexScheme skinek közül választhat.
+      - Hozz létre egy ListView/ListTile csoportot, ahol minden elem egy skin (FlexSchemeData), preview-val (pl. FlexColorWheel vagy egyedi preview widgettel).
+      - A kiválasztott skin vizuálisan legyen kiemelve (pl. pipával, színnel).
+      - A skin elemére kattintva (onTap) hívd meg a ThemeService.setScheme(index) metódust, amely azonnal alkalmazza az új skint és menti is azt (T3.1/T3.2 logika szerint).
+      - Gondoskodj róla, hogy a lista csak az engedélyezett (auditált) skineket mutassa (ThemeService/ThemeBuilder availableThemes listából).
+      - Skin nevek és leírások jelenjenek meg a kiválasztott nyelven (lokalizáció).
+      - Írj widget/integációs tesztet, amely igazolja, hogy a skin-választó helyesen működik.
+    outputs:
+      - "A Beállítások képernyőn skin-választó UI jelenik meg, előnézeti képekkel."
+      - "A kiválasztott skin vizuálisan kiemelve, azonnal alkalmazódik."
+      - "A választás perzisztensen mentődik, újraindítás után is megmarad."
+      - "Skin nevek és leírások lokalizáltak."
+      - "CI pipeline zöld, minden teszt sikeres."
