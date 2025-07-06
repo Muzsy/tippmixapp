@@ -1,0 +1,33 @@
+steps:
+  - name: "AppColors archiválása"
+    description: |
+      Helyezd át a lib/AppColors.dart fájlt a legacy/AppColors.dart helyre.
+      Az egész fájlt, benne minden osztályt, függvényt és property-t lásd el @Deprecated kommenttel.
+    inputs:
+      - lib/AppColors.dart
+    outputs:
+      - legacy/AppColors.dart
+
+  - name: "Importok és hivatkozások törlése"
+    description: |
+      Törölj minden AppColors importot és hivatkozást a codebase minden részéből (különösen a lib/ és UI/widget fájlokban).
+      Ellenőrizd, hogy sehol sem hivatkozol már AppColors-ra.
+    inputs:
+      - legacy/AppColors.dart
+      - lib/
+    outputs:
+      - lib/
+
+  - name: "Dokumentáció frissítése"
+    description: |
+      Frissítsd a projekt dokumentációját (pl. README, Theme Management), hogy világosan szerepeljen: az AppColors már csak archivált állapotban van jelen, minden szín a ThemeBuilder vagy ThemeExtension felől érhető el.
+    outputs:
+      - docs/Theme Management.md
+      - README.md
+
+  - name: "Teszt és audit"
+    description: |
+      Futtass lintet és teszteket, hogy nincs több AppColors-referenciát tartalmazó aktív kódrész.
+      Ellenőrizd, hogy minden teszt továbbra is zöld, a projekt stabil.
+    outputs:
+      - test/
