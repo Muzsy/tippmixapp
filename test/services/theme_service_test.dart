@@ -37,5 +37,20 @@ void main() {
       service.setScheme(999);
       expect(service.state.schemeIndex, 2);
     });
+
+    test('notifies listeners on state changes', () {
+      final service = ThemeService();
+      final emitted = <ThemeState>[];
+      final remove = service.addListener(emitted.add, fireImmediately: false);
+
+      service.toggleDarkMode();
+      service.setScheme(3);
+
+      remove();
+
+      expect(emitted.length, 2);
+      expect(emitted.first.isDark, isTrue);
+      expect(emitted.last.schemeIndex, 3);
+    });
   });
 }
