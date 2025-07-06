@@ -1,0 +1,30 @@
+steps:
+  - name: "accessibility_tools eltávolítása a kódból"
+    description: |
+      Keresd meg és távolítsd el az összes AccessibilityTools widgetet, importot és hozzá kapcsolódó kódrészletet a projektben (tipikusan MaterialApp.builder-ben).
+      Ellenőrizd, hogy a MaterialApp továbbra is helyesen épül fel.
+    outputs:
+      - "Minden AccessibilityTools widget, import eltávolítva"
+
+  - name: "Új accessibility_test alapú teszt létrehozása"
+    description: |
+      Hozz létre egy új tesztfájlt: test/accessibility_test.dart.
+      Ebben indítsd el az app fő widgetjét, futtasd le az accessibility_test auditot a teljes felületen.
+      A teszt sikertelen legyen, ha bármilyen accessibility error van.
+    outputs:
+      - "test/accessibility_test.dart"
+
+  - name: "CI pipeline validáció"
+    description: |
+      Győződj meg róla, hogy a 'flutter test' pipeline automatikusan lefuttatja az accessibility_test.dart tesztet.
+      A build csak akkor zöld, ha nem található accessibility error.
+    outputs:
+      - "CI pipeline accessibility_test audit validációja"
+
+  - name: "Dokumentáció frissítése"
+    description: |
+      Frissítsd a README-t és/vagy projekt dokumentációt: jelezd, hogy mostantól az accessibility_test csomag fut accessibility auditot a projektben.
+      Írj rövid példát a használatra, valamint a futtatás módjára.
+    outputs:
+      - "README, projekt dokumentáció frissítve"
+
