@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/controllers/app_locale_controller.dart';
 import 'package:tippmixapp/controllers/app_theme_controller.dart';
 import 'package:tippmixapp/services/theme_service.dart';
+import 'package:tippmixapp/theme/available_themes.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 
@@ -63,15 +65,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ref.read(themeServiceProvider.notifier).toggleDarkMode();
             },
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              loc.settings_skin,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          ...availableThemes.map((scheme) {
+            final isSelected = scheme == FlexScheme.values[theme.schemeIndex];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: scheme.colors(Brightness.light).primary,
+              ),
+              title: Text(_schemeName(loc, scheme)),
+              subtitle: Text(_schemeDescription(loc, scheme)),
+              trailing: isSelected ? const Icon(Icons.check) : null,
+              onTap: () {
+                ref.read(themeServiceProvider.notifier).setScheme(scheme.index);
+              },
+            );
+          }),
           ListTile(
             title: Text(loc.settings_language),
             trailing: DropdownButton<Locale>(
               value: locale,
               onChanged: (l) {
                 if (l != null) {
-                  ref
-                      .read(appLocaleControllerProvider.notifier)
-                      .setLocale(l);
+                  ref.read(appLocaleControllerProvider.notifier).setLocale(l);
                 }
               },
               items: const [
@@ -101,5 +122,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  String _schemeName(AppLocalizations loc, FlexScheme scheme) {
+    switch (scheme) {
+      case FlexScheme.dellGenoa:
+        return loc.skin_dell_genoa_name;
+      case FlexScheme.pinkM3:
+        return loc.skin_pink_m3_name;
+      default:
+        return scheme.name;
+    }
+  }
+
+  String _schemeDescription(AppLocalizations loc, FlexScheme scheme) {
+    switch (scheme) {
+      case FlexScheme.dellGenoa:
+        return loc.skin_dell_genoa_description;
+      case FlexScheme.pinkM3:
+        return loc.skin_pink_m3_description;
+      default:
+        return '';
+    }
   }
 }
