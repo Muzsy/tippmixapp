@@ -1,11 +1,12 @@
 steps:
   - id: T4.1
-    name: "Golden baseline script elkészítése"
+    name: "Golden baseline Codex-al"
     description: |
-      Készítsd el vagy frissítsd a generate_goldens.dart scriptet, amely végigiterál minden skin × világos/sötét × fő route kombináción,
-      és automatikusan elkészíti a golden baseline PNG-ket a /test/goldens/ mappába.
-      FONTOS: A PNG-k tényleges generálását és commitálását manuálisan a fejlesztő végzi, a Codex NEM generál és nem commitál bináris fájlokat!
+      A Codex generálja le vagy frissítse a /test/generate_goldens.dart fájlt, amely minden elérhető skin × világos/sötét × fő route kombinációra
+      szabványos Flutter golden tesztet hoz létre a matchesGoldenFile API-val.
+      A PNG fájlokat a /test/goldens/ mappába menti, explicit route-label elnevezéssel (pl. "/" helyett "home").
+      A Codex csak szöveges forráskódot commitálhat, bináris fájl (PNG, screenshot stb.) generálása és commitálása kizárólag manuális fejlesztői lépés lehet.
     outputs:
-      - "generate_goldens.dart script naprakész"
-      - "PNG fájlok generálására csak manuális futtatás után kerül sor"
-      - "A pipeline csak akkor zöld, ha minden PNG naprakész, diff = 0"
+      - "/test/generate_goldens.dart script naprakész, minden kombinációban működik"
+      - "A PNG fájlokat a fejlesztő generálja manuális futtatás után"
+      - "A golden baseline pipeline csak akkor zöld, ha minden PNG naprakész, diff=0"

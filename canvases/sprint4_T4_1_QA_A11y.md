@@ -1,36 +1,45 @@
-Sprint4 T4.1 – Golden matrix script (QA & Accessibility)
+Sprint4 T4.1 – Golden baseline script Codex-el (QA & Accessibility)
 🎯 Funkció
-Automatizált golden baseline screenshot generálás minden skin × világos/sötét mód × főképernyő kombinációra, hogy a TippmixApp színsémarendszere vizuálisan auditált, visszakereshető és CI pipeline által folyamatosan ellenőrzött legyen.
+A TippmixApp minden elérhető skin × világos/sötét mód × fő route kombinációjához automatizált golden baseline screenshot generálása Codex workflow-val, a Flutter szabványos golden-test API-jával. A cél, hogy a színséma architektúra CI-ban folyamatosan auditált, összehasonlítható és reprodukálható legyen.
 
 🧠 Fejlesztési részletek
-Készítsd el vagy frissítsd a generate_goldens.dart scriptet, amely automatikusan végigiterál az összes elérhető skin-en és módon, minden fő route-ra screenshotot készítve.
+A Codex feladata:
 
-A PNG fájlokat a /test/goldens/ mappába exportálja – a generálást és commitot kizárólag manuálisan, fejlesztőként végzed el!
+Létrehozza vagy frissíti a /test/generate_goldens.dart fájlt.
 
-Codex csak a scriptet, teszteket, workflow-t készítheti el; bináris generálás/commit mindig manuális!
+A script minden skin × világos/sötét × fő route-ra külön golden tesztet hoz létre a matchesGoldenFile API-val.
 
-A PNG-k naprakészsége elengedhetetlen: minden PR pipeline diff-et futtat, eltérés esetén blokkol.
+A route-label explicit, pl. "/" helyett home, /settings helyett settings.
 
-Fájlnév-konvenció: {screen}_skin{index}_{light|dark}.png
+Minden PNG a /test/goldens/ mappába kerül, névstruktúra: {routeLabel}_skin{index}_{light|dark}.png.
+
+Bináris fájl (PNG) generálását vagy commitálását a Codex semmilyen körülmények között nem végezheti – csak a scriptet készíti el.
+
+A fejlesztő feladata:
+
+Lefuttatja a Codex által generált scriptet (flutter test --update-goldens).
+
+Manuálisan commitálja a golden PNG-ket a /test/goldens/ mappából.
 
 🧪 Tesztállapot
-A golden baseline minden kombinációban létezik.
+A /test/generate_goldens.dart script minden kombinációban működik.
 
-Pipeline-ban minden diff 0, commit warningmentes.
+PNG-k csak manuális futtatással generálódnak, commit manuális.
 
-PNG-k generálása és commitálása manuális.
+A CI pipeline a golden diff alapján csak akkor zöld, ha minden PNG naprakész.
+
+A script nem commitál semmit, csak forrást generál!
 
 🌍 Lokalizáció
-Fájlnevek és workflow nem érint lokalizációt.
-
-Golden snapshot audit minden nyelvi beállítás mellett működik.
+A tesztfájl lokalizáció-független, de a generált screenshotokat minden nyelvi beállítás mellett le lehet futtatni.
 
 📎 Kapcsolódások
-Minden további QA & accessibility pipeline workflow (T4.2–T4.7)
+Sprint4 QA & accessibility workflow következő lépései (T4.2+)
 
-PNG-k naprakészsége minden minőségbiztosítás alapja.
+A golden baseline a teljes vizuális és accessibility audit alapja.
 
 ⚠️ Kritikus szabály
-Codex NEM generál és nem commitál bináris fájlt.
+A Codex soha nem commitálhat bináris fájlt (PNG, screenshot, stb.).
 
-Minden golden PNG manuálisan kerül a repo-ba.
+Minden automatikus teszt/golden commit kizárólag manuális fejlesztői feladat!
+
