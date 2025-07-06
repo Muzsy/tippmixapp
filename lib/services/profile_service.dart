@@ -72,7 +72,8 @@ class ProfileService {
     try {
       await firestore.collection('users').doc(uid).update(data);
     } on FirebaseException catch (e) {
-      if (e.code.toLowerCase() == 'not-found') {
+      final code = e.code.toLowerCase().replaceAll('_', '-');
+      if (code == 'not-found') {
         await firestore
             .collection('users')
             .doc(uid)
