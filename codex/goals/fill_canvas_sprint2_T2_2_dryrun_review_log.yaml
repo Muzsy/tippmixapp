@@ -1,0 +1,10 @@
+steps:
+  - name: "Dry-run codemod futtatása és log exportálása"
+    description: |
+      Futtasd le a tools/codemods/codemod_replace_hex.dart scriptet --dry-run módban az egész kódbázison.
+      A script csak naplózza a cserére kijelölt hex-színeket, fájlnévvel, sorszámmal, a javasolt Theme-referenciával együtt.
+      Az eredményt exportáld egy codemod_dryrun.log nevű fájlba.
+      Nézd át manuálisan a logot, különös figyelemmel a nem egyértelmű vagy komplex színhasználatokra.
+    outputs:
+      - codemod_dryrun.log
+      - Manuálisan ellenőrzött log
