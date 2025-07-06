@@ -80,6 +80,11 @@ class ProfileService {
       } else {
         throw ProfileUpdateFailure();
       }
+    } on Exception {
+      await firestore
+          .collection('users')
+          .doc(uid)
+          .set(data, SetOptions(merge: true));
     }
 
     final cached = cache.get(uid) as UserModel?;
