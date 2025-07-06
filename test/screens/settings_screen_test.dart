@@ -8,6 +8,7 @@ import 'package:tippmixapp/services/theme_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/services/auth_service.dart';
@@ -60,7 +61,9 @@ class FakeAuthService implements AuthService {
 }
 
 void main() {
-  testWidgets('Settings interactions update controllers and logout', (tester) async {
+  testWidgets('Settings interactions update controllers and logout', (
+    tester,
+  ) async {
     final authService = FakeAuthService();
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
@@ -70,14 +73,18 @@ void main() {
       auth: FakeFirebaseAuth(null),
     );
     await tester.pumpWidget(
-        ProviderScope(
+      ProviderScope(
         overrides: [
           authProvider.overrideWith((ref) => AuthNotifier(authService)),
-          appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
-          appLocaleControllerProvider.overrideWith((ref) => AppLocaleController()),
+          appThemeControllerProvider.overrideWith(
+            (ref) => AppThemeController(),
+          ),
+          appLocaleControllerProvider.overrideWith(
+            (ref) => AppLocaleController(),
+          ),
           themeServiceProvider.overrideWith((ref) => themeService),
         ],
-          child: const MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
@@ -100,6 +107,14 @@ void main() {
     await tester.tap(find.text('Dark mode'));
     await tester.pumpAndSettle();
     expect(container.read(themeServiceProvider).isDark, isTrue);
+
+    // change skin
+    await tester.tap(find.text('Pink Party'));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(themeServiceProvider).schemeIndex,
+      FlexScheme.pinkM3.index,
+    );
 
     // change language
     await tester.tap(find.byType(DropdownButton<Locale>));
