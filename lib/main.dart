@@ -5,8 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'dart:async'; // Szükséges a StreamSubscription-hoz
 
-import 'controllers/app_theme_controller.dart';
 import 'controllers/app_locale_controller.dart';
+import 'services/theme_service.dart';
+import 'theme/theme_builder.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
 
 void main() async {
@@ -28,7 +30,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final themeMode = ref.watch(appThemeControllerProvider);
+    final theme = ref.watch(themeServiceProvider);
     final locale = ref.watch(appLocaleControllerProvider);
 
     return MaterialApp.router(
@@ -46,9 +48,15 @@ class MyApp extends ConsumerWidget {
           orElse: () => const Locale('en'),
         );
       },
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: themeMode,
+      theme: buildTheme(
+        scheme: FlexScheme.values[theme.schemeIndex],
+        brightness: Brightness.light,
+      ),
+      darkTheme: buildTheme(
+        scheme: FlexScheme.values[theme.schemeIndex],
+        brightness: Brightness.dark,
+      ),
+      themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
       locale: locale,
       debugShowCheckedModeBanner: false,
     );
