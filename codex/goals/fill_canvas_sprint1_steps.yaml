@@ -1,0 +1,31 @@
+steps:
+
+id: T1.1
+title: "Függőségek frissítése"
+owner: fejlesztő
+description: |
+Add hozzá a flex_color_scheme és dynamic_color csomagokat a pubspec.yaml-hez. Futtasd a flutter pub get-et. (A Codex ezt nem módosíthatja, manuális lépés!)
+acceptance:
+
+"A pubspec.yaml tartalmazza a szükséges csomagokat."
+
+"A CI zöld a pub get lépésnél."
+
+id: T1.2
+title: "ThemeBuilder implementáció (FlexScheme.dellGenoa, skinválasztás előkészítve)"
+owner: fejlesztő
+description: |
+Hozd létre a lib/theme/theme_builder.dart fájlt.
+Készíts egy buildTheme() függvényt, amely FlexThemeData.light és FlexThemeData.dark használatával ThemeData-t generál.
+Alapértelmezett scheme: FlexScheme.dellGenoa, useMaterial3: true.
+Készítsd elő a kódot későbbi skinválasztás és platformtámogatás bővítésére (pl. paraméterek, logika).
+A buildTheme() csak a theme kezelésért felel, ne tartalmazzon semmilyen widget vagy UI logikát.
+output: "lib/theme/theme_builder.dart"
+acceptance:
+
+"A buildTheme() helyesen generál FlexThemeData.light/dark FlexScheme.dellGenoa alapján."
+
+"A kód előkészített több skin és platform támogatására."
+
+"A theme kezelés kizárólag FlexColorScheme-en alapul, szabályos."
+

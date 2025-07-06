@@ -49,6 +49,8 @@ dependencies:
   firebase_storage: ^12.4.8
   image_picker: ^1.1.2
   path: ^1.9.1
+  flex_color_scheme: ^8.2.0
+  dynamic_color: ^1.7.0
   
  
   
