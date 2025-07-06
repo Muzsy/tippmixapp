@@ -1,0 +1,48 @@
+# Codex goal – fix avatar upload fails when user doc is missing (T17‑fix)
+
+canvas: canvases/profile\_avatar\_upload.md
+
+inputs:
+
+# Existing source
+
+* lib/services/profile\_service.dart
+
+# Failing test
+
+* test/screens/profile\_avatar\_upload\_test.dart
+
+# Guidelines
+
+* codex\_docs/error\_handling\_guidelines.md
+
+steps:
+
+* name: handle\_firestore\_not\_found\_case\_insensitive
+  description: |
+  In `lib/services/profile_service.dart` update `updateProfile()` so that Firestore "document not found"
+  errors thrown by both the production SDK (`not-found`) and `FakeFirebaseFirestore` (`NOT_FOUND`)
+  follow the same merge‑on‑absent branch.
+
+  Replace the condition
+
+  ```dart
+  if (e.code == 'not-found') {
+  ```
+
+  with
+
+  ```dart
+  if (e.code.toLowerCase() == 'not-found') {
+  ```
+
+  (or an equivalent check covering both variants).
+  Keep the subsequent `set(data, SetOptions(merge: true))` call unchanged.
+
+  **Why:** On the first avatar upload the user document does not yet exist, so `update()` throws a
+  `FirebaseException` with code `NOT_FOUND` in tests. The current code does not match this variant,
+  bubbles the error up, shows a failure SnackBar, and the widget test *successful upload shows snackbar*
+  fails. Making the check case‑insensitive lets the success path run, the correct "Avatar updated"
+  snackbar appear, and the test pass.
+  output: lib/services/profile\_service.dart
+  run\_tests: true
