@@ -2,43 +2,36 @@ name: build
 
 on:
   push:
-    branches:
-      - main
+    branches: [**]
   pull_request:
-    branches:
-      - main
+    branches: [**]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install Flutter SDK manually
+      # ►► Flutter 3.22.x
+      - name: Install Flutter SDK (GitHub Action)
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.32.x'
 
-      - name: Flutter doctor
-        run: flutter doctor
+      # ►► Univerzális projekt‑setup (ugyanaz, mint Codexnél)
+      - name: Project setup
+        run: bash .codex/setup.sh
 
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Analyze code
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings lib test
-
-      - name: Run tests with coverage
-        run: flutter test --coverage
-
-      - name: Run coverage and badge
+      # (innen lefelé: CI‑only részek)
+      - name: Run coverage + badge
         uses: whynotmake-it/dart-coverage-assistant@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           generate_badges: push
 
+      # ---- Firebase security rules tesztek ----
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -73,15 +66,3 @@ jobs:
         with:
           name: security-rules-log
           path: security_rules_test.log
-
-      # ====== (Opcionális: ha saját commitlépést akarsz, csak akkor kell, ha a badge nem commitolódik automatikusan) ======
-      # - name: Commit coverage badge
-      #   if: github.ref == 'refs/heads/main'
-      #   run: |
-      #     git config user.name "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
-      #     git add badges/coverage.svg
-      #     git commit -m "chore: update coverage badge [skip ci]" || echo "No changes to commit"
-      #     git push
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
