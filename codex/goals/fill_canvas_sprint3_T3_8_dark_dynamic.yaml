@@ -1,0 +1,13 @@
+steps:
+  - name: "Sprint3 Canvas és Codex YAML véglegesítése, review"
+    description: |
+      Ellenőrizd, hogy a Sprint3-hoz tartozó teljes vászon (sprint3_dark_dynamic.md) és Codex YAML (fill_canvas_sprint3_dark_dynamic.yaml) minden fejlesztési, tesztelési és auditálási lépést pontosan, naprakészen, projektstandard szerint dokumentál.
+      - Minden T3.1–T3.7 feladathoz tartozó rész, elvárás, checklist és kapcsolódás legyen lefedve.
+      - Dokumentáld a Definition of Done-t, kockázatokat, platformfüggő elágazásokat, manuális workflow-t (golden/a11y commit Codex tiltás), CI/linter/audit workflow-t is.
+      - Készíts review/checklistet: minden output, coverage, dokumentum és commit ténylegesen naprakész-e.
+      - Jóváhagyás után a végleges canvas és YAML kerüljön be a /canvases és /codex/goals mappába.
+      - A végleges verzió legyen a projekt hivatalos, hivatkozott dokumentációja.
+    outputs:
+      - "A sprint3 vászon (sprint3_dark_dynamic.md) és yaml (fill_canvas_sprint3_dark_dynamic.yaml) naprakészen, hiánytalanul elérhető."
+      - "A Codex workflow minden fejlesztői és audit lépést dokumentál, automata és manuális checklisttel."
+      - "QA, fejlesztői review és CI pipeline alapján elfogadott, publikált dokumentáció."
