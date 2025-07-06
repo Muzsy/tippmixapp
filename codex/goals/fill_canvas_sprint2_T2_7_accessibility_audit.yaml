@@ -1,0 +1,12 @@
+steps:
+  - name: "Hozzáférhetőségi audit accessibility_tools csomaggal"
+    description: |
+      Győződj meg róla, hogy a pubspec.yaml dev_dependencies szekciójában már szerepel az accessibility_tools csomag (ezt manuálisan kell felvenni, a Codex nem módosíthatja!).
+      Ezután állítsd be a MaterialApp builderébe az AccessibilityTools widgetet, hogy fejlesztés közben minden accessibility hiba vizuálisan megjelenjen.
+      Debug buildben járd végig az app fő felületeit, javíts minden jelzett hibát (pl. hiányzó label, túl kicsi tappable area, kontraszt, stb.).
+      A kézi audit eredményeit (screenshot, lista) archiváld a tools/reports/ mappába.
+      Dokumentáld röviden, ha maradt indokolt, nem javítható accessibility warning.
+    outputs:
+      - MaterialApp builderében AccessibilityTools widget
+      - Javított accessibility hibák, kézi report tools/reports/ alatt
+      - (A pubspec.yaml-t manuálisan kell szerkeszteni, Codex nem módosíthatja)
