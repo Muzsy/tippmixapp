@@ -24,6 +24,9 @@ jobs:
       - name: Project setup
         run: bash .codex/setup.sh
 
+      - name: Run linter
+        run: flutter analyze lib test --fatal-infos --fatal-warnings
+
       # (innen lefelé: CI‑only részek)
       - name: Run coverage + badge
         uses: whynotmake-it/dart-coverage-assistant@v1
