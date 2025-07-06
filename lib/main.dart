@@ -32,19 +32,41 @@ class MyApp extends ConsumerWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final theme = ref.watch(themeServiceProvider);
     final locale = ref.watch(appLocaleControllerProvider);
 
-    return MaterialApp.router(
-      routerConfig: router,
-      builder: (context, child) {
-        if (kDebugMode) {
-          return AccessibilityTools(child: child ?? const SizedBox.shrink());
-        }
-        return child ?? const SizedBox.shrink();
-      },
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+    final lightFuture = buildDynamicTheme(
+      scheme: FlexScheme.values[theme.schemeIndex],
+      brightness: Brightness.light,
+    );
+    final darkFuture = buildDynamicTheme(
+      scheme: FlexScheme.values[theme.schemeIndex],
+      brightness: Brightness.dark,
+    );
+
+    return FutureBuilder<List<ThemeData>>(
+      future: Future.wait([lightFuture, darkFuture]),
+      builder: (context, snapshot) {
+        final light = snapshot.data?[0] ??
+            buildTheme(
+              scheme: FlexScheme.values[theme.schemeIndex],
+              brightness: Brightness.light,
+            );
+        final dark = snapshot.data?[1] ??
+            buildTheme(
+              scheme: FlexScheme.values[theme.schemeIndex],
+              brightness: Brightness.dark,
+            );
+
+        return MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) {
+            if (kDebugMode) {
+              return AccessibilityTools(child: child ?? const SizedBox.shrink());
+            }
+            return child ?? const SizedBox.shrink();
+          },
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: const [
         Locale('hu'),
         Locale('en'),
@@ -57,17 +79,13 @@ class MyApp extends ConsumerWidget {
           orElse: () => const Locale('en'),
         );
       },
-      theme: buildTheme(
-        scheme: FlexScheme.values[theme.schemeIndex],
-        brightness: Brightness.light,
-      ),
-      darkTheme: buildTheme(
-        scheme: FlexScheme.values[theme.schemeIndex],
-        brightness: Brightness.dark,
-      ),
-      themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
-      locale: locale,
-      debugShowCheckedModeBanner: false,
+          theme: light,
+          darkTheme: dark,
+          themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
+          locale: locale,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
