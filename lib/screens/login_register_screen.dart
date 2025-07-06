@@ -337,7 +337,10 @@ class _SocialLoginButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: ElevatedButton.icon(
           onPressed: onPressed,
-          icon: Icon(icon, color: Colors.white),
+          icon: Icon(
+            icon,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           label: Text(label),
           style: ElevatedButton.styleFrom(backgroundColor: color),
         ),
