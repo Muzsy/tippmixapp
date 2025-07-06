@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,11 +13,8 @@ import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'dart:async';
-import 'dart:io';
-import 'package:mocktail/mocktail.dart';
 
 class FakeFile extends Fake implements File {}
-
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
@@ -73,7 +69,9 @@ class FakeImagePicker extends Fake implements ImagePicker {
 }
 
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+
 class MockReference extends Mock implements Reference {}
+
 class MockUploadTask extends Mock implements UploadTask {}
 
 void main() {
@@ -98,8 +96,9 @@ void main() {
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
       when(() => reference.putFile(any())).thenAnswer((_) => task);
-      when(() => reference.getDownloadURL())
-          .thenAnswer((_) async => 'http://download');
+      when(
+        () => reference.getDownloadURL(),
+      ).thenAnswer((_) async => 'http://download');
       user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
     });
 
@@ -158,7 +157,9 @@ void main() {
     });
 
     testWidgets('error shows snackbar', (tester) async {
-      when(() => reference.putFile(any())).thenThrow(FirebaseException(plugin: 'storage'));
+      when(
+        () => reference.putFile(any()),
+      ).thenThrow(FirebaseException(plugin: 'storage'));
       await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
