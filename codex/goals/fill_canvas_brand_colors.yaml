@@ -1,0 +1,35 @@
+steps:
+  - name: "BrandColors ThemeExtension definíció létrehozása"
+    description: |
+      Hozd létre a lib/theme/brand_colors.dart fájlt.
+      Ebben definiáld a BrandColors ThemeExtension-t (pl. gradientStart, gradientEnd).
+      Az osztály csak a típust, konstruktorokat, copyWith és lerp metódust tartalmazza – nem tartalmaz konkrét színértékeket.
+    outputs:
+      - lib/theme/brand_colors.dart
+
+  - name: "Preset színek elkülönítése"
+    description: |
+      Hozd létre a lib/theme/brand_colors_presets.dart fájlt.
+      Ebben add meg a konkrét BrandColors példányokat skinenként (brandColorsLight, brandColorsDark), a FlexScheme.dellGenoa színpalettához illeszkedve.
+      Dokumentáld a bővítési lehetőségeket (új skin esetén új preset).
+    outputs:
+      - lib/theme/brand_colors_presets.dart
+
+  - name: "ThemeBuilder integráció"
+    description: |
+      A ThemeBuilder-ben (lib/theme/theme_builder.dart) egészítsd ki a buildTheme() függvényt úgy, hogy a megfelelő BrandColors preset példányt hozzáadja a ThemeData.extensions-hoz mind a light, mind a dark módban.
+    outputs:
+      - lib/theme/theme_builder.dart
+
+  - name: "Widget access példa, használati minta"
+    description: |
+      Adj egy rövid példát a dokumentációhoz (docs vagy komment), hogyan érhető el egyedi szín egy widgetből: Theme.of(context).extension<BrandColors>()!.
+    outputs:
+      - docs/BrandColors_hasznalat.md
+
+  - name: "Teszt és audit"
+    description: |
+      Ellenőrizd, hogy minden widget csak ThemeExtension-ből használ márka/saját színt, nincsenek hardcoded értékek.
+      Frissítsd a teszteket, hogy a BrandColors mindig elérhető.
+    outputs:
+      - test/theme/brand_colors_test.dart
