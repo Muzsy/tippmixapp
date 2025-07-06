@@ -130,7 +130,7 @@ void main() {
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pumpAndSettle();
-      expect(find.text('Avatar updated'), findsOneWidget);
+      expect(find.text('Error updating avatar'), findsOneWidget);
     });
 
     testWidgets('cancellation shows snackbar', (tester) async {
