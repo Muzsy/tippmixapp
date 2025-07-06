@@ -71,8 +71,15 @@ class ProfileService {
 
     try {
       await firestore.collection('users').doc(uid).update(data);
-    } on FirebaseException catch (_) {
-      throw ProfileUpdateFailure();
+    } on FirebaseException catch (e) {
+      if (e.code == 'not-found') {
+        await firestore
+            .collection('users')
+            .doc(uid)
+            .set(data, SetOptions(merge: true));
+      } else {
+        throw ProfileUpdateFailure();
+      }
     }
 
     final cached = cache.get(uid) as UserModel?;
