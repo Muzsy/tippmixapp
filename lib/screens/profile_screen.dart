@@ -116,7 +116,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(loc.profile_avatar_updated)),
         );
-        await Future<void>.delayed(Duration.zero);
+        await WidgetsBinding.instance.endOfFrame;
       }
     } catch (_) {
       if (!mounted) return;
