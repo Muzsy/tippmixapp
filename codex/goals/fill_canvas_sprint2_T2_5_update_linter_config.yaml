@@ -1,0 +1,13 @@
+steps:
+  - name: "Linter szabály bevezetése: avoid-hard-coded-colors"
+    description: |
+      Bővítsd a projekt analysis_options.yaml fájlját az avoid-hard-coded-colors szabállyal.
+      Állítsd be a lintert úgy, hogy minden Colors.*, hex, rgb, stb. manuális színezést warning/error jelzésként kezeljen.
+      Állítsd be a CI pipeline-ban, hogy minden warning blokkolja a buildet (fail-on-warning).
+      Futtasd le a lintert az egész projekten (flutter analyze), javíts minden hibát, amíg warningmentes nem lesz a kód.
+      Teszteld, hogy ha manuális színt illesztesz be, a linter azonnal jelez.
+      Dokumentáld a szabályt fejlesztői readme-ben, ha szükséges.
+    outputs:
+      - analysis_options.yaml (frissített linter szabályokkal)
+      - Zöld linter státusz (flutter analyze, CI warningmentes)
+      - (Opcionális) Frissített fejlesztői dokumentáció
