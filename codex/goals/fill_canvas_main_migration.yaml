@@ -1,0 +1,31 @@
+steps:
+  - name: "main.dart migráció ThemeBuilder-re"
+    description: |
+      Nyisd meg a lib/main.dart fájlt.
+      Állítsd át a MaterialApp theme és darkTheme property-jeit úgy, hogy azok a ThemeBuilder buildTheme() metódusából jöjjenek.
+      Minden theme és skin váltás a ThemeService alapján történjen.
+      Távolíts el minden régi ThemeData, hardcoded szín, vagy egyéb, nem ThemeBuilder-alapú hivatkozást.
+    inputs:
+      - lib/main.dart
+      - lib/theme/theme_builder.dart
+      - lib/services/theme_service.dart
+    outputs:
+      - lib/main.dart
+
+  - name: "ThemeService provider bekötése"
+    description: |
+      Kösd be a ThemeService-t mint providert a fő widgetfába (pl. Riverpod/Provider).
+      A MaterialApp minden theme paraméterét dinamikusan a ThemeService state-je alapján frissítse.
+      Dokumentáld a használatot.
+    inputs:
+      - lib/main.dart
+      - lib/services/theme_service.dart
+    outputs:
+      - lib/main.dart
+
+  - name: "Teszt és audit"
+    description: |
+      Ellenőrizd, hogy minden theme és skin váltás azonnal megjelenik, nincs sehol elavult vagy hardcoded theme hivatkozás.
+      Widget teszt, hogy minden főképernyőn megfelelően működik a ThemeBuilder és ThemeService integráció.
+    outputs:
+      - test/main_theme_test.dart
