@@ -52,7 +52,6 @@ dependencies:
   flex_color_scheme: ^8.2.0
   dynamic_color: ^1.7.0
   args: ^2.7.0
-  
  
   
 
@@ -71,6 +70,7 @@ dev_dependencies:
   fl_chart: ^1.0.0
   screenshot: ^3.0.0
   accessibility_tools: ^2.6.0
+  accessibility_test: ^1.0.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
