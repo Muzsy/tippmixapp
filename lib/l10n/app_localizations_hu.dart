@@ -439,6 +439,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settings_theme_dark => 'Sötét';
 
   @override
+  String get settings_dark_mode => 'Sötét mód';
+
+  @override
   String get settings_language => 'Nyelv';
 
   @override
