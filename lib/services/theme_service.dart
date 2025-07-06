@@ -61,34 +61,38 @@ class ThemeService extends StateNotifier<ThemeState> {
 
   /// Loads saved settings from local storage and Firestore.
   Future<void> hydrate() async {
-    await _initPrefs();
-    final index = _prefs?.getInt(_schemeKey);
-    final dark = _prefs?.getBool(_darkKey);
-    var newState = state.copyWith(
-      schemeIndex: index ?? state.schemeIndex,
-      isDark: dark ?? state.isDark,
-    );
-    final user = _auth.currentUser;
-    if (user != null) {
-      final doc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('settings')
-          .doc('theme')
-          .get();
-      final data = doc.data();
-      if (data != null) {
-        final fsIndex = data['schemeIndex'] as int?;
-        final fsDark = data['isDark'] as bool?;
-        newState = newState.copyWith(
-          schemeIndex: fsIndex ?? newState.schemeIndex,
-          isDark: fsDark ?? newState.isDark,
-        );
-        await _prefs?.setInt(_schemeKey, newState.schemeIndex);
-        await _prefs?.setBool(_darkKey, newState.isDark);
+    try {
+      await _initPrefs();
+      final index = _prefs?.getInt(_schemeKey);
+      final dark = _prefs?.getBool(_darkKey);
+      var newState = state.copyWith(
+        schemeIndex: index ?? state.schemeIndex,
+        isDark: dark ?? state.isDark,
+      );
+      final user = _auth.currentUser;
+      if (user != null) {
+        final doc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('settings')
+            .doc('theme')
+            .get();
+        final data = doc.data();
+        if (data != null) {
+          final fsIndex = data['schemeIndex'] as int?;
+          final fsDark = data['isDark'] as bool?;
+          newState = newState.copyWith(
+            schemeIndex: fsIndex ?? newState.schemeIndex,
+            isDark: fsDark ?? newState.isDark,
+          );
+        }
       }
+      await _prefs?.setInt(_schemeKey, newState.schemeIndex);
+      await _prefs?.setBool(_darkKey, newState.isDark);
+      state = newState;
+    } catch (_) {
+      state = const ThemeState();
     }
-    state = newState;
   }
 
   /// Persists the current scheme index.
