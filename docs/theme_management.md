@@ -11,6 +11,9 @@ A TippmixApp színséma rendszerének célja, hogy a teljes alkalmazás egysége
 - **Material 3 kompatibilitás**: A theme minden komponense a Flutter Material 3 szabványán alapul (useMaterial3: true), biztosítva a trendi, jövőálló megjelenést.
 - **FlexColorScheme**: Minden színséma előre definiált vagy auditált FlexScheme-re épül, garantálva a dark/light mód, AA kontraszt és platformfüggetlenség teljes támogatását.
 - **Widgetek színhasználata**: Kizárólag Theme.of(context).colorScheme vagy ThemeExtension alapján! Kézi hex, rgb vagy manuális színhasználat tilos.
+- **AppColors archiválva**: A korábbi `AppColors` osztály a `legacy/AppColors.dart`
+  fájlba került és @Deprecated jelöléssel szerepel. Minden aktív szín a ThemeBuilder
+  vagy a `BrandColors` ThemeExtensionök felől érhető el.
 
 ---
 
