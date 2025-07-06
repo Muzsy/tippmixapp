@@ -1,0 +1,4 @@
+- Added AccessibilityTools overlay in debug builds via MaterialApp.builder.
+- Checked main screens with overlay; no missing labels or small tap targets found.
+- Color contrast validated using existing color audit report.
+- No remaining accessibility warnings.
