@@ -19,13 +19,38 @@ void main() async {
   await Firebase.initializeApp();
   await dotenv.load();
   final container = ProviderContainer();
+  final themeFuture =
+      container.read(themeServiceProvider.notifier).hydrate();
   await container.read(appLocaleControllerProvider.notifier).loadLocale();
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: const MyApp(),
+      child: _BootstrapApp(themeFuture: themeFuture),
     ),
   );
+}
+
+class _BootstrapApp extends ConsumerWidget {
+  const _BootstrapApp({required this.themeFuture});
+
+  final Future<void> themeFuture;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FutureBuilder<void>(
+      future: themeFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
+        return const MyApp();
+      },
+    );
+  }
 }
 
 class MyApp extends ConsumerWidget {

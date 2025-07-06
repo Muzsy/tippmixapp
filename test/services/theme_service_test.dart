@@ -2,7 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:tippmixapp/services/theme_service.dart';
 
@@ -18,6 +20,8 @@ class FakeFirebaseAuth extends Fake implements FirebaseAuth {
   @override
   User? get currentUser => _user;
 }
+
+class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
 void main() {
   group('ThemeService', () {
@@ -118,6 +122,23 @@ void main() {
 
       expect(service.state.schemeIndex, 1);
       expect(service.state.isDark, isTrue);
+    });
+
+    test('hydrate falls back to defaults on error', () async {
+      SharedPreferences.setMockInitialValues({'theme_scheme': 2, 'theme_dark': true});
+      final prefs = await SharedPreferences.getInstance();
+      final firestore = MockFirebaseFirestore();
+      when(() => firestore.collection(any())).thenThrow(Exception('fail'));
+      final service = ThemeService(
+        prefs: prefs,
+        firestore: firestore,
+        auth: FakeFirebaseAuth(FakeUser('u1')),
+      );
+
+      await service.hydrate();
+
+      expect(service.state.schemeIndex, 0);
+      expect(service.state.isDark, isFalse);
     });
 
     test('saveTheme and saveDarkMode persist values', () async {
