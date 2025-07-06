@@ -74,7 +74,12 @@ class _CopiedTicketEditScreenState extends State<CopiedTicketEditScreen> {
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  _error!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
               ),
             Expanded(
               child: ListView.builder(
