@@ -1,49 +1,45 @@
-# Sprint1 – Core Theme Architecture
+# Sprint 1 – Core Theme Architecture összefoglaló (Canvas)
 
-🎯 **Funkció**  
-A Sprint1 célja a TippmixApp színséma-rendszerének alapvető, jövőálló architektúrájának kiépítése. Megvalósul a FlexColorScheme-alapú ThemeBuilder, a Tippmix-specifikus BrandColors ThemeExtension, és a központi ThemeService állapotkezelés. A fő alkalmazás (main.dart) már az új theme-architektúrát használja, de a meglévő UI-komponensek refaktorálása csak a következő sprintben (Sprint2) kezdődik.
+---
+
+🎯 **Funkció**
+
+A Sprint 1 célja egy új, modern, bővíthető és auditálható színséma-architektúra kiépítése a TippmixApp-ban. A canvas összegzi a FlexColorScheme-re, ThemeBuilder-re, ThemeService-re, BrandColors ThemeExtension-re és a teljes színséma logikára épülő fejlesztési lépéseket. Minden lépés és eredmény standardizált, a projekt minden következő sprintjéhez sablonként szolgál.
 
 ---
 
 🧠 **Fejlesztési részletek**
 
-| Feladat                    | Állapot | Részletek                                                                                       |
-|----------------------------|---------|-------------------------------------------------------------------------------------------------|
-| T1.1 Pubspec & deps upgrade | ⏳      | flex_color_scheme, dynamic_color csomagok hozzáadása, `flutter pub get`, CI lockfile mentése     |
-| T1.2 ThemeBuilder          | ⏳      | Új `/lib/theme/theme_builder.dart` fájl, `buildTheme()` (FlexThemeData.light/dark, useMaterial3) |
-| T1.3 BrandColors extension | ⏳      | ThemeExtension: min. 2 Tippmix-szín (pl. BetSlipGradientStart/End)                              |
-| T1.4 ThemeService          | ⏳      | Riverpod Notifier: currentSchemeIndex, isDark, toggleTheme, toggleDarkMode, setScheme           |
-| T1.5 main.dart migráció    | ⏳      | Régi ThemeData hivatkozások cseréje ThemeBuilder-re, ThemeService provider bekötése              |
-| T1.6 AppColors deprecate   | ⏳      | /legacy alá helyezés, @Deprecated annotáció, minden import eltávolítása                          |
-| T1.7 Unit-tesztek          | ⏳      | Új és frissített tesztek: ThemeBuilder, ThemeService működés, min. 90% teszt coverage            |
-| T1.8 Canvas + YAML         | ⏳      | sprint1_core_theme.md + fill_canvas_sprint1_core_theme.yaml elkészítése, Codex-kompatibilis módon|
+- Az összes Sprint 1-hez tartozó feladat, architektúra, döntés, technikai megvalósítás és minta, beleértve:
+    - ThemeBuilder és ThemeService kódváz, használati logika
+    - BrandColors ThemeExtension szétválasztott implementációja (definíció + presetek)
+    - main.dart migráció, AppColors archiválása
+    - Unit-tesztek és tesztelési stratégiák
+    - Linter, CI, coverage követelmények
+- A canvas minden lépése egyértelműen hivatkozik a kapcsolódó yaml lépésekre, kódra, tesztre, dokumentációra.
+- Ez a canvas minta lesz a további fejlesztési és Codex automatizált workflow-k alapja.
 
 ---
 
-🧪 **Tesztállapot**  
-- CI pipeline: minden lépés (pubspec frissítés, tesztek, linter) zöld
-- Unit tesztek: ThemeBuilder és ThemeService működésének automatikus tesztelése
-- Code coverage: legalább 90%
-- Minden régi AppColors referencia megszűnt, új Theme rendszer működik
+🧪 **Tesztállapot**
+
+- Minden dokumentált lépéshez tartozik unit-teszt, elfogadási kritérium, CI-ban zöld futás.
+- A canvas alapján minden fejlesztő egyértelműen követheti a teljes theme-architektúra integrációt.
 
 ---
 
-🌍 **Lokalizáció**  
-- A ThemeService által kezelt skin-nevek, leírások és preview-k minden platformon lokalizálhatóak
-- Dokumentáció és Codex canvas magyar nyelvű
-- Theme váltás, skin-nevek lokalizációja a következő sprintekben bővül
+🌍 **Lokalizáció**
+
+- A canvas és a hozzátartozó yaml magyar nyelvű, projektstandard szerint íródott.
+- A theme logika nem tartalmaz lokalizációt, de skin leírás, név később bővíthető.
 
 ---
 
-📎 **Kapcsolódások**  
-- **Előzmény:** Sprint0 (color audit, baseline)
-- **Következő:** Sprint2 (Widget Refactor – hex-színek teljes eltávolítása)
-- BrandColors extension közvetlenül kapcsolódik a Tippmix színséma arculatához
-- ThemeService architektúra a későbbi perzisztencia (Sprint3) és CI integráció (Sprint4-5) alapja
+📎 **Kapcsolódások**
+
+- **/codex/goals/canvases/fill_canvas_sprint1_core_theme.yaml**: minden feladathoz yaml automatizáció.
+- **docs/Theme Management.md**: a teljes architektúra leírása.
+- **Unit-teszt fájlok, legacy/AppColors archivált állapot**.
+- Minden további sprint a canvas szerkezetét követi.
 
 ---
-
-## **Összegzés**
-
-A Sprint1 sikeres lezárásával a TippmixApp rendelkezik egy modern, skálázható, FlexColorScheme-alapú theme-architektúrával, amely készen áll a teljes UI refaktorra és a dinamikus skin-váltásra.
-
