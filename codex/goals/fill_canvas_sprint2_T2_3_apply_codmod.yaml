@@ -1,0 +1,13 @@
+steps:
+  - name: "Automatikus színrefaktor végrehajtása és commitálása"
+    description: |
+      A color_audit_reviewed.csv alapján hajtsd végre az összes automatikusan cserélhető színhasználat (hex, Colors.*) refaktorát.
+      Minden ilyen sort cserélj Theme.of(context).colorScheme.* vagy ThemeExtension hivatkozásra, az auditban megadott mapping szerint.
+      A manual_color_refactors.txt-ben felsorolt speciális eseteket most hagyd ki.
+      A változtatásokat commitáld.
+      Futtasd le újra a color_audit scriptet: ha mindent jól cseréltél, már csak a manuális (speciális) helyek jelennek meg.
+      Ellenőrizd, hogy a linter (avoid-hard-coded-colors) nem jelez hibát az automatikusan javított helyeken.
+    outputs:
+      - Refaktorált kód (commit)
+      - Friss color_audit.csv (csak manuális sorok vagy üres)
+      - Linter warning = 0 automatikusan javított helyeken
