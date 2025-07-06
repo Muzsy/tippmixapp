@@ -439,6 +439,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_theme_dark => 'Dunkel';
 
   @override
+  String get settings_dark_mode => 'Dunkler Modus';
+
+  @override
   String get settings_language => 'Sprache';
 
   @override

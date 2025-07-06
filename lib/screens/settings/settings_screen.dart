@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/controllers/app_locale_controller.dart';
 import 'package:tippmixapp/controllers/app_theme_controller.dart';
+import 'package:tippmixapp/services/theme_service.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 
@@ -22,6 +23,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final loc = AppLocalizations.of(context)!;
     final themeMode = ref.watch(appThemeControllerProvider);
     final locale = ref.watch(appLocaleControllerProvider);
+    final theme = ref.watch(themeServiceProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.settings_title)),
@@ -53,6 +55,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
               ],
             ),
+          ),
+          SwitchListTile(
+            title: Text(loc.settings_dark_mode),
+            value: theme.isDark,
+            onChanged: (_) {
+              ref.read(themeServiceProvider.notifier).toggleDarkMode();
+            },
           ),
           ListTile(
             title: Text(loc.settings_language),

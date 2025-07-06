@@ -5,6 +5,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/services/theme_service.dart';
 import 'package:tippmixapp/theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
+
+class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
+  FakeFirebaseAuth(this._user);
+  final fb.User? _user;
+  @override
+  fb.User? get currentUser => _user;
+}
 
 class _TestApp extends ConsumerWidget {
   const _TestApp();
@@ -29,7 +39,16 @@ class _TestApp extends ConsumerWidget {
 
 void main() {
   testWidgets('MaterialApp updates when ThemeService changes', (tester) async {
-    final container = ProviderContainer();
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final themeService = ThemeService(
+      prefs: prefs,
+      firestore: FakeFirebaseFirestore(),
+      auth: FakeFirebaseAuth(null),
+    );
+    final container = ProviderContainer(overrides: [
+      themeServiceProvider.overrideWith((ref) => themeService),
+    ]);
     await tester.pumpWidget(UncontrolledProviderScope(
       container: container,
       child: const _TestApp(),

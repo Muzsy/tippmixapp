@@ -7,6 +7,7 @@ void main() {
       final loc = await AppLocalizations.delegate.load(locale);
       expect(loc.settings_title, isNotEmpty);
       expect(loc.settings_theme, isNotEmpty);
+      expect(loc.settings_dark_mode, isNotEmpty);
       expect(loc.settings_language, isNotEmpty);
       expect(loc.settings_logout, isNotEmpty);
     }
