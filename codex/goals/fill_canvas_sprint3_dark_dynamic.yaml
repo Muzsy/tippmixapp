@@ -1,0 +1,16 @@
+steps:
+  - name: "ThemeService perzisztencia réteg kiterjesztése"
+    description: |
+      Bővítsd a ThemeService-t, hogy a skin index és a dark mode beállításokat perzisztensen tudja kezelni.
+      - Integráld a SharedPreferences-t: lokális mentéshez és visszatöltéshez.
+      - Valósítsd meg a Firestore szinkronizációt: bejelentkezett felhasználók beállításai a users/{uid}/settings/theme dokumentumba kerüljenek.
+      - Készítsd el a következő metódusokat:
+        - hydrate(): induláskor töltse vissza a legutolsó beállításokat (helyi vagy cloud forrásból).
+        - saveTheme(): skin váltáskor mentse el az aktuális skin indexet mindkét forrásba.
+        - saveDarkMode(): dark mode állapotot mentse el mindkét forrásba.
+      - Gondoskodj róla, hogy minden állapotváltozás automatikusan frissítse a UI-t (Provider/Riverpod logika szerint).
+      - Írj unit-tesztet minden új metódushoz.
+    outputs:
+      - "A ThemeService már perzisztensen kezeli a skin és dark mode beállításokat (SharedPreferences + Firestore)."
+      - "hydrate(), saveTheme(), saveDarkMode() metódusok működnek."
+      - "Minden teszt CI pipeline-ban zöld."

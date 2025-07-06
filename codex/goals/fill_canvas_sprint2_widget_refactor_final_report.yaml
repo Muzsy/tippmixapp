@@ -1,0 +1,18 @@
+steps:
+  - name: "Sprint2 widget refaktor összegző jelentés és audit"
+    description: |
+      Készíts összefoglaló jelentést a Sprint2 minden lépéséről:
+        - Codemod script, szín-audit (color_audit.csv), manuális mapping (color_audit_reviewed.csv)
+        - Automatikus és manuális refaktor (Theme/ThemeExtension)
+        - Linter szabály bevezetés (avoid-hard-coded-colors), analysis_options.yaml
+        - Golden baseline frissítés, PNG snapshotok
+        - Accessibility audit (accessibility_tools), a11y_report.html
+        - brand színek kezelése (ThemeExtension, ignore)
+        - Manuális lépések (pubspec.yaml szerkesztés, PNG commit) külön megjegyezve
+      Győződj meg róla, hogy minden widget kizárólag Theme-ből/Extensionből színez.
+      Ellenőrizd, hogy minden audit és minőségi kapu zöld, nincs warning, nincs regresszió.
+      Helyezd el a dokumentációt a /canvases és /codex/goals mappában, a végleges yaml fájl fill_canvas_sprint2_widget_refactor_final_report.yaml néven készüljön.
+    outputs:
+      - Sprint2 összefoglaló canvas (canvases/sprint2_widget_refactor_final_report.md)
+      - Sprint2 összefoglaló yaml (codex/goals/fill_canvas_sprint2_widget_refactor_final_report.yaml)
+      - Frissített audit és baseline artefaktok (csv, png, html, yaml)
