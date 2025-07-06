@@ -4,11 +4,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/controllers/app_locale_controller.dart';
 import 'package:tippmixapp/controllers/app_theme_controller.dart';
+import 'package:tippmixapp/services/theme_service.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/models/user.dart';
+
+class FakeUser extends Fake implements fb.User {
+  @override
+  final String uid;
+  FakeUser(this.uid);
+}
+
+class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
+  FakeFirebaseAuth(this._user);
+  final fb.User? _user;
+  @override
+  fb.User? get currentUser => _user;
+}
 
 class FakeAuthService implements AuthService {
   bool signOutCalled = false;
@@ -45,12 +62,20 @@ class FakeAuthService implements AuthService {
 void main() {
   testWidgets('Settings interactions update controllers and logout', (tester) async {
     final authService = FakeAuthService();
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final themeService = ThemeService(
+      prefs: prefs,
+      firestore: FakeFirebaseFirestore(),
+      auth: FakeFirebaseAuth(null),
+    );
     await tester.pumpWidget(
         ProviderScope(
         overrides: [
           authProvider.overrideWith((ref) => AuthNotifier(authService)),
           appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
           appLocaleControllerProvider.overrideWith((ref) => AppLocaleController()),
+          themeServiceProvider.overrideWith((ref) => themeService),
         ],
           child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -70,6 +95,11 @@ void main() {
     final element = tester.element(find.byType(SettingsScreen));
     final container = ProviderScope.containerOf(element, listen: false);
     expect(container.read(appThemeControllerProvider), ThemeMode.dark);
+
+    // toggle dark mode
+    await tester.tap(find.text('Dark mode'));
+    await tester.pumpAndSettle();
+    expect(container.read(themeServiceProvider).isDark, isTrue);
 
     // change language
     await tester.tap(find.byType(DropdownButton<Locale>));
