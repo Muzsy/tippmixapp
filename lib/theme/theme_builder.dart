@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'brand_colors_presets.dart';
 
@@ -26,4 +27,32 @@ ThemeData buildTheme({
     useMaterial3: true,
     extensions: <ThemeExtension<dynamic>>[brand],
   );
+}
+
+/// Generates [ThemeData] using system dynamic color when available.
+///
+/// Falls back to [buildTheme] when dynamic color is not supported or
+/// retrieval fails. This uses [DynamicColorPlugin.getCorePalette] on
+/// Android 12+ to obtain the system core palette.
+Future<ThemeData> buildDynamicTheme({
+  FlexScheme scheme = FlexScheme.dellGenoa,
+  Brightness brightness = Brightness.light,
+}) async {
+  try {
+    final palette = await DynamicColorPlugin.getCorePalette();
+    if (palette != null) {
+      final colorScheme =
+          palette.toColorScheme(brightness: brightness).harmonized();
+      final brand =
+          brightness == Brightness.dark ? brandColorsDark : brandColorsLight;
+      return ThemeData(
+        colorScheme: colorScheme,
+        useMaterial3: true,
+        extensions: <ThemeExtension<dynamic>>[brand],
+      );
+    }
+  } catch (_) {
+    // ignore any platform or plugin errors and fall back to scheme theme
+  }
+  return buildTheme(scheme: scheme, brightness: brightness);
 }
