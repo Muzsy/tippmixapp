@@ -11,25 +11,10 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mocktail/mocktail.dart' show registerFallbackValue;
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/profile_service.dart';
-
-void _registerFileFallback() {
-  assert(() {
-    registerFallbackValue(File(''));
-    return true;
-  }());
-}
-
-// Ensure fallback is registered when this file is imported
-final _fileFallbackRegistered = (() {
-  _registerFileFallback();
-  return true;
-})();
-
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -60,7 +45,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Future<void> _showAvatarGallery(dynamic user) async {
     final loc = AppLocalizations.of(context)!;
-    final uid = user is firebase_auth.User ? user.uid : (user as app_user.User).id;
+    final uid = user is firebase_auth.User
+        ? user.uid
+        : (user as app_user.User).id;
     await showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
@@ -69,22 +56,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           onAvatarSelected: (path) async {
             Navigator.pop(context);
             setState(() => _avatarUrl = path);
-              try {
-                if (Firebase.apps.isNotEmpty) {
-                  await ProfileService.updateProfile(
-                    uid: uid,
-                    data: {'avatarUrl': path},
-                    firestore: FirebaseFirestore.instance,
-                    cache: _dummyCache,
-                    connectivity: _dummyConnectivity,
-                  );
-                }
-              } catch (_) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(loc.profile_avatar_error)),
+            try {
+              if (Firebase.apps.isNotEmpty) {
+                await ProfileService.updateProfile(
+                  uid: uid,
+                  data: {'avatarUrl': path},
+                  firestore: FirebaseFirestore.instance,
+                  cache: _dummyCache,
+                  connectivity: _dummyConnectivity,
                 );
               }
+            } catch (_) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
+            }
           },
         ),
       ),
@@ -96,15 +83,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final picked = await imagePicker.pickImage(source: ImageSource.gallery);
     if (picked == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.profile_avatar_cancelled)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_cancelled)));
       return;
     }
     try {
       if (storage != null && firestore != null) {
         final url = await ProfileService.uploadAvatar(
-          uid: user is firebase_auth.User ? user.uid : (user as app_user.User).id,
+          uid: user is firebase_auth.User
+              ? user.uid
+              : (user as app_user.User).id,
           file: File(picked.path),
           storage: storage!,
           firestore: firestore!,
@@ -113,24 +102,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         );
         if (!mounted) return;
         setState(() => _avatarUrl = url);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.profile_avatar_updated)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
         await WidgetsBinding.instance.endOfFrame;
       }
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.profile_avatar_error)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
     }
   }
 
   @visibleForTesting
-  Future<void> pickPhoto(dynamic user,
-          {ImagePicker? picker,
-          FirebaseStorage? storage,
-          FirebaseFirestore? firestore}) {
+  Future<void> pickPhoto(
+    dynamic user, {
+    ImagePicker? picker,
+    FirebaseStorage? storage,
+    FirebaseFirestore? firestore,
+  }) {
     if (picker != null) imagePicker = picker;
     if (storage != null) this.storage = storage;
     if (firestore != null) this.firestore = firestore;
@@ -201,8 +192,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final firebaseUser =
-        Firebase.apps.isNotEmpty ? firebase_auth.FirebaseAuth.instance.currentUser : null;
+    final firebaseUser = Firebase.apps.isNotEmpty
+        ? firebase_auth.FirebaseAuth.instance.currentUser
+        : null;
     final user = ref.watch(authProvider).user;
 
     if (firebaseUser == null && user == null) {
@@ -230,65 +222,71 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 : null,
             child: CircleAvatar(
               radius: 40,
-              backgroundImage: _avatarUrl != null && _avatarUrl!.startsWith('http')
+              backgroundImage:
+                  _avatarUrl != null && _avatarUrl!.startsWith('http')
                   ? NetworkImage(_avatarUrl!) as ImageProvider
                   : _avatarUrl != null
-                      ? AssetImage(_avatarUrl!)
-                      : null,
+                  ? AssetImage(_avatarUrl!)
+                  : null,
               child: _avatarUrl == null ? const Icon(Icons.person) : null,
             ),
           ),
           TextButton(
-            onPressed:
-                firebaseUser != null ? () => pickPhoto(firebaseUser) : null,
+            onPressed: firebaseUser != null
+                ? () => pickPhoto(firebaseUser)
+                : null,
             child: Text(loc.profileUploadPhoto),
           ),
-            FutureBuilder<bool>(
-              future: _defaultExists(),
-              builder: (context, snapshot) {
-                if (snapshot.data != true || firebaseUser == null) {
-                  return const SizedBox.shrink();
-                }
-                  return TextButton(
-                    onPressed: () async {
-                      setState(() => _avatarUrl = kDefaultAvatarPath);
-                      if (Firebase.apps.isNotEmpty) {
-                        await ProfileService.updateProfile(
-                          uid: uid,
-                          data: {'avatarUrl': kDefaultAvatarPath},
-                          firestore: FirebaseFirestore.instance,
-                          cache: _dummyCache,
-                          connectivity: _dummyConnectivity,
-                        );
-                      }
-                  },
+          FutureBuilder<bool>(
+            future: _defaultExists(),
+            builder: (context, snapshot) {
+              if (snapshot.data != true || firebaseUser == null) {
+                return const SizedBox.shrink();
+              }
+              return TextButton(
+                onPressed: () async {
+                  setState(() => _avatarUrl = kDefaultAvatarPath);
+                  if (Firebase.apps.isNotEmpty) {
+                    await ProfileService.updateProfile(
+                      uid: uid,
+                      data: {'avatarUrl': kDefaultAvatarPath},
+                      firestore: FirebaseFirestore.instance,
+                      cache: _dummyCache,
+                      connectivity: _dummyConnectivity,
+                    );
+                  }
+                },
                 child: Text(loc.profileResetAvatar),
               );
             },
           ),
           const SizedBox(height: 8),
-            Text('${loc.profile_nickname}: $displayName',
-                style: const TextStyle(fontSize: 16)),
+          Text(
+            '${loc.profile_nickname}: $displayName',
+            style: const TextStyle(fontSize: 16),
+          ),
           const SizedBox(height: 8),
-            Text('${loc.profile_email}: $email',
-                style: const TextStyle(fontSize: 16)),
+          Text(
+            '${loc.profile_email}: $email',
+            style: const TextStyle(fontSize: 16),
+          ),
           const SizedBox(height: 16),
           SwitchListTile(
             dense: true,
             title: Text(loc.profile_global_privacy),
             value: _isPrivate,
-              onChanged: (v) async {
-                setState(() => _isPrivate = v);
-                if (Firebase.apps.isNotEmpty) {
-                  await ProfileService.updateProfile(
-                    uid: uid,
-                    data: {'isPrivate': v},
-                    firestore: FirebaseFirestore.instance,
-                    cache: _dummyCache,
-                    connectivity: _dummyConnectivity,
-                  );
-                }
-              },
+            onChanged: (v) async {
+              setState(() => _isPrivate = v);
+              if (Firebase.apps.isNotEmpty) {
+                await ProfileService.updateProfile(
+                  uid: uid,
+                  data: {'isPrivate': v},
+                  firestore: FirebaseFirestore.instance,
+                  cache: _dummyCache,
+                  connectivity: _dummyConnectivity,
+                );
+              }
+            },
           ),
           const Divider(),
           ElevatedButton(
@@ -308,7 +306,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   await ProfileService.updateProfile(
                     uid: uid,
                     data: {
-                      'fieldVisibility': {key: v}
+                      'fieldVisibility': {key: v},
                     },
                     firestore: FirebaseFirestore.instance,
                     cache: _dummyCache,
@@ -319,30 +317,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             );
           }),
           const SizedBox(height: 16),
-            if (_error != null) ...[
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: 12),
-            ],
-            _loggingOut
-                ? const Center(child: CircularProgressIndicator())
-                : ElevatedButton(
-                    onPressed: _loggingOut ? null : _logout,
-                    child: Text(loc.profile_logout),
-                  ),
-            const SizedBox(height: 8),
+          if (_error != null) ...[
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 12),
           ],
-        ),
-      );
+          _loggingOut
+              ? const Center(child: CircularProgressIndicator())
+              : ElevatedButton(
+                  onPressed: _loggingOut ? null : _logout,
+                  child: Text(loc.profile_logout),
+                ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
 
-      if (!widget.showAppBar) {
-        if (Scaffold.maybeOf(context) != null) {
-          return content;
-        }
-        return Scaffold(body: content);
-      }
+    if (!widget.showAppBar) {
       if (Scaffold.maybeOf(context) != null) {
         return content;
       }
+      return Scaffold(body: content);
+    }
+    if (Scaffold.maybeOf(context) != null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(loc.profile_title)),
       body: content,

@@ -145,3 +145,7 @@ Removed unused flutter_localizations import in login_register_screen_test.
 Implemented FakeAuthService and fixed FakeAuthNotifier constructor in profile_avatar_upload_test; imported fake_cloud_firestore and renamed pumpWidget function.
 Added fake_cloud_firestore import and corrected mock expectation in profile_service_avatar_test.
 Nem sikerult javitani a .env asset figyelmeztetest a llama_index/data/pubspec.yaml fajlban.
+lib/screens/profile_screen.dart → OK – removed mocktail fallback registration
+test/screens/profile_avatar_upload_test.dart → OK – cleaned duplicate and unnecessary imports
+test/services/profile_service_avatar_test.dart → OK – removed unused cloud_firestore import
+llama_index/data/pubspec.yaml → NEM SIKERÜLT – asset .env path missing
