@@ -1,0 +1,16 @@
+steps:
+  - name: "Dark mode toggle implementálása"
+    description: |
+      Valósítsd meg, hogy a felhasználó egy kapcsolóval (SwitchListTile) válthasson világos és sötét mód között a Beállítások képernyőn.
+      - A ThemeService-ben készíts toggleDarkMode() metódust, amely módosítja, menti (T3.1 perzisztencia szerint), majd értesíti a UI-t az állapotváltásról.
+      - A Beállítások (settings) képernyőn jelenjen meg egy SwitchListTile, amely mutatja és vezérli a ThemeService dark mód állapotát.
+      - Gondoskodj arról, hogy a váltás azonnal érvényesüljön minden képernyőn (MaterialApp theme/darkTheme automatikusan frissül).
+      - A kiválasztott mód perzisztensen elmentődik és app induláskor visszatöltődik.
+      - Lokalizáld a kapcsoló feliratát (“Sötét mód” / “Dark mode”).
+      - Írj unit/widget tesztet a toggleDarkMode() működésére.
+    outputs:
+      - "A felhasználó a Beállítások menüben váltani tud világos/sötét mód között."
+      - "A ThemeService.toggleDarkMode() működik, az állapotot menti, visszatölti."
+      - "A kapcsoló minden skin-nél és minden képernyőn helyesen működik."
+      - "A kapcsoló felirata lokalizált (magyar/angol)."
+      - "CI pipeline zöld, minden teszt lefut."
