@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:tippmixapp/services/profile_service.dart';
 
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+
 class MockReference extends Mock implements Reference {}
+
 class MockUploadTask extends Mock implements UploadTask {}
 
 void main() {
@@ -24,9 +25,10 @@ void main() {
       firestore = FakeFirebaseFirestore();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-        when(() => reference.putFile(any())).thenReturn(task);
-      when(() => reference.getDownloadURL())
-          .thenAnswer((_) async => 'http://download');
+      when(() => reference.putFile(any())).thenReturn(task);
+      when(
+        () => reference.getDownloadURL(),
+      ).thenAnswer((_) async => 'http://download');
     });
 
     test('uploads file and updates profile', () async {
