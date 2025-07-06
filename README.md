@@ -35,7 +35,8 @@ state management.
    `GoogleService-Info.plist`). The [FlutterFire](https://firebase.flutter.dev/)
    CLI can generate these files.
 5. Launch the application with `flutter run`.
-6. Run `flutter test` to execute the small widget tests.
+6. Run `flutter test` to execute all widget tests, including the automated
+   accessibility audit provided by the `accessibility_test` package.
 
 ## Repository structure
 
