@@ -129,7 +129,7 @@ void main() {
       await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Avatar updated'), findsOneWidget);
     });
 
