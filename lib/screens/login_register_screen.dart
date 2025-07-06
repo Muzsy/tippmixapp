@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../routes/app_route.dart';
 import '../models/auth_state.dart';
+import '../theme/brand_colors.dart';
 
 class LoginRegisterScreen extends ConsumerStatefulWidget {
   const LoginRegisterScreen({super.key});
@@ -190,21 +191,24 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen>
                   key: const Key('google_login_button'),
                   label: loc.google_login,
                   icon: Icons.g_mobiledata,
-                  color: Colors.red,
+                  color:
+                      Theme.of(context).extension<BrandColors>()!.google,
                   onPressed: null,
                 ),
                 _SocialLoginButton(
                   key: const Key('apple_login_button'),
                   label: loc.apple_login,
                   icon: Icons.apple,
-                  color: Colors.black,
+                  color:
+                      Theme.of(context).extension<BrandColors>()!.apple,
                   onPressed: null,
                 ),
                 _SocialLoginButton(
                   key: const Key('facebook_login_button'),
                   label: loc.facebook_login,
                   icon: Icons.facebook,
-                  color: Colors.blue,
+                  color:
+                      Theme.of(context).extension<BrandColors>()!.facebook,
                   onPressed: null,
                 ),
               ],
