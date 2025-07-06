@@ -1,0 +1,14 @@
+steps:
+  - name: "Android dynamic_color integráció a ThemeBuilderben"
+    description: |
+      Valósítsd meg, hogy Android 12+ eszközökön a TippmixApp színsémája automatikusan a rendszer dynamic color (core palette seed) alapján épüljön fel.
+      - Használd a DynamicColorPlugin-t a rendszer core palette seed lekérésére Android 12+ esetén.
+      - A ThemeBuilder logikájában vizsgáld meg, hogy van-e elérhető dynamic color seed:
+        - Ha van, akkor az app színsémáját ennek alapján generáld (felülírva a felhasználó által választott skin seed-et).
+        - Ha nincs, vagy más platformon fut, a kiválasztott skin seed színét használd (T3.1–T3.4 logika szerint).
+      - Gondoskodj arról, hogy minden platformon (iOS, régi Android, Web) hibamentesen működjön (try-catch, fallback).
+      - Készíts unit/widget tesztet a dynamic color ág és a fallback működésére.
+    outputs:
+      - "Android 12+ eszközökön a rendszerpaletta seed-je alapján színez az app."
+      - "Más platformon a kiválasztott skin logika aktív marad, minden hiba esetén fallback működik."
+      - "CI pipeline minden tesztet sikeresen lefuttat."
