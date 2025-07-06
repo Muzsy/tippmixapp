@@ -153,8 +153,11 @@ class _ShimmerListState extends State<_ShimmerList>
                 key: const Key('shimmer'),
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withAlpha(
-                    ((0.3 + 0.3 * _controller.value) * 255).round(),
+                  color: Theme.of(context)
+                  .colorScheme
+                  .outlineVariant
+                  .withAlpha(
+                    (((0.3 + 0.3 * _controller.value) * 255).round()).toInt(),
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
