@@ -97,7 +97,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_challenge_title => 'Challenge awaits!';
 
   @override
-  String get home_tile_challenge_daily_description => 'Daily challenge: win 3 bets today.';
+  String get home_tile_challenge_daily_description =>
+      'Daily challenge: win 3 bets today.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -111,13 +112,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_educational_tip_title => 'Betting tip';
 
   @override
-  String get home_tile_educational_tip_1 => 'Did you know? Combining bets can increase your odds.';
+  String get home_tile_educational_tip_1 =>
+      'Did you know? Combining bets can increase your odds.';
 
   @override
-  String get home_tile_educational_tip_2 => 'Single bets carry less risk than accumulators.';
+  String get home_tile_educational_tip_2 =>
+      'Single bets carry less risk than accumulators.';
 
   @override
-  String get home_tile_educational_tip_3 => 'Track your betting history to learn from past results.';
+  String get home_tile_educational_tip_3 =>
+      'Track your betting history to learn from past results.';
 
   @override
   String get home_tile_educational_tip_cta => 'More tips';
@@ -452,6 +456,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_push_notifications => 'Push notifications';
+
+  @override
+  String get settings_skin => 'Skin';
+
+  @override
+  String get skin_dell_genoa_name => 'Tippmix Green';
+
+  @override
+  String get skin_dell_genoa_description => 'Default Tippmix green theme';
+
+  @override
+  String get skin_pink_m3_name => 'Pink Party';
+
+  @override
+  String get skin_pink_m3_description => 'Fun and vibrant pink skin';
 
   @override
   String get badge_rookie_title => 'Rookie';

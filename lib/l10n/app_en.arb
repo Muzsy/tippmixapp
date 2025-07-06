@@ -144,6 +144,11 @@
   ,"settings_logout": "Logout"
   ,"settings_ai_recommendations": "AI recommendations"
   ,"settings_push_notifications": "Push notifications"
+  ,"settings_skin": "Skin",
+  ,"skin_dell_genoa_name": "Tippmix Green",
+  ,"skin_dell_genoa_description": "Default Tippmix green theme",
+  ,"skin_pink_m3_name": "Pink Party",
+  ,"skin_pink_m3_description": "Fun and vibrant pink skin"
   ,"badge_rookie_title": "Rookie"
   ,"badge_rookie_description": "First win completed."
   ,"badge_hot_streak_title": "Hot Streak"
