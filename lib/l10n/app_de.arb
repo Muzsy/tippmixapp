@@ -144,6 +144,11 @@
   ,"settings_logout": "Abmelden"
   ,"settings_ai_recommendations": "AI-Empfehlungen"
   ,"settings_push_notifications": "Push-Benachrichtigungen"
+  ,"settings_skin": "Skin",
+  ,"skin_dell_genoa_name": "Tippmix Grün",
+  ,"skin_dell_genoa_description": "Standard Tippmix-Farbschema (grün)",
+  ,"skin_pink_m3_name": "Pink Party",
+  ,"skin_pink_m3_description": "Verspieltes, fröhliches Skin"
   ,"badge_rookie_title": "Anfänger"
   ,"badge_rookie_description": "Erster Gewinn erzielt."
   ,"badge_hot_streak_title": "Heiße Serie"

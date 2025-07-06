@@ -144,6 +144,11 @@
   ,"settings_logout": "Kijelentkezés"
   ,"settings_ai_recommendations": "AI ajánlások"
   ,"settings_push_notifications": "Értesítések"
+  ,"settings_skin": "Skin",
+  ,"skin_dell_genoa_name": "Tippmix Zöld",
+  ,"skin_dell_genoa_description": "Alap Tippmix színséma (zöld)",
+  ,"skin_pink_m3_name": "Pink Party",
+  ,"skin_pink_m3_description": "Lányos, vidám skin"
   ,"badge_rookie_title": "Újonc"
   ,"badge_rookie_description": "Első nyertes fogadásod."
   ,"badge_hot_streak_title": "Forró széria"
