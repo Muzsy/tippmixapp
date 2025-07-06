@@ -1,0 +1,12 @@
+steps:
+  - name: "Golden tesztek frissítése, új baseline létrehozása"
+    description: |
+      A golden PNG snapshot fájlokat csak manuális fejlesztői művelettel lehet elkészíteni és commitolni.
+      Futtasd le a flutter test --update-goldens parancsot a saját fejlesztői környezetedben.
+      Ellenőrizd, hogy minden frissített PNG a várt design szerint készült, nincs regresszió.
+      Manuálisan add hozzá (git add), commitold és pushold a golden PNG fájlokat a repóba.
+      CI pipeline-ban biztosítsd, hogy minden golden diff-ot ellenőriz, és PR csak akkor mehet át, ha nincs eltérés.
+    outputs:
+      - Frissített golden PNG fájlok (/test/goldens/)
+      - Zöld CI pipeline golden diff ellenőrzéssel
+      - Megjegyzés: A PNG fájlokat kizárólag manuálisan lehet commitolni, Codex erre nem képes.

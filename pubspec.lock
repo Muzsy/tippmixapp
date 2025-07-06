@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.57"
+  accessibility_tools:
+    dependency: "direct dev"
+    description:
+      name: accessibility_tools
+      sha256: aaa782bf794d823f371f45d232efe8605cffe081c34a1d83fe4db491ddbba0c7
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
   analyzer:
     dependency: transitive
     description:
@@ -1212,4 +1220,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.8.1 <4.0.0"
-  flutter: ">=3.29.0"
+  flutter: ">=3.32.0"
