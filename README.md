@@ -42,10 +42,16 @@ state management.
 - `lib/` – application code: screens, widgets, services and providers.
 - `docs/` – additional design documents for data models and API integration. Lásd még: `docs/coin_logs_cloud_function.md` a coin naplózás működéséről.
 - `test/` – example widget tests.
+- `legacy/` – archived files including the deprecated `AppColors` palette.
 
 This MVP focuses on providing a simple end‑to‑end flow using live odds data and
 Firebase backend services. Further information about the data models and
 architecture can be found in the documentation under `docs/`.
+
+### Theme and colors
+The old `AppColors` palette has been moved to `legacy/AppColors.dart` and
+is kept only for historical reference. All colors in the active code are
+provided through `ThemeBuilder` and `BrandColors` theme extensions.
 
 ## CI: Firestore security rules
 
