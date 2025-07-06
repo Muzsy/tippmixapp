@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-// ignore: depend_on_referenced_packages
-import 'package:accessibility_tools/accessibility_tools.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -85,12 +82,7 @@ class MyApp extends ConsumerWidget {
 
         return MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) {
-            if (kDebugMode) {
-              return AccessibilityTools(child: child ?? const SizedBox.shrink());
-            }
-            return child ?? const SizedBox.shrink();
-          },
+          builder: (context, child) => child ?? const SizedBox.shrink(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: const [
         Locale('hu'),
