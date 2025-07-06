@@ -59,7 +59,9 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                         style: TextStyle(fontWeight: isMe ? FontWeight.bold : FontWeight.normal),
                       ),
                       subtitle: Text(_subtitle(loc, item, mode)),
-                      tileColor: isMe ? Colors.yellow.shade100 : null,
+                      tileColor: isMe
+                          ? Theme.of(context).colorScheme.tertiaryContainer
+                          : null,
                     );
                   },
                 );
