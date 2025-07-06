@@ -1,0 +1,13 @@
+steps:
+  - name: "Persist & hydrate on startup – Theme beállítások betöltése induláskor"
+    description: |
+      Gondoskodj róla, hogy az alkalmazás indításakor automatikusan visszatöltődjenek a legutóbbi skin és dark mode beállítások.
+      - A main() első lépéseként hívd meg a ThemeService.hydrate() metódust, amely elvégzi a SharedPreferences/Firestore alapú visszatöltést.
+      - Amíg a beállítások nem töltődnek be, jelenjen meg egy splash screen vagy loading state.
+      - A MaterialApp csak a sikeres betöltés után induljon el, mindig a helyes theme/darkTheme állapotban.
+      - Hibakezelés: ha a visszatöltés hibás, alapértelmezett skin/dark mode lépjen életbe.
+      - Írj unit/widget tesztet a hydrate() működésére és a hibakezelésre.
+    outputs:
+      - "Az alkalmazás minden indításkor a legutóbbi választott kinézettel indul el."
+      - "Sikertelen visszatöltés esetén alapértelmezett theme indul."
+      - "CI pipeline minden kapcsolódó tesztet sikeresen lefuttat."
