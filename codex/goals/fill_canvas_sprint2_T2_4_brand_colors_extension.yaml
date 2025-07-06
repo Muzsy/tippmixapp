@@ -1,0 +1,21 @@
+steps:
+  - name: "BrandColors ThemeExtension bevezetése social login gombokhoz"
+    description: |
+      Hozz létre egy új ThemeExtension osztályt BrandColors néven a lib/theme/ mappában.
+      Ebben definiáld a főbb social login márkaszíneket (google, apple, facebook).
+      Például: 
+        - Google: #DB4437
+        - Apple: #000000
+        - Facebook: #1877F3
+      Add hozzá a BrandColors ThemeExtension-t a ThemeData-hoz (light/dark), mindkét módban a hivatalos brand színeknek megfelelően.
+      Cseréld le a login_register_screen.dart (és más social login gombokat tartalmazó widgetek) kódjában a Colors.red, Colors.black, Colors.blue előfordulásokat a megfelelő ThemeExtension hivatkozásra:
+        - Google: Theme.of(context).extension<BrandColors>()!.google
+        - Apple: Theme.of(context).extension<BrandColors>()!.apple
+        - Facebook: Theme.of(context).extension<BrandColors>()!.facebook
+      Ellenőrizd, hogy minden social login gomb a brand guideline szerinti színt használja, de már theme-alapú módon, hard-coded színek nélkül.
+      Futtasd le a lintert (avoid-hard-coded-colors), ellenőrizd, hogy nincs warning!
+    outputs:
+      - lib/theme/brand_colors.dart (vagy a projekt theme mappájában a ThemeExtension definíció)
+      - Frissített ThemeData (light/dark), extensions mezőben a BrandColors példánnyal
+      - Frissített login_register_screen.dart (és minden érintett social login gomb), ThemeExtension hivatkozással
+      - Zöld linter és CI pipeline
