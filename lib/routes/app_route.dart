@@ -12,4 +12,5 @@ enum AppRoute {
   feed,
   notifications,
   notificationPrefs,
+  editProfile,
 }

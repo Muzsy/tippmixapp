@@ -4,7 +4,7 @@ import '../models/user_model.dart';
 
 class UserService {
   final FirebaseFirestore _firestore;
-  UserService([FirebaseFirestore? firestore])
+  const UserService([FirebaseFirestore? firestore])
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<UserModel> updateNotificationPrefs(
@@ -18,5 +18,14 @@ class UserService {
     final snap = await _firestore.collection('users').doc(uid).get();
     final data = snap.data() ?? <String, dynamic>{};
     return UserModel.fromJson(data);
+  }
+
+  Future<UserModel> updateProfile(String uid, Map<String, dynamic> changes) async {
+    await _firestore
+        .collection('users')
+        .doc(uid)
+        .set(changes, SetOptions(merge: true));
+    final snap = await _firestore.collection('users').doc(uid).get();
+    return UserModel.fromJson(snap.data() ?? <String, dynamic>{});
   }
 }
