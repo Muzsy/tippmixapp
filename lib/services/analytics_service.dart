@@ -28,6 +28,24 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  Future<void> logOnboardingCompleted(Duration duration) async {
+    try {
+      await _analytics.logEvent(
+        name: 'onboarding_completed',
+        parameters: {'duration_sec': duration.inSeconds},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> logOnboardingSkipped(Duration duration) async {
+    try {
+      await _analytics.logEvent(
+        name: 'onboarding_skipped',
+        parameters: {'duration_sec': duration.inSeconds},
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());
