@@ -26,8 +26,10 @@ import 'package:tippmixapp/screens/home_screen.dart'
         aiTipFutureProvider,
         activeChallengesProvider,
         latestFeedActivityProvider;
-import 'package:tippmixapp/screens/my_tickets_screen.dart' show ticketsProvider;
-import 'package:tippmixapp/screens/badges/badge_screen.dart' show userBadgesProvider;
+import 'package:tippmixapp/screens/my_tickets_screen.dart'
+    show MyTicketsScreen, ticketsProvider;
+import 'package:tippmixapp/screens/badges/badge_screen.dart'
+    show BadgeScreen, userBadgesProvider;
 import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/login_register_screen.dart';
@@ -76,6 +78,12 @@ class _FakeAuthNotifier extends AuthNotifier {
 
 class _FakeBetSlipProvider extends BetSlipProvider {
   _FakeBetSlipProvider() : super();
+}
+
+class _FakeUser extends Fake implements fb.User {
+  @override
+  final String uid;
+  _FakeUser(this.uid);
 }
 
 class _FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
@@ -174,7 +182,7 @@ void main() {
     themeService = ThemeService(
       prefs: prefs,
       firestore: firestore,
-      auth: _FakeFirebaseAuth(user),
+      auth: _FakeFirebaseAuth(_FakeUser(user.id)),
     );
   });
 
