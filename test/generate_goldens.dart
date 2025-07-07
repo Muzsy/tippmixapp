@@ -3,13 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import 'package:tippmixapp/theme/theme_builder.dart';
 import 'package:tippmixapp/theme/available_themes.dart';
 import 'package:tippmixapp/services/theme_service.dart';
+import 'mock_theme_service.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/auth_state.dart';
@@ -173,17 +172,9 @@ void main() {
 
   final user = User(id: 'u1', email: 'demo@demo.com', displayName: 'Demo');
   late ThemeService themeService;
-  late FakeFirebaseFirestore firestore;
 
   setUpAll(() async {
-    SharedPreferences.setMockInitialValues({});
-    final prefs = await SharedPreferences.getInstance();
-    firestore = FakeFirebaseFirestore();
-    themeService = ThemeService(
-      prefs: prefs,
-      firestore: firestore,
-      auth: _FakeFirebaseAuth(_FakeUser(user.id)),
-    );
+    themeService = MockThemeService();
   });
 
   final routes = <String, AppRoute>{
