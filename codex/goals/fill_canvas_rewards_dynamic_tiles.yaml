@@ -1,0 +1,58 @@
+canvas: canvases/rewards_dynamic_tiles.md
+inputs:
+  - codex_docs/testing_guidelines.md
+steps:
+  - name: Model & stats stream
+    description: Extend `UserStatsModel` with `streakDays`, `nextReward`, `coinsBalance` and provide stream via `StatsService`.
+    outputs:
+      - lib/models/user_stats_model.dart
+      - lib/services/stats_service.dart
+
+  - name: UI – RewardsScreen v2
+    description: Implement `RewardsScreenV2` with streak progress bar widget, dynamic `RewardTile` list, and balance header.
+    outputs:
+      - lib/screens/rewards/rewards_screen_v2.dart
+      - lib/widgets/streak_progress_bar.dart
+      - lib/widgets/reward_tile.dart
+      - lib/widgets/coins_balance_header.dart
+
+  - name: Claim reward flow
+    description: Create `RewardService.claimReward(rewardId)` calling Cloud Function, update balance.
+    outputs:
+      - lib/services/reward_service.dart
+
+  - name: Local notification
+    description: Schedule 22:00 local notif if `streakDays==6` and no login yet that day.
+    outputs:
+      - lib/services/local_notification_service.dart
+
+  - name: Analytics
+    description: Fire `reward_claimed` with params.
+    outputs:
+      - lib/services/analytics_service.dart
+
+  - name: Localization
+    description: ARB keys for reward names, claim states.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (streak increment), service tests (claimReward), integration (7‑day loop), golden (reward tile states).
+    outputs:
+      - test/widgets/streak_progress_test.dart
+      - test/services/reward_service_test.dart
+      - test/integration/rewards_weekly_streak_test.dart
+      - test/golden/reward_tile_claimable.png
+      - test/golden/reward_tile_claimed.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 9
+  tags: [rewards, streak, engagement]
