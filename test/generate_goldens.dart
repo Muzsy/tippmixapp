@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:tippmixapp/theme/theme_builder.dart';
 import 'package:tippmixapp/theme/available_themes.dart';
@@ -14,25 +16,13 @@ import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/providers/notification_provider.dart';
 import 'package:tippmixapp/screens/home_screen.dart'
     show
-        HomeScreen,
         dailyBonusAvailableProvider,
         latestBadgeProvider,
         aiTipFutureProvider,
         activeChallengesProvider,
         latestFeedActivityProvider;
-import 'package:tippmixapp/screens/profile_screen.dart';
-import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/my_tickets_screen.dart'
-    show MyTicketsScreen, ticketsProvider;
-import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
-import 'package:tippmixapp/screens/settings/settings_screen.dart';
-import 'package:tippmixapp/screens/login_register_screen.dart';
-import 'package:tippmixapp/screens/create_ticket_screen.dart';
-import 'package:tippmixapp/screens/badges/badge_screen.dart'
-    show BadgeScreen, userBadgesProvider;
-import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
-import 'package:tippmixapp/screens/feed_screen.dart';
-import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
+import 'package:tippmixapp/screens/my_tickets_screen.dart' show ticketsProvider;
+import 'package:tippmixapp/screens/badges/badge_screen.dart' show userBadgesProvider;
 import 'package:tippmixapp/providers/leaderboard_provider.dart'
     show topTipsterProvider;
 import 'package:tippmixapp/services/reward_service.dart'
@@ -42,6 +32,8 @@ import 'package:tippmixapp/providers/odds_api_provider.dart'
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tippmixapp/router.dart';
+import 'package:tippmixapp/routes/app_route.dart';
 import 'dart:io';
 
 class _FakeAuthService implements AuthService {
@@ -76,21 +68,25 @@ class _FakeBetSlipProvider extends BetSlipProvider {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() async {
+    await Firebase.initializeApp();
+  });
+
   final user = User(id: 'u1', email: 'demo@demo.com', displayName: 'Demo');
 
-  final screens = <String, Widget>{
-    'home': const HomeScreen(showStats: true),
-    'profile': const ProfileScreen(showAppBar: false),
-    'bets': const EventsScreen(sportKey: 'soccer', showAppBar: false),
-    'my_tickets': const MyTicketsScreen(showAppBar: false),
-    'leaderboard': const LeaderboardScreen(),
-    'settings': const SettingsScreen(),
-    'login': const LoginRegisterScreen(),
-    'create_ticket': const CreateTicketScreen(),
-    'badges': const BadgeScreen(),
-    'rewards': const RewardsScreen(),
-    'feed': const FeedScreen(showAppBar: false),
-    'notifications': const NotificationCenterScreen(),
+  final routes = <String, AppRoute>{
+    'home': AppRoute.home,
+    'profile': AppRoute.profile,
+    'bets': AppRoute.bets,
+    'my_tickets': AppRoute.myTickets,
+    'leaderboard': AppRoute.leaderboard,
+    'settings': AppRoute.settings,
+    'login': AppRoute.login,
+    'create_ticket': AppRoute.createTicket,
+    'badges': AppRoute.badges,
+    'rewards': AppRoute.rewards,
+    'feed': AppRoute.feed,
+    'notifications': AppRoute.notifications,
   };
 
   final overrides = <Override>[
@@ -117,9 +113,9 @@ void main() {
 
   for (final scheme in availableThemes) {
     for (final brightness in [Brightness.light, Brightness.dark]) {
-      for (final entry in screens.entries) {
+      for (final entry in routes.entries) {
         final label = entry.key;
-        final widget = entry.value;
+        final route = entry.value;
         final suffix = brightness == Brightness.light ? 'light' : 'dark';
         final fileName = 'goldens/${label}_skin${scheme.index}_$suffix.png';
         // final skip = !File('test/$fileName').existsSync();
@@ -127,7 +123,8 @@ void main() {
           await tester.pumpWidget(
             ProviderScope(
               overrides: overrides,
-              child: MaterialApp(
+              child: MaterialApp.router(
+                routerConfig: router,
                 theme: buildTheme(scheme: scheme, brightness: Brightness.light),
                 darkTheme: buildTheme(
                   scheme: scheme,
@@ -139,10 +136,10 @@ void main() {
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
                 locale: const Locale('en'),
-                home: widget,
               ),
             ),
           );
+          router.goNamed(route.name);
           await tester.pumpAndSettle();
           await expectLater(
             find.byType(MaterialApp),
