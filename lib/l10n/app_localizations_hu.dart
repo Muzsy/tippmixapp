@@ -692,4 +692,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get profile_avatar_cancelled => 'Avatar feltöltés megszakítva';
+
+  @override
+  String get notif_tips => 'Tippek';
+
+  @override
+  String get notif_friend_activity => 'Barátok aktivitása';
+
+  @override
+  String get notif_badge => 'Jelvények';
+
+  @override
+  String get notif_rewards => 'Jutalmak';
+
+  @override
+  String get notif_system => 'Rendszer';
 }

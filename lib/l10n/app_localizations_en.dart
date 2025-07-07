@@ -681,4 +681,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_avatar_cancelled => 'Avatar upload cancelled';
+
+  @override
+  String get notif_tips => 'Tips';
+
+  @override
+  String get notif_friend_activity => 'Friend activity';
+
+  @override
+  String get notif_badge => 'Badges';
+
+  @override
+  String get notif_rewards => 'Rewards';
+
+  @override
+  String get notif_system => 'System';
 }
