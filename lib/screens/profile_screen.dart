@@ -15,6 +15,8 @@ import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/profile_service.dart';
+import 'profile/partials/notification_prefs_section.dart';
+import '../services/user_service.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -316,6 +318,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               },
             );
           }),
+          const Divider(),
+          NotificationPrefsSection(
+            uid: uid,
+            service: UserService(),
+          ),
           const SizedBox(height: 16),
           if (_error != null) ...[
             Text(
