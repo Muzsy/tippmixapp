@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:tippmixapp/services/user_service.dart';
-import 'package:tippmixapp/models/user_model.dart';
 
 void main() {
   test('updateProfile merges changes', () async {
