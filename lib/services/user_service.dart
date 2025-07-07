@@ -28,4 +28,11 @@ class UserService {
     final snap = await _firestore.collection('users').doc(uid).get();
     return UserModel.fromJson(snap.data() ?? <String, dynamic>{});
   }
+
+  Future<void> markOnboardingCompleted(String uid) async {
+    await _firestore.collection('users').doc(uid).set({
+      'onboardingCompleted': true,
+      'onboardingCompletedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }

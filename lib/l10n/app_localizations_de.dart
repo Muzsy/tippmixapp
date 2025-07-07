@@ -776,4 +776,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get login_variant_b_promo_subtitle => 'Werde Teil unserer Community!';
+
+  @override
+  String get onboarding_place_bet => 'Platziere Wetten einfach';
+
+  @override
+  String get onboarding_track_rewards => 'Verfolge deine Belohnungen';
+
+  @override
+  String get onboarding_follow_tipsters => 'Folge Top-Tipstern';
+
+  @override
+  String get onboarding_skip => 'Überspringen';
+
+  @override
+  String get onboarding_next => 'Weiter';
+
+  @override
+  String get onboarding_done => 'Fertig';
 }

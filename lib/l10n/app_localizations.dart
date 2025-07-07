@@ -1614,6 +1614,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join our community and win!'**
   String get login_variant_b_promo_subtitle;
+
+  /// No description provided for @onboarding_place_bet.
+  ///
+  /// In en, this message translates to:
+  /// **'Place bets easily'**
+  String get onboarding_place_bet;
+
+  /// No description provided for @onboarding_track_rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your rewards'**
+  String get onboarding_track_rewards;
+
+  /// No description provided for @onboarding_follow_tipsters.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow top tipsters'**
+  String get onboarding_follow_tipsters;
+
+  /// No description provided for @onboarding_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboarding_skip;
+
+  /// No description provided for @onboarding_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboarding_next;
+
+  /// No description provided for @onboarding_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get onboarding_done;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
