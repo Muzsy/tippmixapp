@@ -746,4 +746,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get verified_badge_label => 'Verifiziert';
+  @override
+  String get follow => 'Folgen';
+  @override
+  String get unfollow => 'Entfolgen';
+  @override
+  String get addFriend => 'Freund hinzuf\u00fcgen';
+  @override
+  String get requestSent => 'Anfrage gesendet';
+  @override
+  String get friends => 'Freunde';
+  @override
+  String get followers => 'Follower';
+  @override
+  String get pending => 'Ausstehend';
+  @override
+  String get accept => 'Akzeptieren';
 }

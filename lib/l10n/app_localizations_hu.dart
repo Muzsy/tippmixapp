@@ -746,4 +746,20 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get verified_badge_label => 'Ellen\u0151rz\u00f6tt';
+  @override
+  String get follow => 'K\u00f6vet\u00e9s';
+  @override
+  String get unfollow => 'K\u00f6vetve';
+  @override
+  String get addFriend => 'Ismer\u0151snek jel\u00f6l';
+  @override
+  String get requestSent => 'K\u00e9relem elk\u00fcldve';
+  @override
+  String get friends => 'Bar\u00e1tok';
+  @override
+  String get followers => 'K\u00f6vet\u0151k';
+  @override
+  String get pending => 'F\u00fcgg\u0151ben';
+  @override
+  String get accept => 'Elfogad';
 }

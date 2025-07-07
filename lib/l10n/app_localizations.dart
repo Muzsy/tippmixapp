@@ -1515,6 +1515,14 @@ abstract class AppLocalizations {
   String get otp_error_invalid;
   String get backup_codes_title;
   String get verified_badge_label;
+  String get follow;
+  String get unfollow;
+  String get addFriend;
+  String get requestSent;
+  String get friends;
+  String get followers;
+  String get pending;
+  String get accept;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
