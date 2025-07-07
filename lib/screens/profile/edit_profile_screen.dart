@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../services/user_service.dart';
 import '../../validators/display_name_validator.dart';
-import '../../validators/age_validator.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -26,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _saving = false;
 
   final _nameValidator = DisplayNameValidator();
-  final _ageValidator = AgeValidator();
 
   @override
   void initState() {
