@@ -197,6 +197,8 @@
   ,"notificationMarkRead": "Als gelesen markieren"
   ,"notificationFilterAll": "Alle"
   ,"notificationFilterUnread": "Ungelesen"
+  ,"notificationArchive": "Archivieren"
+  ,"notificationUndo": "R\u00fcckg\u00e4ngig"
   ,"notificationType_reward": "Belohnung"
   ,"notificationType_badge": "Abzeichen"
   ,"notificationType_friend": "Freundschaftsanfrage"
