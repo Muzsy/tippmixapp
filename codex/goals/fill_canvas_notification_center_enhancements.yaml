@@ -1,0 +1,58 @@
+canvas: canvases/notification_center_enhancements.md
+inputs:
+  - codex_docs/testing_guidelines.md
+steps:
+  - name: Model update
+    description: Add `category`, `archived`, `previewUrl` fields to `NotificationModel`.
+    outputs:
+      - lib/models/notification_model.dart
+
+  - name: Local cache layer
+    description: Implement `NotificationCache` using Hive for last 50 items.
+    outputs:
+      - lib/services/notification_cache.dart
+      - lib/models/hive_notification_adapter.dart
+
+  - name: UI upgrades
+    description: Build `NotificationCenterScreenV2` with category tabs, badge counts, swipe‑archive, rich preview card.
+    outputs:
+      - lib/screens/notification_center/notification_center_v2.dart
+      - lib/widgets/notification_preview_card.dart
+      - lib/widgets/category_tabs.dart
+
+  - name: Deep link & routing
+    description: Map notification `destination` to `AppRoute` and navigate on tap.
+    outputs:
+      - lib/router/app_route.dart
+      - lib/services/notification_handler.dart
+
+  - name: Analytics hook
+    description: Fire `notif_opened` with `category` param.
+    outputs:
+      - lib/services/analytics_service.dart
+
+  - name: Localization
+    description: Add ARB keys for categories, archive, undo snackbar.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (filter, archive), cache tests, integration (FCM→open),
+      golden tests (preview card).
+    outputs:
+      - test/widgets/notification_filter_test.dart
+      - test/services/notification_cache_test.dart
+      - test/integration/notification_deeplink_test.dart
+      - test/golden/notification_preview_card.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 9
+  tags: [notification, ui, cache]
