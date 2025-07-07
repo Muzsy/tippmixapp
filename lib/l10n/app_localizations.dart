@@ -1285,6 +1285,18 @@ abstract class AppLocalizations {
   /// **'Unread'**
   String get notificationFilterUnread;
 
+  /// No description provided for @notificationArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get notificationArchive;
+
+  /// No description provided for @notificationUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get notificationUndo;
+
   /// No description provided for @notificationType_reward.
   ///
   /// In en, this message translates to:

@@ -24,4 +24,8 @@ class NotificationService {
   Future<void> markAsRead(String userId, String notificationId) async {
     await _ref(userId).doc(notificationId).update({'isRead': true});
   }
+
+  Future<void> archive(String userId, String notificationId) async {
+    await _ref(userId).doc(notificationId).update({'archived': true});
+  }
 }
