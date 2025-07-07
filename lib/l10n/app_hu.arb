@@ -241,5 +241,13 @@
   "otp_enter_code": "Kód",
   "otp_error_invalid": "Érvénytelen kód",
   "backup_codes_title": "Mentőkódok",
-  "verified_badge_label": "Ellenőrzött"
+  "verified_badge_label": "Ellenőrzött",
+  "follow": "Követés",
+  "unfollow": "Követve",
+  "addFriend": "Ismerősnek jelöl",
+  "requestSent": "Kérelem elküldve",
+  "friends": "Barátok",
+  "followers": "Követők",
+  "pending": "Függőben",
+  "accept": "Elfogad"
 }
