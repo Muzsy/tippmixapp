@@ -35,5 +35,27 @@ service cloud.firestore {
         && request.resource.data.read == true;
       allow delete: if false;
     }
+
+    /* ——— relations (followers & friends) ——— */
+    match /relations/{uid} {
+      match /followers/{followerUid} {
+        allow create: if signedIn() && request.auth.uid == followerUid;
+        allow delete: if signedIn() && request.auth.uid == followerUid;
+        allow read: if true;
+        allow update: if false;
+      }
+
+      match /friendRequests/{requestId} {
+        allow create: if signedIn()
+          && request.resource.data.fromUid == request.auth.uid;
+        allow read: if signedIn()
+          && (request.auth.uid == resource.data.fromUid
+              || request.auth.uid == resource.data.toUid);
+        allow update: if signedIn()
+          && request.resource.data.accepted == true
+          && request.auth.uid == resource.data.toUid;
+        allow delete: if false;
+      }
+    }
   }
 }

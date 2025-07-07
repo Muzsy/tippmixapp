@@ -241,5 +241,13 @@
   "otp_enter_code": "Code",
   "otp_error_invalid": "Ungültiger Code",
   "backup_codes_title": "Backup-Codes",
-  "verified_badge_label": "Verifiziert"
+  "verified_badge_label": "Verifiziert",
+  "follow": "Folgen",
+  "unfollow": "Entfolgen",
+  "addFriend": "Freund hinzufügen",
+  "requestSent": "Anfrage gesendet",
+  "friends": "Freunde",
+  "followers": "Follower",
+  "pending": "Ausstehend",
+  "accept": "Akzeptieren"
 }
