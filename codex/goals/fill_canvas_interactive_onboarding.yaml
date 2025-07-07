@@ -1,0 +1,63 @@
+canvas: canvases/interactive_onboarding.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Model flag
+    description: Add `onboardingCompleted` (bool) & `onboardingCompletedAt` to `UserModel`.
+    outputs:
+      - lib/models/user_model.dart
+
+  - name: OnboardingFlowScreen implementation
+    description: Build `OnboardingFlowScreen` with `PageView`, animated highlights (`Lottie.asset`) and interaction gates.
+    outputs:
+      - lib/screens/onboarding/onboarding_flow_screen.dart
+      - lib/screens/onboarding/pages/onboarding_page1.dart
+      - lib/screens/onboarding/pages/onboarding_page2.dart
+      - lib/screens/onboarding/pages/onboarding_page3.dart
+      - assets/lottie/place_bet.json
+      - assets/lottie/track_rewards.json
+      - assets/lottie/follow_tipsters.json
+
+  - name: State management & persistence
+    description: Use `Provider` to track progress; persist flag via `UserService.markOnboardingCompleted()`.
+    outputs:
+      - lib/services/user_service.dart
+      - lib/providers/onboarding_provider.dart
+
+  - name: App entrypoint hook
+    description: Insert onboarding check in `SplashController` and route accordingly.
+    outputs:
+      - lib/controllers/splash_controller.dart
+      - lib/router/app_route.dart
+
+  - name: Analytics hooks
+    description: Fire `onboarding_completed`, `onboarding_skipped` with `duration` param.
+    outputs:
+      - lib/services/analytics_service.dart
+
+  - name: Localization
+    description: Add instructional text keys & translations.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (interaction gating), integration (first login flow), golden tests for each page.
+    outputs:
+      - test/widgets/onboarding_interaction_test.dart
+      - test/integration/first_login_onboarding_test.dart
+      - test/golden/onboarding_page1.png
+      - test/golden/onboarding_page2.png
+      - test/golden/onboarding_page3.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 8
+  tags: [onboarding, engagement, animation]
