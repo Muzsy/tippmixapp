@@ -1,0 +1,57 @@
+canvas: canvases/profile_notification_prefs.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Model update
+    description: >-
+      Add `notificationPreferences` (Map<String, bool>) to `UserModel` and create
+      an optional typed helper class `NotificationPreferences` for defaults and
+      validation.
+    outputs:
+      - lib/models/user_model.dart
+      - lib/models/notification_preferences.dart
+
+  - name: Widget implementation
+    description: >-
+      Build `NotificationPreferencesTile` (5 SwitchListTiles) and mount it under
+      `ProfileScreen` in a new section widget `NotificationPrefsSection`.
+    outputs:
+      - lib/widgets/notification_preferences_tile.dart
+      - lib/screens/profile/partials/notification_prefs_section.dart
+
+  - name: Service layer
+    description: Extend `UserService` with `updateNotificationPrefs()` that patches Firestore and returns updated model.
+    outputs:
+      - lib/services/user_service.dart
+
+  - name: Routing update
+    description: If later a dedicated screen is desired, reserve route id `notificationPrefs` and register in `AppRoute`.
+    outputs:
+      - lib/router/app_route.dart
+
+  - name: Localization
+    description: Add ARB keys (`notif_tips`, `notif_friend_activity`, `notif_badge`, `notif_rewards`, `notif_system`) and translations.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Add widget, service, integration and golden tests. Coverage must exceed
+      90% on new code.
+    outputs:
+      - test/widgets/notification_preferences_tile_test.dart
+      - test/services/user_service_test.dart
+      - test/integration/notification_preferences_flow_test.dart
+      - test/golden/notification_preferences_tile.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort Codex run if any issue.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 6
+  tags: [notification, profile, push]
