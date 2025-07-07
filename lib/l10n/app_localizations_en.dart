@@ -613,6 +613,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationFilterUnread => 'Unread';
 
   @override
+  String get notificationArchive => 'Archive';
+
+  @override
+  String get notificationUndo => 'Undo';
+
+  @override
   String get notificationType_reward => 'Reward';
 
   @override
