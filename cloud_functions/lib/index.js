@@ -6,3 +6,5 @@ Object.defineProperty(exports, "onUserCreate", { enumerable: true, get: function
 Object.defineProperty(exports, "coin_trx", { enumerable: true, get: function () { return coin_trx_logic_1.coin_trx; } });
 var log_coin_1 = require("./log_coin");
 Object.defineProperty(exports, "log_coin", { enumerable: true, get: function () { return log_coin_1.log_coin; } });
+var friend_request_1 = require("./friend_request");
+Object.defineProperty(exports, "onFriendRequestAccepted", { enumerable: true, get: function () { return friend_request_1.onFriendRequestAccepted; } });

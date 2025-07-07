@@ -16,4 +16,5 @@ enum AppRoute {
   security,
   twoFactorWizard,
   otpPrompt,
+  friends,
 }
