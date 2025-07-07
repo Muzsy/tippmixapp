@@ -233,5 +233,13 @@
   ,"dob_hint": "Születési dátum"
   ,"dob_error_underage": "Legalább 18 évesnek kell lenned"
   ,"dob_error_future": "A dátum nem lehet jövőbeni"
-  ,"profile_updated": "Profil frissítve"
+  ,"profile_updated": "Profil frissítve",
+  "security_title": "Biztonság",
+  "enable_two_factor": "Kétlépcsős hitelesítés bekapcsolása",
+  "disable_two_factor": "Kétlépcsős hitelesítés kikapcsolása",
+  "otp_prompt_title": "OTP megadása",
+  "otp_enter_code": "Kód",
+  "otp_error_invalid": "Érvénytelen kód",
+  "backup_codes_title": "Mentőkódok",
+  "verified_badge_label": "Ellenőrzött"
 }

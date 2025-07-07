@@ -13,4 +13,7 @@ enum AppRoute {
   notifications,
   notificationPrefs,
   editProfile,
+  security,
+  twoFactorWizard,
+  otpPrompt,
 }

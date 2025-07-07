@@ -722,4 +722,28 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get profile_updated => 'Profil frissítve';
+
+  @override
+  String get security_title => 'Biztons\u00e1g';
+
+  @override
+  String get enable_two_factor => 'K\u00e9tl\u00e9pcs\u0151s hiteles\u00edt\u00e9s bekapcsol\u00e1sa';
+
+  @override
+  String get disable_two_factor => 'K\u00e9tl\u00e9pcs\u0151s hiteles\u00edt\u00e9s kikapcsol\u00e1sa';
+
+  @override
+  String get otp_prompt_title => 'OTP megad\u00e1sa';
+
+  @override
+  String get otp_enter_code => 'K\u00f3d';
+
+  @override
+  String get otp_error_invalid => '\u00c9rv\u00e9nytelen k\u00f3d';
+
+  @override
+  String get backup_codes_title => 'Ment\u0151k\u00f3dok';
+
+  @override
+  String get verified_badge_label => 'Ellen\u0151rz\u00f6tt';
 }

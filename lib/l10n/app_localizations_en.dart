@@ -722,4 +722,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_updated => 'Profile updated';
+
+  @override
+  String get security_title => 'Security';
+
+  @override
+  String get enable_two_factor => 'Enable two-factor authentication';
+
+  @override
+  String get disable_two_factor => 'Disable two-factor authentication';
+
+  @override
+  String get otp_prompt_title => 'Enter OTP';
+
+  @override
+  String get otp_enter_code => 'Code';
+
+  @override
+  String get otp_error_invalid => 'Invalid code';
+
+  @override
+  String get backup_codes_title => 'Backup codes';
+
+  @override
+  String get verified_badge_label => 'Verified';
 }

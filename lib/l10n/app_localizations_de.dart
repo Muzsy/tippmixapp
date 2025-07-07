@@ -722,4 +722,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get profile_updated => 'Profil aktualisiert';
+
+  @override
+  String get security_title => 'Sicherheit';
+
+  @override
+  String get enable_two_factor => 'Zwei-Faktor-Authentifizierung aktivieren';
+
+  @override
+  String get disable_two_factor => 'Zwei-Faktor-Authentifizierung deaktivieren';
+
+  @override
+  String get otp_prompt_title => 'OTP eingeben';
+
+  @override
+  String get otp_enter_code => 'Code';
+
+  @override
+  String get otp_error_invalid => 'Ung\u00fcltiger Code';
+
+  @override
+  String get backup_codes_title => 'Backup-Codes';
+
+  @override
+  String get verified_badge_label => 'Verifiziert';
 }
