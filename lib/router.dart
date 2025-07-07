@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tippmixapp/screens/home_screen.dart';
 // import 'package:tippmixapp/screens/home_body_screen.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
+import 'package:tippmixapp/screens/profile/edit_profile_screen.dart';
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/screens/login_register_screen.dart';
@@ -56,6 +57,15 @@ final GoRouter router = GoRouter(
           name: AppRoute.profile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const ProfileScreen(showAppBar: false),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          path: '/edit-profile',
+          name: AppRoute.editProfile.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const EditProfileScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),

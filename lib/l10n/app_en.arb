@@ -223,5 +223,15 @@
   ,"notif_friend_activity": "Friend activity",
   ,"notif_badge": "Badges",
   ,"notif_rewards": "Rewards",
-  ,"notif_system": "System"
+  ,"notif_system": "System",
+  "edit_title": "Edit Profile",
+  "name_hint": "Display name",
+  "name_error_short": "Name too short",
+  "name_error_long": "Name too long",
+  "bio_hint": "Bio",
+  "team_hint": "Favourite team",
+  "dob_hint": "Date of birth",
+  "dob_error_underage": "You must be 18+",
+  "dob_error_future": "Date cannot be in the future",
+  "profile_updated": "Profile updated"
 }
