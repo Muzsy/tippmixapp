@@ -65,7 +65,7 @@ final GoRouter router = GoRouter(
           path: '/edit-profile',
           name: AppRoute.editProfile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const EditProfileScreen(),
+            child: EditProfileScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),

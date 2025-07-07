@@ -9,8 +9,8 @@ import '../../l10n/app_localizations.dart';
 class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;
   final UserService service;
-  const EditProfileScreen({super.key, this.initial, UserService? service})
-      : service = service ?? const UserService();
+  EditProfileScreen({super.key, this.initial, UserService? service})
+      : service = service ?? UserService();
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();

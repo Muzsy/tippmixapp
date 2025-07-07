@@ -144,10 +144,10 @@
   ,"settings_logout": "Abmelden"
   ,"settings_ai_recommendations": "AI-Empfehlungen"
   ,"settings_push_notifications": "Push-Benachrichtigungen"
-  ,"settings_skin": "Skin",
-  ,"skin_dell_genoa_name": "Tippmix Grün",
-  ,"skin_dell_genoa_description": "Standard Tippmix-Farbschema (grün)",
-  ,"skin_pink_m3_name": "Pink Party",
+  ,"settings_skin": "Skin"
+  ,"skin_dell_genoa_name": "Tippmix Grün"
+  ,"skin_dell_genoa_description": "Standard Tippmix-Farbschema (grün)"
+  ,"skin_pink_m3_name": "Pink Party"
   ,"skin_pink_m3_description": "Verspieltes, fröhliches Skin"
   ,"badge_rookie_title": "Anfänger"
   ,"badge_rookie_description": "Erster Gewinn erzielt."
@@ -219,19 +219,19 @@
   ,"profile_avatar_error": "Fehler beim Aktualisieren des Avatars"
   ,"profile_avatar_updated": "Avatar aktualisiert"
   ,"profile_avatar_cancelled": "Avatar-Upload abgebrochen"
-  ,"notif_tips": "Tipps",
-  ,"notif_friend_activity": "Freunde-Aktivitäten",
-  ,"notif_badge": "Abzeichen",
-  ,"notif_rewards": "Belohnungen",
-  ,"notif_system": "System",
-  "edit_title": "Profil bearbeiten",
-  "name_hint": "Anzeigename",
-  "name_error_short": "Name zu kurz",
-  "name_error_long": "Name zu lang",
-  "bio_hint": "Bio",
-  "team_hint": "Lieblingsteam",
-  "dob_hint": "Geburtsdatum",
-  "dob_error_underage": "Mindestens 18 Jahre erforderlich",
-  "dob_error_future": "Datum darf nicht in der Zukunft liegen",
-  "profile_updated": "Profil aktualisiert"
+  ,"notif_tips": "Tipps"
+  ,"notif_friend_activity": "Freunde-Aktivitäten"
+  ,"notif_badge": "Abzeichen"
+  ,"notif_rewards": "Belohnungen"
+  ,"notif_system": "System"
+  ,"edit_title": "Profil bearbeiten"
+  ,"name_hint": "Anzeigename"
+  ,"name_error_short": "Name zu kurz"
+  ,"name_error_long": "Name zu lang"
+  ,"bio_hint": "Bio"
+  ,"team_hint": "Lieblingsteam"
+  ,"dob_hint": "Geburtsdatum"
+  ,"dob_error_underage": "Mindestens 18 Jahre erforderlich"
+  ,"dob_error_future": "Datum darf nicht in der Zukunft liegen"
+  ,"profile_updated": "Profil aktualisiert"
 }

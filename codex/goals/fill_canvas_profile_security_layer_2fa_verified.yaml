@@ -1,0 +1,61 @@
+canvas: canvases/profile_security_layer_2fa_verified.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Model update
+    description: >-
+      Extend `UserModel` with `twoFactorEnabled`, `twoFactorType`, `verifiedAt`,
+      and encrypted `totpSecret`. Create `TwoFactorType` enum (sms|totp).
+    outputs:
+      - lib/models/user_model.dart
+      - lib/models/two_factor_type.dart
+
+  - name: SecurityScreen UI
+    description: Implement `SecurityScreen` with `SwitchListTile` to toggle 2FA and navigate to `TwoFactorWizard`.
+    outputs:
+      - lib/screens/profile/security/security_screen.dart
+      - lib/screens/profile/security/two_factor_wizard.dart
+
+  - name: 2FA service layer
+    description: Add `SecurityService` handling SMS/TOTP enrollment, OTP verification, backup code generation.
+    outputs:
+      - lib/services/security_service.dart
+
+  - name: Login flow update
+    description: Insert `OtpPromptScreen` after auth when `twoFactorEnabled=true`.
+    outputs:
+      - lib/screens/auth/otp_prompt_screen.dart
+      - lib/router/app_route.dart
+
+  - name: VerifiedBadge widget
+    description: Simple blue checkmark icon rendered if `verifiedAt!=null`.
+    outputs:
+      - lib/widgets/verified_badge.dart
+
+  - name: Localization
+    description: Add strings for 2FA wizard, OTP errors, backup code texts.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (badge visibility, OTP input), service tests (otp verify),
+      integration (enable 2FA → login). Golden: SecurityScreen default & enabled.
+    outputs:
+      - test/widgets/verified_badge_test.dart
+      - test/services/security_service_test.dart
+      - test/integration/two_factor_enable_flow_test.dart
+      - test/golden/security_screen_default.png
+      - test/golden/security_screen_enabled.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 7
+  tags: [security, 2fa, badge]

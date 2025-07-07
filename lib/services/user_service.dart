@@ -4,7 +4,7 @@ import '../models/user_model.dart';
 
 class UserService {
   final FirebaseFirestore _firestore;
-  const UserService([FirebaseFirestore? firestore])
+  UserService([FirebaseFirestore? firestore])
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<UserModel> updateNotificationPrefs(
