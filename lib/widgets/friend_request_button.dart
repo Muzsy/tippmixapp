@@ -20,7 +20,7 @@ class FriendRequestButton extends ConsumerWidget {
     final alreadySent = requests.when(
       data: (list) => list.any((r) => r.fromUid == uid),
       loading: () => false,
-      error: (_, __) => false,
+      error: (_, _) => false,
     );
     final loc = AppLocalizations.of(context)!;
     return TextButton(
