@@ -1,0 +1,59 @@
+canvas: canvases/profile_edit_flow.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Model & validator update
+    description: >-
+      Extend `UserModel` with nullable `bio`, `favouriteTeam`, `dateOfBirth` and
+      add `DisplayNameValidator` & `AgeValidator` in `validators/`.
+    outputs:
+      - lib/models/user_model.dart
+      - lib/validators/display_name_validator.dart
+      - lib/validators/age_validator.dart
+
+  - name: EditProfileScreen UI
+    description: >-
+      Implement `EditProfileScreen` containing `AvatarPicker`, `FormBuilderTextField`,
+      `FormBuilderDropdown`, `FormBuilderDateTimePicker`, and a pinned
+      `SaveButton`.
+    outputs:
+      - lib/screens/profile/edit_profile_screen.dart
+      - lib/widgets/avatar_picker.dart
+
+  - name: Service layer
+    description: Add `updateProfile({required Map<String,dynamic> changes})` to `UserService` with merge update.
+    outputs:
+      - lib/services/user_service.dart
+
+  - name: Routing
+    description: Register route name `editProfile` in `AppRoute` with correct typed wrapper.
+    outputs:
+      - lib/router/app_route.dart
+
+  - name: Localization
+    description: Add ARB keys for labels, hints, errors (`edit_title`, `name_hint`, `name_error_short`, …).
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (form validation logic), service tests (merge patch),
+      integration test (end‑to‑end edit), golden tests (avatar default & picked).
+    outputs:
+      - test/widgets/edit_profile_screen_test.dart
+      - test/services/user_service_update_profile_test.dart
+      - test/integration/edit_profile_flow_test.dart
+      - test/golden/edit_profile_avatar_default.png
+      - test/golden/edit_profile_avatar_picked.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort Codex run on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 6
+  tags: [profile, edit, form]
