@@ -219,4 +219,9 @@
   ,"profile_avatar_error": "Fehler beim Aktualisieren des Avatars"
   ,"profile_avatar_updated": "Avatar aktualisiert"
   ,"profile_avatar_cancelled": "Avatar-Upload abgebrochen"
+  ,"notif_tips": "Tipps",
+  ,"notif_friend_activity": "Freunde-Aktivitäten",
+  ,"notif_badge": "Abzeichen",
+  ,"notif_rewards": "Belohnungen",
+  ,"notif_system": "System"
 }
