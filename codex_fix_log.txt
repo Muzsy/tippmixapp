@@ -149,3 +149,7 @@ lib/screens/profile_screen.dart → OK – removed mocktail fallback registratio
 test/screens/profile_avatar_upload_test.dart → OK – cleaned duplicate and unnecessary imports
 test/services/profile_service_avatar_test.dart → OK – removed unused cloud_firestore import
 llama_index/data/pubspec.yaml → NEM SIKERÜLT – asset .env path missing
+Removed invalid avoid-hard-coded-colors lint from analysis_options.yaml.
+Renamed legacy/AppColors.dart to legacy/app_colors.dart and updated comments.
+Removed unused mocktail and dart:io imports plus unused fake classes in test/generate_goldens.dart.
+Could not fix missing .env asset warning in llama_index/data/pubspec.yaml because file not found.
