@@ -1,0 +1,1 @@
+enum TwoFactorType { sms, totp }
