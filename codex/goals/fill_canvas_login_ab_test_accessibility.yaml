@@ -1,0 +1,60 @@
+canvas: canvases/login_ab_test_accessibility.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Remote Config fetch
+    description: Implement `ExperimentService` to fetch & cache `login_variant` with 28‑day TTL.
+    outputs:
+      - lib/services/experiment_service.dart
+
+  - name: Variant UI implementation
+    description: Refactor `LoginScreen` into variant‑agnostic base; add `LoginScreenVariantB` with promo panel and adaptive layout.
+    outputs:
+      - lib/screens/auth/login_screen.dart
+      - lib/screens/auth/login_screen_variant_b.dart
+      - lib/widgets/promo_panel.dart
+
+  - name: Analytics hooks
+    description: Fire `login_variant_exposed` (once) and `login_success` with `variant` param via `AnalyticsService`.
+    outputs:
+      - lib/services/analytics_service.dart
+
+  - name: Accessibility fixes
+    description: Adjust colors, add semantics labels, enforce focus order in all auth widgets.
+    outputs:
+      - lib/screens/auth/login_form.dart
+      - lib/screens/auth/password_field.dart
+      - lib/screens/auth/email_field.dart
+
+  - name: Debug override
+    description: Add Debug Menu switch to manually set variant for testers.
+    outputs:
+      - lib/screens/debug/debug_menu_screen.dart
+
+  - name: Localization
+    description: ARB keys for promo copy and accessibility hints.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (variant switch), service tests (variant caching), integration (exposure + login), accessibility unit tests
+      (`flutter_a11y_report`), golden (Variant B layout).
+    outputs:
+      - test/widgets/login_variant_switch_test.dart
+      - test/services/experiment_service_test.dart
+      - test/integration/login_ab_flow_test.dart
+      - test/a11y/login_accessibility_test.dart
+      - test/golden/login_variant_b.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 8
+  tags: [login, experiment, accessibility]
