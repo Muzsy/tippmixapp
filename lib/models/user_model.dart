@@ -1,4 +1,5 @@
 import "../constants.dart";
+import 'two_factor_type.dart';
 
 class UserModel {
   final String uid;
@@ -12,6 +13,10 @@ class UserModel {
   final String? bio;
   final String? favouriteTeam;
   final DateTime? dateOfBirth;
+  final bool twoFactorEnabled;
+  final TwoFactorType? twoFactorType;
+  final DateTime? verifiedAt;
+  final String? totpSecret;
 
   UserModel({
     required this.uid,
@@ -21,6 +26,10 @@ class UserModel {
     required this.avatarUrl,
     required this.isPrivate,
     required this.fieldVisibility,
+    this.twoFactorEnabled = false,
+    this.twoFactorType,
+    this.verifiedAt,
+    this.totpSecret,
     this.notificationPreferences = const {},
     this.bio,
     this.favouriteTeam,
@@ -40,6 +49,17 @@ class UserModel {
         notificationPreferences: Map<String, bool>.from(
           (json['notificationPreferences'] as Map?) ?? {},
         ),
+        twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
+        twoFactorType: json['twoFactorType'] != null
+            ? TwoFactorType.values.firstWhere(
+                (e) => e.name == json['twoFactorType'],
+                orElse: () => TwoFactorType.sms,
+              )
+            : null,
+        verifiedAt: json['verifiedAt'] != null
+            ? DateTime.tryParse(json['verifiedAt'] as String)
+            : null,
+        totpSecret: json['totpSecret'] as String?,
         bio: json['bio'] as String?,
         favouriteTeam: json['favouriteTeam'] as String?,
         dateOfBirth: json['dateOfBirth'] != null
@@ -56,6 +76,10 @@ class UserModel {
         'isPrivate': isPrivate,
         'fieldVisibility': fieldVisibility,
         'notificationPreferences': notificationPreferences,
+        'twoFactorEnabled': twoFactorEnabled,
+        if (twoFactorType != null) 'twoFactorType': twoFactorType!.name,
+        if (verifiedAt != null) 'verifiedAt': verifiedAt!.toIso8601String(),
+        if (totpSecret != null) 'totpSecret': totpSecret,
         if (bio != null) 'bio': bio,
         if (favouriteTeam != null) 'favouriteTeam': favouriteTeam,
         if (dateOfBirth != null) 'dateOfBirth': dateOfBirth!.toIso8601String(),

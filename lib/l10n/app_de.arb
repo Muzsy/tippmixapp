@@ -233,5 +233,13 @@
   ,"dob_hint": "Geburtsdatum"
   ,"dob_error_underage": "Mindestens 18 Jahre erforderlich"
   ,"dob_error_future": "Datum darf nicht in der Zukunft liegen"
-  ,"profile_updated": "Profil aktualisiert"
+  ,"profile_updated": "Profil aktualisiert",
+  "security_title": "Sicherheit",
+  "enable_two_factor": "Zwei-Faktor-Authentifizierung aktivieren",
+  "disable_two_factor": "Zwei-Faktor-Authentifizierung deaktivieren",
+  "otp_prompt_title": "OTP eingeben",
+  "otp_enter_code": "Code",
+  "otp_error_invalid": "Ungültiger Code",
+  "backup_codes_title": "Backup-Codes",
+  "verified_badge_label": "Verifiziert"
 }
