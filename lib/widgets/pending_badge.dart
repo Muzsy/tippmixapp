@@ -15,7 +15,7 @@ class PendingBadge extends ConsumerWidget {
     final count = requests.when(
       data: (list) => list.where((r) => !r.accepted).length,
       loading: () => 0,
-      error: (_, __) => 0,
+      error: (_, _) => 0,
     );
     if (count == 0) return const SizedBox.shrink();
     return Container(

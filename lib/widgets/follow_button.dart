@@ -20,7 +20,7 @@ class FollowButton extends ConsumerWidget {
     final isFollowing = followers.when(
       data: (list) => list.contains(uid),
       loading: () => false,
-      error: (_, __) => false,
+      error: (_, _) => false,
     );
     final loc = AppLocalizations.of(context)!;
     return TextButton(
