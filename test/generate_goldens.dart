@@ -171,11 +171,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final user = User(id: 'u1', email: 'demo@demo.com', displayName: 'Demo');
-  late ThemeService themeService;
-
-  setUpAll(() async {
-    themeService = MockThemeService();
-  });
 
   final routes = <String, AppRoute>{
     'home': AppRoute.home,
@@ -197,7 +192,7 @@ void main() {
   final overrides = <Override>[
     authServiceProvider.overrideWith((ref) => _FakeAuthService()),
     authProvider.overrideWith((ref) => _FakeAuthNotifier(user)),
-    themeServiceProvider.overrideWith((ref) => themeService),
+    themeServiceProvider.overrideWith((ref) => MockThemeService()),
     feedStreamProvider.overrideWith((ref) => Stream.value(const [])),
     leaderboardStreamProvider.overrideWith((ref) => Stream.value(const [])),
     userStatsProvider.overrideWith((ref) async => null),
