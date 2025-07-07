@@ -1,0 +1,62 @@
+canvas: canvases/friend_follow_system.md
+inputs:
+  - codex_docs/testing_guidelines.md
+  - codex_docs/routing_integrity.md
+steps:
+  - name: Model & Firestore rules
+    description: Define `FriendRequest` model and update Firestore security rules (`relations.rules`).
+    outputs:
+      - lib/models/friend_request.dart
+      - firestore.rules
+
+  - name: Service layer
+    description: Implement `SocialService` with follow/unfollow/friend request mutations and streams.
+    outputs:
+      - lib/services/social_service.dart
+
+  - name: UI components
+    description: Create `FollowButton`, `FriendRequestButton`, and badges.
+    outputs:
+      - lib/widgets/follow_button.dart
+      - lib/widgets/friend_request_button.dart
+      - lib/widgets/pending_badge.dart
+
+  - name: Screen integrations
+    description: Inject buttons into `UserTile`, add `FriendsScreen` with search + tabs.
+    outputs:
+      - lib/widgets/user_tile.dart
+      - lib/screens/social/friends_screen.dart
+      - lib/router/app_route.dart
+
+  - name: Notifications
+    description: Trigger push on friend acceptance via Cloud Function stub.
+    outputs:
+      - functions/index.js
+      - lib/services/notification_service.dart
+
+  - name: Localization
+    description: Add ARB keys for follow & friend actions.
+    outputs:
+      - lib/l10n/app_hu.arb
+      - lib/l10n/app_en.arb
+      - lib/l10n/app_de.arb
+
+  - name: Tests & golden
+    description: >-
+      Widget tests (buttons), service tests (streams), integration (send→accept),
+      golden (user tile with follow states).
+    outputs:
+      - test/widgets/follow_button_test.dart
+      - test/services/social_service_test.dart
+      - test/integration/friend_flow_test.dart
+      - test/golden/user_tile_following.png
+      - test/golden/user_tile_not_following.png
+
+  - name: Lint & test guard
+    description: Run `flutter analyze` and `flutter test --coverage`; abort on failure.
+    outputs: []
+
+metadata:
+  priority: P1
+  sprint: 7
+  tags: [social, follow, friend]
