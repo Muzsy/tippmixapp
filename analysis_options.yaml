@@ -14,9 +14,7 @@ analyzer:
   errors:
     # 🔐 Tiltja a sealed class implementálást – ERROR szintre emelve
     subtype_of_sealed_class: error
-    # ⚠️ Hardcoded színek tiltása
-
-
+    
   exclude:
     - "**/flutter/**"
     - "**/.dart_tool/**"
