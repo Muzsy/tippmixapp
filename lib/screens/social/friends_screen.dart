@@ -55,7 +55,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
               },
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           Center(
             child: ref.watch(friendRequestsProvider(uid)).when(
@@ -78,7 +78,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
                     .toList(),
               ),
               loading: () => const CircularProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ),
         ],
