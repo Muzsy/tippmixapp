@@ -249,5 +249,7 @@
   "friends": "Freunde",
   "followers": "Follower",
   "pending": "Ausstehend",
-  "accept": "Akzeptieren"
+  "accept": "Akzeptieren",
+  "login_variant_b_promo_title": "Bereits 50.000+ Nutzer",
+  "login_variant_b_promo_subtitle": "Werde Teil unserer Community!"
 }
