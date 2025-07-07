@@ -613,6 +613,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get notificationFilterUnread => 'Olvasatlan';
 
   @override
+  String get notificationArchive => 'Archiválás';
+
+  @override
+  String get notificationUndo => 'Visszavonás';
+
+  @override
   String get notificationType_reward => 'Jutalom';
 
   @override
