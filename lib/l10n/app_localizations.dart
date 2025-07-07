@@ -1419,6 +1419,21 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Avatar upload cancelled'**
   String get profile_avatar_cancelled;
+
+  /// No description provided for @notif_tips.
+  String get notif_tips;
+
+  /// No description provided for @notif_friend_activity.
+  String get notif_friend_activity;
+
+  /// No description provided for @notif_badge.
+  String get notif_badge;
+
+  /// No description provided for @notif_rewards.
+  String get notif_rewards;
+
+  /// No description provided for @notif_system.
+  String get notif_system;
 }
 
 class _AppLocalizationsDelegate

@@ -8,6 +8,7 @@ class UserModel {
   final String avatarUrl;
   final bool isPrivate;
   final Map<String, bool> fieldVisibility;
+  final Map<String, bool> notificationPreferences;
 
   UserModel({
     required this.uid,
@@ -17,6 +18,7 @@ class UserModel {
     required this.avatarUrl,
     required this.isPrivate,
     required this.fieldVisibility,
+    this.notificationPreferences = const {},
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -26,9 +28,12 @@ class UserModel {
         nickname: json['nickname'] as String? ?? '',
         avatarUrl: json['avatarUrl'] as String? ?? kDefaultAvatarPath,
         isPrivate: json['isPrivate'] as bool? ?? false,
-        fieldVisibility:
-            (json['fieldVisibility'] as Map<String, dynamic>? ?? {})
-                .map((k, v) => MapEntry(k, v as bool)),
+        fieldVisibility: Map<String, bool>.from(
+          (json['fieldVisibility'] as Map?) ?? {},
+        ),
+        notificationPreferences: Map<String, bool>.from(
+          (json['notificationPreferences'] as Map?) ?? {},
+        ),
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +44,6 @@ class UserModel {
         'avatarUrl': avatarUrl,
         'isPrivate': isPrivate,
         'fieldVisibility': fieldVisibility,
+        'notificationPreferences': notificationPreferences,
       };
 }
