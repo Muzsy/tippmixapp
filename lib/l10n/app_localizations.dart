@@ -63,8 +63,7 @@ import 'app_localizations_hu.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,19 +83,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('hu'),
+    Locale('hu')
   ];
 
   /// No description provided for @home_title.
@@ -1421,23 +1418,97 @@ abstract class AppLocalizations {
   String get profile_avatar_cancelled;
 
   /// No description provided for @notif_tips.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips'**
   String get notif_tips;
 
   /// No description provided for @notif_friend_activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend activity'**
   String get notif_friend_activity;
 
   /// No description provided for @notif_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
   String get notif_badge;
 
   /// No description provided for @notif_rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
   String get notif_rewards;
 
   /// No description provided for @notif_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
   String get notif_system;
+
+  /// No description provided for @edit_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get edit_title;
+
+  /// No description provided for @name_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get name_hint;
+
+  /// No description provided for @name_error_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Name too short'**
+  String get name_error_short;
+
+  /// No description provided for @name_error_long.
+  ///
+  /// In en, this message translates to:
+  /// **'Name too long'**
+  String get name_error_long;
+
+  /// No description provided for @bio_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bio_hint;
+
+  /// No description provided for @team_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite team'**
+  String get team_hint;
+
+  /// No description provided for @dob_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dob_hint;
+
+  /// No description provided for @dob_error_underage.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be 18+'**
+  String get dob_error_underage;
+
+  /// No description provided for @dob_error_future.
+  ///
+  /// In en, this message translates to:
+  /// **'Date cannot be in the future'**
+  String get dob_error_future;
+
+  /// No description provided for @profile_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profile_updated;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1446,28 +1517,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'hu'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['de', 'en', 'hu'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de':
-      return AppLocalizationsDe();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'hu':
-      return AppLocalizationsHu();
+    case 'de': return AppLocalizationsDe();
+    case 'en': return AppLocalizationsEn();
+    case 'hu': return AppLocalizationsHu();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

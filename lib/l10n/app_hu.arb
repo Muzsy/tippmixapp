@@ -144,10 +144,10 @@
   ,"settings_logout": "Kijelentkezés"
   ,"settings_ai_recommendations": "AI ajánlások"
   ,"settings_push_notifications": "Értesítések"
-  ,"settings_skin": "Skin",
-  ,"skin_dell_genoa_name": "Tippmix Zöld",
-  ,"skin_dell_genoa_description": "Alap Tippmix színséma (zöld)",
-  ,"skin_pink_m3_name": "Pink Party",
+  ,"settings_skin": "Skin"
+  ,"skin_dell_genoa_name": "Tippmix Zöld"
+  ,"skin_dell_genoa_description": "Alap Tippmix színséma (zöld)"
+  ,"skin_pink_m3_name": "Pink Party"
   ,"skin_pink_m3_description": "Lányos, vidám skin"
   ,"badge_rookie_title": "Újonc"
   ,"badge_rookie_description": "Első nyertes fogadásod."
@@ -219,19 +219,19 @@
   ,"profile_avatar_error": "Hiba történt az avatar beállításakor"
   ,"profile_avatar_updated": "Avatar frissítve"
   ,"profile_avatar_cancelled": "Avatar feltöltés megszakítva"
-  ,"notif_tips": "Tippek",
-  ,"notif_friend_activity": "Barátok aktivitása",
-  ,"notif_badge": "Jelvények",
-  ,"notif_rewards": "Jutalmak",
-  ,"notif_system": "Rendszer",
-  "edit_title": "Profil szerkesztése",
-  "name_hint": "Megjelenített név",
-  "name_error_short": "Túl rövid név",
-  "name_error_long": "Túl hosszú név",
-  "bio_hint": "Bemutatkozás",
-  "team_hint": "Kedvenc csapat",
-  "dob_hint": "Születési dátum",
-  "dob_error_underage": "Legalább 18 évesnek kell lenned",
-  "dob_error_future": "A dátum nem lehet jövőbeni",
-  "profile_updated": "Profil frissítve"
+  ,"notif_tips": "Tippek"
+  ,"notif_friend_activity": "Barátok aktivitása"
+  ,"notif_badge": "Jelvények"
+  ,"notif_rewards": "Jutalmak"
+  ,"notif_system": "Rendszer"
+  ,"edit_title": "Profil szerkesztése"
+  ,"name_hint": "Megjelenített név"
+  ,"name_error_short": "Túl rövid név"
+  ,"name_error_long": "Túl hosszú név"
+  ,"bio_hint": "Bemutatkozás"
+  ,"team_hint": "Kedvenc csapat"
+  ,"dob_hint": "Születési dátum"
+  ,"dob_error_underage": "Legalább 18 évesnek kell lenned"
+  ,"dob_error_future": "A dátum nem lehet jövőbeni"
+  ,"profile_updated": "Profil frissítve"
 }

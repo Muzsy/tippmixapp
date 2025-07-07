@@ -144,10 +144,10 @@
   ,"settings_logout": "Logout"
   ,"settings_ai_recommendations": "AI recommendations"
   ,"settings_push_notifications": "Push notifications"
-  ,"settings_skin": "Skin",
-  ,"skin_dell_genoa_name": "Tippmix Green",
-  ,"skin_dell_genoa_description": "Default Tippmix green theme",
-  ,"skin_pink_m3_name": "Pink Party",
+  ,"settings_skin": "Skin"
+  ,"skin_dell_genoa_name": "Tippmix Green"
+  ,"skin_dell_genoa_description": "Default Tippmix green theme"
+  ,"skin_pink_m3_name": "Pink Party"
   ,"skin_pink_m3_description": "Fun and vibrant pink skin"
   ,"badge_rookie_title": "Rookie"
   ,"badge_rookie_description": "First win completed."
@@ -219,19 +219,19 @@
   ,"profile_avatar_error": "Error updating avatar"
   ,"profile_avatar_updated": "Avatar updated"
   ,"profile_avatar_cancelled": "Avatar upload cancelled"
-  ,"notif_tips": "Tips",
-  ,"notif_friend_activity": "Friend activity",
-  ,"notif_badge": "Badges",
-  ,"notif_rewards": "Rewards",
-  ,"notif_system": "System",
-  "edit_title": "Edit Profile",
-  "name_hint": "Display name",
-  "name_error_short": "Name too short",
-  "name_error_long": "Name too long",
-  "bio_hint": "Bio",
-  "team_hint": "Favourite team",
-  "dob_hint": "Date of birth",
-  "dob_error_underage": "You must be 18+",
-  "dob_error_future": "Date cannot be in the future",
-  "profile_updated": "Profile updated"
+  ,"notif_tips": "Tips"
+  ,"notif_friend_activity": "Friend activity"
+  ,"notif_badge": "Badges"
+  ,"notif_rewards": "Rewards"
+  ,"notif_system": "System"
+  ,"edit_title": "Edit Profile"
+  ,"name_hint": "Display name"
+  ,"name_error_short": "Name too short"
+  ,"name_error_long": "Name too long"
+  ,"bio_hint": "Bio"
+  ,"team_hint": "Favourite team"
+  ,"dob_hint": "Date of birth"
+  ,"dob_error_underage": "You must be 18+"
+  ,"dob_error_future": "Date cannot be in the future"
+  ,"profile_updated": "Profile updated"
 }

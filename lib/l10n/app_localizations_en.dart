@@ -97,8 +97,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_challenge_title => 'Challenge awaits!';
 
   @override
-  String get home_tile_challenge_daily_description =>
-      'Daily challenge: win 3 bets today.';
+  String get home_tile_challenge_daily_description => 'Daily challenge: win 3 bets today.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -112,16 +111,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_educational_tip_title => 'Betting tip';
 
   @override
-  String get home_tile_educational_tip_1 =>
-      'Did you know? Combining bets can increase your odds.';
+  String get home_tile_educational_tip_1 => 'Did you know? Combining bets can increase your odds.';
 
   @override
-  String get home_tile_educational_tip_2 =>
-      'Single bets carry less risk than accumulators.';
+  String get home_tile_educational_tip_2 => 'Single bets carry less risk than accumulators.';
 
   @override
-  String get home_tile_educational_tip_3 =>
-      'Track your betting history to learn from past results.';
+  String get home_tile_educational_tip_3 => 'Track your betting history to learn from past results.';
 
   @override
   String get home_tile_educational_tip_cta => 'More tips';
@@ -696,4 +692,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notif_system => 'System';
+
+  @override
+  String get edit_title => 'Edit Profile';
+
+  @override
+  String get name_hint => 'Display name';
+
+  @override
+  String get name_error_short => 'Name too short';
+
+  @override
+  String get name_error_long => 'Name too long';
+
+  @override
+  String get bio_hint => 'Bio';
+
+  @override
+  String get team_hint => 'Favourite team';
+
+  @override
+  String get dob_hint => 'Date of birth';
+
+  @override
+  String get dob_error_underage => 'You must be 18+';
+
+  @override
+  String get dob_error_future => 'Date cannot be in the future';
+
+  @override
+  String get profile_updated => 'Profile updated';
 }
