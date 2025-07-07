@@ -11,4 +11,5 @@ enum AppRoute {
   rewards,
   feed,
   notifications,
+  notificationPrefs,
 }
