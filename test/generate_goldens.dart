@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import 'package:tippmixapp/theme/theme_builder.dart';
 import 'package:tippmixapp/theme/available_themes.dart';
+import 'package:tippmixapp/services/theme_service.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/auth_state.dart';
@@ -16,6 +20,7 @@ import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/providers/notification_provider.dart';
 import 'package:tippmixapp/screens/home_screen.dart'
     show
+        HomeScreen,
         dailyBonusAvailableProvider,
         latestBadgeProvider,
         aiTipFutureProvider,
@@ -23,6 +28,15 @@ import 'package:tippmixapp/screens/home_screen.dart'
         latestFeedActivityProvider;
 import 'package:tippmixapp/screens/my_tickets_screen.dart' show ticketsProvider;
 import 'package:tippmixapp/screens/badges/badge_screen.dart' show userBadgesProvider;
+import 'package:tippmixapp/screens/profile_screen.dart';
+import 'package:tippmixapp/screens/events_screen.dart';
+import 'package:tippmixapp/screens/login_register_screen.dart';
+import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tippmixapp/screens/settings/settings_screen.dart';
+import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
+import 'package:tippmixapp/screens/create_ticket_screen.dart';
+import 'package:tippmixapp/screens/feed_screen.dart';
+import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 import 'package:tippmixapp/providers/leaderboard_provider.dart'
     show topTipsterProvider;
 import 'package:tippmixapp/services/reward_service.dart'
@@ -32,7 +46,6 @@ import 'package:tippmixapp/providers/odds_api_provider.dart'
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/router.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 import 'dart:io';
 
@@ -65,14 +78,105 @@ class _FakeBetSlipProvider extends BetSlipProvider {
   _FakeBetSlipProvider() : super();
 }
 
+class _FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
+  _FakeFirebaseAuth(this._user);
+  final fb.User? _user;
+  @override
+  fb.User? get currentUser => _user;
+}
+
+GoRouter _buildTestRouter() {
+  return GoRouter(
+    initialLocation: '/',
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) => HomeScreen(state: state, child: child),
+        routes: [
+          GoRoute(
+            path: '/create-ticket',
+            name: AppRoute.createTicket.name,
+            builder: (context, state) => const CreateTicketScreen(),
+          ),
+          GoRoute(
+            path: '/',
+            name: AppRoute.home.name,
+            builder: (context, state) =>
+                HomeScreen(state: state, showStats: true, child: const SizedBox.shrink()),
+          ),
+          GoRoute(
+            path: '/profile',
+            name: AppRoute.profile.name,
+            builder: (context, state) => const ProfileScreen(showAppBar: false),
+          ),
+          GoRoute(
+            path: '/bets',
+            name: AppRoute.bets.name,
+            builder: (context, state) =>
+                const EventsScreen(sportKey: 'soccer', showAppBar: false),
+          ),
+          GoRoute(
+            path: '/my-tickets',
+            name: AppRoute.myTickets.name,
+            builder: (context, state) => const MyTicketsScreen(showAppBar: false),
+          ),
+          GoRoute(
+            name: AppRoute.feed.name,
+            path: '/feed',
+            builder: (context, state) => const FeedScreen(showAppBar: false),
+          ),
+          GoRoute(
+            path: '/leaderboard',
+            name: AppRoute.leaderboard.name,
+            builder: (context, state) => const LeaderboardScreen(),
+          ),
+          GoRoute(
+            path: '/badges',
+            name: AppRoute.badges.name,
+            builder: (context, state) => const BadgeScreen(),
+          ),
+          GoRoute(
+            path: '/rewards',
+            name: AppRoute.rewards.name,
+            builder: (context, state) => const RewardsScreen(),
+          ),
+          GoRoute(
+            path: '/notifications',
+            name: AppRoute.notifications.name,
+            builder: (context, state) => const NotificationCenterScreen(),
+          ),
+          GoRoute(
+            path: '/settings',
+            name: AppRoute.settings.name,
+            builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/login',
+            name: AppRoute.login.name,
+            builder: (context, state) => const LoginRegisterScreen(),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(() async {
-    await Firebase.initializeApp();
-  });
-
   final user = User(id: 'u1', email: 'demo@demo.com', displayName: 'Demo');
+  late ThemeService themeService;
+  late FakeFirebaseFirestore firestore;
+
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    firestore = FakeFirebaseFirestore();
+    themeService = ThemeService(
+      prefs: prefs,
+      firestore: firestore,
+      auth: _FakeFirebaseAuth(user),
+    );
+  });
 
   final routes = <String, AppRoute>{
     'home': AppRoute.home,
@@ -89,9 +193,12 @@ void main() {
     'notifications': AppRoute.notifications,
   };
 
+  final router = _buildTestRouter();
+
   final overrides = <Override>[
     authServiceProvider.overrideWith((ref) => _FakeAuthService()),
     authProvider.overrideWith((ref) => _FakeAuthNotifier(user)),
+    themeServiceProvider.overrideWith((ref) => themeService),
     feedStreamProvider.overrideWith((ref) => Stream.value(const [])),
     leaderboardStreamProvider.overrideWith((ref) => Stream.value(const [])),
     userStatsProvider.overrideWith((ref) async => null),
