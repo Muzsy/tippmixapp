@@ -776,4 +776,22 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get login_variant_b_promo_subtitle => 'Csatlakozz és játssz velünk!';
+
+  @override
+  String get onboarding_place_bet => 'Fogadj könnyedén';
+
+  @override
+  String get onboarding_track_rewards => 'Kövesd a jutalmakat';
+
+  @override
+  String get onboarding_follow_tipsters => 'Kövesd a tippmestereket';
+
+  @override
+  String get onboarding_skip => 'Kihagyom';
+
+  @override
+  String get onboarding_next => 'Tovább';
+
+  @override
+  String get onboarding_done => 'Kész';
 }
