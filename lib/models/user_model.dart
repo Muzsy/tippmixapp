@@ -17,6 +17,8 @@ class UserModel {
   final TwoFactorType? twoFactorType;
   final DateTime? verifiedAt;
   final String? totpSecret;
+  final bool onboardingCompleted;
+  final DateTime? onboardingCompletedAt;
 
   UserModel({
     required this.uid,
@@ -30,6 +32,8 @@ class UserModel {
     this.twoFactorType,
     this.verifiedAt,
     this.totpSecret,
+    this.onboardingCompleted = false,
+    this.onboardingCompletedAt,
     this.notificationPreferences = const {},
     this.bio,
     this.favouriteTeam,
@@ -60,6 +64,10 @@ class UserModel {
             ? DateTime.tryParse(json['verifiedAt'] as String)
             : null,
         totpSecret: json['totpSecret'] as String?,
+        onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
+        onboardingCompletedAt: json['onboardingCompletedAt'] != null
+            ? DateTime.tryParse(json['onboardingCompletedAt'] as String)
+            : null,
         bio: json['bio'] as String?,
         favouriteTeam: json['favouriteTeam'] as String?,
         dateOfBirth: json['dateOfBirth'] != null
@@ -80,6 +88,9 @@ class UserModel {
         if (twoFactorType != null) 'twoFactorType': twoFactorType!.name,
         if (verifiedAt != null) 'verifiedAt': verifiedAt!.toIso8601String(),
         if (totpSecret != null) 'totpSecret': totpSecret,
+        'onboardingCompleted': onboardingCompleted,
+        if (onboardingCompletedAt != null)
+          'onboardingCompletedAt': onboardingCompletedAt!.toIso8601String(),
         if (bio != null) 'bio': bio,
         if (favouriteTeam != null) 'favouriteTeam': favouriteTeam,
         if (dateOfBirth != null) 'dateOfBirth': dateOfBirth!.toIso8601String(),

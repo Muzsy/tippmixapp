@@ -251,5 +251,11 @@
   "pending": "Pending",
   "accept": "Accept",
   "login_variant_b_promo_title": "Trusted by 50 000+",
-  "login_variant_b_promo_subtitle": "Join our community and win!"
-}
+  "login_variant_b_promo_subtitle": "Join our community and win!",
+  "onboarding_place_bet": "Place bets easily",
+  "onboarding_track_rewards": "Track your rewards",
+  "onboarding_follow_tipsters": "Follow top tipsters",
+  "onboarding_skip": "Skip",
+  "onboarding_next": "Next",
+  "onboarding_done": "Done"
+ }
