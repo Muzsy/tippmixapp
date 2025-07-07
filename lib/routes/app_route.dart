@@ -18,4 +18,5 @@ enum AppRoute {
   otpPrompt,
   debugMenu,
   friends,
+  onboarding,
 }
