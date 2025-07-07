@@ -197,6 +197,8 @@
   ,"notificationMarkRead": "Mark read"
   ,"notificationFilterAll": "All"
   ,"notificationFilterUnread": "Unread"
+  ,"notificationArchive": "Archive"
+  ,"notificationUndo": "Undo"
   ,"notificationType_reward": "Reward"
   ,"notificationType_badge": "Badge"
   ,"notificationType_friend": "Friend request"
