@@ -15,6 +15,8 @@ import 'package:tippmixapp/screens/social/friends_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
+import 'package:tippmixapp/screens/onboarding/onboarding_flow_screen.dart';
+import 'package:tippmixapp/screens/splash_screen.dart';
 import 'routes/app_route.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
@@ -22,7 +24,7 @@ import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   redirect: (context, state) {
     final user = FirebaseAuth.instance.currentUser;
     final protectedPaths = [
@@ -168,6 +170,16 @@ final GoRouter router = GoRouter(
       path: "/debug",
       name: AppRoute.debugMenu.name,
       builder: (context, state) => const DebugMenuScreen(),
+    ),
+    GoRoute(
+      path: '/splash',
+      name: 'splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding',
+      name: AppRoute.onboarding.name,
+      builder: (context, state) => const OnboardingFlowScreen(),
     ),
     // GoRoute(
     //   path: '/login',

@@ -251,5 +251,11 @@
   "pending": "Függőben",
   "accept": "Elfogad",
   "login_variant_b_promo_title": "Már 50 000+ felhasználó",
-  "login_variant_b_promo_subtitle": "Csatlakozz és játssz velünk!"
-}
+  "login_variant_b_promo_subtitle": "Csatlakozz és játssz velünk!",
+  "onboarding_place_bet": "Fogadj könnyedén",
+  "onboarding_track_rewards": "Kövesd a jutalmakat",
+  "onboarding_follow_tipsters": "Kövesd a tippmestereket",
+  "onboarding_skip": "Kihagyom",
+  "onboarding_next": "Tovább",
+  "onboarding_done": "Kész"
+ }
