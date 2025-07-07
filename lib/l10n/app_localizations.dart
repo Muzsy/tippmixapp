@@ -1506,6 +1506,15 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated'**
   String get profile_updated;
+
+  String get security_title;
+  String get enable_two_factor;
+  String get disable_two_factor;
+  String get otp_prompt_title;
+  String get otp_enter_code;
+  String get otp_error_invalid;
+  String get backup_codes_title;
+  String get verified_badge_label;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
