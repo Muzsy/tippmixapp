@@ -1507,22 +1507,113 @@ abstract class AppLocalizations {
   /// **'Profile updated'**
   String get profile_updated;
 
+  /// No description provided for @security_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
   String get security_title;
+
+  /// No description provided for @enable_two_factor.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable two-factor authentication'**
   String get enable_two_factor;
+
+  /// No description provided for @disable_two_factor.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable two-factor authentication'**
   String get disable_two_factor;
+
+  /// No description provided for @otp_prompt_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter OTP'**
   String get otp_prompt_title;
+
+  /// No description provided for @otp_enter_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
   String get otp_enter_code;
+
+  /// No description provided for @otp_error_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid code'**
   String get otp_error_invalid;
+
+  /// No description provided for @backup_codes_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup codes'**
   String get backup_codes_title;
+
+  /// No description provided for @verified_badge_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
   String get verified_badge_label;
+
+  /// No description provided for @follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
   String get follow;
+
+  /// No description provided for @unfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
   String get unfollow;
+
+  /// No description provided for @addFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Friend'**
   String get addFriend;
+
+  /// No description provided for @requestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
   String get requestSent;
+
+  /// No description provided for @friends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
   String get friends;
+
+  /// No description provided for @followers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
   String get followers;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
   String get pending;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
   String get accept;
+
+  /// No description provided for @login_variant_b_promo_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted by 50 000+'**
+  String get login_variant_b_promo_title;
+
+  /// No description provided for @login_variant_b_promo_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join our community and win!'**
+  String get login_variant_b_promo_subtitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

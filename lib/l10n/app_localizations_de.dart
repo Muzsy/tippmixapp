@@ -739,27 +739,41 @@ class AppLocalizationsDe extends AppLocalizations {
   String get otp_enter_code => 'Code';
 
   @override
-  String get otp_error_invalid => 'Ung\u00fcltiger Code';
+  String get otp_error_invalid => 'Ungültiger Code';
 
   @override
   String get backup_codes_title => 'Backup-Codes';
 
   @override
   String get verified_badge_label => 'Verifiziert';
+
   @override
   String get follow => 'Folgen';
+
   @override
   String get unfollow => 'Entfolgen';
+
   @override
-  String get addFriend => 'Freund hinzuf\u00fcgen';
+  String get addFriend => 'Freund hinzufügen';
+
   @override
   String get requestSent => 'Anfrage gesendet';
+
   @override
   String get friends => 'Freunde';
+
   @override
   String get followers => 'Follower';
+
   @override
   String get pending => 'Ausstehend';
+
   @override
   String get accept => 'Akzeptieren';
+
+  @override
+  String get login_variant_b_promo_title => 'Bereits 50.000+ Nutzer';
+
+  @override
+  String get login_variant_b_promo_subtitle => 'Werde Teil unserer Community!';
 }
