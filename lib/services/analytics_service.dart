@@ -46,6 +46,15 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  Future<void> logNotificationOpened(String category) async {
+    try {
+      await _analytics.logEvent(
+        name: 'notif_opened',
+        parameters: {'category': category},
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());
