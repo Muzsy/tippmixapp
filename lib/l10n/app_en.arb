@@ -249,5 +249,7 @@
   "friends": "Friends",
   "followers": "Followers",
   "pending": "Pending",
-  "accept": "Accept"
+  "accept": "Accept",
+  "login_variant_b_promo_title": "Trusted by 50 000+",
+  "login_variant_b_promo_subtitle": "Join our community and win!"
 }

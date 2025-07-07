@@ -6,7 +6,7 @@ import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/screens/profile/edit_profile_screen.dart';
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/login_register_screen.dart';
+import 'package:tippmixapp/screens/auth/login_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/screens/badges/badge_screen.dart';
@@ -17,6 +17,7 @@ import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
 import 'routes/app_route.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
+import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
 
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
@@ -155,7 +156,7 @@ final GoRouter router = GoRouter(
           path: '/login',
           name: AppRoute.login.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-          child: const LoginRegisterScreen(),
+          child: const LoginScreen(),
           transitionsBuilder: (context, anim, secAnim, child) =>
               FadeTransition(opacity: anim, child: child),
           ),
@@ -163,6 +164,11 @@ final GoRouter router = GoRouter(
      ],
     ),
     // Opcionális: login vagy egyéb top-level oldalak
+    GoRoute(
+      path: "/debug",
+      name: AppRoute.debugMenu.name,
+      builder: (context, state) => const DebugMenuScreen(),
+    ),
     // GoRoute(
     //   path: '/login',
     //   name: 'login',
