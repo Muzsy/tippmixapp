@@ -249,5 +249,7 @@
   "friends": "Barátok",
   "followers": "Követők",
   "pending": "Függőben",
-  "accept": "Elfogad"
+  "accept": "Elfogad",
+  "login_variant_b_promo_title": "Már 50 000+ felhasználó",
+  "login_variant_b_promo_subtitle": "Csatlakozz és játssz velünk!"
 }

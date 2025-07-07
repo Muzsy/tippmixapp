@@ -746,20 +746,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verified_badge_label => 'Verified';
+
   @override
   String get follow => 'Follow';
+
   @override
   String get unfollow => 'Unfollow';
+
   @override
   String get addFriend => 'Add Friend';
+
   @override
   String get requestSent => 'Request sent';
+
   @override
   String get friends => 'Friends';
+
   @override
   String get followers => 'Followers';
+
   @override
   String get pending => 'Pending';
+
   @override
   String get accept => 'Accept';
+
+  @override
+  String get login_variant_b_promo_title => 'Trusted by 50 000+';
+
+  @override
+  String get login_variant_b_promo_subtitle => 'Join our community and win!';
 }
