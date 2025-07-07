@@ -724,42 +724,56 @@ class AppLocalizationsHu extends AppLocalizations {
   String get profile_updated => 'Profil frissítve';
 
   @override
-  String get security_title => 'Biztons\u00e1g';
+  String get security_title => 'Biztonság';
 
   @override
-  String get enable_two_factor => 'K\u00e9tl\u00e9pcs\u0151s hiteles\u00edt\u00e9s bekapcsol\u00e1sa';
+  String get enable_two_factor => 'Kétlépcsős hitelesítés bekapcsolása';
 
   @override
-  String get disable_two_factor => 'K\u00e9tl\u00e9pcs\u0151s hiteles\u00edt\u00e9s kikapcsol\u00e1sa';
+  String get disable_two_factor => 'Kétlépcsős hitelesítés kikapcsolása';
 
   @override
-  String get otp_prompt_title => 'OTP megad\u00e1sa';
+  String get otp_prompt_title => 'OTP megadása';
 
   @override
-  String get otp_enter_code => 'K\u00f3d';
+  String get otp_enter_code => 'Kód';
 
   @override
-  String get otp_error_invalid => '\u00c9rv\u00e9nytelen k\u00f3d';
+  String get otp_error_invalid => 'Érvénytelen kód';
 
   @override
-  String get backup_codes_title => 'Ment\u0151k\u00f3dok';
+  String get backup_codes_title => 'Mentőkódok';
 
   @override
-  String get verified_badge_label => 'Ellen\u0151rz\u00f6tt';
+  String get verified_badge_label => 'Ellenőrzött';
+
   @override
-  String get follow => 'K\u00f6vet\u00e9s';
+  String get follow => 'Követés';
+
   @override
-  String get unfollow => 'K\u00f6vetve';
+  String get unfollow => 'Követve';
+
   @override
-  String get addFriend => 'Ismer\u0151snek jel\u00f6l';
+  String get addFriend => 'Ismerősnek jelöl';
+
   @override
-  String get requestSent => 'K\u00e9relem elk\u00fcldve';
+  String get requestSent => 'Kérelem elküldve';
+
   @override
-  String get friends => 'Bar\u00e1tok';
+  String get friends => 'Barátok';
+
   @override
-  String get followers => 'K\u00f6vet\u0151k';
+  String get followers => 'Követők';
+
   @override
-  String get pending => 'F\u00fcgg\u0151ben';
+  String get pending => 'Függőben';
+
   @override
   String get accept => 'Elfogad';
+
+  @override
+  String get login_variant_b_promo_title => 'Már 50 000+ felhasználó';
+
+  @override
+  String get login_variant_b_promo_subtitle => 'Csatlakozz és játssz velünk!';
 }
