@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import 'package:tippmixapp/theme/theme_builder.dart';
@@ -48,7 +47,6 @@ import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/services/odds_api_service.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/routes/app_route.dart';
-import 'dart:io';
 
 class _FakeAuthService implements AuthService {
   @override
@@ -79,18 +77,6 @@ class _FakeBetSlipProvider extends BetSlipProvider {
   _FakeBetSlipProvider() : super();
 }
 
-class _FakeUser extends Fake implements fb.User {
-  @override
-  final String uid;
-  _FakeUser(this.uid);
-}
-
-class _FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
-  _FakeFirebaseAuth(this._user);
-  final fb.User? _user;
-  @override
-  fb.User? get currentUser => _user;
-}
 
 GoRouter _buildTestRouter() {
   return GoRouter(
