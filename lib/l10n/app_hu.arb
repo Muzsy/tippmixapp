@@ -277,5 +277,7 @@
   "register_finish": "Befejezés",
   "register_skip": "Kihagyás",
   "register_avatar_too_large": "Az avatar mérete legfeljebb 2 MB lehet",
-  "back_button": "Vissza"
+  "back_button": "Vissza",
+  "login_required_title": "Bejelentkezés szükséges",
+  "login_required_message": "Kérjük, jelentkezz be a folytatáshoz"
 }

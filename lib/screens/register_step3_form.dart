@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
-import '../constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 import '../routes/app_route.dart';
