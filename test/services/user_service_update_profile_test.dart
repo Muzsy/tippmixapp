@@ -10,7 +10,7 @@ void main() {
       'email': 'a@b.com',
       'displayName': 'old',
       'nickname': 'n',
-      'avatarUrl': '',
+      'avatarUrl': 'avatar.png',
       'isPrivate': false,
       'fieldVisibility': {},
     });
