@@ -1,9 +1,13 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
-// Initialize Firebase Admin
-admin.initializeApp();
-const db = admin.firestore();
+// Csak egyszer engedjük inicializálni
+if (!getApps().length) {
+  initializeApp({ credential: applicationDefault() });
+}
+
+const db = getFirestore();
 
 /**
  * Automatically create a user document when a new Auth user is created.

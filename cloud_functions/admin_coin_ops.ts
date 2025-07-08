@@ -1,10 +1,13 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
-// Admin only coin operations, see docs/bonus_policy.md for allowed actions
+// Csak egyszer engedjük inicializálni
+if (!getApps().length) {
+  initializeApp({ credential: applicationDefault() });
+}
 
-admin.initializeApp();
-const db = admin.firestore();
+const db = getFirestore();
 
 export const admin_coin_ops = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
