@@ -1,13 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
-// Csak egyszer engedjük inicializálni
-if (!getApps().length) {
-  initializeApp({ credential: applicationDefault() });
-}
-
-const db = getFirestore();
+import { db } from './src/lib/firebase';
 
 export const admin_coin_ops = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
