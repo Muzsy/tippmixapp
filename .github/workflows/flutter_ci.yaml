@@ -31,6 +31,9 @@ jobs:
         run: flutter test --coverage
         # widget tests including register_step1_form_test.dart and register_step2_form_test.dart
 
+      - name: Run guest route guard e2e
+        run: flutter test integration_test/guest_routeguard_test.dart
+
       # (innen lefelé: CI‑only részek)
       - name: Run coverage + badge
         uses: whynotmake-it/dart-coverage-assistant@v1

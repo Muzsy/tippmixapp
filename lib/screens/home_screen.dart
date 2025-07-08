@@ -23,6 +23,7 @@ import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/models/feed_model.dart';
+import 'home_guest_cta_tile.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -93,6 +94,10 @@ class HomeScreen extends ConsumerWidget {
 
     // --- build tile list ---------------------------------------------------
     final tiles = <Widget>[const HomeTileEducationalTip()];
+    final uid = ref.watch(authProvider).user?.id;
+    if (uid == null) {
+      tiles.add(const HomeGuestCtaTile());
+    }
 
     final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
     final topTipster = ref.watch(topTipsterProvider).asData?.value;
