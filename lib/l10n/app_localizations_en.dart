@@ -686,9 +686,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileChooseAvatar => 'Choose avatar';
 
   @override
-  String get profileCropImage => 'Crop image';
-
-  @override
   String get profile_avatar_error => 'Error updating avatar';
 
   @override

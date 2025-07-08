@@ -52,7 +52,11 @@ class _AvatarGalleryState extends State<AvatarGallery> {
               onTap: () => widget.onAvatarSelected(path),
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: Image.asset(path, fit: BoxFit.cover),
+                child: Image.asset(
+                  path,
+                  fit: BoxFit.cover,
+                  semanticLabel: 'avatar',
+                ),
               ),
             );
           },
