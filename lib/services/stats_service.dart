@@ -137,4 +137,13 @@ class StatsService {
       winRate: winRate,
     );
   }
+
+  /// Streams live statistics for a specific user from `/users/{uid}/stats`.
+  Stream<UserStatsModel> statsDocStream(String uid) {
+    final doc = _db.doc('users/$uid/stats');
+    return doc.snapshots().map((snap) {
+      final data = snap.data() ?? <String, dynamic>{};
+      return UserStatsModel.fromJson({'uid': uid, ...data});
+    });
+  }
 }
