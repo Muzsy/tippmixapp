@@ -26,9 +26,7 @@ class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
   final fb.User? _user;
   @override
   fb.User? get currentUser => _user;
-  @override
   Future<bool> validateEmailUnique(String email) async => true;
-  @override
   Future<bool> validateNicknameUnique(String nickname) async => true;
 }
 
@@ -76,7 +74,10 @@ class FakeAuthService implements AuthService {
   @override
   Future<User?> signInWithFacebook() async => null;
   @override
-  Future<bool> pollEmailVerification({Duration timeout = const Duration(minutes: 3), Duration interval = const Duration(seconds: 5),}) async => true;
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async => true;
   @override
   Future<void> confirmPasswordReset(String code, String newPassword) async {}
 }
