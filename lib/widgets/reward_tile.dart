@@ -12,7 +12,7 @@ class RewardTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return ListTile(
-      leading: Icon(Icons.card_giftcard),
+      leading: const Icon(Icons.card_giftcard),
       title: Text(reward.title),
       subtitle: Text(reward.description),
       trailing: reward.isClaimed

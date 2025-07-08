@@ -48,6 +48,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Compile Cloud Functions
+        run: |
+          npm ci --prefix cloud_functions
+          npm run --prefix cloud_functions build
+
       - name: Cache Firebase emulator
         uses: actions/cache@v4
         with:
