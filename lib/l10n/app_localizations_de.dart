@@ -858,4 +858,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get back_button => 'Zurück';
+
+  @override
+  String get login_required_title => 'Anmeldung erforderlich';
+
+  @override
+  String get login_required_message => 'Bitte melde dich an, um fortzufahren';
 }
