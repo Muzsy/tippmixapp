@@ -56,6 +56,8 @@ class FakeAuthService implements AuthService {
 
   @override
   Future<User?> signInWithFacebook() async => null;
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {}
 }
 
 class FakeAuthNotifier extends AuthNotifier {

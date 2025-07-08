@@ -20,6 +20,9 @@ import 'package:tippmixapp/screens/splash_screen.dart';
 import 'routes/app_route.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
+import 'package:tippmixapp/screens/forgot_password_screen.dart';
+import 'package:tippmixapp/screens/password_reset_confirm_screen.dart';
+import 'package:tippmixapp/screens/reset_password_screen.dart';
 
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
@@ -154,11 +157,21 @@ final GoRouter router = GoRouter(
           path: '/login',
           name: AppRoute.login.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-          child: const LoginScreen(),
-          transitionsBuilder: (context, anim, secAnim, child) =>
-              FadeTransition(opacity: anim, child: child),
+            child: const LoginScreen(),
+            transitionsBuilder: (context, anim, secAnim, child) =>
+                FadeTransition(opacity: anim, child: child),
           ),
-        )
+        ),
+        GoRoute(
+          path: '/forgot-password',
+          name: AppRoute.forgotPassword.name,
+          builder: (context, state) => const ForgotPasswordScreen(),
+        ),
+        GoRoute(
+          path: '/reset-confirm',
+          name: AppRoute.passwordResetConfirm.name,
+          builder: (context, state) => const PasswordResetConfirmScreen(),
+        ),
      ],
     ),
     // Opcionális: login vagy egyéb top-level oldalak
@@ -176,6 +189,12 @@ final GoRouter router = GoRouter(
       path: '/onboarding',
       name: AppRoute.onboarding.name,
       builder: (context, state) => const OnboardingFlowScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password/:oobCode',
+      name: AppRoute.resetPassword.name,
+      builder: (context, state) =>
+          ResetPasswordScreen(oobCode: state.pathParameters['oobCode']!),
     ),
     // GoRoute(
     //   path: '/login',

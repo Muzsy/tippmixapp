@@ -152,6 +152,13 @@ class AuthService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
+  Future<void> confirmPasswordReset(String code, String newPassword) async {
+    await _firebaseAuth.confirmPasswordReset(
+      code: code,
+      newPassword: newPassword,
+    );
+  }
+
   // Email cím ellenőrzöttsége
   bool get isEmailVerified => _firebaseAuth.currentUser?.emailVerified ?? false;
 
