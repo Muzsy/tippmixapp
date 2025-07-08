@@ -7,6 +7,9 @@ class UserStatsModel {
   final double winRate;
   final double? roi;
   final int? currentWinStreak;
+  final int streakDays;
+  final String? nextReward;
+  final int coinsBalance;
 
   UserStatsModel({
     required this.uid,
@@ -17,6 +20,9 @@ class UserStatsModel {
     required this.winRate,
     this.roi,
     this.currentWinStreak,
+    this.streakDays = 0,
+    this.nextReward,
+    this.coinsBalance = 0,
   });
 
   factory UserStatsModel.fromJson(Map<String, dynamic> json) => UserStatsModel(
@@ -28,6 +34,9 @@ class UserStatsModel {
         winRate: (json['winRate'] as num?)?.toDouble() ?? 0.0,
         roi: (json['roi'] as num?)?.toDouble(),
         currentWinStreak: json['currentWinStreak'] as int?,
+        streakDays: json['streakDays'] as int? ?? 0,
+        nextReward: json['nextReward'] as String?,
+        coinsBalance: json['coinsBalance'] as int? ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +48,8 @@ class UserStatsModel {
         'winRate': winRate,
         if (roi != null) 'roi': roi,
         if (currentWinStreak != null) 'currentWinStreak': currentWinStreak,
+        'streakDays': streakDays,
+        'nextReward': nextReward,
+        'coinsBalance': coinsBalance,
       };
 }

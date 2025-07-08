@@ -55,6 +55,15 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  Future<void> logRewardClaimed(String rewardId, String type) async {
+    try {
+      await _analytics.logEvent(
+        name: 'reward_claimed',
+        parameters: {'rewardId': rewardId, 'type': type},
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());
