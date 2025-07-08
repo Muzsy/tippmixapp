@@ -825,4 +825,22 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get password_strength_strong => 'Erős';
+
+  @override
+  String get gdpr_consent => 'Elfogadom az adatkezelési tájékoztatót';
+
+  @override
+  String get gdpr_required_error => 'A GDPR hozzájárulás kötelező';
+
+  @override
+  String get auth_error_invalid_nickname => 'A becenév 3-20 karakter hosszú legyen';
+
+  @override
+  String get auth_error_invalid_date => 'Érvénytelen dátum';
+
+  @override
+  String get auth_error_nickname_taken => 'A becenév már foglalt';
+
+  @override
+  String get back_button => 'Vissza';
 }
