@@ -1,0 +1,53 @@
+# fill_canvas_qa_release.yaml – Codex goal for Sprint 8 QA, Accessibility & Release
+# Generated from canvases/qa_release_revamp.md
+
+canvas: canvases/qa_release_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ WCAG-AA audit & fixes
+  - id: wcag_audit
+    description: "Run flutter_a11y; fix contrast & semanticsLabel issues across lib/."
+    outputs:
+      - modify: [lib/**]
+
+  # 2️⃣ Localization finalization
+  - id: l10n_final
+    description: "Sync HU/EN/DE .arb files, remove unused keys, run flutter gen-l10n."
+    outputs:
+      - modify: [lib/l10n/*.arb]
+
+  # 3️⃣ Email verification flow
+  - id: email_verification
+    description: "Add sendEmailVerification() call and verification polling to AuthService and Registration completion flow."
+    outputs:
+      - modify: [lib/services/auth_service.dart]
+
+  # 4️⃣ Update AGENTS & CI token
+  - id: agents_context
+    description: "Register GuardPopupService in AGENTS.md and switch production CI token in codex_docs/codex_context.yaml."
+    outputs:
+      - modify: [AGENTS.md, codex_docs/codex_context.yaml]
+
+  # 5️⃣ CI pipeline hardening
+  - id: ci_pipeline
+    description: "Add flutter_a11y and build steps (appbundle, ipa) to .github/workflows/flutter_ci.yaml."
+    outputs:
+      - modify: [.github/workflows/flutter_ci.yaml]
+
+  # 6️⃣ Changelog & version bump
+  - id: changelog_version
+    description: "Update CHANGELOG.md for v1.4.0, bump version in pubspec.yaml, create git tag v1.4.0-login_revamp."
+    outputs:
+      - modify: [CHANGELOG.md, pubspec.yaml]
+
+  # 7️⃣ UAT checklist
+  - id: uat_checklist
+    description: "Create docs/uat_checklist_login_register_revamp.md with checkbox table for stakeholder sign-off."
+    outputs:
+      - add: [docs/uat_checklist_login_register_revamp.md]
+
+ready: false
