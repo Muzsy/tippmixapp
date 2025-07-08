@@ -813,4 +813,16 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get onboarding_done => 'Kész';
+
+  @override
+  String get continue_button => 'Folytatás';
+
+  @override
+  String get password_strength_weak => 'Gyenge';
+
+  @override
+  String get password_strength_medium => 'Közepes';
+
+  @override
+  String get password_strength_strong => 'Erős';
 }

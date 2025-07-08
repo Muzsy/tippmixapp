@@ -42,6 +42,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -54,21 +55,26 @@ class FakeAuthService implements AuthService {
 }
 
 class FakeAuthNotifier extends AuthNotifier {
-  FakeAuthNotifier(User? user)
-      : super(FakeAuthService()) {
+  FakeAuthNotifier(User? user) : super(FakeAuthService()) {
     state = AuthState(user: user);
   }
 }
 
 void main() {
-  testWidgets('LeaderboardScreen displays stats and highlights user', (tester) async {
+  testWidgets('LeaderboardScreen displays stats and highlights user', (
+    tester,
+  ) async {
     final controller = StreamController<List<UserStatsModel>>();
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
-          authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: 'a@a.hu', displayName: 'Me'))),
+          authProvider.overrideWith(
+            (ref) => FakeAuthNotifier(
+              User(id: 'u1', email: 'a@a.hu', displayName: 'Me'),
+            ),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -112,7 +118,7 @@ void main() {
           leaderboardStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
         ],
-          child: const MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),

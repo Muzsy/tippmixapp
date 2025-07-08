@@ -813,4 +813,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboarding_done => 'Done';
+
+  @override
+  String get continue_button => 'Continue';
+
+  @override
+  String get password_strength_weak => 'Weak';
+
+  @override
+  String get password_strength_medium => 'Medium';
+
+  @override
+  String get password_strength_strong => 'Strong';
 }
