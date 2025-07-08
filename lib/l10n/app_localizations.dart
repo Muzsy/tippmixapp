@@ -1423,12 +1423,6 @@ abstract class AppLocalizations {
   /// **'Choose avatar'**
   String get profileChooseAvatar;
 
-  /// No description provided for @profileCropImage.
-  ///
-  /// In en, this message translates to:
-  /// **'Crop image'**
-  String get profileCropImage;
-
   /// No description provided for @profile_avatar_error.
   ///
   /// In en, this message translates to:

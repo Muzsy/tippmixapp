@@ -66,6 +66,8 @@ class FakeAuthService implements AuthService {
   @override
   Future<tm.User?> signInWithFacebook() async => null;
   @override
+  Future<bool> pollEmailVerification({Duration timeout = const Duration(minutes: 3), Duration interval = const Duration(seconds: 5),}) async => true;
+  @override
   Future<void> confirmPasswordReset(String code, String newPassword) async {}
 }
 
