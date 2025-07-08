@@ -1,15 +1,22 @@
-import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../models/user.dart';
 
 class AuthService {
   final fb.FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
+  final FacebookAuth _facebookAuth;
 
-  AuthService({fb.FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
-    : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-      _firestore = firestore ?? FirebaseFirestore.instance;
+  AuthService({
+    fb.FirebaseAuth? firebaseAuth,
+    FirebaseFirestore? firestore,
+    FacebookAuth? facebookAuth,
+  })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance,
+        _facebookAuth = facebookAuth ?? FacebookAuth.instance;
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
@@ -79,19 +86,26 @@ class AuthService {
     }
   }
 
-  // Facebook sign-in
+  // Facebook sign-in using flutter_facebook_auth
   Future<User?> signInWithFacebook() async {
     try {
-      final cred = await _firebaseAuth.signInWithProvider(
-        fb.FacebookAuthProvider(),
-      );
-      final user = cred.user;
-      if (user == null) return null;
-      return User(
-        id: user.uid,
-        email: user.email ?? '',
-        displayName: user.displayName ?? '',
-      );
+      final res = await _facebookAuth.login();
+      if (res.status == LoginStatus.success) {
+        final credential =
+            fb.FacebookAuthProvider.credential(res.accessToken!.token);
+        final cred = await _firebaseAuth.signInWithCredential(credential);
+        final user = cred.user;
+        if (user == null) return null;
+        return User(
+          id: user.uid,
+          email: user.email ?? '',
+          displayName: user.displayName ?? '',
+        );
+      } else if (res.status == LoginStatus.cancelled) {
+        throw AuthServiceException('auth/facebook-cancelled');
+      } else {
+        throw AuthServiceException('auth/unknown');
+      }
     } on fb.FirebaseAuthException catch (e) {
       throw AuthServiceException(_firebaseErrorToCode(e));
     }
@@ -117,12 +131,19 @@ class AuthService {
   }
 
   Future<bool> validateEmailUnique(String email) async {
-    final query = await _firestore
-        .collection("users")
-        .where("email", isEqualTo: email)
-        .limit(1)
-        .get();
-    return query.docs.isEmpty;
+    final functions = FirebaseFunctions.instanceFor(region: 'europe-central2');
+    final callable = functions.httpsCallable('checkEmailUnique');
+    try {
+      final result =
+          await callable.call<Map<String, dynamic>>({'email': email});
+      return result.data['unique'] as bool? ?? true;
+    } on FirebaseFunctionsException {
+      if (kDebugMode) return true;
+      rethrow;
+    } catch (_) {
+      if (kDebugMode) return true;
+      rethrow;
+    }
   }
 
   Future<bool> validateNicknameUnique(String nickname) async {
