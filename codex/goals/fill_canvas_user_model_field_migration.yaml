@@ -1,0 +1,31 @@
+steps:
+  - name: Adatmigrációs script létrehozása
+    description: Hozd létre a felhasználói kollekciót backfill-elő `functions/scripts/migrateUserSchema.ts` fájlt, amely pótolja a hiányzó mezőket alapértékkel és `schemaVersion: 2`-t állít.
+    outputs:
+      - functions/scripts/migrateUserSchema.ts
+
+  - name: package.json script hozzáadása
+    description: Add hozzá a `package.json`-hoz a "migrate:user-schema" NPM scriptet ("ts-node functions/scripts/migrateUserSchema.ts").
+    outputs:
+      - functions/package.json
+
+  - name: UserModel fallback eltávolítása
+    description: Távolítsd el az `?? ''` fallbackeket a `lib/models/user_model.dart` fájlban (email, displayName, nickname, avatarUrl), és adj assertet a konstruktorhoz.
+    outputs:
+      - lib/models/user_model.dart
+
+  - name: SplashController hiba-kezelés
+    description: Csomagold `UserModel.fromJson()` hívását try/catch-be a `lib/controllers/splash_controller.dart` fájlban; hiba esetén signOut + router.goNamed(AppRoute.login.name).
+    outputs:
+      - lib/controllers/splash_controller.dart
+
+  - name: Új tesztek
+    description: Írj/frissíts unit és integration teszteket (`test/models/user_model_test.dart`, `test_driver/splash_test.dart`), hogy lefedjék a migráció utáni működést.
+    outputs:
+      - test/models/user_model_test.dart
+      - test_driver/splash_test.dart
+
+  - name: CI futtatás
+    description: Ellenőrizd, hogy `flutter analyze` és `flutter test` fut a GitHub Actions workflowban (`.github/workflows/ci.yaml`).
+    outputs:
+      - .github/workflows/ci.yaml
