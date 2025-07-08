@@ -1,0 +1,46 @@
+# fill_canvas_guest_routeguard.yaml – Codex goal for Sprint 5 Guest Home & RouteGuard implementation
+# Generated from canvases/guest_home_routeguard_revamp.md
+
+canvas: canvases/guest_home_routeguard_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ HomeGuest CTA tile
+  - id: cta_tile
+    description: "Add `HomeGuestCtaTile` widget (InkWell) to Home screen grid; onTap → context.goNamed(AppRoute.login)."
+    outputs:
+      - lib/screens/home_guest_cta_tile.dart
+      - lib/screens/home_screen.dart
+
+  # 2️⃣ AuthGuard provider
+  - id: auth_guard
+    description: "Implement `RequireAuth` ConsumerWidget in lib/providers/auth_guard.dart wrapping child; if uid == null show LoginRequiredDialog."
+    outputs:
+      - lib/providers/auth_guard.dart
+      - lib/widgets/login_required_dialog.dart
+
+  # 3️⃣ Router integration
+  - id: router_integration
+    description: "Wrap BetSlip, Profile, History, Settings routes with RequireAuth in lib/router/router.dart."
+    outputs:
+      - lib/router/router.dart
+
+  # 4️⃣ e2e test
+  - id: e2e_test
+    description: "Create integration_test/guest_routeguard_test.dart: simulate guest tap on BetSlip tile, expect LoginRequiredDialog."
+    outputs:
+      - integration_test/guest_routeguard_test.dart
+
+  # 5️⃣ CI update
+  - id: ci_update
+    description: "Add `flutter drive --target=integration_test/guest_routeguard_test.dart` step to CI workflow."
+    outputs:
+      - .github/workflows/flutter_ci.yaml
+
+ready: false
