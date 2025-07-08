@@ -858,4 +858,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get back_button => 'Vissza';
+
+  @override
+  String get login_required_title => 'Bejelentkezés szükséges';
+
+  @override
+  String get login_required_message => 'Kérjük, jelentkezz be a folytatáshoz';
 }

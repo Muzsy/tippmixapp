@@ -858,4 +858,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get back_button => 'Back';
+
+  @override
+  String get login_required_title => 'Login required';
+
+  @override
+  String get login_required_message => 'Please log in to continue';
 }
