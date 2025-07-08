@@ -153,3 +153,7 @@ Removed invalid avoid-hard-coded-colors lint from analysis_options.yaml.
 Renamed legacy/AppColors.dart to legacy/app_colors.dart and updated comments.
 Removed unused mocktail and dart:io imports plus unused fake classes in test/generate_goldens.dart.
 Could not fix missing .env asset warning in llama_index/data/pubspec.yaml because file not found.
+- Stubbed LocalNotificationService to remove missing flutter_local_notifications plugin errors.
+- Replaced deprecated headline6 with titleLarge in CoinsBalanceHeader.
+- Updated OTPPromptScreen, SecurityScreen and TwoFactorWizard to use context.mounted check after async calls.
+- Could not fix missing .env asset warning for llama_index/data/pubspec.yaml (file not present).
