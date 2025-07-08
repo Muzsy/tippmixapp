@@ -1,6 +1,9 @@
 import * as functions from 'firebase-functions';
-import { FieldValue } from 'firebase-admin/firestore';
-import { db } from './src/lib/firebase';
+import * as admin from 'firebase-admin';
+
+// Initialize Firebase Admin
+admin.initializeApp();
+const db = admin.firestore();
 
 /**
  * Automatically create a user document when a new Auth user is created.
@@ -12,7 +15,7 @@ export const onUserCreate = functions
     const userRef = db.collection('users').doc(user.uid);
     await userRef.set({
       coins: 50,
-      createdAt: FieldValue.serverTimestamp(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   });
 
@@ -75,7 +78,7 @@ export const coin_trx = functions
       // If somehow user doc is missing, initialize with zero balance
       let currentBalance = 0;
       if (!userSnap.exists) {
-        tx.set(userRef, { coins: 0, createdAt: FieldValue.serverTimestamp() });
+        tx.set(userRef, { coins: 0, createdAt: admin.firestore.FieldValue.serverTimestamp() });
       } else {
         currentBalance = (userSnap.get('coins') as number) || 0;
       }
@@ -95,7 +98,7 @@ export const coin_trx = functions
         type,
         reason,
         transactionId,
-        timestamp: FieldValue.serverTimestamp(),
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
     });
 
