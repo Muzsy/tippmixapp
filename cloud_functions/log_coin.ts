@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-admin.initializeApp();
-const db = admin.firestore();
+import { FieldValue } from 'firebase-admin/firestore';
+import { db } from './src/lib/firebase';
 
 interface LogData {
   amount: number;
@@ -49,7 +47,7 @@ export const log_coin = functions
       type,
       meta,
       transactionId,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      timestamp: FieldValue.serverTimestamp(),
     });
     return { success: true };
   });
