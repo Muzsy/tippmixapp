@@ -29,7 +29,6 @@ import 'package:tippmixapp/screens/badges/badge_screen.dart'
     show BadgeScreen, userBadgesProvider;
 import 'package:tippmixapp/screens/profile_screen.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/login_register_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
@@ -155,11 +154,6 @@ GoRouter _buildTestRouter() {
             path: '/settings',
             name: AppRoute.settings.name,
             builder: (context, state) => const SettingsScreen(),
-          ),
-          GoRoute(
-            path: '/login',
-            name: AppRoute.login.name,
-            builder: (context, state) => const LoginRegisterScreen(),
           ),
         ],
       ),
