@@ -31,14 +31,16 @@ class _TwoFactorWizardState extends State<TwoFactorWizard> {
             ElevatedButton(
               onPressed: () async {
                 final l = AppLocalizations.of(context)!;
+                final messenger = ScaffoldMessenger.of(context);
+                final navigator = Navigator.of(context);
                 final ok = await widget.service.verifyOtp(_otp.text);
                 if (!mounted) return;
                 if (!ok) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     SnackBar(content: Text(l.otp_error_invalid)),
                   );
                 } else {
-                  Navigator.of(context).pop();
+                  navigator.pop();
                 }
               },
               child: Text(loc.otp_prompt_title),
