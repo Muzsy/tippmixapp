@@ -52,6 +52,7 @@ class _FakeAuthService implements AuthService {
   Stream<User?> authStateChanges() => const Stream.empty();
   @override
   User? get currentUser => null;
+  Future<bool> validateEmailUnique(String email) async => true;
   @override
   Future<User?> signInWithEmail(String email, String password) async => null;
   @override
@@ -85,13 +86,13 @@ class _FakeBetSlipProvider extends BetSlipProvider {
   _FakeBetSlipProvider() : super();
 }
 
-
 GoRouter _buildTestRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: [
       ShellRoute(
-        builder: (context, state, child) => HomeScreen(state: state, child: child),
+        builder: (context, state, child) =>
+            HomeScreen(state: state, child: child),
         routes: [
           GoRoute(
             path: '/create-ticket',
@@ -101,8 +102,11 @@ GoRouter _buildTestRouter() {
           GoRoute(
             path: '/',
             name: AppRoute.home.name,
-            builder: (context, state) =>
-                HomeScreen(state: state, showStats: true, child: const SizedBox.shrink()),
+            builder: (context, state) => HomeScreen(
+              state: state,
+              showStats: true,
+              child: const SizedBox.shrink(),
+            ),
           ),
           GoRoute(
             path: '/profile',
@@ -118,7 +122,8 @@ GoRouter _buildTestRouter() {
           GoRoute(
             path: '/my-tickets',
             name: AppRoute.myTickets.name,
-            builder: (context, state) => const MyTicketsScreen(showAppBar: false),
+            builder: (context, state) =>
+                const MyTicketsScreen(showAppBar: false),
           ),
           GoRoute(
             name: AppRoute.feed.name,
@@ -243,5 +248,4 @@ void main() {
         });
       }
     }
-  }
-}
+  }}

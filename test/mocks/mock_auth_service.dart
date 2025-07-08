@@ -6,6 +6,7 @@ class MockAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
   User? _user;
 
+  bool emailUnique = true;
   @override
   Stream<User?> authStateChanges() => _controller.stream;
 
@@ -36,6 +37,8 @@ class MockAuthService implements AuthService {
 
   @override
   User? get currentUser => _user;
+  @override
+  Future<bool> validateEmailUnique(String email) async => emailUnique;
 
   @override
   Future<User?> signInWithGoogle() async => null;

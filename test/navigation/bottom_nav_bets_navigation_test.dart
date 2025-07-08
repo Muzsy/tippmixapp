@@ -55,6 +55,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -74,7 +75,7 @@ class FakeAuthNotifier extends AuthNotifier {
 
 class TestOddsApiProvider extends OddsApiProvider {
   TestOddsApiProvider(OddsApiProviderState state)
-      : super(OddsCacheWrapper(OddsApiService())) {
+    : super(OddsCacheWrapper(OddsApiService())) {
     this.state = state;
   }
 
@@ -88,7 +89,8 @@ void main() {
       initialLocation: '/',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => HomeScreen(state: state, child: child),
+          builder: (context, state, child) =>
+              HomeScreen(state: state, child: child),
           routes: [
             GoRoute(
               path: '/',
@@ -100,8 +102,9 @@ void main() {
               name: AppRoute.bets.name,
               pageBuilder: (context, state) => CustomTransitionPage(
                 child: const EventsScreen(sportKey: 'soccer'),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
               ),
             ),
           ],

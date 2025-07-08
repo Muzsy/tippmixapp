@@ -55,6 +55,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -74,7 +75,7 @@ class FakeAuthNotifier extends AuthNotifier {
 
 class TestOddsApiProvider extends OddsApiProvider {
   TestOddsApiProvider(OddsApiProviderState state)
-      : super(OddsCacheWrapper(OddsApiService())) {
+    : super(OddsCacheWrapper(OddsApiService())) {
     this.state = state;
   }
 
@@ -83,12 +84,15 @@ class TestOddsApiProvider extends OddsApiProvider {
 }
 
 void main() {
-  testWidgets('drawer bets item closes drawer and navigates with title', (tester) async {
+  testWidgets('drawer bets item closes drawer and navigates with title', (
+    tester,
+  ) async {
     final router = GoRouter(
       initialLocation: '/profile',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => HomeScreen(state: state, child: child),
+          builder: (context, state, child) =>
+              HomeScreen(state: state, child: child),
           routes: [
             GoRoute(
               path: '/',
@@ -100,8 +104,9 @@ void main() {
               name: AppRoute.bets.name,
               pageBuilder: (context, state) => CustomTransitionPage(
                 child: const EventsScreen(sportKey: 'soccer'),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
               ),
             ),
             GoRoute(
@@ -148,7 +153,9 @@ void main() {
 
     expect(find.byType(EventsScreen), findsOneWidget);
     expect(find.text('Bets'), findsOneWidget);
-    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold).first);
+    final scaffoldState = tester.state<ScaffoldState>(
+      find.byType(Scaffold).first,
+    );
     expect(scaffoldState.isDrawerOpen, isFalse);
   });
 }
