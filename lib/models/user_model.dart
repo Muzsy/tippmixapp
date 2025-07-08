@@ -1,4 +1,3 @@
-import "../constants.dart";
 import 'two_factor_type.dart';
 
 class UserModel {
@@ -38,14 +37,18 @@ class UserModel {
     this.bio,
     this.favouriteTeam,
     this.dateOfBirth,
-  });
+  })  : assert(uid.isNotEmpty),
+        assert(email.isNotEmpty),
+        assert(displayName.isNotEmpty),
+        assert(nickname.isNotEmpty),
+        assert(avatarUrl.isNotEmpty);
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         uid: json['uid'] as String,
-        email: json['email'] as String? ?? '',
-        displayName: json['displayName'] as String? ?? '',
-        nickname: json['nickname'] as String? ?? '',
-        avatarUrl: json['avatarUrl'] as String? ?? kDefaultAvatarPath,
+        email: json['email'] as String,
+        displayName: json['displayName'] as String,
+        nickname: json['nickname'] as String,
+        avatarUrl: json['avatarUrl'] as String,
         isPrivate: json['isPrivate'] as bool? ?? false,
         fieldVisibility: Map<String, bool>.from(
           (json['fieldVisibility'] as Map?) ?? {},
