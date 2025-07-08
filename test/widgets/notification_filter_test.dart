@@ -34,6 +34,7 @@ class FakeAuthService implements AuthService {
   bool get isEmailVerified => true;
   @override
   User? get currentUser => null;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -47,7 +48,9 @@ class FakeAuthService implements AuthService {
 
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier() : super(FakeAuthService()) {
-    state = AuthState(user: User(id: 'u1', email: '', displayName: ''));
+    state = AuthState(
+      user: User(id: 'u1', email: '', displayName: ''),
+    );
   }
 }
 
@@ -119,7 +122,8 @@ class FakeNotificationService extends NotificationService {
   }
 
   @override
-  Stream<List<NotificationModel>> streamNotifications(String userId) => const Stream.empty();
+  Stream<List<NotificationModel>> streamNotifications(String userId) =>
+      const Stream.empty();
 }
 
 void main() {
@@ -133,7 +137,9 @@ void main() {
           notificationStreamProvider.overrideWith((ref) => controller.stream),
           notificationServiceProvider.overrideWithValue(service),
           authProvider.overrideWith((ref) => FakeAuthNotifier()),
-          analyticsServiceProvider.overrideWith((ref) => FakeAnalyticsService()),
+          analyticsServiceProvider.overrideWith(
+            (ref) => FakeAnalyticsService(),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

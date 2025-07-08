@@ -43,6 +43,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -95,7 +96,9 @@ void main() {
     await tester.pumpWidget(
       _buildApp(
         auth: authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
-        tickets: ticketsProvider.overrideWith((ref) => Stream.value(const <Ticket>[])),
+        tickets: ticketsProvider.overrideWith(
+          (ref) => Stream.value(const <Ticket>[]),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -106,8 +109,13 @@ void main() {
   testWidgets('shows list of tickets', (tester) async {
     await tester.pumpWidget(
       _buildApp(
-        auth: authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me'))),
-        tickets: ticketsProvider.overrideWith((ref) => Stream.value(sampleTickets)),
+        auth: authProvider.overrideWith(
+          (ref) =>
+              FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
+        tickets: ticketsProvider.overrideWith(
+          (ref) => Stream.value(sampleTickets),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -117,16 +125,17 @@ void main() {
 
   testWidgets('pull to refresh refreshes provider', (tester) async {
     var calls = 0;
-    final override = ticketsProvider.overrideWith(
-      (ref) {
-        calls++;
-        return Stream.value(sampleTickets);
-      },
-    );
+    final override = ticketsProvider.overrideWith((ref) {
+      calls++;
+      return Stream.value(sampleTickets);
+    });
 
     await tester.pumpWidget(
       _buildApp(
-        auth: authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me'))),
+        auth: authProvider.overrideWith(
+          (ref) =>
+              FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
         tickets: override,
       ),
     );

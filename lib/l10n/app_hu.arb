@@ -262,5 +262,9 @@
   "onboarding_follow_tipsters": "Kövesd a tippmestereket",
   "onboarding_skip": "Kihagyom",
   "onboarding_next": "Tovább",
-  "onboarding_done": "Kész"
- }
+  "onboarding_done": "Kész",
+  "continue_button": "Folytatás",
+  "password_strength_weak": "Gyenge",
+  "password_strength_medium": "Közepes",
+  "password_strength_strong": "Erős"
+}

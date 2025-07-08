@@ -1,12 +1,15 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 
 class AuthService {
   final fb.FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
 
-  AuthService({fb.FirebaseAuth? firebaseAuth})
-      : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance;
+  AuthService({fb.FirebaseAuth? firebaseAuth, FirebaseFirestore? firestore})
+    : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
@@ -111,6 +114,15 @@ class AuthService {
     } on fb.FirebaseAuthException catch (e) {
       throw AuthServiceException(_firebaseErrorToCode(e));
     }
+  }
+
+  Future<bool> validateEmailUnique(String email) async {
+    final query = await _firestore
+        .collection("users")
+        .where("email", isEqualTo: email)
+        .limit(1)
+        .get();
+    return query.docs.isEmpty;
   }
 
   // Kijelentkezés
