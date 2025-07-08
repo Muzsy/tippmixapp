@@ -8,7 +8,10 @@ class CoinsBalanceHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text('Coins: $coins', style: Theme.of(context).textTheme.headline6),
+      child: Text(
+        'Coins: $coins',
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
     );
   }
 }
