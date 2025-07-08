@@ -1,0 +1,60 @@
+# fill_canvas_register_step1.yaml – Codex goal for Sprint 2 RegisterWizard Step 1 implementation
+# Generated from canvases/register_wizard_step1_revamp.md
+
+canvas: canvases/register_wizard_step1_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Wizard skeleton
+  - id: wizard_skeleton
+    description: "Create/extend `RegisterWizard` in lib/screens/register_wizard.dart with a PageView that hosts three pages and a PageController provided via Riverpod AutoDispose Provider. Default page index = 0."
+    outputs:
+      - lib/screens/register_wizard.dart
+      - lib/providers/register_state_notifier.dart
+
+  # 2️⃣ Step 1 form widget
+  - id: step1_form
+    description: "Implement `RegisterStep1Form` widget in lib/screens/register_step1_form.dart containing email & password fields, password visibility toggle, and a disabled Continue ElevatedButton that becomes enabled only when form is valid."
+    outputs:
+      - lib/screens/register_step1_form.dart
+
+  # 3️⃣ Real‑time validation
+  - id: realtime_validation
+    description: "Use TextEditingController listeners to perform regex validation: email via RFC 5322, password ≥8 chars, 1 digit, 1 uppercase. Display inline error text and a strength meter."
+    outputs:
+      - lib/screens/register_step1_form.dart
+      - lib/widgets/password_strength_indicator.dart
+
+  # 4️⃣ Email uniqueness check
+  - id: email_uniqueness
+    description: "Add `validateEmailUnique(String email)` to AuthService which queries Firestore `users` collection. Use debounce in form submission."
+    outputs:
+      - lib/services/auth_service.dart
+
+  # 5️⃣ Save state & navigate
+  - id: save_and_navigate
+    description: "On Continue press call registerStateNotifier.saveStep1(email, password) and animate PageController to next page."
+    outputs:
+      - lib/providers/register_state_notifier.dart
+      - lib/screens/register_wizard.dart
+
+  # 6️⃣ Tests
+  - id: tests
+    description: "Write widget test that enters valid credentials, taps Continue, expects Provider state update and `pageController.page == 1`. Mock AuthService email‑unique call."
+    outputs:
+      - test/widgets/register_step1_form_test.dart
+      - test/mocks/mock_auth_service.dart
+
+  # 7️⃣ CI update
+  - id: ci_update
+    description: "Ensure new tests are collected in GitHub Actions; no other CI change needed."
+    outputs:
+      - .github/workflows/flutter_ci.yaml
+
+
