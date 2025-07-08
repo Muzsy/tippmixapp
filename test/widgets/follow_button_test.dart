@@ -9,7 +9,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/user.dart' as tm;
 import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/providers/auth_provider.dart' show AuthNotifier, authProvider;
+import 'package:tippmixapp/providers/auth_provider.dart'
+    show AuthNotifier, authProvider;
 
 class FakeSocialService extends Fake implements SocialService {
   bool followCalled = false;
@@ -33,7 +34,8 @@ class FakeAuthService implements AuthService {
   Future<tm.User?> signInWithEmail(String email, String password) async => null;
 
   @override
-  Future<tm.User?> registerWithEmail(String email, String password) async => null;
+  Future<tm.User?> registerWithEmail(String email, String password) async =>
+      null;
 
   @override
   Future<void> signOut() async {
@@ -52,6 +54,7 @@ class FakeAuthService implements AuthService {
 
   @override
   tm.User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<tm.User?> signInWithGoogle() async => null;
@@ -78,9 +81,10 @@ void main() {
         overrides: [
           socialServiceProvider.overrideWithValue(service),
           followersProvider.overrideWith((ref, uid) => Stream.value([])),
-          authProvider.overrideWith((ref) => FakeAuthNotifier(
-                tm.User(id: 'me', email: '', displayName: ''),
-              )),
+          authProvider.overrideWith(
+            (ref) =>
+                FakeAuthNotifier(tm.User(id: 'me', email: '', displayName: '')),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

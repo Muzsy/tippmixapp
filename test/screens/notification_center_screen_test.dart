@@ -44,6 +44,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -138,7 +139,10 @@ void main() {
         overrides: [
           notificationStreamProvider.overrideWith((ref) => controller.stream),
           notificationServiceProvider.overrideWithValue(service),
-          authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
+          authProvider.overrideWith(
+            (ref) =>
+                FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me')),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

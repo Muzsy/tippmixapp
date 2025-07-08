@@ -36,6 +36,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> registerWithEmail(String email, String password) async => null;
@@ -73,20 +74,20 @@ void main() {
 
   setUp(() {
     // Mock the educational_tips.json asset so AssetBundle does not throw.
-    TestWidgetsFlutterBinding.ensureInitialized()
-        .defaultBinaryMessenger
+    TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (ByteData? message) async {
-      final key = utf8.decode(message!.buffer.asUint8List());
-      if (key == 'lib/assets/educational_tips.json') {
-        return ByteData.view(Uint8List.fromList(utf8.encode(tipsJson)).buffer);
-      }
-      return null;
-    });
+          final key = utf8.decode(message!.buffer.asUint8List());
+          if (key == 'lib/assets/educational_tips.json') {
+            return ByteData.view(
+              Uint8List.fromList(utf8.encode(tipsJson)).buffer,
+            );
+          }
+          return null;
+        });
   });
 
   tearDown(() {
-    TestWidgetsFlutterBinding.ensureInitialized()
-        .defaultBinaryMessenger
+    TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', null);
   });
 
@@ -115,14 +116,16 @@ void main() {
           dailyBonusAvailableProvider.overrideWith((ref) => true),
 
           // 2️⃣ Provide ready‑made statistics so UserStatsHeader renders immediately
-          userStatsProvider.overrideWith((ref) async => UserStatsModel(
-                uid: 'u1',
-                displayName: 'Test',
-                coins: 100,
-                totalBets: 10,
-                totalWins: 5,
-                winRate: 0.5,
-              )),
+          userStatsProvider.overrideWith(
+            (ref) async => UserStatsModel(
+              uid: 'u1',
+              displayName: 'Test',
+              coins: 100,
+              totalBets: 10,
+              totalWins: 5,
+              winRate: 0.5,
+            ),
+          ),
 
           // 3️⃣ Disable real Firebase usage
           authServiceProvider.overrideWith((ref) => FakeAuthService()),

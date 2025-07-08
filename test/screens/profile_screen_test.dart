@@ -43,6 +43,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -64,16 +65,16 @@ Widget _buildApp({required Override auth}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
-        GoRoute(
-          path: '/',
-          name: AppRoute.profile.name,
-          builder: (context, state) => const ProfileScreen(showAppBar: false),
-        ),
-        GoRoute(
-          path: '/badges',
-          name: AppRoute.badges.name,
-          builder: (context, state) => const BadgeScreen(),
-        ),
+      GoRoute(
+        path: '/',
+        name: AppRoute.profile.name,
+        builder: (context, state) => const ProfileScreen(showAppBar: false),
+      ),
+      GoRoute(
+        path: '/badges',
+        name: AppRoute.badges.name,
+        builder: (context, state) => const BadgeScreen(),
+      ),
     ],
   );
 
@@ -105,7 +106,11 @@ void main() {
   });
 
   testWidgets('shows user info and navigates to badges', (tester) async {
-    final user = User(id: 'u1', email: 'user@example.com', displayName: 'Tester');
+    final user = User(
+      id: 'u1',
+      email: 'user@example.com',
+      displayName: 'Tester',
+    );
     await tester.pumpWidget(
       _buildApp(
         auth: authProvider.overrideWith((ref) => FakeAuthNotifier(user)),

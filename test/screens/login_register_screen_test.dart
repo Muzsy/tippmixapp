@@ -28,6 +28,7 @@ class _FakeAuthService implements AuthService {
   Stream<User?> authStateChanges() => const Stream.empty();
   @override
   User? get currentUser => null;
+  Future<bool> validateEmailUnique(String email) async => true;
   @override
   Future<User?> signInWithEmail(String email, String password) async => null;
   @override
@@ -67,7 +68,9 @@ class _FakeAuthNotifier extends AuthNotifier {
     if (loginErrorCode != null) {
       return loginErrorCode;
     }
-    state = AuthState(user: User(id: 'u', email: email, displayName: 'Demo'));
+    state = AuthState(
+      user: User(id: 'u', email: email, displayName: 'Demo'),
+    );
     return null;
   }
 
@@ -77,7 +80,9 @@ class _FakeAuthNotifier extends AuthNotifier {
     if (registerErrorCode != null) {
       return registerErrorCode;
     }
-    state = AuthState(user: User(id: 'u', email: email, displayName: 'Demo'));
+    state = AuthState(
+      user: User(id: 'u', email: email, displayName: 'Demo'),
+    );
     return null;
   }
 
@@ -99,23 +104,21 @@ Widget _buildTestApp({required _FakeAuthNotifier fakeAuth, Locale? locale}) {
   final router = GoRouter(
     initialLocation: '/',
     routes: [
-        GoRoute(
-          path: '/',
-          name: 'login',
-          builder: (context, state) => const LoginRegisterScreen(),
-        ),
-        GoRoute(
-          path: '/home',
-          name: 'home',
-          builder: (context, state) => const SizedBox.shrink(),
-        ),
+      GoRoute(
+        path: '/',
+        name: 'login',
+        builder: (context, state) => const LoginRegisterScreen(),
+      ),
+      GoRoute(
+        path: '/home',
+        name: 'home',
+        builder: (context, state) => const SizedBox.shrink(),
+      ),
     ],
   );
 
   return ProviderScope(
-    overrides: [
-      authProvider.overrideWith((ref) => fakeAuth),
-    ],
+    overrides: [authProvider.overrideWith((ref) => fakeAuth)],
     child: MaterialApp.router(
       routerConfig: router,
       theme: buildTheme(),
@@ -148,24 +151,33 @@ void main() {
       expect(find.widgetWithText(ElevatedButton, 'Login'), findsOneWidget);
     });
 
-    testWidgets('Átváltás Register módba megjeleníti a Confirm Password mezőt', (tester) async {
-      await tester.pumpWidget(_buildTestApp(fakeAuth: fakeAuth));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Átváltás Register módba megjeleníti a Confirm Password mezőt',
+      (tester) async {
+        await tester.pumpWidget(_buildTestApp(fakeAuth: fakeAuth));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Register'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Register'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Confirm Password'), findsOneWidget);
-      expect(find.widgetWithText(ElevatedButton, 'Register'), findsOneWidget);
-    });
+        expect(find.text('Confirm Password'), findsOneWidget);
+        expect(find.widgetWithText(ElevatedButton, 'Register'), findsOneWidget);
+      },
+    );
 
     testWidgets('Login gomb meghívja fakeAuth.login-t', (tester) async {
       await tester.pumpWidget(_buildTestApp(fakeAuth: fakeAuth));
       await tester.pumpAndSettle();
 
       // Mezők kitöltése
-      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'user@example.com');
-      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secret');
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Email'),
+        'user@example.com',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'),
+        'secret',
+      );
 
       await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
       await tester.pumpAndSettle();
@@ -181,9 +193,18 @@ void main() {
       await tester.tap(find.text('Register'));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'a@b.c');
-      await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'pw');
-      await tester.enterText(find.widgetWithText(TextFormField, 'Confirm Password'), 'pw');
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Email'),
+        'a@b.c',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'),
+        'pw',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Confirm Password'),
+        'pw',
+      );
 
       await tester.tap(find.widgetWithText(ElevatedButton, 'Register'));
       await tester.pumpAndSettle();
@@ -243,5 +264,4 @@ void main() {
         expect(find.text(loc.auth_error_user_not_found), findsOneWidget);
       }
     });
-  });
-}
+  });}

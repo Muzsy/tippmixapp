@@ -1680,6 +1680,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get onboarding_done;
+
+  /// No description provided for @continue_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continue_button;
+
+  /// No description provided for @password_strength_weak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get password_strength_weak;
+
+  /// No description provided for @password_strength_medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get password_strength_medium;
+
+  /// No description provided for @password_strength_strong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get password_strength_strong;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
