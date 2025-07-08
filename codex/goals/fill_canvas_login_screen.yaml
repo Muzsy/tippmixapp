@@ -1,0 +1,63 @@
+# fill_canvas_login_screen.yaml – Codex goal for Sprint 1 LoginScreen implementation
+# Generated based on Sprint 1 tasks from codex_goals_login_register_revamp_sprints.yaml
+
+canvas: canvases/login_screen_revamp.md
+
+includes:
+  # Core project rule‑sets Codex must load before executing the steps
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Widget skeleton and email/password form
+  - id: skeleton
+    description: "Create `LoginScreen` scaffold in lib/screens/login_screen.dart with a separate `LoginForm` widget in lib/screens/widgets/login_form.dart containing email & password TextFields, a primary login ElevatedButton and placeholder row for social buttons."
+    outputs:
+      - lib/screens/login_screen.dart
+      - lib/screens/widgets/login_form.dart
+
+  # 2️⃣ Social login buttons
+  - id: social_buttons
+    description: "Implement `SocialLoginButtons` with Google, Apple (platform‑guard), and Facebook variants; wire each to matching AuthService method. Place inside the placeholder row of LoginForm."
+    outputs:
+      - lib/widgets/social_login_buttons.dart
+      - lib/services/auth_service.dart
+      - lib/screens/widgets/login_form.dart
+
+  # 3️⃣ Register link navigation
+  - id: register_link
+    description: "Add a TextButton under the form that calls `context.goNamed(AppRoute.register)` to open the RegisterWizard route."
+    outputs:
+      - lib/screens/widgets/login_form.dart
+
+  # 4️⃣ AuthService refactor
+  - id: auth_service_refactor
+    description: "Extract authentication helpers into `lib/services/auth_service.dart` exposing `signInWithEmail`, `signInWithGoogle`, `signInWithApple`, `signInWithFacebook`; update existing imports."
+    outputs:
+      - lib/services/auth_service.dart
+      - lib/screens/login_screen.dart
+
+  # 5️⃣ Guest flow guard
+  - id: guest_flow
+    description: "After successful sign‑in (`uid != null`) navigate to HomeLogged via GoRouter; otherwise stay on Login. Provide a Riverpod `authStateProvider` wrapper if required."
+    outputs:
+      - lib/screens/login_screen.dart
+      - lib/providers/auth_state_provider.dart
+
+  # 6️⃣ Widget test
+  - id: widget_test
+    description: "Write a widget test that pumps LoginScreen, performs a mocked successful email login and expects navigation to the Home route. Ensure localization delegates are loaded for HU/EN/DE."
+    outputs:
+      - test/widgets/login_screen_test.dart
+      - test/mocks/mock_auth_service.dart
+
+  # 7️⃣ CI guard
+  - id: ci_pipeline
+    description: "Add/update GitHub Actions workflow step to run `flutter analyze` and `flutter test --coverage`; ensure coverage badge upload."
+    outputs:
+      - .github/workflows/flutter_ci.yaml
+
+

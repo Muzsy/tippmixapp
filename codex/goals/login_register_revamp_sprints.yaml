@@ -1,0 +1,138 @@
+ready: true
+
+# Login & Registration Revamp – **Részletes Sprint‑vászon**
+
+> **Végső cél**  Modern, áttekinthető hitelesítési rendszer a Tippmixapp‑ban.
+# (A fájl fennmaradó része változatlanul hagyva – sprint roadmap, részfeladatok, DoD és kockázatok ugyanaz, lásd korábbi verzió)
+
+# Login & Registration Revamp – **Részletes Sprint‑vászon**
+
+> **Végső cél**  Modern, áttekinthető hitelesítési rendszer a Tippmixapp‑ban:
+> * Vendég‑mód → főképernyő „Belépés” csempével.
+> * Fókuszált **LoginScreen** (e‑mail + social), alul link a Regisztrációhoz.
+> * Többlépéses **RegisterWizard** külön útvonalon.
+> * Bármely korlátozott funkció/panel **route‑guard popup**‑pal terel a Loginre.
+> * Régi A/B képernyők, kód és tesztek **teljes kivezetése**.
+
+---
+
+## 🗺️ Sprint Roadmap (áttekintés)
+
+| Sprint | Fő fókusz | Becsült idő | Kimenetek (DoD) |
+|--------|-----------|------------|-----------------|
+| **0 – Discovery** | Követelmények, UX‑flow, wireframe | 0,5 nap | `docs/login_register_revamp.md` – mermaid‑diagram, mezőlista, vendég‑CTA mockup |
+| **1 – LoginScreen** | Új Login widget + service | 1,5 nap | `lib/screens/login_screen.dart`, social‑login gombok, widget‑teszt, `flutter analyze` zöld |
+| **2 – RegisterWizard** | 3‑lépéses regisztráció | 2 nap | `lib/screens/register/` mappa, stepper + email verify, unit + widget tests |
+| **3 – GuestHome & Guard** | Főképernyő guest‑CTA + route‑guard | 1 nap | Csempe a Home‑on, `AuthGuard` provider, popup dialog, e2e‑test |
+| **4 – Cleanup** | Legacy törlés, l10n, CI | 0,5 nap | Régi AB képernyők törölve, l10n kulcsok frissítve, GitHub CI fut |
+| **5 – QA & Release** | Lokalizáció, accessibility, store‑build | 1 nap | HU/EN/DE json, WCAG AA audit, `flutter build`, changelog |
+
+---
+
+## 📑 Sprint 0 – Discovery & UX specifikáció
+
+### Cél
+* Egyeztetni a /docs, /codex_docs anyagokat és **AGENTS.md** irányelveit.
+* Rögzíteni minden képernyő state‑géppel és mermaid‑diagrammal.
+
+### Feladatok
+1. **Könyvtár‑audit** – olvasd be a projekt **/docs**, **/codex_docs** tartalmát, AGENTS.md‑t.  
+2. **Flow‑diagram** – `mermaid` a következő állapotokkal: `Splash → (guest) HomeGuest → Login → RegisterWizard(step1‑3) → HomeLogged`.  
+3. **Wireframe** – link Figma‑/PNG‑export a Login & Register UI‑ról.  
+4. **Mezőlista** – JSON‑tábla a regisztráció minden mezőjéről (név, típus, validáció).  
+5. **Definition of Ready** – ellenőrzőlista: approved UX, PO sign‑off.
+
+### DoD
+* `docs/login_register_revamp.md` commit‑elve, review‑elve, főágon.
+
+---
+
+## 🏗️ Sprint 1 – LoginScreen implementation
+
+### Feladatok
+1. **Widget skeleton** – `lib/screens/login_screen.dart` + `login_form.dart`.  
+2. **Social login gombok** – Google, Apple (platform‑guard), Facebook.  
+3. **`router.goNamed(AppRoute.register)` link** az alján.  
+4. **AuthService refactor** – kiemelni `auth_service.dart`‑be `signInWithEmail`, `signInWithGoogle`, stb.  
+5. **Guest flow** – ha `uid != null` → HomeLogged, else marad.  
+6. **Widget test** – sikeres login navigál Home‑ra.  
+7. **CI** – `flutter analyze && flutter test --coverage` pipeline.
+
+### DoD
+* Tesztek zöld, linter 0 hiba, képernyő 3 nyelven lokalizált.
+
+---
+
+## 🧩 Sprint 2 – RegisterWizard (3 lépés)
+
+### Lépések
+| Step | Mezők | Extra |
+|------|-------|-------|
+| 1 | E‑mail, jelszó | live‑validator, password strength meter |
+| 2 | Nickname, születési dátum | date‑picker, GDPR checkbox |
+| 3 | Avatar (opcionális), összegzés | image picker, terms link |
+
+### Feladatok
+1. **Stepper widget** – `lib/screens/register/stepper.dart`.  
+2. **Email‑verify flow** – Firebase Auth sendEmailVerification + polling.  
+3. **Progress provider** – Riverpod StateNotifier.  
+4. **Unit + widget test** minden lépésre.  
+5. **Router → HomeLogged** a végén.
+
+### DoD
+* Wizard hibamentesen végigmegy, teszt‑coverage ≥90 % a register‑csomagra.
+
+---
+
+## 🏠 Sprint 3 – Guest Home & RouteGuard
+
+### Feladatok
+1. **HomeGuest CTA** – új csempe `Belépés / Regisztrálj` → Login.  
+2. **AuthGuard provider** – wrapper `RequireAuth` komponens, amely ha `uid == null` → `LoginRequiredDialog` (Get.dialog / showDialog).  
+3. **Integrálás minden korlátozott route‑nál** (BetSlip, Profile, History…).  
+4. **e2e‑test** – guest felhasználó kattint BetSlip → popup jelenik meg.
+
+### DoD
+* Minden védett funkció felugróval terel, HomeGuest‑en CTA működik.
+
+---
+
+## 🧹 Sprint 4 – Legacy cleanup & CI
+
+### Feladatok
+1. **Töröld** `login_register_screen.dart`, `login_screen_variant_b*`, experiment service, Remote Config kulcs.  
+2. **L10n prune** – távolítsd el nem használt kulcsokat.  
+3. **CI** – frissítsd GitHub Actions: `flutter test`, `flutter drive` vendég‑ és login‑flow‑ra.  
+4. **README** – frissített képernyő screenshot.
+
+### DoD
+* `flutter analyze` tiszta, CI zöld, master branch deploy‑kész.
+
+---
+
+## ✅ Sprint 5 – QA, Accessibility, Release
+
+* **WCAG AA audit** – min. 4,5 : 1 kontraszt, beszélő label.  
+* **Lokalizáció** – HU/EN/DE .arb update, `flutter gen-l10n`.  
+* **Store build** – `flutter build appbundle` + iOS ipa, TestFlight / Play Beta.  
+* **Changelog & version bump** – semver + Git tag.  
+* **Stakeholder UAT** – checklist aláírva.
+
+---
+
+## 🚩 Kockázatok & Mitigáció
+* **Social login API változás** → wrapper service + e2e teszt.  
+* **Email‑verify latency** → fallback „Küldj újra” gomb + progress bar.  
+* **Legacy törlés utáni regresszió** → snapshot tesztek + feature‑flags 1 sprintig lappanganak rollbackre.  
+
+---
+
+### Végső Definition of Done
+* Vendégként böngészhető Home, védett route‑oknál popup.  
+* Login & Register önálló, gyors, 3 nyelvű, teljes tesztsor lefut.  
+* Korábbi A/B‑ és legacy kód nyom nélkül eltávolítva.  
+* Store‑release jóváhagyva.  
+
+---
+
+> **Megjegyzés**  A Codex minden sprint előtt automatikusan futtatja a `flutter pub get`, `flutter analyze`, `flutter test --coverage` parancsokat, és csak akkor lép tovább, ha minden zöld.

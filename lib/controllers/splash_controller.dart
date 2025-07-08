@@ -14,6 +14,7 @@ class SplashController extends StateNotifier<AsyncValue<void>> {
   Future<void> _init() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
+      router.goNamed(AppRoute.login.name);
       state = const AsyncData(null);
       return;
     }
