@@ -40,6 +40,15 @@ class _FakeAuthService implements AuthService {
   Future<void> sendPasswordResetEmail(String email) async {}
   @override
   bool get isEmailVerified => true;
+
+  @override
+  Future<User?> signInWithGoogle() async => null;
+
+  @override
+  Future<User?> signInWithApple() async => null;
+
+  @override
+  Future<User?> signInWithFacebook() async => null;
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
