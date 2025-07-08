@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tests with coverage
         run: flutter test --coverage
-        # widget tests including register_step1_form_test.dart and register_step2_form_test.dart
+        # widget tests including register_step1_form_test.dart, register_step2_form_test.dart and forgot_password_flow_test.dart
 
       - name: Run guest route guard e2e
         run: flutter drive --target=integration_test/guest_routeguard_test.dart

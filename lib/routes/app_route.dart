@@ -20,4 +20,7 @@ enum AppRoute {
   debugMenu,
   friends,
   onboarding,
+  forgotPassword,
+  passwordResetConfirm,
+  resetPassword,
 }

@@ -66,6 +66,8 @@ class FakeAuthService implements AuthService {
 
   @override
   Future<User?> signInWithFacebook() async => null;
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {}
 }
 
 // ignore: subtype_of_sealed_class
