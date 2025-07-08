@@ -1,0 +1,79 @@
+name: build
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ►► Flutter 3.22.x
+      - name: Install Flutter SDK (GitHub Action)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.x'
+
+      # ►► Univerzális projekt‑setup (ugyanaz, mint Codexnél)
+      - name: Project setup
+        run: bash .codex/setup.sh
+
+      - name: Run linter
+        run: flutter analyze lib test --fatal-infos --fatal-warnings
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      # (innen lefelé: CI‑only részek)
+      - name: Run coverage + badge
+        uses: whynotmake-it/dart-coverage-assistant@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          generate_badges: push
+
+      # ---- Firebase security rules tesztek ----
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Compile Cloud Functions
+        run: |
+          npm ci --prefix cloud_functions
+          npm run --prefix cloud_functions build
+
+      - name: Cache Firebase emulator
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-${{ hashFiles('firebase.json') }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Test Firestore security rules
+        run: |
+          chmod +x scripts/test_firebase_rules.sh
+          ./scripts/test_firebase_rules.sh | tee security_rules_test.log
+
+      - name: Upload security rules log
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-rules-log
+          path: security_rules_test.log

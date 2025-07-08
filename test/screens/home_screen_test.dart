@@ -57,6 +57,15 @@ class FakeAuthService implements AuthService {
 
   @override
   bool get isEmailVerified => true;
+
+  @override
+  Future<User?> signInWithGoogle() async => null;
+
+  @override
+  Future<User?> signInWithApple() async => null;
+
+  @override
+  Future<User?> signInWithFacebook() async => null;
 }
 
 void main() {
