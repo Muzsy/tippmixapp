@@ -30,16 +30,15 @@ class _TwoFactorWizardState extends State<TwoFactorWizard> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                final ctx = context;
                 final ok = await widget.service.verifyOtp(_otp.text);
-                if (!mounted) return;
-                final l = AppLocalizations.of(ctx)!;
+                if (!context.mounted) return;
+                final l = AppLocalizations.of(context)!;
                 if (!ok) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l.otp_error_invalid)),
                   );
                 } else {
-                  Navigator.of(ctx).pop();
+                  Navigator.of(context).pop();
                 }
               },
               child: Text(loc.otp_prompt_title),
