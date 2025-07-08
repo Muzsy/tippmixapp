@@ -385,6 +385,12 @@ abstract class AppLocalizations {
   /// **'Register'**
   String get register_button;
 
+  /// No description provided for @register_link.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get register_link;
+
   /// No description provided for @forgot_password.
   ///
   /// In en, this message translates to:
@@ -1248,6 +1254,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No rewards available'**
   String get rewardEmpty;
+
+  /// No description provided for @reward_balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins: {coins}'**
+  String reward_balance(Object coins);
+
+  /// No description provided for @reward_streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak: {days}/7'**
+  String reward_streak(Object days);
 
   /// No description provided for @menuNotifications.
   ///
