@@ -12,7 +12,7 @@ import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/screens/badges/badge_screen.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:tippmixapp/screens/social/friends_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tippmixapp/providers/auth_guard.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
 import 'package:tippmixapp/screens/onboarding/onboarding_flow_screen.dart';
@@ -25,18 +25,6 @@ import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/splash',
-  redirect: (context, state) {
-    final user = FirebaseAuth.instance.currentUser;
-    final protectedPaths = [
-      '/my-tickets',
-      '/create-ticket',
-      '/settings',
-      '/notifications',
-    ];
-    final accessingProtected = protectedPaths.contains(state.uri.path);
-    if (user == null && accessingProtected) return '/login';
-    return null;
-  },
   routes: [
     ShellRoute(
       builder: (context, state, child) => HomeScreen(state: state, child: child),
@@ -45,7 +33,9 @@ final GoRouter router = GoRouter(
           path: '/create-ticket',
           name: AppRoute.createTicket.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const CreateTicketScreen(),
+            child: const RequireAuth(
+              child: CreateTicketScreen(),
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -60,7 +50,9 @@ final GoRouter router = GoRouter(
           path: '/profile',
           name: AppRoute.profile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const ProfileScreen(showAppBar: false),
+            child: const RequireAuth(
+              child: ProfileScreen(showAppBar: false),
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -87,7 +79,9 @@ final GoRouter router = GoRouter(
           path: '/my-tickets',
           name: AppRoute.myTickets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const MyTicketsScreen(showAppBar: false),
+            child: const RequireAuth(
+              child: MyTicketsScreen(showAppBar: false),
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
@@ -149,7 +143,9 @@ final GoRouter router = GoRouter(
           path: '/settings',
           name: AppRoute.settings.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const SettingsScreen(),
+            child: const RequireAuth(
+              child: SettingsScreen(),
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),

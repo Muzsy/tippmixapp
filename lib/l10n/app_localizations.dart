@@ -1770,6 +1770,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get back_button;
+
+  /// No description provided for @login_required_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Login required'**
+  String get login_required_title;
+
+  /// No description provided for @login_required_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to continue'**
+  String get login_required_message;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -277,5 +277,7 @@
   "register_finish": "Finish",
   "register_skip": "Skip",
   "register_avatar_too_large": "Avatar image must be 2 MB or less",
-  "back_button": "Back"
+  "back_button": "Back",
+  "login_required_title": "Login required",
+  "login_required_message": "Please log in to continue"
 }
