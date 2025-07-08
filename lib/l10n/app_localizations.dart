@@ -1735,6 +1735,36 @@ abstract class AppLocalizations {
   /// **'Nickname already taken'**
   String get auth_error_nickname_taken;
 
+  /// No description provided for @register_take_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get register_take_photo;
+
+  /// No description provided for @register_choose_file.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get register_choose_file;
+
+  /// No description provided for @register_finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get register_finish;
+
+  /// No description provided for @register_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get register_skip;
+
+  /// No description provided for @register_avatar_too_large.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar image must be 2 MB or less'**
+  String get register_avatar_too_large;
+
   /// No description provided for @back_button.
   ///
   /// In en, this message translates to:
