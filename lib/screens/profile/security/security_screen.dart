@@ -33,14 +33,13 @@ class _SecurityScreenState extends State<SecurityScreen> {
             : loc.enable_two_factor),
         value: _enabled,
           onChanged: (v) async {
-            final ctx = context;
             if (v) {
               final ok = await widget.service.enable(TwoFactorType.sms);
-              if (!mounted) return;
-              if (ok) ctx.pushNamed(AppRoute.twoFactorWizard.name);
+              if (!context.mounted) return;
+              if (ok) context.pushNamed(AppRoute.twoFactorWizard.name);
             } else {
               await widget.service.disable();
-              if (!mounted) return;
+              if (!context.mounted) return;
             }
             setState(() => _enabled = widget.service.status);
           },

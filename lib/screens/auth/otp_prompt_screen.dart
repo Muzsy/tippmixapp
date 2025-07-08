@@ -40,14 +40,13 @@ class _OtpPromptScreenState extends State<OtpPromptScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                final ctx = context;
                 final ok = await widget.service.verifyOtp(_ctrl.text);
-                if (!mounted) return;
-                final l = AppLocalizations.of(ctx)!;
+                if (!context.mounted) return;
+                final l = AppLocalizations.of(context)!;
                 if (!ok) {
                   setState(() => _error = l.otp_error_invalid);
                 } else {
-                  Navigator.of(ctx).pop(true);
+                  Navigator.of(context).pop(true);
                 }
               },
               child: Text(loc.otp_prompt_title),
