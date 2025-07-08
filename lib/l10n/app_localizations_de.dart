@@ -842,5 +842,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get auth_error_nickname_taken => 'Der Spitzname ist bereits vergeben';
 
   @override
+  String get register_take_photo => 'Foto aufnehmen';
+
+  @override
+  String get register_choose_file => 'Datei auswählen';
+
+  @override
+  String get register_finish => 'Fertig';
+
+  @override
+  String get register_skip => 'Überspringen';
+
+  @override
+  String get register_avatar_too_large => 'Avatar darf maximal 2 MB sein';
+
+  @override
   String get back_button => 'Zurück';
 }

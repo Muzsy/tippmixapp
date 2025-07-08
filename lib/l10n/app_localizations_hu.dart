@@ -842,5 +842,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get auth_error_nickname_taken => 'A becenév már foglalt';
 
   @override
+  String get register_take_photo => 'Készíts fotót';
+
+  @override
+  String get register_choose_file => 'Fájl kiválasztása';
+
+  @override
+  String get register_finish => 'Befejezés';
+
+  @override
+  String get register_skip => 'Kihagyás';
+
+  @override
+  String get register_avatar_too_large => 'Az avatar mérete legfeljebb 2 MB lehet';
+
+  @override
   String get back_button => 'Vissza';
 }
