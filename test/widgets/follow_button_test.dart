@@ -55,6 +55,7 @@ class FakeAuthService implements AuthService {
   @override
   tm.User? get currentUser => _current;
   Future<bool> validateEmailUnique(String email) async => true;
+  Future<bool> validateNicknameUnique(String nickname) async => true;
 
   @override
   Future<tm.User?> signInWithGoogle() async => null;

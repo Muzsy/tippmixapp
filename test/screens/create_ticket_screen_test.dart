@@ -29,6 +29,7 @@ class _FakeAuthService implements AuthService {
   @override
   m.User? get currentUser => null;
   Future<bool> validateEmailUnique(String email) async => true;
+  Future<bool> validateNicknameUnique(String nickname) async => true;
   @override
   Future<m.User?> signInWithEmail(String email, String password) async => null;
   @override
