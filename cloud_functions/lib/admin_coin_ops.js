@@ -35,10 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.admin_coin_ops = void 0;
 const functions = __importStar(require("firebase-functions"));
-const admin = __importStar(require("firebase-admin"));
-// Admin only coin operations, see docs/bonus_policy.md for allowed actions
-admin.initializeApp();
-const db = admin.firestore();
+const firebase_1 = require("./src/lib/firebase");
 exports.admin_coin_ops = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
         throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
@@ -47,8 +44,8 @@ exports.admin_coin_ops = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError('permission-denied', 'Admin privileges required');
     }
     const { userId, amount, operation } = data;
-    const userRef = db.collection('users').doc(userId);
-    await db.runTransaction(async (t) => {
+    const userRef = firebase_1.db.collection('users').doc(userId);
+    await firebase_1.db.runTransaction(async (t) => {
         const snap = await t.get(userRef);
         if (!snap.exists) {
             throw new functions.https.HttpsError('not-found', 'User not found');
