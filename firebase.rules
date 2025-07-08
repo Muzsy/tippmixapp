@@ -20,6 +20,17 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // user dokumentum
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+       // subcollection
+      match /settings/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+
+
     /* ——— badges (publikus read) ——— */
     match /badges/{badgeId} {
       allow read:  if true;
