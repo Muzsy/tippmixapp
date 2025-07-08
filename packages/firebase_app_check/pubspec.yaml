@@ -1,0 +1,7 @@
+name: firebase_app_check
+description: Stub for firebase_app_check used in tests.
+version: 0.0.1
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+
+flutter:
