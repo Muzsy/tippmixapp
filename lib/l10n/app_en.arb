@@ -47,6 +47,7 @@
   "confirm_password_hint": "Confirm Password",
   "login_button": "Login",
   "register_button": "Register",
+  "register_link": "Create account",
   "forgot_password": "Forgot password?",
   "verification_email_sent": "Verification email sent",
   "password_reset_title": "Reset Password",

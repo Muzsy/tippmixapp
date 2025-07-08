@@ -161,6 +161,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get register_button => 'Regisztráció';
 
   @override
+  String get register_link => 'Fiók létrehozása';
+
+  @override
   String get forgot_password => 'Elfelejtett jelszó?';
 
   @override
@@ -593,6 +596,16 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get rewardEmpty => 'Nincs elérhető jutalom';
+
+  @override
+  String reward_balance(Object coins) {
+    return 'Egyenleg: $coins';
+  }
+
+  @override
+  String reward_streak(Object days) {
+    return 'Sorozat: $days/7';
+  }
 
   @override
   String get menuNotifications => 'Értesítések';

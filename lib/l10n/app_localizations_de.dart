@@ -161,6 +161,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get register_button => 'Registrieren';
 
   @override
+  String get register_link => 'Konto erstellen';
+
+  @override
   String get forgot_password => 'Passwort vergessen?';
 
   @override
@@ -593,6 +596,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rewardEmpty => 'Keine Belohnungen verfügbar';
+
+  @override
+  String reward_balance(Object coins) {
+    return 'Guthaben: $coins';
+  }
+
+  @override
+  String reward_streak(Object days) {
+    return 'Serie: $days/7';
+  }
 
   @override
   String get menuNotifications => 'Benachrichtigungen';

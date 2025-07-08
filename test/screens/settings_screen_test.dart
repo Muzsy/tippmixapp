@@ -58,6 +58,15 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => null;
+
+  @override
+  Future<User?> signInWithGoogle() async => null;
+
+  @override
+  Future<User?> signInWithApple() async => null;
+
+  @override
+  Future<User?> signInWithFacebook() async => null;
 }
 
 void main() {
