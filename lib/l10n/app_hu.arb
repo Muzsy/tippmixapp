@@ -191,6 +191,8 @@
   ,"rewardClaim": "Átvétel"
   ,"rewardClaimed": "Már átvetted"
   ,"rewardEmpty": "Nincs elérhető jutalom"
+  ,"reward_balance": "Egyenleg: {coins}"
+  ,"reward_streak": "Sorozat: {days}/7"
   ,"menuNotifications": "Értesítések"
   ,"notificationTitle": "Események"
   ,"notificationEmpty": "Nincs új esemény"

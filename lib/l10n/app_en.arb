@@ -191,6 +191,8 @@
   ,"rewardClaim": "Claim"
   ,"rewardClaimed": "Claimed"
   ,"rewardEmpty": "No rewards available"
+  ,"reward_balance": "Coins: {coins}"
+  ,"reward_streak": "Streak: {days}/7"
   ,"menuNotifications": "Notifications"
   ,"notificationTitle": "Events"
   ,"notificationEmpty": "No new notifications"

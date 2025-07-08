@@ -191,6 +191,8 @@
   ,"rewardClaim": "Einsammeln"
   ,"rewardClaimed": "Bereits eingesammelt"
   ,"rewardEmpty": "Keine Belohnungen verfügbar"
+  ,"reward_balance": "Guthaben: {coins}"
+  ,"reward_streak": "Serie: {days}/7"
   ,"menuNotifications": "Benachrichtigungen"
   ,"notificationTitle": "Ereignisse"
   ,"notificationEmpty": "Keine neuen Ereignisse"
