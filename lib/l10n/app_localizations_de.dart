@@ -825,4 +825,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get password_strength_strong => 'Stark';
+
+  @override
+  String get gdpr_consent => 'Ich stimme der Datenschutzerklärung zu';
+
+  @override
+  String get gdpr_required_error => 'GDPR-Zustimmung erforderlich';
+
+  @override
+  String get auth_error_invalid_nickname => 'Der Spitzname muss 3-20 Zeichen lang sein';
+
+  @override
+  String get auth_error_invalid_date => 'Ungültiges Datum';
+
+  @override
+  String get auth_error_nickname_taken => 'Der Spitzname ist bereits vergeben';
+
+  @override
+  String get back_button => 'Zurück';
 }

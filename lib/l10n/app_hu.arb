@@ -266,5 +266,11 @@
   "continue_button": "Folytatás",
   "password_strength_weak": "Gyenge",
   "password_strength_medium": "Közepes",
-  "password_strength_strong": "Erős"
+  "password_strength_strong": "Erős",
+  "gdpr_consent": "Elfogadom az adatkezelési tájékoztatót",
+  "gdpr_required_error": "A GDPR hozzájárulás kötelező",
+  "auth_error_invalid_nickname": "A becenév 3-20 karakter hosszú legyen",
+  "auth_error_invalid_date": "Érvénytelen dátum",
+  "auth_error_nickname_taken": "A becenév már foglalt",
+  "back_button": "Vissza"
 }

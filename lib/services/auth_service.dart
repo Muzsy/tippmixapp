@@ -125,6 +125,15 @@ class AuthService {
     return query.docs.isEmpty;
   }
 
+  Future<bool> validateNicknameUnique(String nickname) async {
+    final query = await _firestore
+        .collection('users')
+        .where('nickname', isEqualTo: nickname)
+        .limit(1)
+        .get();
+    return query.docs.isEmpty;
+  }
+
   // Kijelentkezés
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
