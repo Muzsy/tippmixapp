@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 import 'register_step1_form.dart';
 import 'register_step2_form.dart';
+import 'register_step3_form.dart';
 
 class RegisterWizard extends ConsumerWidget {
   const RegisterWizard({super.key});
@@ -20,7 +21,7 @@ class RegisterWizard extends ConsumerWidget {
         children: const [
           RegisterStep1Form(),
           RegisterStep2Form(),
-          Center(child: Text('Step 3')), // placeholder
+          RegisterStep3Form(),
         ],
       ),
     );

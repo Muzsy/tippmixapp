@@ -842,5 +842,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auth_error_nickname_taken => 'Nickname already taken';
 
   @override
+  String get register_take_photo => 'Take photo';
+
+  @override
+  String get register_choose_file => 'Choose file';
+
+  @override
+  String get register_finish => 'Finish';
+
+  @override
+  String get register_skip => 'Skip';
+
+  @override
+  String get register_avatar_too_large => 'Avatar image must be 2 MB or less';
+
+  @override
   String get back_button => 'Back';
 }

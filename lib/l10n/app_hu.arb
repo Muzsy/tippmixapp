@@ -272,5 +272,10 @@
   "auth_error_invalid_nickname": "A becenév 3-20 karakter hosszú legyen",
   "auth_error_invalid_date": "Érvénytelen dátum",
   "auth_error_nickname_taken": "A becenév már foglalt",
+  "register_take_photo": "Készíts fotót",
+  "register_choose_file": "Fájl kiválasztása",
+  "register_finish": "Befejezés",
+  "register_skip": "Kihagyás",
+  "register_avatar_too_large": "Az avatar mérete legfeljebb 2 MB lehet",
   "back_button": "Vissza"
 }

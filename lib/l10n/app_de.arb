@@ -272,5 +272,10 @@
   "auth_error_invalid_nickname": "Der Spitzname muss 3-20 Zeichen lang sein",
   "auth_error_invalid_date": "Ungültiges Datum",
   "auth_error_nickname_taken": "Der Spitzname ist bereits vergeben",
+  "register_take_photo": "Foto aufnehmen",
+  "register_choose_file": "Datei auswählen",
+  "register_finish": "Fertig",
+  "register_skip": "Überspringen",
+  "register_avatar_too_large": "Avatar darf maximal 2 MB sein",
   "back_button": "Zurück"
 }
