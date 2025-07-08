@@ -69,3 +69,7 @@ Ez a konfigurációs fájl határozza meg, hogyan viselkedjen a Codex a TippmixA
 ---
 
 Ez a fájl globálisan érvényes a teljes Codex-feldolgozási pipeline-ra a TippmixApp projektben. Bármilyen eltéréshez explicit új canvas szükséges.
+
+```yaml
+ci_token: production
+```

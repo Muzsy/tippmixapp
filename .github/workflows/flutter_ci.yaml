@@ -27,6 +27,9 @@ jobs:
       - name: Run linter
         run: flutter analyze lib test --fatal-infos --fatal-warnings
 
+      - name: Run accessibility audit
+        run: flutter_a11y lib
+
       - name: Run tests with coverage
         run: flutter test --coverage
         # widget tests including register_step1_form_test.dart, register_step2_form_test.dart and forgot_password_flow_test.dart
@@ -40,6 +43,12 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           generate_badges: push
+
+      - name: Build Android appbundle
+        run: flutter build appbundle --release
+
+      - name: Build iOS IPA
+        run: flutter build ipa --no-codesign
 
       # ---- Firebase security rules tesztek ----
       - name: Setup Node.js
