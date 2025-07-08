@@ -26,7 +26,9 @@ class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
   final fb.User? _user;
   @override
   fb.User? get currentUser => _user;
+  @override
   Future<bool> validateEmailUnique(String email) async => true;
+  @override
   Future<bool> validateNicknameUnique(String nickname) async => true;
 }
 
@@ -60,7 +62,9 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => null;
+  @override
   Future<bool> validateEmailUnique(String email) async => true;
+  @override
   Future<bool> validateNicknameUnique(String nickname) async => true;
 
   @override
