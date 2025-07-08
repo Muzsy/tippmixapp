@@ -1,0 +1,43 @@
+# fill_canvas_legacy_cleanup_ci.yaml – Codex goal for Sprint 6 Legacy Cleanup & CI implementation
+# Generated from canvases/legacy_cleanup_ci_revamp.md
+
+canvas: canvases/legacy_cleanup_ci_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Delete legacy screens
+  - id: delete_legacy_screens
+    description: "Remove obsolete files: lib/screens/login_register_screen.dart, login_screen_variant_b.dart, lib/experiments/remote_config_service.dart."
+    outputs:
+      - delete: [
+          lib/screens/login_register_screen.dart,
+          lib/screens/login_screen_variant_b.dart,
+          lib/experiments/remote_config_service.dart
+        ]
+
+  # 2️⃣ Prune unused l10n keys
+  - id: prune_l10n
+    description: "Run l10n_unused_key_checker.dart, delete unused keys from .arb files, then run `flutter gen-l10n`."
+    outputs:
+      - modify: [lib/l10n/*.arb]
+
+  # 3️⃣ Update CI workflow
+  - id: update_ci
+    description: "Add integration test step `flutter drive --target=integration_test/guest_routeguard_test.dart` to .github/workflows/flutter_ci.yaml."
+    outputs:
+      - modify: [.github/workflows/flutter_ci.yaml]
+
+  # 4️⃣ Update README screenshot link
+  - id: update_readme
+    description: "Replace old login screenshot link with docs/images/login_revamp_screenshot_v1.png in README.md."
+    outputs:
+      - modify: [README.md]
+
+  # 5️⃣ Run full test suite
+  - id: run_tests
+    description: "Execute `flutter analyze`, `flutter test --coverage`, and `flutter drive` to ensure pipeline green. No direct output files."
+
+ready: false
