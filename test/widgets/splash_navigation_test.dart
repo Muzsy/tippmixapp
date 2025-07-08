@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:tippmixapp/controllers/splash_controller.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tippmixapp/screens/splash_screen.dart';
+import 'package:tippmixapp/screens/register_wizard.dart';
+
+class _FakeSplashController extends StateNotifier<AsyncValue<void>>
+    implements SplashController {
+  _FakeSplashController(this._router) : super(const AsyncLoading()) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _router.goNamed(AppRoute.login.name);
+      state = const AsyncData(null);
+    });
+  }
+  final GoRouter _router;
+}
+
+void main() {
+  testWidgets('splash navigates to login without errors', (tester) async {
+    final router = GoRouter(
+      initialLocation: '/splash',
+      routes: [
+        GoRoute(
+          path: '/splash',
+          name: 'splash',
+          builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: AppRoute.login.name,
+          builder: (context, state) => const Scaffold(body: Text('login')),
+        ),
+        GoRoute(
+          path: '/register',
+          name: AppRoute.register.name,
+          builder: (context, state) => const RegisterWizard(),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          splashControllerProvider.overrideWith(
+            (ref) => _FakeSplashController(router),
+          ),
+        ],
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: const [Locale('en'), Locale('hu'), Locale('de')],
+          locale: const Locale('en'),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(router.routerDelegate.currentConfiguration.fullPath, '/login');
+    expect(tester.takeException(), isNull);
+  });
+}
