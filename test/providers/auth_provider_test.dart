@@ -27,6 +27,7 @@ class ThrowingAuthService implements AuthService {
   @override
   User? get currentUser => null;
   Future<bool> validateEmailUnique(String email) async => true;
+  Future<bool> validateNicknameUnique(String nickname) async => true;
 
   @override
   Future<void> sendEmailVerification() async {}

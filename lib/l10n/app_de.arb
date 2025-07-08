@@ -266,5 +266,11 @@
   "continue_button": "Weiter",
   "password_strength_weak": "Schwach",
   "password_strength_medium": "Mittel",
-  "password_strength_strong": "Stark"
+  "password_strength_strong": "Stark",
+  "gdpr_consent": "Ich stimme der Datenschutzerklärung zu",
+  "gdpr_required_error": "GDPR-Zustimmung erforderlich",
+  "auth_error_invalid_nickname": "Der Spitzname muss 3-20 Zeichen lang sein",
+  "auth_error_invalid_date": "Ungültiges Datum",
+  "auth_error_nickname_taken": "Der Spitzname ist bereits vergeben",
+  "back_button": "Zurück"
 }
