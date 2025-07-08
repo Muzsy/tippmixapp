@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-admin.initializeApp();
-const db = admin.firestore();
+import { FieldValue } from 'firebase-admin/firestore';
+import { db } from './src/lib/firebase';
 
 export const daily_bonus = functions
   .region('europe-central2')
@@ -25,7 +23,7 @@ export const daily_bonus = functions
         type: 'credit',
         reason: 'daily_bonus',
         transactionId: logRef.id,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        timestamp: FieldValue.serverTimestamp(),
         description: 'Daily bonus',
       });
     });
