@@ -1704,6 +1704,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Strong'**
   String get password_strength_strong;
+
+  /// No description provided for @gdpr_consent.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the privacy policy'**
+  String get gdpr_consent;
+
+  /// No description provided for @gdpr_required_error.
+  ///
+  /// In en, this message translates to:
+  /// **'GDPR consent required'**
+  String get gdpr_required_error;
+
+  /// No description provided for @auth_error_invalid_nickname.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname must be 3-20 characters'**
+  String get auth_error_invalid_nickname;
+
+  /// No description provided for @auth_error_invalid_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid date'**
+  String get auth_error_invalid_date;
+
+  /// No description provided for @auth_error_nickname_taken.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname already taken'**
+  String get auth_error_nickname_taken;
+
+  /// No description provided for @back_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back_button;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

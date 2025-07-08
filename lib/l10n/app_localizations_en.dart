@@ -825,4 +825,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get password_strength_strong => 'Strong';
+
+  @override
+  String get gdpr_consent => 'I agree to the privacy policy';
+
+  @override
+  String get gdpr_required_error => 'GDPR consent required';
+
+  @override
+  String get auth_error_invalid_nickname => 'Nickname must be 3-20 characters';
+
+  @override
+  String get auth_error_invalid_date => 'Invalid date';
+
+  @override
+  String get auth_error_nickname_taken => 'Nickname already taken';
+
+  @override
+  String get back_button => 'Back';
 }

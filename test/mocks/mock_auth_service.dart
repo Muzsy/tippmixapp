@@ -7,6 +7,7 @@ class MockAuthService implements AuthService {
   User? _user;
 
   bool emailUnique = true;
+  bool nicknameUnique = true;
   @override
   Stream<User?> authStateChanges() => _controller.stream;
 
@@ -39,6 +40,9 @@ class MockAuthService implements AuthService {
   User? get currentUser => _user;
   @override
   Future<bool> validateEmailUnique(String email) async => emailUnique;
+
+  @override
+  Future<bool> validateNicknameUnique(String nickname) async => nicknameUnique;
 
   @override
   Future<User?> signInWithGoogle() async => null;
