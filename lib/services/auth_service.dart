@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 
 class AuthService {
@@ -25,6 +26,61 @@ class AuthService {
       final cred = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
+      );
+      final user = cred.user;
+      if (user == null) return null;
+      return User(
+        id: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName ?? '',
+      );
+    } on fb.FirebaseAuthException catch (e) {
+      throw AuthServiceException(_firebaseErrorToCode(e));
+    }
+  }
+
+  // Google sign-in
+  Future<User?> signInWithGoogle() async {
+    try {
+      final cred = await _firebaseAuth.signInWithProvider(
+        fb.GoogleAuthProvider(),
+      );
+      final user = cred.user;
+      if (user == null) return null;
+      return User(
+        id: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName ?? '',
+      );
+    } on fb.FirebaseAuthException catch (e) {
+      throw AuthServiceException(_firebaseErrorToCode(e));
+    }
+  }
+
+  // Apple sign-in
+  Future<User?> signInWithApple() async {
+    if (kIsWeb) throw UnsupportedError('Apple sign-in not supported on web');
+    try {
+      final cred = await _firebaseAuth.signInWithProvider(
+        fb.AppleAuthProvider(),
+      );
+      final user = cred.user;
+      if (user == null) return null;
+      return User(
+        id: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName ?? '',
+      );
+    } on fb.FirebaseAuthException catch (e) {
+      throw AuthServiceException(_firebaseErrorToCode(e));
+    }
+  }
+
+  // Facebook sign-in
+  Future<User?> signInWithFacebook() async {
+    try {
+      final cred = await _firebaseAuth.signInWithProvider(
+        fb.FacebookAuthProvider(),
       );
       final user = cred.user;
       if (user == null) return null;

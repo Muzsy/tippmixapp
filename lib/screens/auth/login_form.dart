@@ -7,6 +7,7 @@ import '../../services/analytics_service.dart';
 import 'email_field.dart';
 import "package:go_router/go_router.dart";
 import 'password_field.dart';
+import '../../widgets/social_login_buttons.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
   final String variant;
@@ -35,13 +36,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final error = await ref
         .read(authProvider.notifier)
         .login(_emailCtrl.text, _passCtrl.text);
-    if (error == null && mounted) {
+    if (error == null) {
       await ref
           .read(analyticsServiceProvider)
           .logLoginSuccess(widget.variant);
-      if (mounted) {
-        context.goNamed(AppRoute.home.name);
-      }
     }
   }
 
@@ -66,6 +64,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         ElevatedButton(
           onPressed: _submit,
           child: Text(loc.login_button),
+        ),
+        const SizedBox(height: 16),
+        const SocialLoginButtons(),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () => context.goNamed(AppRoute.register.name),
+          child: Text(loc.register_link),
         ),
       ],
     );
