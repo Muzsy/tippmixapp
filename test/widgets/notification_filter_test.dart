@@ -34,7 +34,9 @@ class FakeAuthService implements AuthService {
   bool get isEmailVerified => true;
   @override
   User? get currentUser => null;
+  @override
   Future<bool> validateEmailUnique(String email) async => true;
+  @override
   Future<bool> validateNicknameUnique(String nickname) async => true;
 
   @override

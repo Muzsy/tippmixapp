@@ -51,7 +51,9 @@ class _FakeAuthService implements AuthService {
   Stream<User?> authStateChanges() => const Stream.empty();
   @override
   User? get currentUser => null;
+  @override
   Future<bool> validateEmailUnique(String email) async => true;
+  @override
   Future<bool> validateNicknameUnique(String nickname) async => true;
   @override
   Future<User?> signInWithEmail(String email, String password) async => null;

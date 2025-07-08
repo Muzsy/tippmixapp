@@ -1,0 +1,368 @@
+[
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/lib/providers/onboarding_provider.dart",
+    "message": "The method 'markOnboardingCompleted' isn't defined for the type 'UserService'.\nTry correcting the name to the name of an existing method, or defining a method named 'markOnboardingCompleted'.",
+    "code": "undefined_method",
+    "startLineNumber": 21
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/home_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 39
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/home_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 40
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/login_register_screen_test.dart",
+    "message": "Missing concrete implementations of 'class AuthService.confirmPasswordReset' and 'class AuthService.pollEmailVerification'.\nTry implementing the missing methods, or make the class abstract.",
+    "code": "non_abstract_class_inherits_abstract_member",
+    "startLineNumber": 26
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/login_register_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 31
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/login_register_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 32
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/llama_index/data/pubspec.yaml",
+    "message": "The asset file '.env' doesn't exist.\nTry creating the file or fixing the path to the file.",
+    "code": "asset_does_not_exist",
+    "startLineNumber": 71
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/widgets/onboarding_interaction_test.dart",
+    "message": "The method doesn't override an inherited method.\nTry updating this class to match the superclass, or removing the override annotation.",
+    "code": "override_on_non_overriding_member",
+    "startLineNumber": 31
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/lib/screens/profile/security/two_factor_wizard.dart",
+    "message": "Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check.\nGuard a 'State.context' use with a 'mounted' check on the State, and other BuildContext use with a 'mounted' check on the BuildContext.",
+    "code": "use_build_context_synchronously",
+    "startLineNumber": 36
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/lib/screens/profile/security/two_factor_wizard.dart",
+    "message": "Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check.\nGuard a 'State.context' use with a 'mounted' check on the State, and other BuildContext use with a 'mounted' check on the BuildContext.",
+    "code": "use_build_context_synchronously",
+    "startLineNumber": 38
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/lib/screens/profile/security/two_factor_wizard.dart",
+    "message": "Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check.\nGuard a 'State.context' use with a 'mounted' check on the State, and other BuildContext use with a 'mounted' check on the BuildContext.",
+    "code": "use_build_context_synchronously",
+    "startLineNumber": 42
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/lib/services/local_notification_service.dart",
+    "message": "TODO: implement local notification scheduling once plugin is available.",
+    "code": "todo",
+    "startLineNumber": 5
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/auth_notifier_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 44
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/auth_notifier_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 45
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/generate_goldens.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 54
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/generate_goldens.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 55
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/models/public_profile_privacy_logic_test.dart",
+    "message": "TODO: evaluate visible fields based on privacy settings",
+    "code": "todo",
+    "startLineNumber": 16
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/models/public_profile_privacy_logic_test.dart",
+    "message": "TODO: evaluate global private flag",
+    "code": "todo",
+    "startLineNumber": 30
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/bottom_nav_bets_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 58
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/bottom_nav_bets_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 59
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/bottom_nav_mytickets_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 56
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/bottom_nav_mytickets_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 57
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_bets_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 58
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_bets_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 59
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_mytickets_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 56
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_mytickets_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 57
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_profile_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 55
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/drawer_profile_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 56
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/feed_navigation_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 55
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/navigation/feed_navigation_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 56
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/providers/auth_provider_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 29
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/providers/auth_provider_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 30
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/create_ticket_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 31
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/create_ticket_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 32
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/feed_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 45
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/feed_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 46
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/home_appbar_title_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 55
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/home_appbar_title_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 56
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/leaderboard_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 45
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/leaderboard_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 46
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/my_tickets_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 46
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/my_tickets_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 47
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/notification_center_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 47
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/notification_center_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 48
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/notification_center_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 48
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/notification_center_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 49
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/profile_avatar_upload_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 49
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/profile_avatar_upload_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 50
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/profile_privacy_widget_test.dart",
+    "message": "TODO: build ProfileScreen and verify privacy toggles",
+    "code": "todo",
+    "startLineNumber": 5
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/profile_privacy_widget_test.dart",
+    "message": "TODO: implement widget setup and asserts",
+    "code": "todo",
+    "startLineNumber": 10
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/profile_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 46
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/screens/profile_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 47
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/settings_screen_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 63
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/screens/settings_screen_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 64
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/services/club_service_test.dart",
+    "message": "TODO: Verify club default entity fetch.",
+    "code": "todo",
+    "startLineNumber": 8
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/widgets/follow_button_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 57
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/widgets/follow_button_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 58
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/widgets/home_feed_widget_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 58
+  },
+  {
+    "resource": "/c:/Dev/GitHub/tippmixapp/test/widgets/home_feed_widget_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 59
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/widgets/notification_filter_test.dart",
+    "message": "The member 'validateEmailUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 37
+  },
+  {
+    "resource": "/C:/Dev/GitHub/tippmixapp/test/widgets/notification_filter_test.dart",
+    "message": "The member 'validateNicknameUnique' overrides an inherited member but isn't annotated with '@override'.\nTry adding the '@override' annotation.",
+    "code": "annotate_overrides",
+    "startLineNumber": 38
+  }
+]
