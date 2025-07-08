@@ -17,6 +17,7 @@ import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
 import 'package:tippmixapp/screens/onboarding/onboarding_flow_screen.dart';
 import 'package:tippmixapp/screens/splash_screen.dart';
+import 'package:tippmixapp/screens/register_wizard.dart';
 import 'routes/app_route.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
 import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
@@ -30,34 +31,36 @@ final GoRouter router = GoRouter(
   initialLocation: '/splash',
   routes: [
     ShellRoute(
-      builder: (context, state, child) => HomeScreen(state: state, child: child),
+      builder: (context, state, child) =>
+          HomeScreen(state: state, child: child),
       routes: [
         GoRoute(
           path: '/create-ticket',
           name: AppRoute.createTicket.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const RequireAuth(
-              child: CreateTicketScreen(),
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const RequireAuth(child: CreateTicketScreen()),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: '/',
           name: AppRoute.home.name,
-          builder: (context, state) =>
-              HomeScreen(state: state, showStats: true, child: const SizedBox.shrink()),
+          builder: (context, state) => HomeScreen(
+            state: state,
+            showStats: true,
+            child: const SizedBox.shrink(),
+          ),
         ),
         GoRoute(
           path: '/profile',
           name: AppRoute.profile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const RequireAuth(
-              child: ProfileScreen(showAppBar: false),
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const RequireAuth(child: ProfileScreen(showAppBar: false)),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -65,8 +68,9 @@ final GoRouter router = GoRouter(
           name: AppRoute.editProfile.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: EditProfileScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -74,19 +78,19 @@ final GoRouter router = GoRouter(
           name: AppRoute.bets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const EventsScreen(sportKey: 'soccer', showAppBar: false),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: '/my-tickets',
           name: AppRoute.myTickets.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const RequireAuth(
-              child: MyTicketsScreen(showAppBar: false),
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const RequireAuth(child: MyTicketsScreen(showAppBar: false)),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -94,8 +98,9 @@ final GoRouter router = GoRouter(
           path: '/feed',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const FeedScreen(showAppBar: false),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -103,8 +108,9 @@ final GoRouter router = GoRouter(
           name: AppRoute.leaderboard.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const LeaderboardScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -112,8 +118,9 @@ final GoRouter router = GoRouter(
           name: AppRoute.friends.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const FriendsScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -121,7 +128,9 @@ final GoRouter router = GoRouter(
           name: AppRoute.badges.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const BadgeScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -129,8 +138,9 @@ final GoRouter router = GoRouter(
           name: AppRoute.rewards.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const RewardsScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -138,19 +148,19 @@ final GoRouter router = GoRouter(
           name: AppRoute.notifications.name,
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const NotificationCenterScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: '/settings',
           name: AppRoute.settings.name,
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const RequireAuth(
-              child: SettingsScreen(),
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const RequireAuth(child: SettingsScreen()),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
@@ -163,6 +173,12 @@ final GoRouter router = GoRouter(
           ),
         ),
         GoRoute(
+          path: '/register',
+          name: AppRoute.register.name,
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: RegisterWizard()),
+        ),
+        GoRoute(
           path: '/forgot-password',
           name: AppRoute.forgotPassword.name,
           builder: (context, state) => const ForgotPasswordScreen(),
@@ -172,7 +188,7 @@ final GoRouter router = GoRouter(
           name: AppRoute.passwordResetConfirm.name,
           builder: (context, state) => const PasswordResetConfirmScreen(),
         ),
-     ],
+      ],
     ),
     // Opcionális: login vagy egyéb top-level oldalak
     GoRoute(
