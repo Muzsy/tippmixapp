@@ -9,6 +9,8 @@ It integrates Firebase for authentication and data storage, fetches live event
 information from the [Odds API](https://the-odds-api.com/), and uses Riverpod for
 state management.
 
+![Login Screen](docs/images/login_revamp_screenshot_v1.png)
+
 ## Features
 
 - **Firebase Auth** – email based login and registration.
