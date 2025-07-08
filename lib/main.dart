@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'dart:async'; // Szükséges a StreamSubscription-hoz
 
+import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
 import 'services/theme_service.dart';
 import 'theme/theme_builder.dart';
@@ -12,8 +12,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await bootstrap();
   await dotenv.load();
   final container = ProviderContainer();
   final themeFuture =

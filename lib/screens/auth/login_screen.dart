@@ -34,6 +34,7 @@ class _LoginScreenBase extends ConsumerWidget {
       });
     });
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text(loc.login_title)),
       body: Center(child: LoginForm(variant: variant)),
     );
