@@ -1,0 +1,67 @@
+# fix_login_logic.yaml – Bug‑fix sprint for login flow issues seen in latest log.txt
+# Issues addressed:
+#  • Firestore permission‑denied when checking e‑mail uniqueness
+#  • App Check causing auth/unknown on Google/Facebook sign‑in
+#  • Facebook OAuth not supported via generic provider
+#  • RenderFlex overflow on LoginForm (small keyboards)
+
+canvas: canvases/login_screen_revamp.md  # original Sprint‑1 canvas context
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ App Check debug init (Google & Facebook)
+  - id: appcheck_init
+    description: |
+      Ensure FirebaseAppCheck debug provider is activated **before** Firebase.initializeApp():
+      ```dart
+      if (kDebugMode) {
+        await FirebaseAppCheck.instance.activate(androidProvider: AndroidProvider.debug);
+      }
+      ```
+      Place in lib/bootstrap.dart (called from main.dart) prior to any Firebase calls.
+    outputs:
+      - modify: [lib/bootstrap.dart, lib/main.dart]
+
+  # 2️⃣ Facebook login via Facebook SDK
+  - id: facebook_sdk
+    description: |
+      Replace generic OAuth flow in AuthService.signInWithFacebook() with `flutter_facebook_auth`:
+      ```dart
+      final LoginResult res = await FacebookAuth.instance.login();
+      if (res.status == LoginStatus.success) {
+        final credential = FacebookAuthProvider.credential(res.accessToken!.token);
+        return _firebaseAuth.signInWithCredential(credential);
+      }
+      ```
+      Handle LoginStatus.cancelled & failed → AuthFailure.facebookCancelled / server.
+    outputs:
+      - modify: [lib/services/auth_service.dart]
+
+  # 3️⃣ Firestore email‑uniqueness via Cloud Function
+  - id: email_unique_cf
+    description: |
+      Replace direct Firestore query (permission‑denied) with HTTPS callable Cloud Function `checkEmailUnique`; on dev fallback assume unique if function unavailable.
+    outputs:
+      - modify: [lib/services/auth_service.dart]
+
+  # 4️⃣ LoginForm overflow fix
+  - id: loginform_scroll
+    description: |
+      Wrap LoginForm Column in SingleChildScrollView + Padding; add `resizeToAvoidBottomInset: true` on scaffold.
+    outputs:
+      - modify: [lib/screens/login_form.dart, lib/screens/login_screen.dart]
+
+  # 5️⃣ Regression tests
+  - id: regression_tests
+    description: |
+      • Widget test for LoginForm scroll when soft‑keyboard open (small height).  
+      • AuthService Facebook sign‑in happy / cancelled path using mock.
+    outputs:
+      - add: [test/widgets/login_form_scroll_test.dart, test/mocks/mock_facebook_auth.dart]
+
+ready: false
