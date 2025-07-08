@@ -6,6 +6,10 @@ class MockAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();
   User? _user;
 
+  String? sentEmail;
+  String? confirmCode;
+  String? confirmPassword;
+
   bool emailUnique = true;
   bool nicknameUnique = true;
   @override
@@ -31,7 +35,15 @@ class MockAuthService implements AuthService {
   Future<void> sendEmailVerification() async {}
 
   @override
-  Future<void> sendPasswordResetEmail(String email) async {}
+  Future<void> sendPasswordResetEmail(String email) async {
+    sentEmail = email;
+  }
+
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {
+    confirmCode = code;
+    confirmPassword = newPassword;
+  }
 
   @override
   bool get isEmailVerified => true;
