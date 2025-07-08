@@ -35,19 +35,18 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.daily_bonus = void 0;
 const functions = __importStar(require("firebase-functions"));
-const admin = __importStar(require("firebase-admin"));
-admin.initializeApp();
-const db = admin.firestore();
+const firestore_1 = require("firebase-admin/firestore");
+const firebase_1 = require("./src/lib/firebase");
 exports.daily_bonus = functions
     .region('europe-central2')
     .pubsub.schedule('5 0 * * *')
     .timeZone('Europe/Budapest')
     .onRun(async () => {
-    const usersSnap = await db.collection('users').get();
-    const batch = db.batch();
+    const usersSnap = await firebase_1.db.collection('users').get();
+    const batch = firebase_1.db.batch();
     usersSnap.docs.forEach((doc) => {
         const userId = doc.id;
-        const logRef = db
+        const logRef = firebase_1.db
             .collection('users')
             .doc(userId)
             .collection('coin_logs')
@@ -58,7 +57,7 @@ exports.daily_bonus = functions
             type: 'credit',
             reason: 'daily_bonus',
             transactionId: logRef.id,
-            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            timestamp: firestore_1.FieldValue.serverTimestamp(),
             description: 'Daily bonus',
         });
     });

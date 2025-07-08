@@ -35,10 +35,8 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.coin_trx = exports.onUserCreate = void 0;
 const functions = __importStar(require("firebase-functions"));
-const admin = __importStar(require("firebase-admin"));
-// Initialize Firebase Admin
-admin.initializeApp();
-const db = admin.firestore();
+const firestore_1 = require("firebase-admin/firestore");
+const firebase_1 = require("./src/lib/firebase");
 /**
  * Automatically create a user document when a new Auth user is created.
  */
@@ -46,10 +44,10 @@ exports.onUserCreate = functions
     .region('europe-central2')
     .auth.user()
     .onCreate(async (user) => {
-    const userRef = db.collection('users').doc(user.uid);
+    const userRef = firebase_1.db.collection('users').doc(user.uid);
     await userRef.set({
         coins: 50,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: firestore_1.FieldValue.serverTimestamp(),
     });
 });
 /**
@@ -76,19 +74,19 @@ exports.coin_trx = functions
         throw new functions.https.HttpsError('invalid-argument', 'A valid transactionId is required.');
     }
     // Prevent duplicate transactions
-    const logRef = db.collection('coin_logs').doc(transactionId);
+    const logRef = firebase_1.db.collection('coin_logs').doc(transactionId);
     const existingLog = await logRef.get();
     if (existingLog.exists) {
         return { success: true };
     }
     // Transaction: update user balance and log atomically
-    await db.runTransaction(async (tx) => {
-        const userRef = db.collection('users').doc(userId);
+    await firebase_1.db.runTransaction(async (tx) => {
+        const userRef = firebase_1.db.collection('users').doc(userId);
         const userSnap = await tx.get(userRef);
         // If somehow user doc is missing, initialize with zero balance
         let currentBalance = 0;
         if (!userSnap.exists) {
-            tx.set(userRef, { coins: 0, createdAt: admin.firestore.FieldValue.serverTimestamp() });
+            tx.set(userRef, { coins: 0, createdAt: firestore_1.FieldValue.serverTimestamp() });
         }
         else {
             currentBalance = userSnap.get('coins') || 0;
@@ -104,7 +102,7 @@ exports.coin_trx = functions
             type,
             reason,
             transactionId,
-            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            timestamp: firestore_1.FieldValue.serverTimestamp(),
         });
     });
     return { success: true };
