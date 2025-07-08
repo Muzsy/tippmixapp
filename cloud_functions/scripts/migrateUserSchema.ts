@@ -1,12 +1,4 @@
-import { getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
-// Csak egyszer engedjük inicializálni
-if (!getApps().length) {
-  initializeApp({ credential: applicationDefault() });
-}
-
-const db = getFirestore();
+import { db } from '../src/lib/firebase';
 
 async function migrate() {
   const usersSnap = await db.collection('users').get();
