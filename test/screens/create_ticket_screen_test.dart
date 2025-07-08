@@ -28,10 +28,12 @@ class _FakeAuthService implements AuthService {
   Stream<m.User?> authStateChanges() => const Stream.empty();
   @override
   m.User? get currentUser => null;
+  Future<bool> validateEmailUnique(String email) async => true;
   @override
   Future<m.User?> signInWithEmail(String email, String password) async => null;
   @override
-  Future<m.User?> registerWithEmail(String email, String password) async => null;
+  Future<m.User?> registerWithEmail(String email, String password) async =>
+      null;
   @override
   Future<void> signOut() async {}
   @override
@@ -53,7 +55,9 @@ class _FakeAuthService implements AuthService {
 
 class _FakeAuthNotifier extends AuthNotifier {
   _FakeAuthNotifier() : super(_FakeAuthService()) {
-    state = AuthState(user: m.User(id: 'u1', email: 'dev@example.com', displayName: 'Dev'));
+    state = AuthState(
+      user: m.User(id: 'u1', email: 'dev@example.com', displayName: 'Dev'),
+    );
   }
 }
 
@@ -76,7 +80,9 @@ Widget _buildTestApp({required List<TipModel> tips}) {
     overrides: [
       authProvider.overrideWith((ref) => _FakeAuthNotifier()),
       // closure *BetSlipProvider* típust ad vissza, OK a fordítónak
-      betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: tips)),
+      betSlipProvider.overrideWith(
+        (ref) => _FakeBetSlipProvider(initialTips: tips),
+      ),
     ],
     child: const MaterialApp(
       localizationsDelegates: [
@@ -99,14 +105,24 @@ void main() {
   group('CreateTicketScreen', () {
     final sampleTips = [
       TipModel(
-        eventId: 'e1', eventName: 'Arsenal vs City', odds: 2.0,
-        startTime: DateTime(2025, 7, 1), sportKey: 'soccer',
-        bookmaker: 'Bet365', marketKey: 'h2h', outcome: 'Arsenal',
+        eventId: 'e1',
+        eventName: 'Arsenal vs City',
+        odds: 2.0,
+        startTime: DateTime(2025, 7, 1),
+        sportKey: 'soccer',
+        bookmaker: 'Bet365',
+        marketKey: 'h2h',
+        outcome: 'Arsenal',
       ),
       TipModel(
-        eventId: 'e2', eventName: 'Real vs Barca', odds: 1.5,
-        startTime: DateTime(2025, 7, 2), sportKey: 'soccer',
-        bookmaker: 'Bet365', marketKey: 'h2h', outcome: 'Real Madrid',
+        eventId: 'e2',
+        eventName: 'Real vs Barca',
+        odds: 1.5,
+        startTime: DateTime(2025, 7, 2),
+        sportKey: 'soccer',
+        bookmaker: 'Bet365',
+        marketKey: 'h2h',
+        outcome: 'Real Madrid',
       ),
     ];
 
@@ -118,23 +134,28 @@ void main() {
       expect(find.text('Real vs Barca'), findsOneWidget);
     });
 
-    testWidgets('Stake = 0 esetén hibaüzenet jelenik meg "Place Bet" gombnyomásra', (tester) async {
-      await tester.pumpWidget(_buildTestApp(tips: sampleTips));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Stake = 0 esetén hibaüzenet jelenik meg "Place Bet" gombnyomásra',
+      (tester) async {
+        await tester.pumpWidget(_buildTestApp(tips: sampleTips));
+        await tester.pumpAndSettle();
 
-      // Stake 0
-      await tester.enterText(find.byType(TextField), '0');
-      await tester.pump();
+        // Stake 0
+        await tester.enterText(find.byType(TextField), '0');
+        await tester.pump();
 
-      // Gomb lenyomása
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Place Bet'));
-      await tester.pump();
+        // Gomb lenyomása
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Place Bet'));
+        await tester.pump();
 
-      // SnackBar ‑ vagy Text ‑ hibajelzés várható ("Invalid stake" stb.)
-      expect(find.textContaining('stake'), findsOneWidget);
-    });
+        // SnackBar ‑ vagy Text ‑ hibajelzés várható ("Invalid stake" stb.)
+        expect(find.textContaining('stake'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Potenciális nyeremény 100 Ft Stake esetén 300.00 Ft', (tester) async {
+    testWidgets('Potenciális nyeremény 100 Ft Stake esetén 300.00 Ft', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestApp(tips: sampleTips));
       await tester.pumpAndSettle();
 
