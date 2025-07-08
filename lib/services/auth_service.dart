@@ -147,6 +147,24 @@ class AuthService {
     }
   }
 
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async {
+    var user = _firebaseAuth.currentUser;
+    if (user == null) return false;
+    final end = DateTime.now().add(timeout);
+    while (DateTime.now().isBefore(end)) {
+      await _firebaseAuth.currentUser?.reload();
+      user = _firebaseAuth.currentUser;
+      if (user?.emailVerified ?? false) {
+        return true;
+      }
+      await Future.delayed(interval);
+    }
+    return user?.emailVerified ?? false;
+  }
+
   // Jelszó visszaállító email küldése
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
