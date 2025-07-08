@@ -46,9 +46,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
         EmailField(
           controller: _emailCtrl,
           focusNode: _emailFocus,
@@ -72,7 +74,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           onPressed: () => context.goNamed(AppRoute.register.name),
           child: Text(loc.register_link),
         ),
-      ],
+        ],
+      ),
     );
   }
 }
