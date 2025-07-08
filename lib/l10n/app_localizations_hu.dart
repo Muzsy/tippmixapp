@@ -686,9 +686,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get profileChooseAvatar => 'Válassz avatart';
 
   @override
-  String get profileCropImage => 'Kép kivágása';
-
-  @override
   String get profile_avatar_error => 'Hiba történt az avatar beállításakor';
 
   @override

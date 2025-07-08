@@ -220,7 +220,6 @@
   ,"profileUploadPhoto": "Upload your own photo"
   ,"profileResetAvatar": "Reset to default avatar"
   ,"profileChooseAvatar": "Choose avatar"
-  ,"profileCropImage": "Crop image"
   ,"profile_avatar_error": "Error updating avatar"
   ,"profile_avatar_updated": "Avatar updated"
   ,"profile_avatar_cancelled": "Avatar upload cancelled"

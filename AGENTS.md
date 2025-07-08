@@ -9,6 +9,7 @@ A benne foglalt szabályok minden vászon (.md) + lépéslista (.yaml) az eg
 
 * **TippmixApp** – közösségi sportfogadási szimulátor (Flutter + Firebase)
 * Virtuális **TippCoin** pénznem (CoinService + Cloud Functions)
+* Biztonsági popup logika (GuardPopupService)
 * OddsAPI integráció a valós idejű odds‑okhoz
 * Enum‑alapú **AppLocalizations** rendszer + runtime nyelvváltás
 * **Codex‑alapú** fejlesztés: vászon (.md) + lépéslista (.yaml) az egyetlen elfogadott workflow

@@ -45,6 +45,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await _authService.registerWithEmail(email, password);
       state = AuthState(user: user);
       await _authService.sendEmailVerification();
+      await _authService.pollEmailVerification();
       return null;
     } on AuthServiceException catch (e) {
       state = AuthState(errorCode: e.code);

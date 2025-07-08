@@ -16,7 +16,12 @@ class NotificationPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: notification.previewUrl != null
-          ? Image.network(notification.previewUrl!, width: 40, height: 40)
+          ? Image.network(
+              notification.previewUrl!,
+              width: 40,
+              height: 40,
+              semanticLabel: 'notification image',
+            )
           : null,
       title: Text(notification.title),
       subtitle: Text(notification.description),

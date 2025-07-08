@@ -54,6 +54,12 @@ class _FakeAuthService implements AuthService {
   Future<m.User?> signInWithFacebook() async => null;
   @override
   Future<void> confirmPasswordReset(String code, String newPassword) async {}
+
+  @override
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async => true;
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
