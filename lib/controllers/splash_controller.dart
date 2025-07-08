@@ -19,11 +19,16 @@ class SplashController extends StateNotifier<AsyncValue<void>> {
     }
     final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     final data = doc.data() ?? <String, dynamic>{};
-    final user = UserModel.fromJson(data);
-    if (user.onboardingCompleted) {
-      router.goNamed(AppRoute.home.name);
-    } else {
-      router.goNamed(AppRoute.onboarding.name);
+    try {
+      final user = UserModel.fromJson(data);
+      if (user.onboardingCompleted) {
+        router.goNamed(AppRoute.home.name);
+      } else {
+        router.goNamed(AppRoute.onboarding.name);
+      }
+    } catch (_) {
+      await FirebaseAuth.instance.signOut();
+      router.goNamed(AppRoute.login.name);
     }
     state = const AsyncData(null);
   }
