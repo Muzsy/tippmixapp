@@ -1,0 +1,53 @@
+# fill_canvas_register_step2.yaml – Codex goal for Sprint 3 RegisterWizard Step 2 implementation
+# Updated: removed mandatory 18+ age check per stakeholder feedback
+
+canvas: canvases/register_wizard_step2_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Step 2 form widget
+  - id: step2_form
+    description: "Create `RegisterStep2Form` in lib/screens/register_step2_form.dart with Nickname TextField, BirthDate DatePicker, GDPR Consent Checkbox, Back and Continue buttons. Validate required fields and date format."
+    outputs:
+      - lib/screens/register_step2_form.dart
+
+  # 2️⃣ Nickname uniqueness validation
+  - id: nickname_uniqueness
+    description: "Add `validateNicknameUnique(String nickname)` to AuthService; call it on Continue press with debounce."
+    outputs:
+      - lib/services/auth_service.dart
+      - lib/screens/register_step2_form.dart
+
+  # 3️⃣ GDPR consent required
+  - id: gdpr_consent
+    description: "Ensure GDPR checkbox is checked; otherwise disable Continue and show inline error."
+    outputs:
+      - lib/screens/register_step2_form.dart
+
+  # 4️⃣ Save state & navigate
+  - id: save_and_navigate
+    description: "On successful validation, call registerStateNotifier.saveStep2(...) and animate PageController to next page (Step 3)."
+    outputs:
+      - lib/providers/register_state_notifier.dart
+      - lib/screens/register_wizard.dart
+
+  # 5️⃣ Tests
+  - id: tests
+    description: "Write widget tests covering: nickname not unique, GDPR unchecked, and happy path navigation to Step 3. Mock AuthService nickname call."
+    outputs:
+      - test/widgets/register_step2_form_test.dart
+      - test/mocks/mock_auth_service.dart
+
+  # 6️⃣ CI update
+  - id: ci_update
+    description: "Ensure new tests run in existing GitHub Actions workflow; maintain coverage badge."
+    outputs:
+      - .github/workflows/flutter_ci.yaml
+
+
