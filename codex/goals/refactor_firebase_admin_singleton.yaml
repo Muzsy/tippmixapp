@@ -1,0 +1,38 @@
+steps:
+  - name: Hozd létre a központi Firebase helper‑t
+    description: >-
+      Adj hozzá a cloud_functions/src/lib mappába egy firebase.ts fájlt, amely
+      applicationDefault() hitelesítéssel pontosan egyszer inicializálja az
+      Admin SDK‑t, majd exportálja a Firestore példányt (`db`).
+    outputs:
+      - cloud_functions/src/lib/firebase.ts
+
+  - name: Cseréld le a duplikált inicializálásokat
+    description: >-
+      Töröld / kommenteld ki az `admin.initializeApp()` hívásokat a következő
+      fájlokban, és cseréld `import * as admin …` helyett:
+        * cloud_functions/src/index.ts
+        * cloud_functions/src/scripts/migrateUserSchema.ts
+      új importra: `import { db } from "./lib/firebase"`.
+    outputs:
+      - cloud_functions/src/index.ts
+      - cloud_functions/src/scripts/migrateUserSchema.ts
+
+  - name: Frissítsd a csomagokat és runtime‑ot
+    description: >-
+      A package.json `engines.node` mezője legyen "20", és frissítsd a
+      firebase‑functions & firebase‑admin csomagokat a legújabb stabil verzióra.
+    outputs:
+      - cloud_functions/package.json
+
+  - name: Build & CI ellenőrzés
+    description: >-
+      Futtasd a `npm ci --prefix cloud_functions && npm run --prefix
+      cloud_functions build` parancsokat; a GH Actions workflow már tartalmazza
+      a *Compile Cloud Functions* lépést – ennek zöldre kell futnia.
+
+  - name: Egyszeri migráció futtatása
+    description: >-
+      Lokálisan:  `npm run --prefix cloud_functions migrate:user-schema`, vagy
+      prod‑on `firebase deploy --only functions:migrateUserSchema`.  A Cloud
+      Console logban nem jelenhet meg `app/duplicate-app` hiba.
