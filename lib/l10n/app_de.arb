@@ -262,5 +262,9 @@
   "onboarding_follow_tipsters": "Folge Top-Tipstern",
   "onboarding_skip": "Überspringen",
   "onboarding_next": "Weiter",
-  "onboarding_done": "Fertig"
- }
+  "onboarding_done": "Fertig",
+  "continue_button": "Weiter",
+  "password_strength_weak": "Schwach",
+  "password_strength_medium": "Mittel",
+  "password_strength_strong": "Stark"
+}

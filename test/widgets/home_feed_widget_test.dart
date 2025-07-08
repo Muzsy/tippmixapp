@@ -55,6 +55,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -147,13 +148,15 @@ void main() {
         overrides: [
           feedStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
-          copyTicketProvider.overrideWithValue(({
-            required String userId,
-            required String ticketId,
-            required List<TipModel> tips,
-            String? sourceUserId,
-            FirebaseFirestore? firestore,
-          }) async => 'id'),
+          copyTicketProvider.overrideWithValue(
+            ({
+              required String userId,
+              required String ticketId,
+              required List<TipModel> tips,
+              String? sourceUserId,
+              FirebaseFirestore? firestore,
+            }) async => 'id',
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -184,8 +187,18 @@ void main() {
         overrides: [
           feedStreamProvider.overrideWith((ref) => controller.stream),
           authProvider.overrideWith(
-              (ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'me'))),
-          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async => 'id'),
+            (ref) =>
+                FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'me')),
+          ),
+          copyTicketProvider.overrideWithValue(
+            ({
+              required String userId,
+              required String ticketId,
+              required List<TipModel> tips,
+              String? sourceUserId,
+              FirebaseFirestore? firestore,
+            }) async => 'id',
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -228,10 +241,7 @@ void main() {
       eventType: FeedEventType.betPlaced,
       message: 'bet',
       timestamp: DateTime.now(),
-      extraData: {
-        'ticketId': 't1',
-        'tips': <Map<String, dynamic>>[],
-      },
+      extraData: {'ticketId': 't1', 'tips': <Map<String, dynamic>>[]},
     );
     await tester.pumpWidget(
       ProviderScope(
@@ -239,8 +249,16 @@ void main() {
           feedStreamProvider.overrideWith((ref) => controller.stream),
           feedServiceProvider.overrideWithValue(feedService as FeedService),
           authProvider.overrideWith(
-              (ref) => FakeAuthNotifier(User(id: 'me', email: '', displayName: 'Me'))),
-          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async {
+            (ref) =>
+                FakeAuthNotifier(User(id: 'me', email: '', displayName: 'Me')),
+          ),
+          copyTicketProvider.overrideWithValue(({
+            required String userId,
+            required String ticketId,
+            required List<TipModel> tips,
+            String? sourceUserId,
+            FirebaseFirestore? firestore,
+          }) async {
             copyCalled = true;
             return 'c1';
           }),
@@ -275,7 +293,15 @@ void main() {
         overrides: [
           feedStreamProvider.overrideWith((ref) => Stream.error('err')),
           authProvider.overrideWith((ref) => FakeAuthNotifier(null)),
-          copyTicketProvider.overrideWithValue(({required String userId, required String ticketId, required List<TipModel> tips, String? sourceUserId, FirebaseFirestore? firestore}) async => 'id'),
+          copyTicketProvider.overrideWithValue(
+            ({
+              required String userId,
+              required String ticketId,
+              required List<TipModel> tips,
+              String? sourceUserId,
+              FirebaseFirestore? firestore,
+            }) async => 'id',
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

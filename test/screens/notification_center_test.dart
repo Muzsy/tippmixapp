@@ -45,6 +45,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -133,7 +134,10 @@ Future<void> _pumpApp(
       overrides: [
         notificationStreamProvider.overrideWith((ref) => stream),
         notificationServiceProvider.overrideWithValue(service),
-        authProvider.overrideWith((ref) => FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me'))),
+        authProvider.overrideWith(
+          (ref) =>
+              FakeAuthNotifier(User(id: 'u1', email: '', displayName: 'Me')),
+        ),
       ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -159,11 +163,31 @@ void main() {
       controller.close();
     });
 
-    testWidgets('NC-01 list is ordered by timestamp descending', (tester) async {
+    testWidgets('NC-01 list is ordered by timestamp descending', (
+      tester,
+    ) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final n1 = NotificationModel(id: 'n1', type: NotificationType.reward, title: 't1', description: 'd', timestamp: DateTime(2020));
-      final n2 = NotificationModel(id: 'n2', type: NotificationType.reward, title: 't2', description: 'd', timestamp: DateTime(2021));
-      final n3 = NotificationModel(id: 'n3', type: NotificationType.reward, title: 't3', description: 'd', timestamp: DateTime(2022));
+      final n1 = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 't1',
+        description: 'd',
+        timestamp: DateTime(2020),
+      );
+      final n2 = NotificationModel(
+        id: 'n2',
+        type: NotificationType.reward,
+        title: 't2',
+        description: 'd',
+        timestamp: DateTime(2021),
+      );
+      final n3 = NotificationModel(
+        id: 'n3',
+        type: NotificationType.reward,
+        title: 't3',
+        description: 'd',
+        timestamp: DateTime(2022),
+      );
       controller.add([n1, n2, n3]);
       await tester.pump();
       final firstPos = tester.getTopLeft(find.text('t3')).dy;
@@ -173,7 +197,13 @@ void main() {
 
     testWidgets('NC-02 shows unread indicator', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final n = NotificationModel(id: 'n1', type: NotificationType.reward, title: 'unread', description: 'd', timestamp: DateTime.now());
+      final n = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 'unread',
+        description: 'd',
+        timestamp: DateTime.now(),
+      );
       controller.add([n]);
       await tester.pump();
       expect(find.text('Mark read'), findsOneWidget);
@@ -181,7 +211,13 @@ void main() {
 
     testWidgets('NC-03 mark notification read on tap', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final n = NotificationModel(id: 'n1', type: NotificationType.reward, title: 'tap', description: 'd', timestamp: DateTime.now());
+      final n = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 'tap',
+        description: 'd',
+        timestamp: DateTime.now(),
+      );
       controller.add([n]);
       await tester.pump();
       await tester.tap(find.text('tap'));
@@ -191,8 +227,21 @@ void main() {
 
     testWidgets('NC-04 filter unread shows only unread items', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final read = NotificationModel(id: 'n1', type: NotificationType.reward, title: 'read', description: 'd', timestamp: DateTime.now(), isRead: true);
-      final unread = NotificationModel(id: 'n2', type: NotificationType.reward, title: 'unread', description: 'd', timestamp: DateTime.now());
+      final read = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 'read',
+        description: 'd',
+        timestamp: DateTime.now(),
+        isRead: true,
+      );
+      final unread = NotificationModel(
+        id: 'n2',
+        type: NotificationType.reward,
+        title: 'unread',
+        description: 'd',
+        timestamp: DateTime.now(),
+      );
       controller.add([read, unread]);
       await tester.pump();
       await tester.tap(find.text('Unread'));
@@ -203,10 +252,22 @@ void main() {
 
     testWidgets('NC-05 push stream inserts newest item on top', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final old = NotificationModel(id: 'n1', type: NotificationType.reward, title: 'old', description: 'd', timestamp: DateTime(2020));
+      final old = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 'old',
+        description: 'd',
+        timestamp: DateTime(2020),
+      );
       controller.add([old]);
       await tester.pump();
-      final newest = NotificationModel(id: 'n2', type: NotificationType.reward, title: 'new', description: 'd', timestamp: DateTime(2021));
+      final newest = NotificationModel(
+        id: 'n2',
+        type: NotificationType.reward,
+        title: 'new',
+        description: 'd',
+        timestamp: DateTime(2021),
+      );
       controller.add([newest, old]);
       await tester.pump();
       final firstPos = tester.getTopLeft(find.text('new')).dy;
@@ -216,7 +277,13 @@ void main() {
 
     testWidgets('NC-06 pull to refresh reloads provider', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      final n = NotificationModel(id: 'n1', type: NotificationType.reward, title: 'item', description: 'd', timestamp: DateTime.now());
+      final n = NotificationModel(
+        id: 'n1',
+        type: NotificationType.reward,
+        title: 'item',
+        description: 'd',
+        timestamp: DateTime.now(),
+      );
       controller.add([n]);
       await tester.pump();
       await tester.drag(find.byType(ListView), const Offset(0, 300));
@@ -232,14 +299,24 @@ void main() {
     });
 
     testWidgets('NC-08 localization HU', (tester) async {
-      await _pumpApp(tester, controller.stream, service: service, locale: const Locale('hu'));
+      await _pumpApp(
+        tester,
+        controller.stream,
+        service: service,
+        locale: const Locale('hu'),
+      );
       controller.add([]);
       await tester.pump();
       expect(find.text('Nincs új esemény'), findsOneWidget);
     });
 
     testWidgets('NC-09 localization DE', (tester) async {
-      await _pumpApp(tester, controller.stream, service: service, locale: const Locale('de'));
+      await _pumpApp(
+        tester,
+        controller.stream,
+        service: service,
+        locale: const Locale('de'),
+      );
       controller.add([]);
       await tester.pump();
       expect(find.text('Keine neuen Ereignisse'), findsOneWidget);
@@ -254,13 +331,18 @@ void main() {
 
     testWidgets('NC-11 long list scrolls without overflow', (tester) async {
       await _pumpApp(tester, controller.stream, service: service);
-      controller.add(List.generate(200, (i) => NotificationModel(
+      controller.add(
+        List.generate(
+          200,
+          (i) => NotificationModel(
             id: 'n$i',
             type: NotificationType.reward,
             title: 't$i',
             description: 'd',
             timestamp: DateTime.now(),
-          )));
+          ),
+        ),
+      );
       await tester.pump();
       await tester.fling(find.byType(ListView), const Offset(0, -1000), 1000);
       await tester.pumpAndSettle();

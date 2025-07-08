@@ -262,5 +262,9 @@
   "onboarding_follow_tipsters": "Follow top tipsters",
   "onboarding_skip": "Skip",
   "onboarding_next": "Next",
-  "onboarding_done": "Done"
- }
+  "onboarding_done": "Done",
+  "continue_button": "Continue",
+    "password_strength_weak": "Weak",
+  "password_strength_medium": "Medium",
+  "password_strength_strong": "Strong"
+}

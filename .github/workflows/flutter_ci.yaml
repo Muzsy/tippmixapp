@@ -29,6 +29,7 @@ jobs:
 
       - name: Run tests with coverage
         run: flutter test --coverage
+        # widget tests including register_step1_form_test.dart
 
       # (innen lefelé: CI‑only részek)
       - name: Run coverage + badge

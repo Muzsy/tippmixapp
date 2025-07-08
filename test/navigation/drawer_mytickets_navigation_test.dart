@@ -53,6 +53,7 @@ class FakeAuthService implements AuthService {
 
   @override
   User? get currentUser => _current;
+  Future<bool> validateEmailUnique(String email) async => true;
 
   @override
   Future<User?> signInWithGoogle() async => null;
@@ -71,12 +72,15 @@ class FakeAuthNotifier extends AuthNotifier {
 }
 
 void main() {
-  testWidgets('drawer my tickets item closes drawer and navigates with title', (tester) async {
+  testWidgets('drawer my tickets item closes drawer and navigates with title', (
+    tester,
+  ) async {
     final router = GoRouter(
       initialLocation: '/bets',
       routes: [
         ShellRoute(
-          builder: (context, state, child) => HomeScreen(state: state, child: child),
+          builder: (context, state, child) =>
+              HomeScreen(state: state, child: child),
           routes: [
             GoRoute(
               path: '/',
@@ -88,8 +92,9 @@ void main() {
               name: AppRoute.myTickets.name,
               pageBuilder: (context, state) => CustomTransitionPage(
                 child: const MyTicketsScreen(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(opacity: animation, child: child),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
               ),
             ),
             GoRoute(
@@ -134,7 +139,9 @@ void main() {
 
     expect(find.byType(MyTicketsScreen), findsOneWidget);
     expect(find.text('My Tickets'), findsOneWidget);
-    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold).first);
+    final scaffoldState = tester.state<ScaffoldState>(
+      find.byType(Scaffold).first,
+    );
     expect(scaffoldState.isDrawerOpen, isFalse);
   });
 }
