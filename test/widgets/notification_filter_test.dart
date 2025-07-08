@@ -126,10 +126,10 @@ void main() {
           authProvider.overrideWith((ref) => FakeAuthNotifier()),
           analyticsServiceProvider.overrideWith((ref) => FakeAnalyticsService()),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const NotificationCenterScreenV2(),
+          home: NotificationCenterScreenV2(),
         ),
       ),
     );
