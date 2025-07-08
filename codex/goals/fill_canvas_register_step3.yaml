@@ -1,0 +1,59 @@
+# fill_canvas_register_step3.yaml – Codex goal for Sprint 4 RegisterWizard Step 3 implementation
+# Updated: support camera photo capture and file selection
+
+canvas: canvases/register_wizard_step3_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Step 3 form widget
+  - id: step3_form
+    description: "Create `RegisterStep3Form` in lib/screens/register_step3_form.dart with avatar pick UI offering both Camera (take photo) and File/Gallery selection, preview image, and Skip / Finish buttons."
+    outputs:
+      - lib/screens/register_step3_form.dart
+
+  # 2️⃣ Image selection, capture & crop
+  - id: image_selection
+    description: "Integrate ImagePickerService to support ImageSource.camera and ImageSource.gallery. Enforce 1:1 crop and ≤2 MB size; show snackbar error if exceeded."
+    outputs:
+      - lib/screens/register_step3_form.dart
+
+  # 3️⃣ Storage upload
+  - id: storage_upload
+    description: "Add `uploadAvatar(File image)` in lib/services/storage_service.dart to upload to Firebase Storage at `avatars/{uid}.jpg` and return URL. Save in registerStateNotifier."
+    outputs:
+      - lib/services/storage_service.dart
+      - lib/providers/register_state_notifier.dart
+
+  # 4️⃣ Skip flow
+  - id: skip_flow
+    description: "If user taps Skip, bypass upload and proceed to complete registration."
+    outputs:
+      - lib/screens/register_step3_form.dart
+
+  # 5️⃣ Complete registration & navigate
+  - id: complete_registration
+    description: "Call registerStateNotifier.completeRegistration() to create Firestore user document and navigate to Home route via GoRouter."
+    outputs:
+      - lib/providers/register_state_notifier.dart
+      - lib/screens/register_wizard.dart
+
+  # 6️⃣ Tests
+  - id: tests
+    description: "Write widget tests covering: camera photo pick & upload, file pick & upload, oversized image error, skip flow, finish → Home route. Mock StorageService."
+    outputs:
+      - test/widgets/register_step3_form_test.dart
+      - test/mocks/mock_storage_service.dart
+
+  # 7️⃣ CI update
+  - id: ci_update
+    description: "Ensure new tests run in GitHub Actions workflow; maintain coverage badge."
+    outputs:
+      - .github/workflows/flutter_ci.yaml
+
+ready: false
