@@ -1,0 +1,60 @@
+# fix_splash_router_oauth.yaml – Bug‑fix sprint to resolve startup & routing errors
+# Context: log.txt revealed setState‑during‑build in Splash, missing 'register' route, and OAuth AppCheck dev errors.
+
+canvas: canvases/qa_release_revamp.md  # reuse final sprint canvas context for dependencies
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Splash navigation timing fix
+  - id: fix_splash_navigation
+    description: |
+      Modify lib/controllers/splash_controller.dart so that navigation to the next route happens **after** the first frame.
+      Replace direct `router.goNamed(...)` inside `initState`/build with:
+      ```dart
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final router = GoRouter.of(context);
+        router.goNamed(AppRoute.login);
+      });
+      ```
+    outputs:
+      - modify: [lib/controllers/splash_controller.dart]
+
+  # 2️⃣ Register route addition
+  - id: add_register_route
+    description: |
+      Ensure GoRouter has a route named AppRoute.register pointing to RegisterWizardPage.
+      Add entry if missing:
+      ```dart
+      GoRoute(
+        name: AppRoute.register,
+        path: '/register',
+        pageBuilder: (context, state) => const NoTransitionPage(child: RegisterWizardPage()),
+      ),
+      ```
+    outputs:
+      - modify: [lib/router/router.dart]
+
+  # 3️⃣ Optional AppCheck dev helper
+  - id: appcheck_debug
+    description: |
+      Add conditional initialization in main.dart to activate the DebugAppCheckProvider when `kDebugMode` is true to avoid auth/unknown errors during dev OAuth sign‑in:
+      ```dart
+      if (kDebugMode) {
+        await FirebaseAppCheck.instance.activate(androidProvider: AndroidProvider.debug);
+      }
+      ```
+    outputs:
+      - modify: [lib/main.dart]
+
+  # 4️⃣ Widget test regression
+  - id: regression_test
+    description: "Add widget test ensuring SplashScreen navigates to LoginScreen without setState errors."
+    outputs:
+      - add: [test/widgets/splash_navigation_test.dart]
+
+ready: false
