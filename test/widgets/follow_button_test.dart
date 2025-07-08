@@ -52,6 +52,15 @@ class FakeAuthService implements AuthService {
 
   @override
   tm.User? get currentUser => _current;
+
+  @override
+  Future<tm.User?> signInWithGoogle() async => null;
+
+  @override
+  Future<tm.User?> signInWithApple() async => null;
+
+  @override
+  Future<tm.User?> signInWithFacebook() async => null;
 }
 
 class FakeAuthNotifier extends AuthNotifier {

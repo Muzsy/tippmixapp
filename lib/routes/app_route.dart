@@ -6,6 +6,7 @@ enum AppRoute {
   leaderboard,
   settings,
   login,
+  register,
   createTicket,
   badges,
   rewards,
