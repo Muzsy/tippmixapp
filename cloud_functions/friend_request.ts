@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-admin.initializeApp();
-const db = admin.firestore();
+import { FieldValue } from 'firebase-admin/firestore';
+import { db } from './src/lib/firebase';
 
 export const onFriendRequestAccepted = functions
   .region('europe-central2')
@@ -20,7 +18,7 @@ export const onFriendRequestAccepted = functions
         .add({
           type: 'friend',
           fromUid,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
     }
   });
