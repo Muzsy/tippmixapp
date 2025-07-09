@@ -1,0 +1,28 @@
+# fix_router_splash_navigation.yaml
+canvas: canvases/login_screen_revamp.md
+
+includes:
+  - codex_docs/routing_integrity.md
+
+steps:
+  - id: router_order
+    description: |
+      Move the '/splash' GoRoute **before** the ShellRoute block in lib/router.dart.
+    outputs:
+      - modify: [lib/router.dart]
+
+  - id: splash_navigation
+    description: |
+      Refactor SplashScreen so that route change happens in `ref.listen`
+      on AsyncData instead of inside controller init/build.
+    outputs:
+      - modify: [lib/screens/splash_screen.dart]
+
+  - id: bootstrap_guard
+    description: |
+      Ensure FirebaseAppCheck debug provider is activated in bootstrap()
+      **and** remove any duplicate AppCheck activation from other files.
+    outputs:
+      - modify: [lib/bootstrap.dart, lib/main.dart]
+
+ready: false
