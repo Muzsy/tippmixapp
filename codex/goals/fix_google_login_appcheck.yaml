@@ -1,0 +1,26 @@
+name: AppCheck aktiválása a Google Login hibájának javítására
+description: |
+  A Google-bejelentkezés meghiúsul, mert az App Check token nem generálható.
+  A logban a következő hiba látható: "No AppCheckProvider installed".
+  A cél az, hogy a debug AppCheck provider aktiválása már a main() első soraiban megtörténjen.
+steps:
+  - name: AppCheck aktiválásának áthelyezése
+    description: |
+      Nyissa meg a `lib/main.dart` fájlt, és ellenőrizze, hogy a `FirebaseAppCheck.instance.activate(...)`
+      hívás a `main()` függvényben szerepel-e.
+      Ha nem, vagy csak a `bootstrap.dart` fájlban van, helyezze át a hívást a `main()` függvény elejére, még a `bootstrap()` meghívása előtt.
+      Csak debug módban aktiválja az AppCheck-et.
+    outputs:
+      - lib/main.dart
+
+  - name: Teszt futtatása
+    description: |
+      Futtassa a `flutter analyze` és `flutter test --coverage` parancsokat, hogy meggyőződjön a módosítás helyességéről.
+    outputs:
+      - analyze_log.txt
+      - test_results.json
+
+  - name: Bejelentkezési hiba validálása
+    description: |
+      Ellenőrizze, hogy a `GenericIdpActivity` nem dob többé "No AppCheckProvider installed" hibát.
+      A Google bejelentkezésnek hibamentesen le kell futnia.
