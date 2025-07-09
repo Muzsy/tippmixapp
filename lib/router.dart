@@ -33,6 +33,11 @@ final GoRouter router = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/splash',
   routes: [
+    GoRoute(
+      path: '/splash',
+      name: 'splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) =>
           HomeScreen(state: state, child: child),
@@ -198,11 +203,6 @@ final GoRouter router = GoRouter(
       path: "/debug",
       name: AppRoute.debugMenu.name,
       builder: (context, state) => const DebugMenuScreen(),
-    ),
-    GoRoute(
-      path: '/splash',
-      name: 'splash',
-      builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: '/onboarding',

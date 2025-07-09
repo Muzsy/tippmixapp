@@ -3,11 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/user_model.dart';
-import '../router.dart';
 import '../routes/app_route.dart';
 import 'package:flutter/widgets.dart';
 
-class SplashController extends StateNotifier<AsyncValue<void>> {
+class SplashController extends StateNotifier<AsyncValue<AppRoute>> {
   SplashController() : super(const AsyncLoading()) {
     _init();
   }
@@ -16,9 +15,8 @@ class SplashController extends StateNotifier<AsyncValue<void>> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        router.goNamed(AppRoute.login.name);
+        state = const AsyncData(AppRoute.login);
       });
-      state = const AsyncData(null);
       return;
     }
     final doc = await FirebaseFirestore.instance
@@ -30,24 +28,23 @@ class SplashController extends StateNotifier<AsyncValue<void>> {
       final user = UserModel.fromJson(data);
       if (user.onboardingCompleted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          router.goNamed(AppRoute.home.name);
+          state = const AsyncData(AppRoute.home);
         });
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          router.goNamed(AppRoute.onboarding.name);
+          state = const AsyncData(AppRoute.onboarding);
         });
       }
     } catch (_) {
       await FirebaseAuth.instance.signOut();
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        router.goNamed(AppRoute.login.name);
+        state = const AsyncData(AppRoute.login);
       });
     }
-    state = const AsyncData(null);
   }
 }
 
 final splashControllerProvider =
-    StateNotifierProvider<SplashController, AsyncValue<void>>(
+    StateNotifierProvider<SplashController, AsyncValue<AppRoute>>(
       (ref) => SplashController(),
     );
