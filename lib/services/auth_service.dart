@@ -138,12 +138,21 @@ class AuthService {
       final result =
           await callable.call<Map<String, dynamic>>({'email': email});
       return result.data['unique'] as bool? ?? true;
-    } on FirebaseFunctionsException {
-      if (kDebugMode) return true;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'permission-denied') {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('validateEmailUnique permission-denied, assuming unique');
+        }
+        return true;
+      }
       rethrow;
-    } catch (_) {
-      if (kDebugMode) return true;
-      rethrow;
+    } on TimeoutException {
+      if (kDebugMode) {
+        // ignore: avoid_print
+        print('validateEmailUnique timeout, assuming unique');
+      }
+      return true;
     }
   }
 
