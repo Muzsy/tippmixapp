@@ -9,15 +9,13 @@ import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/screens/splash_screen.dart';
 import 'package:tippmixapp/screens/register_wizard.dart';
 
-class _FakeSplashController extends StateNotifier<AsyncValue<void>>
+class _FakeSplashController extends StateNotifier<AsyncValue<AppRoute>>
     implements SplashController {
-  _FakeSplashController(this._router) : super(const AsyncLoading()) {
+  _FakeSplashController() : super(const AsyncLoading()) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _router.goNamed(AppRoute.login.name);
-      state = const AsyncData(null);
+      state = const AsyncData(AppRoute.login);
     });
   }
-  final GoRouter _router;
 }
 
 void main() {
@@ -47,7 +45,7 @@ void main() {
       ProviderScope(
         overrides: [
           splashControllerProvider.overrideWith(
-            (ref) => _FakeSplashController(router),
+            (ref) => _FakeSplashController(),
           ),
         ],
         child: MaterialApp.router(
