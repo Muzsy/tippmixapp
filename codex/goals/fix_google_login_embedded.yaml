@@ -1,0 +1,55 @@
+name: Google bejelentkezés diszkrét módosítása
+description: |
+  A jelenlegi Google bejelentkezési folyamat natív Custom Chrome Tab-ot nyit (GenericIdpActivity),
+  ami nem felhasználóbarát. A cél, hogy a GoogleSignIn csomag segítségével az alkalmazáson belül,
+  diszkréten történjen meg a hitelesítés, majd az így kapott tokenek alapján történjen a FirebaseAuth belépés.
+steps:
+  - name: Google login refaktorálása
+    description: |
+      Keresse meg azt a metódust, amely jelenleg a Google bejelentkezésért felel a `lib/services/auth_service.dart` fájlban.
+      Cserélje le úgy, hogy először `GoogleSignIn().signIn()` segítségével történjen a bejelentkezés,
+      majd a kapott accessToken és idToken alapján hozza létre a Firebase credentialt:
+      ```dart
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return; // megszakította
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      ```
+      Ellenőrizze, hogy a `google_sign_in` import szerepel-e (`import 'package:google_sign_in/google_sign_in.dart';`).
+    outputs:
+      - lib/services/auth_service.dart
+
+  - name: UI handler frissítése a login gombnál
+    description: |
+      A `lib/screens/login_register_screen.dart` fájlban frissítse azt az eseménykezelőt, amely a Google login gombra reagál.
+      Győződjön meg arról, hogy az új diszkrét login metódust hívja meg.
+    outputs:
+      - lib/screens/login_register_screen.dart
+
+  - name: Debug kompatibilitás ellenőrzése
+    description: |
+      Ellenőrizze, hogy az `android/app/build.gradle` fájlban az `applicationId` értéke megegyezik a Firebase Console-ban regisztrált package névvel.
+      SHA-1/SHA-256 fingerprint már be van állítva, nem szükséges figyelmeztetés.
+    outputs:
+      - android/app/build.gradle
+
+  - name: Függőség ellenőrzése
+    description: |
+      Ellenőrizze, hogy a `pubspec.yaml` fájl tartalmazza a `google_sign_in` csomagot. Ha nem, figyelmeztesse manuálisan a fejlesztőt,
+      mivel a Codex nem módosíthatja a `pubspec.yaml` fájlt.
+    outputs:
+      - pubspec.yaml
+
+  - name: Tesztelés és validáció
+    description: |
+      Futtassa a `flutter analyze` és `flutter test --coverage` parancsokat, hogy ellenőrizze a módosítás érvényességét.
+    outputs:
+      - analyze_log.json
+      - test_results.json
