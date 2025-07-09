@@ -1,0 +1,47 @@
+# fix_startup_remote_config.yaml
+canvas: canvases/login_screen_revamp.md    # bármelyik canvas megfelel háttérnek
+
+includes:
+  - codex_docs/service_dependencies.md
+
+steps:
+  # 1️⃣ Remote Config aszinkronizálás
+  - id: async_remote_config
+    description: |
+      lib/controllers/splash_controller.dart-ban
+      - Cseréld az `await remoteConfig.fetchAndActivate()` hívást:
+        ```dart
+        unawaited(Future.microtask(() async {
+          await remoteConfig.fetchAndActivate();
+        }));
+        ```
+      - A Splash csak az első **frame** után (addPostFrameCallback) hívja
+        a `state = AsyncData(AppRoute.login)` navigációt.
+    outputs:
+      - modify: [lib/controllers/splash_controller.dart]
+
+  # 2️⃣ Hibák előtérbe hozása
+  - id: global_error_widget
+    description: |
+      lib/main.dart-ban:
+      ```dart
+      ErrorWidget.builder = (d) => Material(
+        color: Colors.red,
+        child: Center(child: Text(d.exceptionAsString(),
+                   style: const TextStyle(color: Colors.white))),
+      );
+      ```
+      És ideiglenesen távolítsd el / kommentezd ki a `runZonedGuarded`-et,
+      hogy a kivételek ismét láthatók legyenek.
+    outputs:
+      - modify: [lib/main.dart]
+
+  # 3️⃣ Regressziós teszt
+  - id: splash_smoke_test
+    description: |
+      Új widget-teszt: pump SplashScreen, várj egy pumpAndSettle(),
+      assert that `find.byType(LoginScreen)` megjelenik 5 mp-en belül.
+    outputs:
+      - add: [test/widgets/splash_smoke_test.dart]
+
+ready: false
