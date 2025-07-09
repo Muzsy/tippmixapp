@@ -17,7 +17,7 @@ steps:
     description: |
       Futtassa a `flutter analyze` és `flutter test --coverage` parancsokat, hogy meggyőződjön a módosítás helyességéről.
     outputs:
-      - analyze_log.txt
+      - analyze_log.json
       - test_results.json
 
   - name: Bejelentkezési hiba validálása
