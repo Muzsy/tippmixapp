@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../theme/brand_colors.dart';
+import '../services/auth_service.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
   const SocialLoginButtons({super.key});
@@ -16,20 +17,37 @@ class SocialLoginButtons extends ConsumerWidget {
     final colors = Theme.of(context).extension<BrandColors>()!;
     final auth = ref.read(authServiceProvider);
 
+    final messenger = ScaffoldMessenger.of(context);
     final buttons = <Widget>[
       _SocialLoginButton(
-        key: const Key('google_login_button'),
+        key: const Key("google_login_button"),
         label: loc.google_login,
         icon: Icons.g_mobiledata,
         color: colors.google,
-        onPressed: auth.signInWithGoogle,
+        onPressed: () async {
+          try {
+            await auth.signInWithGoogle();
+          } on AuthServiceException catch (e) {
+            messenger.showSnackBar(
+              SnackBar(content: Text(_mapError(context, e.code))),
+            );
+          }
+        },
       ),
       _SocialLoginButton(
-        key: const Key('facebook_login_button'),
+        key: const Key("facebook_login_button"),
         label: loc.facebook_login,
         icon: Icons.facebook,
         color: colors.facebook,
-        onPressed: auth.signInWithFacebook,
+        onPressed: () async {
+          try {
+            await auth.signInWithFacebook();
+          } on AuthServiceException catch (e) {
+            messenger.showSnackBar(
+              SnackBar(content: Text(_mapError(context, e.code))),
+            );
+          }
+        },
       ),
     ];
 
@@ -84,4 +102,12 @@ class _SocialLoginButton extends StatelessWidget {
       ),
     );
   }
+}
+
+String _mapError(BuildContext context, String code) {
+  final loc = AppLocalizations.of(context)!;
+  if (code == 'auth/facebook-cancelled') {
+    return loc.dialog_cancel;
+  }
+  return loc.auth_error_unknown;
 }

@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
@@ -7,16 +8,17 @@ import '../models/user.dart';
 
 class AuthService {
   final fb.FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
   final FacebookAuth _facebookAuth;
+  final FirebaseFunctions _functions;
 
   AuthService({
     fb.FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firestore,
     FacebookAuth? facebookAuth,
+    FirebaseFunctions? functions,
   })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _facebookAuth = facebookAuth ?? FacebookAuth.instance;
+        _facebookAuth = facebookAuth ?? FacebookAuth.instance,
+        _functions =
+            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
@@ -131,8 +133,7 @@ class AuthService {
   }
 
   Future<bool> validateEmailUnique(String email) async {
-    final functions = FirebaseFunctions.instanceFor(region: 'europe-central2');
-    final callable = functions.httpsCallable('checkEmailUnique');
+    final callable = _functions.httpsCallable('checkEmailUnique');
     try {
       final result =
           await callable.call<Map<String, dynamic>>({'email': email});
@@ -147,12 +148,27 @@ class AuthService {
   }
 
   Future<bool> validateNicknameUnique(String nickname) async {
-    final query = await _firestore
-        .collection('users')
-        .where('nickname', isEqualTo: nickname)
-        .limit(1)
-        .get();
-    return query.docs.isEmpty;
+    final callable = _functions.httpsCallable('checkNicknameUnique');
+    try {
+      final result =
+          await callable.call<Map<String, dynamic>>({'nickname': nickname});
+      return result.data['unique'] as bool? ?? true;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'permission-denied') {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('validateNicknameUnique permission-denied, assuming unique');
+        }
+        return true;
+      }
+      rethrow;
+    } on TimeoutException {
+      if (kDebugMode) {
+        // ignore: avoid_print
+        print('validateNicknameUnique timeout, assuming unique');
+      }
+      return true;
+    }
   }
 
   // Kijelentkezés
