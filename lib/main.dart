@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
@@ -13,39 +12,29 @@ import 'theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
 
-void main() {
-  runZonedGuarded(() async {
-    await bootstrap();
-    await dotenv.load();
-    final container = ProviderContainer();
-    final themeFuture =
-        container.read(themeServiceProvider.notifier).hydrate();
-    await container.read(appLocaleControllerProvider.notifier).loadLocale();
-    runApp(
-      UncontrolledProviderScope(
-        container: container,
-        child: _BootstrapApp(themeFuture: themeFuture),
-      ),
-    );
-  }, (error, stack) {
-    if (error is fb.FirebaseAuthException) {
-      final context = rootNavigatorKey.currentContext;
-      if (context != null) {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            content: Text(AppLocalizations.of(ctx)!.auth_error_unknown),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(AppLocalizations.of(ctx)!.dialog_cancel),
-              ),
-            ],
+Future<void> main() async {
+  ErrorWidget.builder = (d) => Material(
+        color: Colors.red,
+        child: Center(
+          child: Text(
+            d.exceptionAsString(),
+            style: const TextStyle(color: Colors.white),
           ),
-        );
-      }
-    }
-  });
+        ),
+      );
+
+  await bootstrap();
+  await dotenv.load();
+  final container = ProviderContainer();
+  final themeFuture =
+      container.read(themeServiceProvider.notifier).hydrate();
+  await container.read(appLocaleControllerProvider.notifier).loadLocale();
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: _BootstrapApp(themeFuture: themeFuture),
+    ),
+  );
 }
 
 class _BootstrapApp extends ConsumerWidget {
