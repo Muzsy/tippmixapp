@@ -18,7 +18,7 @@ import 'package:tippmixapp/screens/badges/badge_screen.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:tippmixapp/screens/feed_screen.dart';
 import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
-import 'package:tippmixapp/screens/login_register_screen.dart';
+import 'package:tippmixapp/screens/auth/login_screen.dart';
 
 /// Generates golden baseline PNGs for each theme, brightness and main route.
 ///
@@ -41,7 +41,7 @@ Future<void> main() async {
     AppRoute.rewards: const RewardsScreen(),
     AppRoute.feed: const FeedScreen(showAppBar: false),
     AppRoute.notifications: const NotificationCenterScreen(),
-    AppRoute.login: const LoginRegisterScreen(),
+    AppRoute.login: const LoginScreen(),
   };
 
   for (var i = 0; i < availableThemes.length; i++) {
