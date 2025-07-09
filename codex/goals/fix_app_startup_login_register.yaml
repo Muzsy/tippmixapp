@@ -1,0 +1,75 @@
+# fix_app_startup_login_register.yaml – All‑in bug‑fix sprint
+# Purpose: eliminate black screen on startup AND restore functional Login / Register flows.
+# Scope covers: Splash → Login navigation, Remote Config blocking, AppCheck dup‑init, Router order,
+#               Email/Nickname uniqueness, Social‑login error handling, overflow in LoginForm.
+
+canvas: canvases/login_screen_revamp.md   # base functional canvas
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Router & Splash sequence – fix initial navigation
+  - id: router_splash_sequence
+    description: |
+      • Ensure '/splash' GoRoute is declared **before** any ShellRoute in lib/router.dart.
+      • SplashScreen navigates with addPostFrameCallback or ref.listen on AsyncData.
+    outputs:
+      - modify: [lib/router.dart, lib/screens/splash_screen.dart]
+
+  # 2️⃣ Remote Config async + AppCheck singleton
+  - id: remoteconfig_appcheck
+    description: |
+      • In splash_controller.dart wrap fetchAndActivate in unawaited(Future.microtask(...)).
+      • Guarantee FirebaseAppCheck debug provider activation **once** in bootstrap.dart *before* Firebase.initializeApp.
+      • Remove any duplicate Firebase.initializeApp or AppCheck activation from other files.
+    outputs:
+      - modify: [lib/controllers/splash_controller.dart,
+                lib/bootstrap.dart,
+                lib/main.dart]
+
+  # 3️⃣ Global error visibility
+  - id: error_widget
+    description: |
+      Add ErrorWidget.builder in main.dart to show red screen with exception text;
+      temporarily comment out runZonedGuarded wrapper so errors surface.
+    outputs:
+      - modify: [lib/main.dart]
+
+  # 4️⃣ AuthService robustness
+  - id: authservice_hardening
+    description: |
+      • Facebook sign‑in: switch to flutter_facebook_auth; map cancel→AuthFailure.facebookCancelled.
+      • Google/Facebook sign‑in: wrap in try/catch; on error show snackbar.
+      • Email & nickname uniqueness: call HTTPS callable CF; on permission‑denied fallback true + log.
+    outputs:
+      - modify: [lib/services/auth_service.dart,
+                lib/screens/login_form.dart]
+
+  # 5️⃣ LoginForm UI overflow & accessibility
+  - id: loginform_ui
+    description: |
+      • Wrap LoginForm Column in SingleChildScrollView; set resizeToAvoidBottomInset: true on LoginScreen scaffold.
+      • Add semanticsLabel to all IconButtons.
+    outputs:
+      - modify: [lib/screens/login_form.dart,
+                lib/screens/login_screen.dart]
+
+  # 6️⃣ Regression & smoke tests
+  - id: tests
+    description: |
+      Add tests:
+      • splash_navigation_test.dart – Splash → Login within 5 s.
+      • login_form_scroll_test.dart – no overflow on 400 px height.
+      • social_login_error_test.dart – Facebook cancel shows snackbar.
+      • uniqueness_fallback_test.dart – AuthService returns true on CF permission‑denied.
+    outputs:
+      - add: [test/widgets/splash_navigation_test.dart,
+              test/widgets/login_form_scroll_test.dart,
+              test/widgets/social_login_error_test.dart,
+              test/services/uniqueness_fallback_test.dart]
+
+ready: false
