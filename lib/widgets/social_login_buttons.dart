@@ -24,30 +24,32 @@ class SocialLoginButtons extends ConsumerWidget {
         label: loc.google_login,
         icon: Icons.g_mobiledata,
         color: colors.google,
-        onPressed: () async {
-          try {
-            await auth.signInWithGoogle();
-          } on AuthServiceException catch (e) {
-            messenger.showSnackBar(
-              SnackBar(content: Text(_mapError(context, e.code))),
-            );
-          }
-        },
+          onPressed: () async {
+            try {
+              await auth.signInWithGoogle();
+            } on AuthServiceException catch (e) {
+              if (!context.mounted) return;
+              messenger.showSnackBar(
+                SnackBar(content: Text(_mapError(context, e.code))),
+              );
+            }
+          },
       ),
       _SocialLoginButton(
         key: const Key("facebook_login_button"),
         label: loc.facebook_login,
         icon: Icons.facebook,
         color: colors.facebook,
-        onPressed: () async {
-          try {
-            await auth.signInWithFacebook();
-          } on AuthServiceException catch (e) {
-            messenger.showSnackBar(
-              SnackBar(content: Text(_mapError(context, e.code))),
-            );
-          }
-        },
+          onPressed: () async {
+            try {
+              await auth.signInWithFacebook();
+            } on AuthServiceException catch (e) {
+              if (!context.mounted) return;
+              messenger.showSnackBar(
+                SnackBar(content: Text(_mapError(context, e.code))),
+              );
+            }
+          },
       ),
     ];
 
