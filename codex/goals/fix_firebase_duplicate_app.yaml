@@ -1,0 +1,35 @@
+name: Firebase duplicate initialization hiba javítása
+description: |
+  Az alkalmazás fekete képernyővel indul, a log alapján [core/duplicate-app] hiba történik, mert a Firebase App "[DEFAULT]" példánya már létezik. 
+  A cél, hogy a Firebase.initializeApp() hívás csak egyszer fusson le. 
+  Ellenőrizze az inicializálási logikát, javítsa a hibát, és validálja a működést.
+steps:
+  - name: Hiba azonosítása
+    description: |
+      Keresse meg a `Firebase.initializeApp()` hívásokat a `main.dart`, `bootstrap.dart` vagy más fájlokban.
+      Ellenőrizze, hogy előfordul-e több példányban, illetve hogy van-e `already exists` hiba kivédve try-catch blokkal.
+
+  - name: Inicializálás helyesítése
+    description: |
+      Biztosítsa, hogy a Firebase.initializeApp() pontosan egyszer fusson le.
+      Ha szükséges, használjon `Firebase.apps.isEmpty` ellenőrzést, vagy refaktorálja úgy a `bootstrap.dart`-ot, hogy ne hívja meg kétszer.
+    outputs:
+      - lib/bootstrap.dart
+      - lib/main.dart
+
+  - name: Logikai ellenőrzés
+    description: |
+      Validálja, hogy nincs több példányú `initializeApp()` hívás és az alkalmazás hibamentesen elindul.
+      Szükség esetén végezzen minimális refaktort a projektstruktúrában az inicializálás tisztázásához.
+
+  - name: Flutter analyze és tesztek futtatása
+    description: |
+      Futtassa a `flutter analyze` és `flutter test --coverage` parancsokat a javítás után.
+    outputs:
+      - analyze_log.json
+      - test_results.json
+
+  - name: Indítási teszt és logvizsgálat
+    description: |
+      Ellenőrizze, hogy az alkalmazás elindul-e fekete képernyő nélkül. Vizsgálja meg a logfájlban, hogy megszűnt-e a `[core/duplicate-app]` hiba.
+
