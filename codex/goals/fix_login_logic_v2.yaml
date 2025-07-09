@@ -1,0 +1,68 @@
+# fix_login_logic_v2.yaml – Second bug‑fix sprint for persistent login issues
+# Root causes from latest log:
+#  • AppCheck provider still not active before Auth calls → auth/unknown
+#  • Firestore PERMISSION_DENIED during nickname check (rules or unauth context)
+#  • Facebook login cancelled repeatedly, returns exception but UI not catching → crash
+#  • Google/Facebook OAuth require AppCheck token in custom Chrome tab
+#  • signInWithPassword shows reCAPTCHA token empty (AppCheck again)
+
+canvas: canvases/login_screen_revamp.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/service_dependencies.md
+  - codex_docs/routing_integrity.md
+
+steps:
+  # 1️⃣ Bootstrap sequence – AppCheck before Firebase.initializeApp
+  - id: bootstrap_appcheck
+    description: |
+      Refactor lib/bootstrap.dart → `async void bootstrap()` that:
+      1. Ensures WidgetsFlutterBinding is initialized.
+      2. Activates FirebaseAppCheck **before** Firebase.initializeApp():
+         ```dart
+         WidgetsFlutterBinding.ensureInitialized();
+         if (kDebugMode) {
+           await FirebaseAppCheck.instance.activate(androidProvider: AndroidProvider.debug,
+                                                    appleProvider: AppleProvider.debug);
+         }
+         await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+         ```
+      Update main.dart to call `bootstrap()` then runApp().
+    outputs:
+      - modify: [lib/bootstrap.dart, lib/main.dart]
+
+  # 2️⃣ Nickname uniqueness – resilient Cloud Function fallback
+  - id: nickname_uniqueness_fallback
+    description: |
+      Wrap `AuthService.validateNicknameUnique` Cloud Function call in try/catch.
+      • On FirebaseFunctionsException code == "permission-denied" OR timeout, return **true** (assume unique) but log warning.
+      • Remove direct Firestore query.
+    outputs:
+      - modify: [lib/services/auth_service.dart]
+
+  # 3️⃣ Facebook & Google sign‑in error handling
+  - id: oauth_error_handling
+    description: |
+      In LoginForm social buttons, wrap `authService.signInWithGoogle/Facebook` in `try ... on AuthFailure catch` and show ScaffoldMessenger snackbar instead of letting exception bubble.
+      Map AuthFailure.facebookCancelled to info snackbar.
+    outputs:
+      - modify: [lib/screens/login_form.dart]
+
+  # 4️⃣ Global uncaught auth exception guard
+  - id: zone_error_handler
+    description: |
+      Add `runZonedGuarded` in main.dart to catch `FirebaseAuthException` and show generic error dialog instead of crashing.
+    outputs:
+      - modify: [lib/main.dart]
+
+  # 5️⃣ Regression tests update
+  - id: regression_tests_update
+    description: |
+      • Add unit test for validateNicknameUnique fallback → returns true on permission‑denied.
+      • Widget test: simulate Facebook cancelled → no crash, snackbar shown.
+    outputs:
+      - add: [test/services/validate_nickname_fallback_test.dart,
+              test/widgets/social_login_error_test.dart]
+
+ready: false
