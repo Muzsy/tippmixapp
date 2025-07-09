@@ -1,0 +1,16 @@
+# fix_duplicate_firebase_init.yaml
+canvas: canvases/login_screen_revamp.md
+
+steps:
+  - id: remove_second_initialize
+    description: |
+      In lib/main.dart **delete** any direct call to `Firebase.initializeApp(...)`,
+      leaving only:
+      ```dart
+      Future<void> main() async {
+        await bootstrap();
+      }
+      ```
+      Ensure no other file calls Firebase.initializeApp a second time.
+    outputs:
+      - modify: [lib/main.dart]
