@@ -1,0 +1,26 @@
+name: Firebase inicializálási hiba globális javítása
+description: |
+  Az alkalmazás továbbra is [core/duplicate-app] hibával áll le, a Firebase.initializeApp több példányban hívódik meg.
+  Vizsgálja meg a teljes kódot, és biztosítsa, hogy pontosan egyszer történjen inicializálás, csak akkor, ha még nincs példány.
+steps:
+  - name: Inicializálás keresése mindenhol
+    description: |
+      Keresse meg az összes `Firebase.initializeApp()` hívást a projektben, beleértve a `main.dart`, `bootstrap.dart`, `firebase_service.dart`, `config` vagy `test` fájlokat is.
+      Jegyezze fel, ha több helyen van ilyen hívás.
+
+  - name: Egységesítse az inicializálást
+    description: |
+      Gondoskodjon arról, hogy az inicializálás kizárólag a `bootstrap()` függvényen belül történjen, `Firebase.apps.isEmpty` feltétellel.
+      Törölje vagy kommentálja ki a többi inicializálási kísérletet.
+    outputs:
+      - lib/main.dart
+      - lib/bootstrap.dart
+      - lib/services/firebase_service.dart
+
+  - name: Ellenőrzés és validálás
+    description: |
+      Futtassa a `flutter analyze` és `flutter test --coverage` parancsokat.
+      Győződjön meg róla, hogy az alkalmazás hibamentesen indul, és a hibaüzenet nem jelentkezik.
+    outputs:
+      - analyze_log.txt
+      - test_results.json
