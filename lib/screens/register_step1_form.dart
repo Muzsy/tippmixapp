@@ -109,8 +109,10 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
               decoration: InputDecoration(
                 labelText: loc.password_hint,
                 suffixIcon: IconButton(
+                  tooltip: loc.profile_toggle_visibility,
                   icon: Icon(
                     _obscure ? Icons.visibility : Icons.visibility_off,
+                    semanticLabel: loc.profile_toggle_visibility,
                   ),
                   onPressed: _toggle,
                 ),
