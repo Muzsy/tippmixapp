@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 import '../models/user_model.dart';
 import '../routes/app_route.dart';
@@ -12,6 +15,10 @@ class SplashController extends StateNotifier<AsyncValue<AppRoute>> {
   }
 
   Future<void> _init() async {
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    unawaited(Future.microtask(() async {
+      await remoteConfig.fetchAndActivate();
+    }));
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
