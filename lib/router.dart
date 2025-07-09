@@ -25,9 +25,12 @@ import 'package:tippmixapp/screens/forgot_password_screen.dart';
 import 'package:tippmixapp/screens/password_reset_confirm_screen.dart';
 import 'package:tippmixapp/screens/reset_password_screen.dart';
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 final GoRouter router = GoRouter(
+  navigatorKey: rootNavigatorKey,
   initialLocation: '/splash',
   routes: [
     ShellRoute(
