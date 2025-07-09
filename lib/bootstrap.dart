@@ -13,7 +13,9 @@ Future<void> bootstrap() async {
       appleProvider: AppleProvider.debug,
     );
   }
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 }
