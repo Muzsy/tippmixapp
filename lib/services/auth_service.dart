@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user.dart';
 
 class AuthService {
@@ -51,12 +52,23 @@ class AuthService {
     }
   }
 
-  // Google sign-in
+  // Google sign-in using google_sign_in for a smoother UX
   Future<User?> signInWithGoogle() async {
     try {
-      final cred = await _firebaseAuth.signInWithProvider(
-        fb.GoogleAuthProvider(),
+      final GoogleSignInAccount googleUser =
+          await GoogleSignIn.instance.authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final GoogleSignInClientAuthorization authz =
+          await googleUser.authorizationClient.authorizeScopes(<String>['email']);
+
+      final credential = fb.GoogleAuthProvider.credential(
+        accessToken: authz.accessToken,
+        idToken: googleAuth.idToken,
       );
+
+      final cred = await _firebaseAuth.signInWithCredential(credential);
       final user = cred.user;
       if (user == null) return null;
       return User(
