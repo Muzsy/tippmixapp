@@ -882,4 +882,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get login_required_message => 'Please log in to continue';
+
+  @override
+  String get emailVerify_title => 'Verify your email!';
+
+  @override
+  String get emailVerify_description => 'Click the link in the verification email then return to the app.';
+
+  @override
+  String get emailVerify_resend => 'Resend';
+
+  @override
+  String get emailVerify_sent => 'Verification email sent';
+
+  @override
+  String get emailVerify_exit => 'Exit';
 }
