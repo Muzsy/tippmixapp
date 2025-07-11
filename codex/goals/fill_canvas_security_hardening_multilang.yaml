@@ -1,0 +1,58 @@
+# fill_canvas_security_hardening_multilang.yaml – Codex goal (Sprint 9)
+
+canvas: canvases/security_hardening_multilang.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/security_guidelines.md   # tartalmazza a titkos kulcs kezelés és API policy részt
+  - codex_docs/service_dependencies.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ HIBP Service – k‑anonymity API‐wrapper
+  - id: hibp_service
+    description: |
+      Hozd létre a `HIBPService` osztályt (`lib/services/hibp_service.dart`).
+      – `Future<bool> isPasswordPwned(String password)` 
+      – K‑anonymity SHA‑1 hash (első 5 karakter lekérdezése, maradék összevetés).
+      – Időkorlát 4 s, cache (ram) 24 óra.
+      – Egységteszt mock HTTP klienssel.
+
+  # 2️⃣ Regisztrációs validáció‐pipeline bekötés
+  - id: validator_integration
+    description: |
+      Integráld a `RegisterStep1Form` jelszó validációjába:
+      – Ha pwned → hibaüzenet (key: `password_pwned_error`).
+      – Analytics event `reg_password_pwned`.
+
+  # 3️⃣ reCAPTCHA v3 bevezetése
+  - id: recaptcha
+    description: |
+      Implementáld a Google reCAPTCHA v3‑at `RecaptchaService` néven.
+      – `Future<bool> verifyToken()` – visszaadja, hogy a score ≥ 0,5‑e.
+      – `web`, `android`, `ios` build target support (használj `flutter_recaptcha_v3` plugint, amennyiben CI támogatott).
+      – Mock adapter tesztekhez.
+
+  # 4️⃣ AuthException mapper
+  - id: exception_mapper
+    description: |
+      Készíts központi `AuthErrorMapper`‑t, amely `FirebaseAuthException`‑t → lokalizált sztringre fordít `context.l10n`. Támogasd az új hibákat (hibp, recaptcha, network_timeout).
+
+  # 5️⃣ Lokalizáció frissítés
+  - id: l10n_update
+    description: |
+      Frissítsd az ARB fájlokat (hu, en, de):
+      – `password_pwned_error`, `recaptcha_failed_error`, `unknown_network_error`, stb.
+      – Futtasd `flutter pub run intl_utils:generate`.
+
+  # 6️⃣ Teszt és CI
+  - id: tests_and_ci
+    description: |
+      – Unit: HIBPService, RecaptchaService (mock), AuthErrorMapper
+      – Widget: RegisterStep1Form – pwned jelszó + recaptcha fail flow
+      – Integráció: happy path (score ≥ 0,5) → sikeres account létrehozás
+      – CI: `flutter test --coverage`, minimum 85 %.
+
+priority: P1
