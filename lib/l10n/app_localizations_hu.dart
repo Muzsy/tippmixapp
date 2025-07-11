@@ -824,6 +824,21 @@ class AppLocalizationsHu extends AppLocalizations {
   String get password_strength_strong => 'Erős';
 
   @override
+  String get errorInvalidEmail => 'Érvénytelen email cím';
+
+  @override
+  String get errorWeakPassword => 'Gyenge jelszó';
+
+  @override
+  String get passwordStrengthVeryWeak => 'Nagyon gyenge';
+
+  @override
+  String get passwordStrengthStrong => 'Erős';
+
+  @override
+  String get btnContinue => 'Folytatás';
+
+  @override
   String get gdpr_consent => 'Elfogadom az adatkezelési tájékoztatót';
 
   @override

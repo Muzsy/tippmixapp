@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/register_state_notifier.dart';
 import '../widgets/password_strength_indicator.dart';
+import '../helpers/validators.dart';
 
 class RegisterStep1Form extends ConsumerStatefulWidget {
   const RegisterStep1Form({super.key});
@@ -57,21 +58,18 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
   }
 
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) return null;
-    final regex = RegExp(r"^[\w.!#%&'*+/=?^_`{|}~-]+@[^\s@]+\.[^\s@]+$");
-    if (!regex.hasMatch(value)) {
-      return AppLocalizations.of(context)!.auth_error_invalid_email;
+    final key = validateEmail(value);
+    if (key != null) {
+      return AppLocalizations.of(context)!.errorInvalidEmail;
     }
     if (_emailError != null) return _emailError;
     return null;
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return null;
-    final hasUpper = RegExp(r'[A-Z]').hasMatch(value);
-    final hasDigit = RegExp(r'\d').hasMatch(value);
-    if (value.length < 8 || !hasUpper || !hasDigit) {
-      return AppLocalizations.of(context)!.auth_error_weak_password;
+    final key = validatePassword(value);
+    if (key != null) {
+      return AppLocalizations.of(context)!.errorWeakPassword;
     }
     return null;
   }

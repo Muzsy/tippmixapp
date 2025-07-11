@@ -24,10 +24,15 @@ jobs:
       - name: Project setup
         run: bash .codex/setup.sh
 
+      - name: Generate localization
+        run: flutter gen-l10n
+
       - name: Run linter
         run: flutter analyze lib test --fatal-infos --fatal-warnings
 
       # (innen lefelé: CI‑only részek)
+      - name: Run tests with coverage
+        run: flutter test --coverage
       - name: Run coverage + badge
         uses: whynotmake-it/dart-coverage-assistant@v1
         with:

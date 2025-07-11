@@ -1699,6 +1699,36 @@ abstract class AppLocalizations {
   /// **'Strong'**
   String get password_strength_strong;
 
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak password'**
+  String get errorWeakPassword;
+
+  /// No description provided for @passwordStrengthVeryWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Very weak'**
+  String get passwordStrengthVeryWeak;
+
+  /// No description provided for @passwordStrengthStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get passwordStrengthStrong;
+
+  /// No description provided for @btnContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get btnContinue;
+
   /// No description provided for @gdpr_consent.
   ///
   /// In en, this message translates to:
