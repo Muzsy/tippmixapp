@@ -290,5 +290,8 @@
   "emailVerify_description": "Klicke auf den Link in der erhaltenen E-Mail und kehre dann zur App zurück.",
   "emailVerify_resend": "Erneut senden",
   "emailVerify_sent": "Bestätigungs-E-Mail gesendet",
-  "emailVerify_exit": "Beenden"
+  "emailVerify_exit": "Beenden",
+  "password_pwned_error": "Dieses Passwort wurde bereits geleakt",
+  "recaptcha_failed_error": "reCAPTCHA-Verifizierung fehlgeschlagen",
+  "unknown_network_error": "Unbekannter Netzwerkfehler"
 }
