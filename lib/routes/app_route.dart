@@ -23,4 +23,5 @@ enum AppRoute {
   forgotPassword,
   passwordResetConfirm,
   resetPassword,
+  emailNotVerified,
 }

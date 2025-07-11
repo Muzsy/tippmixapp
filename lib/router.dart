@@ -24,6 +24,7 @@ import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
 import 'package:tippmixapp/screens/forgot_password_screen.dart';
 import 'package:tippmixapp/screens/password_reset_confirm_screen.dart';
 import 'package:tippmixapp/screens/reset_password_screen.dart';
+import 'package:tippmixapp/screens/auth/email_not_verified_screen.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -195,6 +196,11 @@ final GoRouter router = GoRouter(
           path: '/reset-confirm',
           name: AppRoute.passwordResetConfirm.name,
           builder: (context, state) => const PasswordResetConfirmScreen(),
+        ),
+        GoRoute(
+          path: '/auth/email-not-verified',
+          name: AppRoute.emailNotVerified.name,
+          builder: (context, state) => const EmailNotVerifiedScreen(),
         ),
       ],
     ),
