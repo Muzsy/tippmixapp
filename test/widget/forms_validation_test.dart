@@ -7,12 +7,12 @@ import 'package:tippmixapp/screens/register_step1_form.dart';
 void main() {
   testWidgets('RegisterStep1Form disables continue button for invalid input', (tester) async {
     await tester.pumpWidget(
-      ProviderScope(
+      const ProviderScope(
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
-          home: const Scaffold(body: RegisterStep1Form()),
+          locale: Locale('en'),
+          home: Scaffold(body: RegisterStep1Form()),
         ),
       ),
     );

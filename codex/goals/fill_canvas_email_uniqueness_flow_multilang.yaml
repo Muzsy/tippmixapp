@@ -1,0 +1,75 @@
+# fill_canvas_email_uniqueness_flow_multilang.yaml – Codex goal (Sprint 7)
+
+canvas: canvases/email_uniqueness_flow_multilang.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/service_dependencies.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ API wrapper
+  - id: add_api_wrapper
+    description: >
+      Add method `isEmailAvailable(String email)` to `AuthRepository` that hits the
+      Cloud Function `checkEmail` and returns **true** when the e‑mail does **not** exist.
+      If the function returns HTTP 409, throw `EmailAlreadyInUseFailure`.
+    run: dart run build_runner build --delete-conflicting-outputs
+    test_files:
+      - test/unit/auth_repository_email_available_test.dart
+
+  # 2️⃣ ViewModel / Bloc integráció
+  - id: add_viewmodel_logic
+    description: >
+      Bővítsd a `RegisterStep1ViewModel`‑t (vagy Bloc‑ot) úgy, hogy a `Continue` gomb
+      megnyomásakor meghívja `authRepository.isEmailAvailable`. Kezelje a `loadingService`
+      overlay‑t, és `EmailExists` state‑et dobjon ütközés esetén.
+    run: flutter analyze lib/ presentation/
+    test_files:
+      - test/unit/register_step1_viewmodel_test.dart
+
+  # 3️⃣ UI hiba‑üzenet & loader
+  - id: ui_error_loader
+    description: >
+      Frissítsd a `RegisterStep1Form` widgetet:
+        • Pending állapotban mutass „Checking e‑mail...” progress overlay‑t.
+        • `EmailExists` állapotnál mutass mező-hibát és shake animációt.
+        • Dobj Localized Snackbar‑t:
+            - hu: "Ez az e‑mail már foglalt"
+            - en: "This e‑mail is already registered"
+            - de: "Diese E‑Mail‑Adresse ist bereits vergeben"
+    test_files:
+      - test/widget/register_step1_email_exists_test.dart
+
+  # 4️⃣ Lokalizációs kulcsok
+  - id: l10n_strings
+    description: >
+      Add `error_email_exists` és `loader_checking_email` kulcsokat az
+      `lib/l10n/intl_*.arb` fájlokhoz (hu, en, de), majd generáld újra a lokalizációt.
+    run: flutter gen-l10n
+
+  # 5️⃣ L10n egységteszt
+  - id: l10n_test
+    description: Ellenőrizd, hogy a generált AppLocalizations mindhárom nyelven a helyes
+      szöveget adja vissza a fenti kulcsokra.
+    test_files:
+      - test/unit/l10n_email_exists_test.dart
+
+  # 6️⃣ Golden teszt
+  - id: golden_test
+    description: Hozz létre golden tesztet a hibás űrlap‑állapotra, hogy ne csússzon el a UI.
+    test_files:
+      - test/golden/register_step1_email_exists.golden.dart
+
+  # 7️⃣ CI frissítés
+  - id: ci_update
+    description: Bővítsd a `.codex_ci.yaml` mátrixot az új teszt csomagokkal. iOS workflow nem változik.
+
+run_tests:
+  - flutter test --coverage
+run_analyze: flutter analyze
+run_format: dart format --set-exit-if-changed .
+
+priority: P1
