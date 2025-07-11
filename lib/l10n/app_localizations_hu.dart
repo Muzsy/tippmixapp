@@ -830,6 +830,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get errorWeakPassword => 'Gyenge jelszó';
 
   @override
+  String get errorEmailExists => 'Ez az e-mail már foglalt';
+
+  @override
+  String get loaderCheckingEmail => 'E-mail ellenőrzése...';
+
+  @override
   String get passwordStrengthVeryWeak => 'Nagyon gyenge';
 
   @override
