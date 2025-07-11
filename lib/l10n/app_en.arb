@@ -290,5 +290,8 @@
   "emailVerify_description": "Click the link in the verification email then return to the app.",
   "emailVerify_resend": "Resend",
   "emailVerify_sent": "Verification email sent",
-  "emailVerify_exit": "Exit"
+  "emailVerify_exit": "Exit",
+  "password_pwned_error": "This password has appeared in a data breach",
+  "recaptcha_failed_error": "reCAPTCHA verification failed",
+  "unknown_network_error": "Network error occurred"
 }

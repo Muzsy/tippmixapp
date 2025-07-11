@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Thin wrapper over [FirebaseAnalytics] to record login A/B events.
 class AnalyticsService {
   AnalyticsService([FirebaseAnalytics? analytics])
-      : _analytics = analytics ?? FirebaseAnalytics.instance;
+    : _analytics = analytics ?? FirebaseAnalytics.instance;
 
   final FirebaseAnalytics _analytics;
   bool _exposedLogged = false;
@@ -62,6 +62,12 @@ class AnalyticsService {
         name: 'reward_claimed',
         parameters: {'rewardId': rewardId, 'type': type},
       );
+    } catch (_) {}
+  }
+
+  Future<void> logRegPasswordPwned() async {
+    try {
+      await _analytics.logEvent(name: 'reg_password_pwned');
     } catch (_) {}
   }
 }
