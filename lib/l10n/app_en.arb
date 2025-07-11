@@ -285,5 +285,10 @@
   "register_avatar_too_large": "Avatar image must be 2 MB or less",
   "back_button": "Back",
   "login_required_title": "Login required",
-  "login_required_message": "Please log in to continue"
+  "login_required_message": "Please log in to continue",
+  "emailVerify_title": "Verify your email!",
+  "emailVerify_description": "Click the link in the verification email then return to the app.",
+  "emailVerify_resend": "Resend",
+  "emailVerify_sent": "Verification email sent",
+  "emailVerify_exit": "Exit"
 }
