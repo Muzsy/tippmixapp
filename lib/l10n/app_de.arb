@@ -285,5 +285,10 @@
   "register_avatar_too_large": "Avatar darf maximal 2 MB sein",
   "back_button": "Zurück",
   "login_required_title": "Anmeldung erforderlich",
-  "login_required_message": "Bitte melde dich an, um fortzufahren"
+  "login_required_message": "Bitte melde dich an, um fortzufahren",
+  "emailVerify_title": "Bestätige deine E-Mail!",
+  "emailVerify_description": "Klicke auf den Link in der erhaltenen E-Mail und kehre dann zur App zurück.",
+  "emailVerify_resend": "Erneut senden",
+  "emailVerify_sent": "Bestätigungs-E-Mail gesendet",
+  "emailVerify_exit": "Beenden"
 }

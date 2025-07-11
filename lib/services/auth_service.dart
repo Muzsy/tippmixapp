@@ -132,6 +132,7 @@ class AuthService {
         email: email,
         password: password,
       );
+      await cred.user?.sendEmailVerification();
       final user = cred.user;
       if (user == null) return null;
       return User(

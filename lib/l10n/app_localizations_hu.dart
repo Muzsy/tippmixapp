@@ -882,4 +882,19 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get login_required_message => 'Kérjük, jelentkezz be a folytatáshoz';
+
+  @override
+  String get emailVerify_title => 'Erősítsd meg az emailed!';
+
+  @override
+  String get emailVerify_description => 'Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.';
+
+  @override
+  String get emailVerify_resend => 'Újraküldés';
+
+  @override
+  String get emailVerify_sent => 'Ellenőrző email elküldve!';
+
+  @override
+  String get emailVerify_exit => 'Kilépés';
 }

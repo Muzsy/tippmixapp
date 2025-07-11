@@ -285,5 +285,10 @@
   "register_avatar_too_large": "Az avatar mérete legfeljebb 2 MB lehet",
   "back_button": "Vissza",
   "login_required_title": "Bejelentkezés szükséges",
-  "login_required_message": "Kérjük, jelentkezz be a folytatáshoz"
+  "login_required_message": "Kérjük, jelentkezz be a folytatáshoz",
+  "emailVerify_title": "Erősítsd meg az emailed!",
+  "emailVerify_description": "Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.",
+  "emailVerify_resend": "Újraküldés",
+  "emailVerify_sent": "Ellenőrző email elküldve!",
+  "emailVerify_exit": "Kilépés"
 }

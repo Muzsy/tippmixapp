@@ -7,6 +7,7 @@ rules:
     - assets/lang/**
     - canvases/**
     - codex/goals/**
+    - .codex.yaml
   forbidden_files:
     - pubspec.yaml
     - android/**

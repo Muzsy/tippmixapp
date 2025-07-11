@@ -1818,6 +1818,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please log in to continue'**
   String get login_required_message;
+
+  /// No description provided for @emailVerify_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email!'**
+  String get emailVerify_title;
+
+  /// No description provided for @emailVerify_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Click the link in the verification email then return to the app.'**
+  String get emailVerify_description;
+
+  /// No description provided for @emailVerify_resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get emailVerify_resend;
+
+  /// No description provided for @emailVerify_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent'**
+  String get emailVerify_sent;
+
+  /// No description provided for @emailVerify_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get emailVerify_exit;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
