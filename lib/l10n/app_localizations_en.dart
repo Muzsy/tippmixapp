@@ -830,6 +830,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorWeakPassword => 'Weak password';
 
   @override
+  String get errorEmailExists => 'This e-mail is already registered';
+
+  @override
+  String get loaderCheckingEmail => 'Checking e-mail...';
+
+  @override
   String get passwordStrengthVeryWeak => 'Very weak';
 
   @override
