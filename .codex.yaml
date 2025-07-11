@@ -1,0 +1,5 @@
+# Codex CI configuration
+# Ensure auth tests are executed
+ci:
+  test_commands:
+    - flutter test test/auth/**/*.dart
