@@ -824,6 +824,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password_strength_strong => 'Strong';
 
   @override
+  String get errorInvalidEmail => 'Invalid email address';
+
+  @override
+  String get errorWeakPassword => 'Weak password';
+
+  @override
+  String get passwordStrengthVeryWeak => 'Very weak';
+
+  @override
+  String get passwordStrengthStrong => 'Strong';
+
+  @override
+  String get btnContinue => 'Continue';
+
+  @override
   String get gdpr_consent => 'I agree to the privacy policy';
 
   @override
