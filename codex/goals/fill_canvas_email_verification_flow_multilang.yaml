@@ -1,0 +1,84 @@
+# fill_canvas_email_verification_flow_multilang.yaml – Codex goal (Sprint 8)
+
+canvas: canvases/email_verification_flow_multilang.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/service_dependencies.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ sendEmailVerification a regisztráció végén
+  - id: send_verification_after_signup
+    description: >
+      A `AuthRepository.createUserWithEmailAndPassword` hívás befejezése után hívd meg a
+      `user.sendEmailVerification()` metódust. Logolj debug‑szinten, hibát mapelj.
+    expected_source: lib/services/auth_repository.dart
+    run: |
+      apply_patch <<'PATCH'
+      *** Begin Patch
+      *** Update File: lib/services/auth_repository.dart
+      @@
+       Future<UserCredential> createUserWithEmailAndPassword(String email, String password) async {
+         final cred = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      +  await cred.user?.sendEmailVerification();
+         return cred;
+       }
+      *** End Patch
+      PATCH
+
+  # 2️⃣ EmailNotVerifiedScreen háromnyelvű szövegekkel
+  - id: email_not_verified_screen
+    description: >
+      Új route: `/auth/email‑not‑verified`.  
+      Mutass ikon‑utasítás kombót, „Erősítsd meg az emailed” + Resend + Kilépés gomb.  
+      Lokalizáld hu/en/de static.json‑ban.
+    expected_source: lib/presentation/auth/email_not_verified_screen.dart
+
+  # 3️⃣ Resend Verification (throttle = 60 s)
+  - id: resend_with_throttle
+    description: >
+      A Resend gomb egy `CooldownButton` widget (új). Miután lefut `sendEmailVerification`, 
+      állítsd disabled‑re 60 s‑ig. Mutass SnackBar‑t locale‑függő "Email elküldve" üzenettel.
+    expected_source: lib/presentation/widgets/cooldown_button.dart
+
+  # 4️⃣ AuthGate guard – redirect unverified user
+  - id: auth_gate_redirect
+    description: >
+      AuthGate ellenőrizze `user.emailVerified`; ha false, navigáljon `/auth/email‑not‑verified`‑re.
+    expected_source: lib/presentation/routes/auth_gate.dart
+
+  # 5️⃣ DeepLink / DynamicLink handler
+  - id: deeplink_handler
+    description: >
+      Implementáld a `DynamicLinkService`‑ben a `emailLinkStream`, mely figyeli a deep linket
+      (pattern: `/verify?mode=verifyEmail&...`) és `user.reload()` után frissíti a Provider‑t.
+    expected_source: lib/services/dynamic_link_service.dart
+
+  # 6️⃣ L10n keys hu/en/de
+  - id: add_localization_strings
+    description: >
+      Frissítsd a `intl/<lang>.arb` fájlokat az alábbi kulcsokkal: 
+      * emailVerify_title
+      * emailVerify_description
+      * emailVerify_resend
+      * emailVerify_sent
+      * emailVerify_exit
+    expected_source: lib/l10n/intl_en.arb
+
+  # 7️⃣ Widget + integration tests
+  - id: tests
+    description: >
+      Írj widget‑tesztet, ami szimulálja a Resend gombot és ellenőrzi a cooldown‑t. 
+      Integration‑teszt: dynamic link után AuthGate átenged‑e.
+    expected_source: test/auth/email_verification_test.dart
+
+  # 8️⃣ CI – futtasd új teszteket
+  - id: ci_update
+    description: >
+      Módosítsd `.codex.yaml`‑t, hogy a `flutter test test/auth/**/*.dart` is lefusson.
+    expected_source: .codex.yaml
+
+priority: P1
