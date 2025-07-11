@@ -1,0 +1,68 @@
+# fill_canvas_auth_form_validation_multilang.yaml – Codex goal (Sprint 6, 3‑nyelvű l10n)
+
+canvas: canvases/auth_form_validation_revamp_multilang.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md  # részletes i18n‑útmutató
+  - codex_docs/routing_integrity.md
+  - codex_docs/service_dependencies.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Validator helper függvények
+  - id: validators
+    description: |
+      **helpers/validators.dart** – RFC 5322 e‑mail‑regex + jelszó erősség‑vizsgálat (min 12 karakter,
+      kis‑/nagybetű, szám, speciális). Hibák **l10n‑kulccsal** térnek vissza.
+    commands:
+      - write_file:
+          path: lib/helpers/validators.dart
+          content: |
+            /// Új, null‑safe validátorok – _auto‑importálva_ a form widgetekben.
+            // ... (kód)
+      - write_test:
+          path: test/unit/validators_test.dart
+      - flutter_test:
+          paths: [test/unit/validators_test.dart]
+
+  # 2️⃣ Widget patch: LoginForm & RegisterStep1Form
+  - id: form_widgets
+    description: |
+      Widget‑módosítások: `TextFormField` → `HookFormField`, `onChanged`‑debounce (300 ms),
+      hibaszövegek a **l10n lookupból**.
+    commands:
+      - apply_patch:  # (git‑patch blokk)
+      - write_test:
+          path: test/widget/forms_validation_test.dart
+      - flutter_test:
+          paths: [test/widget/forms_validation_test.dart]
+
+  # 3️⃣ l10n fájlok bővítése (hu, en, de)
+  - id: l10n_files
+    description: |
+      Bővítsd/hozd létre az **app_hu.arb**, **app_en.arb**, **app_de.arb** fájlokat a
+      következő kulcsokkal: `errorInvalidEmail`, `errorWeakPassword`, `passwordStrengthVeryWeak`,
+      `passwordStrengthStrong`, `btnContinue`, … – legalább 90 %‑os fordítási lefedettséggel.
+    commands:
+      - write_file:
+          path: lib/l10n/app_en.arb
+          # … (kulcs‑érték párok)
+      - write_file:
+          path: lib/l10n/app_hu.arb
+      - write_file:
+          path: lib/l10n/app_de.arb
+      - write_test:
+          path: test/unit/l10n_keys_test.dart
+      - flutter_test:
+          paths: [test/unit/l10n_keys_test.dart]
+
+  # 4️⃣ CI pipeline update (l10n gen + coverage)
+  - id: ci_update
+    description: |
+      Frissítsd a **.codex/ci.yaml**‑t, hogy tartalmazza a `flutter gen-l10n` lépést és a
+      központi `flutter test --coverage` futtatást.
+    commands:
+      - apply_patch: .codex/ci.yaml
+
+priority: P1
