@@ -824,6 +824,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get password_strength_strong => 'Stark';
 
   @override
+  String get errorInvalidEmail => 'Ungültige E-Mail-Adresse';
+
+  @override
+  String get errorWeakPassword => 'Schwaches Passwort';
+
+  @override
+  String get passwordStrengthVeryWeak => 'Sehr schwach';
+
+  @override
+  String get passwordStrengthStrong => 'Stark';
+
+  @override
+  String get btnContinue => 'Weiter';
+
+  @override
   String get gdpr_consent => 'Ich stimme der Datenschutzerklärung zu';
 
   @override
