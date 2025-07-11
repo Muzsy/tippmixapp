@@ -1711,6 +1711,18 @@ abstract class AppLocalizations {
   /// **'Weak password'**
   String get errorWeakPassword;
 
+  /// No description provided for @errorEmailExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This e-mail is already registered'**
+  String get errorEmailExists;
+
+  /// No description provided for @loaderCheckingEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking e-mail...'**
+  String get loaderCheckingEmail;
+
   /// No description provided for @passwordStrengthVeryWeak.
   ///
   /// In en, this message translates to:
