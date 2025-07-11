@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
-import '../providers/auth_provider.dart';
+import '../controllers/register_step1_viewmodel.dart';
 import '../providers/register_state_notifier.dart';
 import '../widgets/password_strength_indicator.dart';
 import '../helpers/validators.dart';
@@ -36,14 +36,19 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
     if (!_formKey.currentState!.validate()) return;
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
-      final auth = ref.read(authServiceProvider);
-      final unique = await auth.validateEmailUnique(_emailCtrl.text);
-      if (!unique) {
+      final vm = ref.read(registerStep1ViewModelProvider.notifier);
+      await vm.checkEmail(_emailCtrl.text);
+      if (!mounted) return;
+      final state = ref.read(registerStep1ViewModelProvider);
+      if (state == RegisterStep1State.emailExists) {
         setState(() {
-          _emailError = AppLocalizations.of(
-            context,
-          )!.auth_error_email_already_in_use;
+          _emailError = AppLocalizations.of(context)!.errorEmailExists;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorEmailExists),
+          ),
+        );
         return;
       }
       ref
@@ -77,6 +82,30 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    ref.listen<RegisterStep1State>(registerStep1ViewModelProvider, (
+      prev,
+      next,
+    ) {
+      if (next == RegisterStep1State.checkingEmail) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            content: Row(
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(width: 16),
+                Text(loc.loaderCheckingEmail),
+              ],
+            ),
+          ),
+        );
+      } else {
+        if (Navigator.of(context, rootNavigator: true).canPop()) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+      }
+    });
     final isValid =
         _validateEmail(_emailCtrl.text) == null &&
         _validatePassword(_passCtrl.text) == null &&
