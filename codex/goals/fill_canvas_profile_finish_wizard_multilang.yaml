@@ -1,0 +1,96 @@
+# fill_canvas_profile_finish_wizard_multilang.yaml – Codex goal (Sprint 10)
+
+canvas: canvases/profile_finish_wizard_multilang.md
+
+includes:
+  - codex_docs/codex_context.yaml
+  - codex_docs/localization_logic.md
+  - codex_docs/service_dependencies.yaml
+  - codex_docs/routing_integrity.md
+  - codex_docs/firestore_rules.md
+  - codex_docs/priority_rules.md
+
+steps:
+  # 1️⃣ Profile model + serialization
+  - id: profile_model
+    description: >
+      Create `lib/models/profile.dart` with fields `uid`, `displayName`, `avatarUrl`, `createdAt`, `coins`.
+      Implement `fromJson` / `toJson` helpers.
+    changes:
+      - lib/models/profile.dart
+    test:
+      - test/unit/models/profile_model_test.dart
+
+  # 2️⃣ Firestore service createProfile
+  - id: firestore_service
+    description: >
+      Extend `AuthRepository` (or new `ProfileRepository`) with `Future<void> createProfile(Profile p)`.
+      Must run inside a transaction, default `coins = 1000`, `createdAt = Timestamp.now()`.
+    changes:
+      - lib/services/profile_repository.dart
+    test:
+      - test/unit/services/profile_repository_test.dart
+
+  # 3️⃣ Wizard UI (Step 2 of onboarding)
+  - id: wizard_ui
+    description: >
+      Add `ProfileFinishScreen` under `lib/ui/onboarding/`. Collect `displayName` (required, 2‑30 chars),
+      optional `avatar` picker (camera/gallery), optional `referralCode` (max 6 chars). Show progress bar (Step 2/2).
+      Localize labels, hints, error texts in hu/en/de.
+    changes:
+      - lib/ui/onboarding/profile_finish_screen.dart
+      - assets/l10n/*
+    test:
+      - test/widget/profile_finish_screen_test.dart
+
+  # 4️⃣ Routing guard
+  - id: routing_guard
+    description: >
+      Ensure users with verified email **but** missing profile (`users/{uid}` doc absent) are routed to `ProfileFinishScreen`
+      instead of home dashboard. Update `AuthGate` logic accordingly.
+    changes:
+      - lib/app/auth_gate.dart
+      - lib/router.dart
+    test:
+      - test/widget/auth_gate_profile_guard_test.dart
+
+  # 5️⃣ Firestore security rules
+  - id: firestore_rules
+    description: >
+      Update `/firestore.rules` to allow users to read/write **their own** profile doc,
+      prohibit writing `coins` except server‑side Cloud Function (placeholder rule).
+    changes:
+      - firestore.rules
+    test:
+      - test/unit/firestore_rules_test.dart
+
+  # 6️⃣ Avatar storage
+  - id: avatar_storage
+    description: >
+      Upload selected avatar img (≤ 1 MB, jpg/png) to `storage/users/{uid}/avatar.jpg` with Firebase Storage.
+      Compress on device via `image_picker` + `image` pkg.
+    changes:
+      - lib/services/storage_service.dart
+      - pubspec.yaml (add dependencies)
+    test:
+      - test/unit/services/storage_service_test.dart
+
+  # 7️⃣ CI + l10n
+  - id: ci_l10n
+    description: >
+      Ensure `flutter gen-l10n --arb-dir=assets/l10n` runs in CI.
+      Add tests to check 100 % string coverage in hu/en/de for new keys.
+    changes:
+      - .github/workflows/ci.yaml
+      - tool/check_l10n_coverage.dart
+
+  # 8️⃣ Documentation
+  - id: docs
+    description: >
+      Update `/docs/README_registration.md` with wizard screenshots + flow diagram.
+    changes:
+      - docs/README_registration.md
+
+ci:
+  run_flutter_analyze: true
+  run_flutter_test: true
