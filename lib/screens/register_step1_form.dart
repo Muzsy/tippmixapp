@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../controllers/register_step1_viewmodel.dart';
 import '../providers/register_state_notifier.dart';
+import '../providers/hibp_service_provider.dart';
+import '../providers/recaptcha_service_provider.dart';
+import '../services/analytics_service.dart';
 import '../widgets/password_strength_indicator.dart';
 import '../helpers/validators.dart';
 
@@ -34,6 +37,26 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
 
   Future<void> _continue() async {
     if (!_formKey.currentState!.validate()) return;
+    final hibp = ref.read(hibpServiceProvider);
+    final analytics = ref.read(analyticsServiceProvider);
+    final recaptcha = ref.read(recaptchaServiceProvider);
+    if (await hibp.isPasswordPwned(_passCtrl.text)) {
+      analytics.logRegPasswordPwned();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.password_pwned_error),
+        ),
+      );
+      return;
+    }
+    if (!await recaptcha.verifyToken('token')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.recaptcha_failed_error),
+        ),
+      );
+      return;
+    }
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
       final vm = ref.read(registerStep1ViewModelProvider.notifier);
