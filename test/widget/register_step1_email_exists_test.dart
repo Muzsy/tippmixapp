@@ -25,8 +25,8 @@ void main() {
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: Scaffold(body: RegisterStep1Form()),
+            locale: Locale('en'),
+            home: Scaffold(body: RegisterStep1Form()),
         ),
       ),
     );
