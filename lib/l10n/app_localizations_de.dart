@@ -882,4 +882,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get login_required_message => 'Bitte melde dich an, um fortzufahren';
+
+  @override
+  String get emailVerify_title => 'Bestätige deine E-Mail!';
+
+  @override
+  String get emailVerify_description => 'Klicke auf den Link in der erhaltenen E-Mail und kehre dann zur App zurück.';
+
+  @override
+  String get emailVerify_resend => 'Erneut senden';
+
+  @override
+  String get emailVerify_sent => 'Bestätigungs-E-Mail gesendet';
+
+  @override
+  String get emailVerify_exit => 'Beenden';
 }
