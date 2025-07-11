@@ -290,5 +290,8 @@
   "emailVerify_description": "Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.",
   "emailVerify_resend": "Újraküldés",
   "emailVerify_sent": "Ellenőrző email elküldve!",
-  "emailVerify_exit": "Kilépés"
+  "emailVerify_exit": "Kilépés",
+  "password_pwned_error": "Ez a jelszó már kiszivárgott",
+  "recaptcha_failed_error": "A reCAPTCHA ellenőrzés nem sikerült",
+  "unknown_network_error": "Ismeretlen hálózati hiba"
 }
