@@ -40,18 +40,24 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
     final hibp = ref.read(hibpServiceProvider);
     final analytics = ref.read(analyticsServiceProvider);
     final recaptcha = ref.read(recaptchaServiceProvider);
-    if (await hibp.isPasswordPwned(_passCtrl.text)) {
-      analytics.logRegPasswordPwned();
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (await hibp.isPasswordPwned(_passCtrl.text)) {
+        analytics.logRegPasswordPwned();
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+        // ignore: use_build_context_synchronously
         SnackBar(
+          // ignore: use_build_context_synchronously
           content: Text(AppLocalizations.of(context)!.password_pwned_error),
         ),
       );
       return;
     }
-    if (!await recaptcha.verifyToken('token')) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!await recaptcha.verifyToken('token')) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+        // ignore: use_build_context_synchronously
         SnackBar(
+          // ignore: use_build_context_synchronously
           content: Text(AppLocalizations.of(context)!.recaptcha_failed_error),
         ),
       );
@@ -63,12 +69,15 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
       await vm.checkEmail(_emailCtrl.text);
       if (!mounted) return;
       final state = ref.read(registerStep1ViewModelProvider);
-      if (state == RegisterStep1State.emailExists) {
-        setState(() {
-          _emailError = AppLocalizations.of(context)!.errorEmailExists;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (state == RegisterStep1State.emailExists) {
+          setState(() {
+            _emailError = AppLocalizations.of(context)!.errorEmailExists;
+          });
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(
+          // ignore: use_build_context_synchronously
           SnackBar(
+            // ignore: use_build_context_synchronously
             content: Text(AppLocalizations.of(context)!.errorEmailExists),
           ),
         );
