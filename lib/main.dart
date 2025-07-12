@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
+import 'firebase_app_check_ext.dart';
 
 import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
@@ -16,10 +17,6 @@ import 'router.dart';
 
 
 Future<void> main() async {
-  //  <<< DEBUG: tokenteszt >>>
-const dbg = String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
-print('⛳ COMPILETIME TOKEN = $dbg');
-//  <<< DEBUG: tokenteszt >>>
   ErrorWidget.builder = (d) => Material(
         color: Colors.red,
         child: Center(
@@ -32,14 +29,20 @@ print('⛳ COMPILETIME TOKEN = $dbg');
 
   await dotenv.load();
   await bootstrap();
+
+  // --- App Check debug token fix ---
+  const debugToken =
+      String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
   await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode
-        ? AndroidProvider.debug
-        : AndroidProvider.playIntegrity,
-    appleProvider: kDebugMode
-        ? AppleProvider.debug
-        : AppleProvider.appAttest,
+    androidProvider:
+        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    appleProvider:
+        kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
+  if (kDebugMode && debugToken.isNotEmpty) {
+    await FirebaseAppCheck.instance.setToken(debugToken, isDebug: true);
+  }
+  // --- end fix ---
   final container = ProviderContainer();
   final themeFuture =
       container.read(themeServiceProvider.notifier).hydrate();
