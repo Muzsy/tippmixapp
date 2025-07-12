@@ -18,7 +18,7 @@ class HIBPService {
 
   HIBPService({http.Client? client, Clock? clockOverride})
     : _client = client ?? http.Client(),
-      _clock = clockOverride ?? Clock();
+      _clock = clockOverride ?? const Clock();
 
   Future<bool> isPasswordPwned(String password) async {
     final hash = sha1.convert(utf8.encode(password)).toString().toUpperCase();
@@ -30,7 +30,7 @@ class HIBPService {
     final prefix = hash.substring(0, 5);
     final suffix = hash.substring(5);
     final uri = Uri.parse('https://api.pwnedpasswords.com/range/$prefix');
-    final response = await _client.get(uri).timeout(const Duration(seconds: 4));
+    final response = await _client.get(uri).timeout(const Duration(seconds: 10));
     if (response.statusCode != 200) {
       throw http.ClientException('hibp_error');
     }
