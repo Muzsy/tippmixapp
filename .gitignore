@@ -12,7 +12,7 @@
 .swiftpm/
 migrate_working_dir/
 llama_index/
-.vscode/
+
 
 # IntelliJ related
 *.iml
