@@ -18,4 +18,4 @@ void main() {
     expect(other.createdAt.toIso8601String(), profile.createdAt.toIso8601String());
     expect(other.coins, profile.coins);
   });
-});
+}
