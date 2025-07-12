@@ -14,7 +14,12 @@ import 'theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
 
+
 Future<void> main() async {
+  //  <<< DEBUG: tokenteszt >>>
+const dbg = String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
+print('⛳ COMPILETIME TOKEN = $dbg');
+//  <<< DEBUG: tokenteszt >>>
   ErrorWidget.builder = (d) => Material(
         color: Colors.red,
         child: Center(
@@ -25,15 +30,16 @@ Future<void> main() async {
         ),
       );
 
-  if (kDebugMode) {
-    await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.debug,
-      appleProvider: AppleProvider.debug,
-    );
-  }
-
-  await bootstrap();
   await dotenv.load();
+  await bootstrap();
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode
+        ? AppleProvider.debug
+        : AppleProvider.appAttest,
+  );
   final container = ProviderContainer();
   final themeFuture =
       container.read(themeServiceProvider.notifier).hydrate();
