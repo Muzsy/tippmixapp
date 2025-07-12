@@ -2,13 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "TippmixApp Debug",
+      "name": "Debug with App Check",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "debug",
       "args": [
         "--dart-define",
-        "FIREBASE_APP_CHECK_DEBUG_TOKEN=5bfacd45-ee78-4b82-9f1b-9737a4331c34"
+        "FIREBASE_APP_CHECK_DEBUG_TOKEN=<PASTE_YOUR_TOKEN_HERE>"
       ]
     }
   ]

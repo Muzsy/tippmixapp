@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
-import 'firebase_app_check_ext.dart';
 
 import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
@@ -33,15 +32,19 @@ Future<void> main() async {
   // --- App Check debug token fix ---
   const debugToken =
       String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
+  // Fejlesztői safeguard: ha debug módban futunk, kötelező a token.
+  assert(
+    !kDebugMode || debugToken.isNotEmpty,
+    '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN nincs megadva!\n'
+    'Indítsd a buildet --dart-define=FIREBASE_APP_CHECK_DEBUG_TOKEN=<token> paraméterrel.',
+  );
   await FirebaseAppCheck.instance.activate(
     androidProvider:
         kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
     appleProvider:
         kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
-  if (kDebugMode && debugToken.isNotEmpty) {
-    await FirebaseAppCheck.instance.setToken(debugToken, isDebug: true);
-  }
+
   // --- end fix ---
   final container = ProviderContainer();
   final themeFuture =
