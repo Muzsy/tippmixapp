@@ -1,0 +1,48 @@
+meta:
+  canvas: fix_appcheck_launch.canvas
+  priority: P1
+
+steps:
+  # 1️⃣ VS Code debug konfiguráció – dart-define paraméter
+  - create_file:
+      target: .vscode/launch.json
+      content: |
+        {
+          "version": "0.2.0",
+          "configurations": [
+            {
+              "name": "Debug with App Check",
+              "request": "launch",
+              "type": "dart",
+              "args": [
+                "--dart-define",
+                "FIREBASE_APP_CHECK_DEBUG_TOKEN=<PASTE_YOUR_TOKEN_HERE>"
+              ]
+            }
+          ]
+        }
+
+  # 2️⃣ main.dart – assert hozzáadása + setToken blokk eltávolítása
+  - patch_file:
+      file: lib/main.dart
+      patch: |
+        @@
+         const debugToken = String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
++        // Fejlesztői safeguard: ha debug módban futunk, kötelező a token.
++        assert(
++          !kDebugMode || debugToken.isNotEmpty,
++          '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN nincs megadva!\n'
++          'Indítsd a buildet --dart-define=FIREBASE_APP_CHECK_DEBUG_TOKEN=<token> paraméterrel.',
++        );
+@@
+-         if (kDebugMode && debugToken.isNotEmpty) {
+-           await FirebaseAppCheck.instance.setToken(debugToken, isDebug: true);
+-         }
++
+         // --- end fix ---
+
+  # 3️⃣ (Opcionális) Távolítsuk el a már nem használt kiterjesztést, ha létezik
+  - delete_file?: lib/firebase_app_check_ext.dart
+
+  # 4️⃣ Statikus analízis futtatása
+  - run: flutter analyze --fatal-infos
