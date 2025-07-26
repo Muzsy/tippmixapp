@@ -1,0 +1,5 @@
+"""
+Archív fix yaml fájl.
+
+Az eredeti `fix_security_rules_tests_node.yaml` a Firestore biztonsági szabályok Node.js alapú tesztjeinek javítását tartalmazta.  A részletes utasítások a Git történelemben érhetők el.
+"""
