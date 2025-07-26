@@ -43,4 +43,5 @@ android {
 flutter {
     source = "../.."
 }
+println("🔥 DEBUG TOKEN in Gradle: " + System.getenv("FIREBASE_APP_CHECK_DEBUG_TOKEN"))
 

@@ -2,16 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug (AppCheck)",
+      "name": "DEBUG – TOKEN TESZT",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
         "--dart-define",
-        "FIREBASE_APP_CHECK_DEBUG_TOKEN=4b23dcc8-3244-4bbf-96fa-475d676748b0"
+        "FIREBASE_APP_CHECK_DEBUG_TOKEN=af5559f6-2d95-4a22-a4ca-96e731562f52"
       ],
       "env": {
-        "FIREBASE_APP_CHECK_DEBUG_TOKEN": "4b23dcc8-3244-4bbf-96fa-475d676748b0"
+        "FIREBASE_APP_CHECK_DEBUG_TOKEN": "af5559f6-2d95-4a22-a4ca-96e731562f52"
       }
     }
   ]
