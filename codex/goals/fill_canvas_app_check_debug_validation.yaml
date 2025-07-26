@@ -1,0 +1,38 @@
+steps:
+  - name: Token beolvasási logika ellenőrzése a main.dart-ban
+    description: Ellenőrizzük, hogy a main.dart a FIREBASE_APP_CHECK_DEBUG_TOKEN értéket kizárólag --dart-define paraméterrel olvassa-e be.
+    outputs:
+      - "Beolvasási logika megfelelő / hibás"
+
+  - name: launch.json token átadás ellenőrzése
+    description: Ellenőrizzük, hogy a VS Code launch.json tartalmazza-e a megfelelő --dart-define=FIREBASE_APP_CHECK_DEBUG_TOKEN=... paramétert.
+    outputs:
+      - "launch.json token argumentum rendben / hiányzik"
+
+  - name: gradle.properties vagy AndroidManifest.xml vizsgálata
+    description: Megvizsgáljuk, hogy a debug token szerepel-e a gradle.properties vagy AndroidManifest.xml egyikében, és nincs-e duplikáció.
+    outputs:
+      - "Token szerepel gradle-ben / manifestben / nincs benne / duplikálva van"
+
+  - name: google-services.json projekt és package name ellenőrzése
+    description: Ellenőrizzük, hogy a json-ben szereplő project_id és package_name megegyezik-e a Firebase Console projekt beállításaival.
+    outputs:
+      - "project_id egyezik / eltér", "package_name egyezik / eltér"
+
+  - name: Logfile token-ellenőrzés
+    description: Ellenőrizzük, hogy a legutóbbi log tartalmazza-e az "Enter this debug secret..." sort. Ha igen, kinyerjük a token értékét.
+    outputs:
+      - "Token generálva: [token] / Nincs token generálva"
+
+  - name: Token egyezés Firebase Console debug lista alapján (manuális exporttal)
+    description: Opcionálisan ellenőrizzük, hogy a logban generált token szerepel-e egy feltöltött firebase_debug_tokens.json állományban (amelyet a fejlesztő exportált a Console-ból).
+    inputs:
+      - firebase_debug_tokens.json
+    outputs:
+      - "Token szerepel az exportált listában / hiányzik"
+      - "Debug token egyezés: igen / nem"
+
+  - name: Összefoglaló riport generálása
+    description: Az ügynök jelentést készít a vizsgálat eredményéből, kiemelve az esetleges hibákat.
+    outputs:
+      - "Minden rendben van / Problémák találhatók", "Hiba listázása"
