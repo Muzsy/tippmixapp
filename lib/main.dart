@@ -13,48 +13,70 @@ import 'services/theme_service.dart';
 import 'theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
-import 'dart:io' show Platform;
 
-
+/// Entry point of the application.
+///
+/// This file contains the minimal initialization required to start the app
+/// and activate Firebase App Check in debug mode. The debug token is read
+/// exclusively from a compile‐time environment definition via
+/// `--dart-define=FIREBASE_APP_CHECK_DEBUG_TOKEN=...`. The native plugin
+/// picks up the same value from the process environment (set via VS Code's
+/// `env` configuration) and therefore there is no need to access
+/// `Platform.environment` from Dart. If the token is missing during a
+/// development build, an assertion will be thrown to remind the
+/// developer to supply it.
 Future<void> main() async {
-  ErrorWidget.builder = (d) => Material(
+  // Show any uncaught Flutter errors as a red screen with the exception.
+  ErrorWidget.builder = (details) => Material(
         color: Colors.red,
         child: Center(
           child: Text(
-            d.exceptionAsString(),
+            details.exceptionAsString(),
             style: const TextStyle(color: Colors.white),
           ),
         ),
       );
 
+  // Load environment variables from a .env file (if present).
   await dotenv.load();
   await bootstrap();
 
-  // --- App Check debug token fix ---
-  final debugToken = const String.fromEnvironment(
+  // --- App Check debug token configuration ---
+  // The debug token is supplied at build time via `--dart-define`. Only
+  // compile‑time definitions are considered here. Do NOT read from
+  // `Platform.environment` since that environment variable is for the native
+  // layer (the plugin uses it separately). See launch.json for how the
+  // same token is supplied both as a Dart define and an environment
+  // variable.
+  const debugToken = String.fromEnvironment(
     'FIREBASE_APP_CHECK_DEBUG_TOKEN',
     defaultValue: '',
-  ).isNotEmpty
-      ? const String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN')
-      : (Platform.environment['FIREBASE_APP_CHECK_DEBUG_TOKEN'] ?? '');
+  );
 
   assert(
     !kDebugMode || debugToken.isNotEmpty,
     '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN nincs megadva!\n'
-    'Adj meg --dart-define paramétert VAGY állítsd be env-változóként.',
+    'Adj meg --dart-define paramétert a build parancsban, '
+    'és állítsd be a környezeti változót a natív plugin számára (lásd launch.json).',
   );
 
+  // Activate App Check. In debug mode the Android/iOS provider is set
+  // accordingly. The debug token is picked up automatically by the native
+  // plugin if the corresponding environment variable has been set. There is
+  // no need to pass the token here in Dart.
   await FirebaseAppCheck.instance.activate(
     androidProvider:
         kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
     appleProvider:
         kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
-  // --- end fix ---
+  // --- end debug token configuration ---
+
   final container = ProviderContainer();
   final themeFuture =
       container.read(themeServiceProvider.notifier).hydrate();
   await container.read(appLocaleControllerProvider.notifier).loadLocale();
+
   runApp(
     UncontrolledProviderScope(
       container: container,
@@ -88,6 +110,7 @@ class _BootstrapApp extends ConsumerWidget {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeServiceProvider);
@@ -102,7 +125,7 @@ class MyApp extends ConsumerWidget {
       brightness: Brightness.dark,
     );
 
-    return FutureBuilder<List<ThemeData>>(
+    return FutureBuilder<List<ThemeData>>( 
       future: Future.wait([lightFuture, darkFuture]),
       builder: (context, snapshot) {
         final light = snapshot.data?[0] ??
@@ -120,18 +143,18 @@ class MyApp extends ConsumerWidget {
           routerConfig: router,
           builder: (context, child) => child ?? const SizedBox.shrink(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: const [
-        Locale('hu'),
-        Locale('en'),
-        Locale('de'),
-      ],
-      localeResolutionCallback: (Locale? deviceLocale, Iterable<Locale> supported) {
-        if (deviceLocale == null) return const Locale('en');
-        return supported.firstWhere(
-          (l) => l.languageCode == deviceLocale.languageCode,
-          orElse: () => const Locale('en'),
-        );
-      },
+          supportedLocales: const [
+            Locale('hu'),
+            Locale('en'),
+            Locale('de'),
+          ],
+          localeResolutionCallback: (Locale? deviceLocale, Iterable<Locale> supported) {
+            if (deviceLocale == null) return const Locale('en');
+            return supported.firstWhere(
+              (l) => l.languageCode == deviceLocale.languageCode,
+              orElse: () => const Locale('en'),
+            );
+          },
           theme: light,
           darkTheme: dark,
           themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
@@ -143,7 +166,7 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-/// Segédosztály a stream figyeléséhez, GoRouter számára
+/// Helper class for GoRouter to listen to a stream and rebuild when it emits.
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListener = () => notifyListeners();
