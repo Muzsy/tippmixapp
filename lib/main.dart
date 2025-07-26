@@ -13,6 +13,7 @@ import 'services/theme_service.dart';
 import 'theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
+import 'dart:io' show Platform;
 
 
 Future<void> main() async {
@@ -30,21 +31,25 @@ Future<void> main() async {
   await bootstrap();
 
   // --- App Check debug token fix ---
-  const debugToken =
-      String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN');
-  // Fejlesztői safeguard: ha debug módban futunk, kötelező a token.
+  final debugToken = const String.fromEnvironment(
+    'FIREBASE_APP_CHECK_DEBUG_TOKEN',
+    defaultValue: '',
+  ).isNotEmpty
+      ? const String.fromEnvironment('FIREBASE_APP_CHECK_DEBUG_TOKEN')
+      : (Platform.environment['FIREBASE_APP_CHECK_DEBUG_TOKEN'] ?? '');
+
   assert(
     !kDebugMode || debugToken.isNotEmpty,
     '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN nincs megadva!\n'
-    'Indítsd a buildet --dart-define=FIREBASE_APP_CHECK_DEBUG_TOKEN=<token> paraméterrel.',
+    'Adj meg --dart-define paramétert VAGY állítsd be env-változóként.',
   );
+
   await FirebaseAppCheck.instance.activate(
     androidProvider:
         kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
     appleProvider:
         kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
-
   // --- end fix ---
   final container = ProviderContainer();
   final themeFuture =
