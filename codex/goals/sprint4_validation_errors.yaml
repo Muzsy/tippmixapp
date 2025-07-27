@@ -1,0 +1,116 @@
+meta:
+  canvas: sprint4_validation_errors.md
+  priority: P1
+
+steps:
+  - patch_file:
+      target: lib/ui/auth/register_step1_form.dart
+      patch: |
+        @@
+        - final emailAvailable = await _authRepo.isEmailAvailable(email);
+        + bool emailAvailable;
+        + try {
+        +   emailAvailable = await _authRepo.isEmailAvailable(email);
+        + } on EmailAlreadyInUseFailure {
+        +   if (!mounted) return false;
+        +   ScaffoldMessenger.of(context).showSnackBar(
+        +     const SnackBar(content: Text('Ez az e‑mail már foglalt.')),
+        +   );
+        +   return false;
+        + }
+        + if (!emailAvailable) {
+        +   ScaffoldMessenger.of(context).showSnackBar(
+        +     const SnackBar(content: Text('Ez az e‑mail már foglalt.')),
+        +   );
+        +   return false;
+        + }
+
+  - patch_file:
+      target: lib/ui/auth/register_step2_form.dart
+      patch: |
+        @@
+        - ElevatedButton(
+        -   onPressed: _isFormValid ? _onNextPressed : null,
+        + ElevatedButton(
+        +   onPressed: _onNextPressed,
+        @@
+        - void _onNextPressed() {
+        -   // Navigálás Step 3-ra
+        - }
+        + void _onNextPressed() {
+        +   final formValid = _formKey.currentState?.validate() ?? false;
+        +   if (!formValid) {
+        +     ScaffoldMessenger.of(context).showSnackBar(
+        +       const SnackBar(content: Text('Hiányos adatok, kérlek töltsd ki!')),
+        +     );
+        +     return;
+        +   }
+        +   // Navigálás Step 3‑ra
+        + }
+
+  - write_test:
+      name: email_already_in_use_shows_error
+      location: test/widget/email_already_in_use_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:mockito/mockito.dart';
+        import 'package:provider/provider.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+        import 'package:tippmixapp/repository/auth_repository.dart';
+        
+        class _MockAuthRepo extends Mock implements AuthRepository {}
+        class EmailAlreadyInUseFailure implements Exception {}
+        
+        void main() {
+          testWidgets('email already in use shows snackbar', (tester) async {
+            final mockRepo = _MockAuthRepo();
+            when(mockRepo.isEmailAvailable(any)).thenThrow(EmailAlreadyInUseFailure());
+            
+            await tester.pumpWidget(
+              Provider<AuthRepository>.value(
+                value: mockRepo,
+                child: const MaterialApp(home: RegisterWizard()),
+              ),
+            );
+            await tester.enterText(find.byKey(const Key('emailField')), 'taken@example.com');
+            await tester.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await tester.enterText(find.byKey(const Key('confirmPasswordField')), 'Teszt123!');
+
+            await tester.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await tester.pump();
+            expect(find.text('Ez az e‑mail már foglalt.'), findsOneWidget);
+          });
+        }
+
+  - write_test:
+      name: step2_missing_consent_shows_error
+      location: test/widget/step2_consent_error_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+        
+        void main() {
+          testWidgets('missing consent shows error', (tester) async {
+            await tester.pumpWidget(const MaterialApp(home: RegisterWizard()));
+
+            // Lépjünk a 2. oldalra gyorsan helperrel (feltételezve hogy van navigateToStep):
+            await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
+            await tester.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await tester.enterText(find.byKey(const Key('confirmPasswordField')), 'Teszt123!');
+            await tester.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await tester.pumpAndSettle();
+
+            // Nem pipáljuk ki a GDPR‑checkboxot
+            await tester.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await tester.pump();
+
+            expect(find.text('Hiányos adatok, kérlek töltsd ki!'), findsOneWidget);
+            // Bizonyosság hogy nem jutunk Step3-ra (avatar picker nincs jelen)
+            expect(find.byKey(const Key('avatarPicker')), findsNothing);
+          });
+        }
+
+  - run: flutter analyze --fatal-infos
+  - run: flutter test test/widget/email_already_in_use_test.dart test/widget/step2_consent_error_test.dart
