@@ -45,12 +45,18 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
     }
   }
 
-  Future<void> _continue() async {
-    if (!_formKey.currentState!.validate() || _birthDate == null || !_consent) {
+  Future<void> _onNextPressed() async {
+    final formValid = _formKey.currentState?.validate() ?? false;
+    if (!formValid || _birthDate == null || !_consent) {
       setState(() {
         _showDateError = _birthDate == null;
         _showConsentError = !_consent;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hiányos adatok, kérlek töltsd ki!'),
+        ),
+      );
       return;
     }
     _debounce?.cancel();
@@ -89,11 +95,6 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final isValid =
-        _validateNick(_nickCtrl.text) == null &&
-            _birthDate != null &&
-            _consent &&
-            _nickCtrl.text.isNotEmpty;
     return Form(
       key: _formKey,
       child: Padding(
@@ -163,7 +164,7 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
                   child: Text(loc.back_button),
                 ),
                 ElevatedButton(
-                  onPressed: isValid ? _continue : null,
+                  onPressed: _onNextPressed,
                   child: Text(loc.continue_button),
                 ),
               ],
