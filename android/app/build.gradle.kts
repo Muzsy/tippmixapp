@@ -20,6 +20,11 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    dependencies {
+        implementation("com.google.firebase:firebase-appcheck-debug:17.0.0")
+        implementation("androidx.core:core-ktx:1.9.0")
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.tippmixapp"
