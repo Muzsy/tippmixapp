@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../services/auth_service.dart';
+import 'auth_provider.dart';
 import '../services/profile_service.dart';
 import '../models/user_model.dart';
 import '../constants.dart';
@@ -43,7 +44,8 @@ class RegisterData {
 }
 
 class RegisterStateNotifier extends StateNotifier<RegisterData> {
-  RegisterStateNotifier() : super(const RegisterData());
+  final AuthService _auth;
+  RegisterStateNotifier(this._auth) : super(const RegisterData());
 
   void saveStep1(String email, String password) {
     state = state.copyWith(email: email, password: password);
@@ -58,8 +60,11 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   }
 
   Future<void> completeRegistration() async {
-    final auth = AuthService();
-    final user = await auth.registerWithEmail(state.email, state.password);
+    // ignore: avoid_print
+    print('[REGISTER] STARTED');
+    final user = await _auth.registerWithEmail(state.email, state.password);
+    // ignore: avoid_print
+    print('[REGISTER] SUCCESS');
     if (user == null) return;
     if (Firebase.apps.isNotEmpty) {
       final model = UserModel(
@@ -79,7 +84,7 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
 }
 
 final registerStateNotifierProvider = StateNotifierProvider<RegisterStateNotifier, RegisterData>(
-  (ref) => RegisterStateNotifier(),
+  (ref) => RegisterStateNotifier(ref.read(authServiceProvider)),
 );
 
 final registerPageControllerProvider = Provider.autoDispose<PageController>((ref) {
