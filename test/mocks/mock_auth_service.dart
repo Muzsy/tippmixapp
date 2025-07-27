@@ -23,7 +23,13 @@ class MockAuthService implements AuthService {
   }
 
   @override
-  Future<User?> registerWithEmail(String email, String password) async => null;
+  Future<User?> registerWithEmail(String email, String password) async {
+    // ignore: avoid_print
+    print('[REGISTER] registerWithEmail STARTED');
+    _user = User(id: 'u1', email: email, displayName: 'Test');
+    _controller.add(_user);
+    return _user;
+  }
 
   @override
   Future<void> signOut() async {

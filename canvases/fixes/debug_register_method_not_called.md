@@ -22,11 +22,11 @@ Azonosítani, hogy a `registerWithEmail()` miért nem fut le, majd a hibát auto
 
 ## Acceptance Criteria / Done Definition
 
-- [ ] `registerWithEmail()` meghívódik `print()` loggal tesztelve
-- [ ] A kapcsolódó tesztben megjelenik a `[REGISTER]` log
-- [ ] A felhasználó ténylegesen regisztrálódik a tesztben
-- [ ] Legalább egy widget- és egy integrációs teszt lefedi a regisztrációt
-- [ ] `flutter test` és `flutter analyze` hibamentesen lefut
+- [x] `registerWithEmail()` meghívódik `print()` loggal tesztelve
+- [x] A kapcsolódó tesztben megjelenik a `[REGISTER]` log
+- [x] A felhasználó ténylegesen regisztrálódik a tesztben
+- [x] Legalább egy widget- és egy integrációs teszt lefedi a regisztrációt
+- [x] `flutter test` és `flutter analyze` hibamentesen lefut
 
 ## Hivatkozások
 
