@@ -128,6 +128,9 @@ class AuthService {
 
   // Regisztráció email/jelszóval
   Future<User?> registerWithEmail(String email, String password) async {
+    // ignore: avoid_print
+    print('[REGISTER] registerWithEmail STARTED');
+    // ignore: avoid_print
     print('🔵 registerWithEmail() STARTED');
     try {
       String? token;
