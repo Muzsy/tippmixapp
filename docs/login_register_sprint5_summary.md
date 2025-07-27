@@ -11,6 +11,7 @@
 - Bejelentkezés e‑mail és jelszó párossal.
 - Új fiók létrehozása megerősítő e‑maillel.
 - Elfelejtett jelszó funkció a "Jelszó visszaállítása" gombbal.
+- A felhasználó csak megerősített e‑maillel léphet tovább, külön "EmailNotVerifiedScreen" jelzi, ha ez hiányzik.
 
 ### Onboarding folyamat
 - Első indításkor rövid tippek mutatják be a funkciókat.
@@ -35,6 +36,7 @@
 - Sign in with email and password.
 - Create a new account with confirmation e‑mail.
 - Password recovery via the "Reset password" button.
+- Access to features requires a verified e‑mail. The EmailNotVerifiedScreen informs users until verification.
 
 ### Onboarding flow
 - First launch displays short tips explaining the features.
@@ -59,6 +61,7 @@
 - Anmeldung mit E‑Mail und Passwort.
 - Neues Konto wird per Bestätigungs‑E‑Mail aktiviert.
 - Passwort zurücksetzen über den Button "Passwort vergessen".
+- Erst nach bestätigter E‑Mail gelangt der Nutzer weiter; der "EmailNotVerifiedScreen" weist darauf hin.
 
 ### Onboarding‑Ablauf
 - Beim ersten Start erklären kurze Tipps die Funktionen.
