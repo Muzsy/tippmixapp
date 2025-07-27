@@ -10,6 +10,7 @@ import 'package:tippmixapp/screens/auth/login_screen.dart';
 import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
 import 'package:tippmixapp/screens/settings/settings_screen.dart';
 import 'package:tippmixapp/screens/badges/badge_screen.dart';
+import 'package:tippmixapp/ui/auth/auth_gate.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:tippmixapp/screens/social/friends_screen.dart';
 import 'package:tippmixapp/providers/auth_guard.dart';
@@ -56,11 +57,8 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: '/',
           name: AppRoute.home.name,
-          builder: (context, state) => HomeScreen(
-            state: state,
-            showStats: true,
-            child: const SizedBox.shrink(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: AuthGate()),
         ),
         GoRoute(
           path: '/profile',
