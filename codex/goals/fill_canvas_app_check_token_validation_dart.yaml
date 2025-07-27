@@ -1,0 +1,30 @@
+steps:
+  - name: AppCheck aktiválás sorrendjének ellenőrzése
+    description: Ellenőrizzük, hogy a Firebase.initializeApp() és FirebaseAppCheck.instance.activate() meghívása megtörténik-e a main.dart-ban az alkalmazás indításakor.
+    outputs:
+      - "AppCheck aktiválva: igen / nem"
+
+  - name: AppCheck token lekérés és ellenőrzés
+    description: Ellenőrizzük, hogy a getToken() hívás megtörténik-e a regisztráció előtt, és a token értéke nem null.
+    outputs:
+      - "Token elérhető: igen / nem", "Token érték: ..."
+
+  - name: Auth regisztráció előtti késleltetés beépítése
+    description: Ellenőrizzük, hogy a getToken() után legalább 1-2 másodperces várakozás történik-e, hogy biztosan legyen érvényes token.
+    outputs:
+      - "Késleltetés jelen van: igen / nem"
+
+  - name: Token logolás ellenőrzése
+    description: Vizsgáljuk, hogy a token kiírása megtörténik-e debug logba az auth előtt.
+    outputs:
+      - "Token logolva: igen / nem"
+
+  - name: FirebaseAppCheck hibakezelés
+    description: Ha getToken() hibát dob, szerepel-e try-catch, és üzenet a naplóban?
+    outputs:
+      - "Hibakezelés jelen van: igen / nem", "Hibaüzenet logolva: igen / nem"
+
+  - name: Összegző riport generálása
+    description: A fenti vizsgálatok alapján értékeljük, hogy az AppCheck token validálása megfelelően működik-e regisztráció előtt.
+    outputs:
+      - "AppCheck + Auth folyamat konzisztens: igen / nem", "Hiányosság listája"
