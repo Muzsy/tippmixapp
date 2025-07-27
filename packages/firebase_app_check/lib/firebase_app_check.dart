@@ -5,6 +5,8 @@ class FirebaseAppCheck {
     AndroidProvider androidProvider = AndroidProvider.debug,
     AppleProvider appleProvider = AppleProvider.debug,
   }) async {}
+
+  Future<String?> getToken() async => 'test-token';
 }
 
 enum AndroidProvider { debug, playIntegrity }
