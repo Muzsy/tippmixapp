@@ -47,10 +47,11 @@
 ```dart
 final _router = GoRouter(
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => HomeScreen(),
-    ),
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: AuthGate()),
+      ),
     GoRoute(
       path: '/fogadas',
       builder: (context, state) => BetScreen(),
@@ -61,8 +62,13 @@ final _router = GoRouter(
     ),
     // ...
   ],
+
 );
 ```
+
+Az alap '/' route tehát egy `AuthGate` widgetre mutat, amely dönti el, hogy a
+felhasználó a LoginScreenre, az EmailNotVerifiedScreenre vagy a HomeScreenre
+kerül.
 
 ---
 
