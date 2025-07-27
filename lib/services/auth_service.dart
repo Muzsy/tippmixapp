@@ -129,6 +129,8 @@ class AuthService {
   // Regisztráció email/jelszóval
   Future<User?> registerWithEmail(String email, String password) async {
     // ignore: avoid_print
+    print('[REGISTER] STARTED');
+    // ignore: avoid_print
     print('[REGISTER] registerWithEmail STARTED');
     // ignore: avoid_print
     print('🔵 registerWithEmail() STARTED');
@@ -155,6 +157,8 @@ class AuthService {
       await cred.user?.sendEmailVerification();
       final user = cred.user;
       if (user == null) return null;
+      // ignore: avoid_print
+      print('[REGISTER] SUCCESS');
       return User(
         id: user.uid,
         email: user.email ?? '',
