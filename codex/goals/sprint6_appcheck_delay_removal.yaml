@@ -1,0 +1,55 @@
+meta:
+  canvas: sprint6_appcheck_delay_removal.md
+  priority: P2
+
+steps:
+  - patch_file:
+      target: lib/services/auth_service.dart
+      patch: |
+        @@
+        - await Future.delayed(Duration(seconds: 2));
+        + final appCheckToken = await FirebaseAppCheck.instance.getToken(true);
+        + if (kDebugMode) {
+        +   print('[APP_CHECK] token: $appCheckToken');
+        + }
+
+  - patch_file:
+      target: lib/services/auth_service.dart
+      patch: |
+        @@
+        import 'package:firebase_auth/firebase_auth.dart';
+        +import 'package:firebase_app_check/firebase_app_check.dart';
+        +import 'package:flutter/foundation.dart';
+
+  - write_test:
+      name: register_completes_without_delay_test
+      location: test/unit/register_no_delay_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:fake_async/fake_async.dart';
+        import 'package:mockito/mockito.dart';
+        import 'package:tippmixapp/services/auth_service.dart';
+        import 'package:firebase_auth/firebase_auth.dart';
+        import 'package:firebase_app_check/firebase_app_check.dart';
+        
+        class _MockFirebaseAuth extends Mock implements FirebaseAuth {}
+        class _MockAppCheck extends Mock implements FirebaseAppCheck {}
+        
+        void main() {
+          test('registerWithEmail completes quickly without artificial delay', () {
+            fakeAsync((async) {
+              final mockAuth = _MockFirebaseAuth();
+              final mockAppCheck = _MockAppCheck();
+              when(mockAppCheck.getToken(true))
+                  .thenAnswer((_) async => 'token');
+              final service = AuthService(mockAuth, appCheck: mockAppCheck);
+              var completed = false;
+              service.registerWithEmail('a@b.com', 'Secret123').then((_) => completed = true);
+              async.elapse(const Duration(milliseconds: 80));
+              expect(completed, true);
+            });
+          });
+        }
+
+  - run: flutter analyze --fatal-infos
+  - run: flutter test test/unit/register_no_delay_test.dart
