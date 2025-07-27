@@ -1,0 +1,55 @@
+meta:
+  canvas: sprint3_pageview_fix.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: lib/ui/auth/register_step1_form.dart
+      patch: |
+        @@
+        - await _pageController.animateToPage(
+        -   1,
+        -   duration: kTransitionDuration,
+        -   curve: Curves.easeInOut,
+        - );
+        + try {
+        +   if (!mounted) return;
+        +   await _pageController.animateToPage(
+        +     1,
+        +     duration: kTransitionDuration,
+        +     curve: Curves.easeInOut,
+        +   );
+        + } catch (e) {
+        +   if (!mounted) return;
+        +   ScaffoldMessenger.of(context).showSnackBar(
+        +     const SnackBar(content: Text('Ismeretlen hiba, kérlek próbáld újra')),
+        +   );
+        + }
+
+  - write_test:
+      name: step1_to_step2_navigation
+      location: test/widget/register_navigation_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+        
+        void main() {
+          testWidgets('navigation from step1 to step2 works', (tester) async {
+            await tester.pumpWidget(const MaterialApp(home: RegisterWizard()));
+            
+            // Kitöltjük a szükséges mezőket
+            await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
+            await tester.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await tester.enterText(find.byKey(const Key('confirmPasswordField')), 'Teszt123!');
+
+            await tester.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await tester.pumpAndSettle();
+            
+            // A Step2-n a nickname mező jelenik meg
+            expect(find.byKey(const Key('nicknameField')), findsOneWidget);
+          });
+        }
+
+  - run: flutter analyze --fatal-infos
+  - run: flutter test test/widget/register_navigation_test.dart
