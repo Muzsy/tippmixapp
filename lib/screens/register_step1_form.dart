@@ -6,6 +6,8 @@ import '../controllers/register_step1_viewmodel.dart';
 import '../providers/register_state_notifier.dart';
 import '../providers/hibp_service_provider.dart';
 import '../providers/recaptcha_service_provider.dart';
+import '../providers/auth_repository_provider.dart';
+import '../services/auth_repository.dart';
 import '../services/analytics_service.dart';
 import '../widgets/password_strength_indicator.dart';
 import '../helpers/validators.dart';
@@ -43,6 +45,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
       if (await hibp.isPasswordPwned(_passCtrl.text)) {
         analytics.logRegPasswordPwned();
         // ignore: use_build_context_synchronously
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
         // ignore: use_build_context_synchronously
         SnackBar(
@@ -65,20 +68,26 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
     }
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
-      final vm = ref.read(registerStep1ViewModelProvider.notifier);
-      await vm.checkEmail(_emailCtrl.text);
-      if (!mounted) return;
-      final state = ref.read(registerStep1ViewModelProvider);
-        if (state == RegisterStep1State.emailExists) {
-          setState(() {
-            _emailError = AppLocalizations.of(context)!.errorEmailExists;
-          });
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-          // ignore: use_build_context_synchronously
+      final authRepo = ref.read(authRepositoryProvider);
+      bool emailAvailable;
+      try {
+        emailAvailable = await authRepo.isEmailAvailable(_emailCtrl.text);
+      } on EmailAlreadyInUseFailure {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            // ignore: use_build_context_synchronously
-            content: Text(AppLocalizations.of(context)!.errorEmailExists),
+            content:
+                Text(AppLocalizations.of(context)!.errorEmailExists),
+          ),
+        );
+        return;
+      }
+      if (!emailAvailable) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.errorEmailExists),
           ),
         );
         return;
