@@ -47,6 +47,11 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   final AuthService _auth;
   RegisterStateNotifier(this._auth) : super(const RegisterData());
 
+  /// Visszaállítja az állapotot alapértelmezett, üres értékre.
+  void reset() {
+    state = const RegisterData();
+  }
+
   void saveStep1(String email, String password) {
     state = state.copyWith(email: email, password: password);
   }
