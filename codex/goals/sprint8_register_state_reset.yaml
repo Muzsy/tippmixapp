@@ -1,0 +1,98 @@
+meta:
+  canvas: sprint8_register_state_reset.md
+  priority: P2
+
+steps:
+  # 1️⃣  reset() metódus hozzáadása a notifierhez
+  - patch_file:
+      target: lib/state/register_state_notifier.dart
+      patch: |
+        @@
+        class RegisterStateNotifier extends StateNotifier<RegisterData> {
+          RegisterStateNotifier(this._authService) : super(RegisterData());
+          final AuthService _authService;
++
++         /// Visszaállítja az állapotot alapértelmezett, üres értékre.
++         void reset() {
++           state = RegisterData();
++         }
+        }
+
+  # 2️⃣  reset hívása a wizard dispose-jában
+  - patch_file:
+      target: lib/ui/auth/register_wizard.dart
+      patch: |
+        @@
+         class _RegisterWizardState extends State<RegisterWizard> {
+           late final PageController _pageController;
++
++          @override
++          void dispose() {
++            // Állapot törlése, hogy a következő regisztráció tiszta legyen
++            context.read(registerStateNotifierProvider.notifier).reset();
++            _pageController.dispose();
++            super.dispose();
++          }
+        
+  # 3️⃣  reset hívása sikeres befejezés után (Finish gomb)
+  - patch_file:
+      target: lib/ui/auth/register_step3_form.dart
+      patch: |
+        @@
+-            await ref.read(registerStateNotifierProvider.notifier).completeRegistration();
++            await ref.read(registerStateNotifierProvider.notifier).completeRegistration();
++            // sikeres regisztráció után állapot törlése
++            ref.read(registerStateNotifierProvider.notifier).reset();
+
+  # 4️⃣  Unit teszt – reset törli az állapotot
+  - write_test:
+      name: reset_clears_state_test
+      location: test/unit/register_reset_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/state/register_state_notifier.dart';
+        import 'package:tippmixapp/services/auth_service.dart';
+        import 'package:riverpod/riverpod.dart';
+        
+        class _FakeAuth extends Fake implements AuthService {}
+        
+        void main() {
+          test('reset clears state', () {
+            final notifier = RegisterStateNotifier(_FakeAuth());
+            notifier.state = notifier.state.copyWith(email: 'x@y.hu');
+            expect(notifier.state.email, isNotEmpty);
+            notifier.reset();
+            expect(notifier.state.email, isEmpty);
+          });
+        }
+
+  # 5️⃣  Widget teszt – wizard dispose után újraindításkor mezők üresek
+  - write_test:
+      name: wizard_dispose_resets_state_test
+      location: test/widget/wizard_reset_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:riverpod/riverpod.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+        
+        void main() {
+          testWidgets('wizard dispose resets state', (tester) async {
+            await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: RegisterWizard())));
+            // Kitöltjük az email mezőt az első lépésen
+            await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
+            expect(find.text('test@example.com'), findsOneWidget);
+            // Eltávolítjuk a wizardot a widget fáról
+            await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: Placeholder())));
+            await tester.pumpAndSettle();
+            // Újraindítjuk a wizardot
+            await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: RegisterWizard())));
+            await tester.pumpAndSettle();
+            // A mezőnek ismét üresnek kell lennie
+            expect(find.text('test@example.com'), findsNothing);
+          });
+        }
+
+  # 6️⃣  Statikus analízis és tesztek futtatása
+  - run: flutter analyze --fatal-infos
+  - run: flutter test
