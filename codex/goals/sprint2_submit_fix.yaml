@@ -1,0 +1,52 @@
+meta:
+  canvas: sprint2_submit_fix.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: lib/state/register_state_notifier.dart
+      patch: |
+        @@
+        - Future<void> completeRegistration() {
+        -   _auth.registerWithEmail(state.email, state.password);
+        + Future<void> completeRegistration() async {
+        +   print('[REGISTER] STARTED');
+        +   await _auth.registerWithEmail(state.email, state.password);
+        +   print('[REGISTER] SUCCESS');
+        }
+
+  - patch_file:
+      target: lib/ui/auth/register_wizard.dart
+      patch: |
+        @@
+        - onPressed: () {
+        -   ref.read(registerStateNotifierProvider.notifier).completeRegistration();
+        - },
+        + onPressed: () async {
+        +   await ref.read(registerStateNotifierProvider.notifier).completeRegistration();
+        + },
+
+  - write_test:
+      name: notifier_complete_registration_awaits_auth
+      location: test/unit/register_notifier_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/state/register_state_notifier.dart';
+        import 'package:tippmixapp/services/auth_service.dart';
+        import 'package:mockito/mockito.dart';
+        
+        class _MockAuth extends Mock implements AuthService {}
+        
+        void main() {
+          test('completeRegistration awaits auth call', () async {
+            final mockAuth = _MockAuth();
+            when(mockAuth.registerWithEmail(any, any))
+                .thenAnswer((_) async => Future.value());
+            final notifier = RegisterStateNotifier(mockAuth);
+            await notifier.completeRegistration();
+            verify(mockAuth.registerWithEmail(any, any)).called(1);
+          });
+        }
+
+  - run: flutter analyze --fatal-infos
+  - run: flutter test test/unit/register_notifier_test.dart
