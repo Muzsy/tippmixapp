@@ -78,11 +78,15 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
       notifier.saveAvatar(url);
     }
     await notifier.completeRegistration();
+    // sikeres regisztráció után állapot törlése
+    notifier.reset();
     if (mounted) context.goNamed(AppRoute.home.name);
   }
 
   Future<void> _skip() async {
     await ref.read(registerStateNotifierProvider.notifier).completeRegistration();
+    // sikeres regisztráció után állapot törlése
+    ref.read(registerStateNotifierProvider.notifier).reset();
     if (mounted) context.goNamed(AppRoute.home.name);
   }
 
