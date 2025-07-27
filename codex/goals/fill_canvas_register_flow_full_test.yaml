@@ -1,0 +1,38 @@
+meta:
+  canvas: register_flow_full_test.md
+  priority: P0
+
+steps:
+  - name: Hívási lánc ellenőrzése
+    description: Vizsgáljuk meg, hogy a `registerWithEmail()` metódus meghívása megtörténik-e a regisztrációs flow végén (pl. `RegisterNotifier.submit()` vagy `Wizard.onNext()`).
+    outputs:
+      - "Hívási lánc azonosítva vagy hiányzik"
+
+  - name: Meghívás beépítése
+    description: Ha a hívás hiányzik, illesszük be a megfelelő helyre (`onPressed`, `submit`, `async`).
+    outputs:
+      - "Híváslánc rögzítve vagy javítva"
+
+  - name: Debug log beszúrása
+    description: A `registerWithEmail()` metódusba illesszük be `print('[REGISTER] STARTED')` és `print('[REGISTER] SUCCESS')` sorokat.
+    outputs:
+      - "Log beszúrva"
+
+  - name: Integration teszt létrehozása
+    description: Hozzunk létre egy `integration_test/register_flow_test.dart` fájlt, amely végigviszi a felhasználót a teljes regisztrációs folyamaton, beleértve az űrlapokat, hívásokat és képernyőváltásokat.
+    outputs:
+      - "Teszt létrejött"
+      - "Log alapján regisztráció sikeres"
+
+  - name: Hibaág tesztelése
+    description: Adjunk a teszthez egy alternatív ágat, ahol foglalt e-mailt vagy gyenge jelszót adunk meg, és figyeljük a hibakezelést.
+    outputs:
+      - "Hibaág teszt lefutott"
+      - "SnackBar vagy errorText megjelent"
+
+  - name: Tesztek lefuttatása
+    description: Futtassuk le a `flutter test`, `flutter analyze` és `flutter drive integration_test/register_flow_test.dart` parancsokat.
+    outputs:
+      - "flutter test passed"
+      - "flutter drive passed"
+      - "flutter analyze passed"
