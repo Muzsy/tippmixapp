@@ -1,0 +1,42 @@
+meta:
+  canvas: debug_register_method_not_called.md
+  priority: P0
+
+steps:
+  - name: Hívási pont elemzése
+    description: Vizsgáljuk meg, melyik fájlokból kellene meghívódnia a `registerWithEmail()` metódusnak (pl. `RegisterWizard`, `RegisterNotifier`, `Step1Form`, stb.).
+    outputs:
+      - "Hívási lánc azonosítva vagy hiányzik"
+
+  - name: Meghívás javítása
+    description: Amennyiben nincs hívás, pótoljuk az onPressed vagy StateNotifier hívásláncot, hogy biztosan elérje az `AuthService().registerWithEmail()` metódust.
+    outputs:
+      - "Meghívási lánc rögzítve vagy javítva"
+
+  - name: Debug log beszúrása
+    description: Illesszük be a `print('[REGISTER] registerWithEmail STARTED')` sort a metódus legelejére.
+    outputs:
+      - "Debug log beszúrva"
+
+  - name: Widget-teszt létrehozása
+    description: Hozzunk létre egy widget-tesztet, amely érvényes adatokat ad meg a regisztrációs űrlapon, és megnyomja a tovább gombot. Ellenőrizzük, hogy a log megjelenik.
+    outputs:
+      - "Widget-teszt létrejött"
+      - "registerWithEmail log megjelent futáskor"
+
+  - name: Integrációs teszt létrehozása
+    description: Hozzunk létre egy integrációs tesztet, amely elindítja az alkalmazást, végigmegy a regisztráción, és ellenőrzi, hogy a metódus valóban lefut, majd a felhasználó továbbjut.
+    outputs:
+      - "Integrációs teszt létrejött"
+      - "Felhasználó regisztráció sikeres"
+  
+  - name: Tesztek lefuttatása
+    description: Futtassuk a `flutter test` és `flutter drive` parancsokat.
+    outputs:
+      - "flutter test passed"
+      - "flutter drive (integrációs teszt) passed"
+
+  - name: Ellenőrzés
+    description: Futtassuk a `flutter analyze` parancsot, és ellenőrizzük, hogy nincs hiba.
+    outputs:
+      - "`flutter analyze` passed"

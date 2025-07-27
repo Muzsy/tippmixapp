@@ -128,6 +128,7 @@ class AuthService {
 
   // Regisztráció email/jelszóval
   Future<User?> registerWithEmail(String email, String password) async {
+    print('🔵 registerWithEmail() STARTED');
     try {
       String? token;
       try {
