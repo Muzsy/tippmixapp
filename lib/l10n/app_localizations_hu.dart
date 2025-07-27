@@ -12,8 +12,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_title => 'Főképernyő';
 
   @override
-  String get home_guest_message =>
-      'Jelentkezz be vagy regisztrálj a profilod megtekintéséhez';
+  String get home_guest_message => 'Jelentkezz be vagy regisztrálj a profilod megtekintéséhez';
 
   @override
   String get home_coin => 'TippCoin';
@@ -49,12 +48,10 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_highlight_tip => 'Napi tipp: Bayern győz';
 
   @override
-  String get home_highlight_motivation =>
-      'Motiváció: Próbálj ki egy új stratégiát!';
+  String get home_highlight_motivation => 'Motiváció: Próbálj ki egy új stratégiát!';
 
   @override
-  String get home_highlight_coin =>
-      'TippCoin: Nyerj extra coinokat aktivitással!';
+  String get home_highlight_coin => 'TippCoin: Nyerj extra coinokat aktivitással!';
 
   @override
   String get home_tile_daily_bonus_title => 'Napi bónusz';
@@ -100,8 +97,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_challenge_title => 'Kihívás vár rád!';
 
   @override
-  String get home_tile_challenge_daily_description =>
-      'Napi kihívás: nyerj ma 3 fogadást.';
+  String get home_tile_challenge_daily_description => 'Napi kihívás: nyerj ma 3 fogadást.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -115,16 +111,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_tile_educational_tip_title => 'Fogadási tipp';
 
   @override
-  String get home_tile_educational_tip_1 =>
-      'Tudtad? Kombinált fogadással magasabb oddsszal nyerhetsz.';
+  String get home_tile_educational_tip_1 => 'Tudtad? Kombinált fogadással magasabb oddsszal nyerhetsz.';
 
   @override
-  String get home_tile_educational_tip_2 =>
-      'Egyszerűbb fogadással kisebb a kockázat.';
+  String get home_tile_educational_tip_2 => 'Egyszerűbb fogadással kisebb a kockázat.';
 
   @override
-  String get home_tile_educational_tip_3 =>
-      'Vezesd a fogadási naplód, hogy tanulhass a múltból.';
+  String get home_tile_educational_tip_3 => 'Vezesd a fogadási naplód, hogy tanulhass a múltból.';
 
   @override
   String get home_tile_educational_tip_cta => 'További tippek';
@@ -273,8 +266,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get events_screen_no_events => 'Nincs esemény';
 
   @override
-  String get events_screen_quota_warning =>
-      'Figyelem: az API kvóta hamarosan elfogy';
+  String get events_screen_quota_warning => 'Figyelem: az API kvóta hamarosan elfogy';
 
   @override
   String get events_screen_refresh => 'Frissítés';
@@ -375,8 +367,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get drawer_title => 'Menü';
 
   @override
-  String get errorUserNotFound =>
-      'Felhasználó nem található. Jelentkezz be újra.';
+  String get errorUserNotFound => 'Felhasználó nem található. Jelentkezz be újra.';
 
   @override
   String get go_to_create_ticket => 'Szelvény elküldése';
@@ -391,8 +382,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get missing_transaction_id => 'Hiányzik a tranzakció azonosító.';
 
   @override
-  String get amount_must_be_integer =>
-      'Az összegnek egész számnak kell lennie.';
+  String get amount_must_be_integer => 'Az összegnek egész számnak kell lennie.';
 
   @override
   String get admin_only_field => 'Ezt a mezőt csak admin módosíthatja.';
@@ -497,8 +487,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get badge_parlay_pro_title => 'Kombi szakértő';
 
   @override
-  String get badge_parlay_pro_description =>
-      '5+ eseményes kombi szelvény nyerése.';
+  String get badge_parlay_pro_description => '5+ eseményes kombi szelvény nyerése.';
 
   @override
   String get badge_night_owl_title => 'Éjjeli bagoly';
@@ -510,8 +499,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get badge_comeback_kid_title => 'Visszatérő';
 
   @override
-  String get badge_comeback_kid_description =>
-      'Három vereség után nyert szelvény.';
+  String get badge_comeback_kid_description => 'Három vereség után nyert szelvény.';
 
   @override
   String get profile_badges_empty => 'Még nem szereztél badge-et';
@@ -535,8 +523,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get feed_event_like => 'Lájk';
 
   @override
-  String get feed_report_success =>
-      'A bejegyzést jelentettük moderátorainknak.';
+  String get feed_report_success => 'A bejegyzést jelentettük moderátorainknak.';
 
   @override
   String get feed_empty_state => 'Nincs megjeleníthető bejegyzés';
@@ -560,8 +547,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get copy_submit_button => 'Szelvény feladása';
 
   @override
-  String get copy_invalid_state =>
-      'A szelvény nem módosult, így nem adható fel.';
+  String get copy_invalid_state => 'A szelvény nem módosult, így nem adható fel.';
 
   @override
   String get auth_error_user_not_found => 'Felhasználó nem található';
@@ -570,8 +556,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get auth_error_wrong_password => 'Hibás jelszó';
 
   @override
-  String get auth_error_email_already_in_use =>
-      'Az email cím már használatban van';
+  String get auth_error_email_already_in_use => 'Az email cím már használatban van';
 
   @override
   String get auth_error_invalid_email => 'Érvénytelen email cím';
@@ -866,8 +851,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get gdpr_required_error => 'A GDPR hozzájárulás kötelező';
 
   @override
-  String get auth_error_invalid_nickname =>
-      'A becenév 3-20 karakter hosszú legyen';
+  String get auth_error_invalid_nickname => 'A becenév 3-20 karakter hosszú legyen';
 
   @override
   String get auth_error_invalid_date => 'Érvénytelen dátum';
@@ -888,8 +872,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get register_skip => 'Kihagyás';
 
   @override
-  String get register_avatar_too_large =>
-      'Az avatar mérete legfeljebb 2 MB lehet';
+  String get register_avatar_too_large => 'Az avatar mérete legfeljebb 2 MB lehet';
 
   @override
   String get back_button => 'Vissza';
@@ -904,8 +887,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get emailVerify_title => 'Erősítsd meg az emailed!';
 
   @override
-  String get emailVerify_description =>
-      'Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.';
+  String get emailVerify_description => 'Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.';
 
   @override
   String get emailVerify_resend => 'Újraküldés';
@@ -924,4 +906,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get unknown_network_error => 'Ismeretlen hálózati hiba';
+
+  @override
+  String get unknown_error_try_again => 'Ismeretlen hiba, kérlek próbáld újra';
 }

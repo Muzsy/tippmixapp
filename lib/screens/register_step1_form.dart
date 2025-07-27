@@ -87,10 +87,22 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
           .read(registerStateNotifierProvider.notifier)
           .saveStep1(_emailCtrl.text, _passCtrl.text);
       final controller = ref.read(registerPageControllerProvider);
-      await controller.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      try {
+        if (!mounted) return;
+        await controller.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.unknown_error_try_again,
+            ),
+          ),
+        );
+      }
     });
   }
 

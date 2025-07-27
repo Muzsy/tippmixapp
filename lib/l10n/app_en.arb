@@ -293,5 +293,6 @@
   "emailVerify_exit": "Exit",
   "password_pwned_error": "This password has appeared in a data breach",
   "recaptcha_failed_error": "reCAPTCHA verification failed",
-  "unknown_network_error": "Network error occurred"
+  "unknown_network_error": "Network error occurred",
+  "unknown_error_try_again": "Unknown error, please try again"
 }

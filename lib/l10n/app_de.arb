@@ -293,5 +293,6 @@
   "emailVerify_exit": "Beenden",
   "password_pwned_error": "Dieses Passwort wurde bereits geleakt",
   "recaptcha_failed_error": "reCAPTCHA-Verifizierung fehlgeschlagen",
-  "unknown_network_error": "Unbekannter Netzwerkfehler"
+  "unknown_network_error": "Unbekannter Netzwerkfehler",
+  "unknown_error_try_again": "Unbekannter Fehler, bitte versuche es erneut"
 }
