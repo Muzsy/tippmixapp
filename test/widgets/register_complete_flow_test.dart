@@ -12,7 +12,7 @@ import '../mocks/mock_auth_service.dart';
 
 class FakeRegisterNotifier extends RegisterStateNotifier {
   final AuthService auth;
-  FakeRegisterNotifier(this.auth) : super() {
+  FakeRegisterNotifier(this.auth) : super(auth) {
     state = state.copyWith(
       email: 'user@test.com',
       password: 'Password1!',
@@ -34,8 +34,16 @@ void main() {
     final router = GoRouter(
       initialLocation: '/',
       routes: [
-        GoRoute(path: '/', name: 'register', builder: (_, __) => const RegisterStep3Form()),
-        GoRoute(path: '/home', name: 'home', builder: (_, __) => const Placeholder()),
+        GoRoute(
+          path: '/',
+          name: 'register',
+          builder: (context, state) => const RegisterStep3Form(),
+        ),
+        GoRoute(
+          path: '/home',
+          name: 'home',
+          builder: (context, state) => const Placeholder(),
+        ),
       ],
     );
     await runZoned(() async {
