@@ -1,0 +1,25 @@
+steps:
+  - name: AppCheck token validálás beépítése az Auth regisztráció elé
+    description: A registerWithEmail metódus elejdus elej\uére getToken() hívást szúrunk be, amely validálja az AppCheck tokent.
+    outputs:
+      - "getToken() beszúrva: igen / nem"
+
+  - name: Hibakezelés beillesztése
+    description: A getToken() hívást try-catch blokkba ágyazzuk, és a hibát logoljuk a konzolra.
+    outputs:
+      - "try-catch jelen van: igen / nem", "Hiba logolva: igen / nem"
+
+  - name: Token logolás beszúrása
+    description: A getToken() eredményét kiírjuk debug logba a regisztráció előtt.
+    outputs:
+      - "Token logolva: igen / nem"
+
+  - name: Regisztráció előtti várakozás beszúrása
+    description: A token lekérése után legalább 2 másodperc várakozást iktatunk be.
+    outputs:
+      - "Várakozás jelen van: igen / nem"
+
+  - name: Ellenőrzés újrafuttatása
+    description: A korábbi ellenőrzó Codex YAML lépései szerint validáljuk, hogy a getToken, logolás, késleltetés és hibakezelés működik-e.
+    outputs:
+      - "AppCheck + Auth tokenfolyamat javítva: igen / nem", "Hiányosság listája az új kódban"
