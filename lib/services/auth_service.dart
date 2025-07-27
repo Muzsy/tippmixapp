@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user.dart';
@@ -128,6 +129,21 @@ class AuthService {
   // Regisztráció email/jelszóval
   Future<User?> registerWithEmail(String email, String password) async {
     try {
+      String? token;
+      try {
+        token = await FirebaseAppCheck.instance.getToken();
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('registerWithEmail AppCheck token: $token');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('getToken error: $e');
+        }
+      }
+      await Future.delayed(const Duration(seconds: 2));
+
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
