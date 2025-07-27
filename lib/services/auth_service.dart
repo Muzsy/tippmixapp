@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:flutter/foundation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user.dart';
@@ -12,15 +12,18 @@ class AuthService {
   final fb.FirebaseAuth _firebaseAuth;
   final FacebookAuth _facebookAuth;
   final FirebaseFunctions _functions;
+  final FirebaseAppCheck _appCheck;
 
   AuthService({
     fb.FirebaseAuth? firebaseAuth,
     FacebookAuth? facebookAuth,
     FirebaseFunctions? functions,
+    FirebaseAppCheck? appCheck,
   })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
         _facebookAuth = facebookAuth ?? FacebookAuth.instance,
         _functions =
-            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
+            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2'),
+        _appCheck = appCheck ?? FirebaseAppCheck.instance;
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
@@ -135,20 +138,11 @@ class AuthService {
     // ignore: avoid_print
     print('🔵 registerWithEmail() STARTED');
     try {
-      String? token;
-      try {
-        token = await FirebaseAppCheck.instance.getToken();
-        if (kDebugMode) {
-          // ignore: avoid_print
-          print('registerWithEmail AppCheck token: $token');
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          // ignore: avoid_print
-          print('getToken error: $e');
-        }
+      final appCheckToken = await _appCheck.getToken(true);
+      if (kDebugMode) {
+        // ignore: avoid_print
+        print('[APP_CHECK] token: $appCheckToken');
       }
-      await Future.delayed(const Duration(seconds: 2));
 
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
