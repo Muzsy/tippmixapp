@@ -1,0 +1,146 @@
+meta:
+  canvas: sprint5_email_verified_guard.md
+  priority: P1
+
+steps:
+  - patch_file:
+      target: lib/ui/auth/auth_gate.dart
+      patch: |
+        @@
+        - if (user == null) {
+        -   return const SignInScreen();
+        - }
+        + if (user == null) {
+        +   return const SignInScreen();
+        + }
+        + if (!user.emailVerified) {
+        +   return const EmailNotVerifiedScreen();
+        + }
+
+  - add_file:
+      path: lib/ui/auth/email_not_verified_screen.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:firebase_auth/firebase_auth.dart';
+        
+        class EmailNotVerifiedScreen extends StatefulWidget {
+          const EmailNotVerifiedScreen({super.key});
+          @override
+          _EmailNotVerifiedScreenState createState() => _EmailNotVerifiedScreenState();
+        }
+        
+        class _EmailNotVerifiedScreenState extends State<EmailNotVerifiedScreen> {
+          bool _sending = false;
+          bool _reloading = false;
+          
+          Future<void> _resend() async {
+            setState(() => _sending = true);
+            await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+            if (!mounted) return;
+            setState(() => _sending = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Verifikációs e‑mail elküldve.')),
+            );
+          }
+          
+          Future<void> _refresh() async {
+            setState(() => _reloading = true);
+            await FirebaseAuth.instance.currentUser?.reload();
+            if (!mounted) return;
+            setState(() => _reloading = false);
+          }
+          
+          @override
+          Widget build(BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('E‑mail megerősítése szükséges')),
+              body: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'A fiókod aktiválásához erősítsd meg az e‑mail‑címedet. A levélben található linkre kattintva térj vissza az alkalmazásba.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _sending ? null : _resend,
+                      child: _sending ? const CircularProgressIndicator() : const Text('Újra küldés'),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: _reloading ? null : _refresh,
+                      child: _reloading ? const CircularProgressIndicator() : const Text('Megerősítettem'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+
+  - write_test:
+      name: unverified_user_redirected_test
+      location: test/widget/unverified_user_redirect_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+        import 'package:provider/provider.dart';
+        import 'package:tippmixapp/ui/auth/auth_gate.dart';
+        import 'package:tippmixapp/ui/auth/email_not_verified_screen.dart';
+        
+        void main() {
+          testWidgets('unverified user redirected', (tester) async {
+            final mockUser = MockUser(
+              uid: '1',
+              email: 'test@example.com',
+              isAnonymous: false,
+              emailVerified: false,
+            );
+            final mockAuth = MockFirebaseAuth(mockUser: mockUser);
+            await tester.pumpWidget(
+              Provider<FirebaseAuth>.value(
+                value: mockAuth,
+                child: const MaterialApp(home: AuthGate()),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(EmailNotVerifiedScreen), findsOneWidget);
+          });
+        }
+
+  - write_test:
+      name: verified_user_goes_home_test
+      location: test/widget/verified_user_goes_home_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+        import 'package:provider/provider.dart';
+        import 'package:tippmixapp/ui/auth/auth_gate.dart';
+        import 'package:tippmixapp/ui/home/home_screen.dart';
+        
+        void main() {
+          testWidgets('verified user goes to home', (tester) async {
+            final mockUser = MockUser(
+              uid: '1',
+              email: 'test@example.com',
+              isAnonymous: false,
+              emailVerified: true,
+            );
+            final mockAuth = MockFirebaseAuth(mockUser: mockUser);
+            await tester.pumpWidget(
+              Provider<FirebaseAuth>.value(
+                value: mockAuth,
+                child: const MaterialApp(home: AuthGate()),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(HomeScreen), findsOneWidget);
+          });
+        }
+
+  - run: flutter analyze --fatal-infos
+  - run: flutter test test/widget/unverified_user_redirect_test.dart test/widget/verified_user_goes_home_test.dart
