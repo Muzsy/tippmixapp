@@ -1,0 +1,76 @@
+meta:
+  canvas: sprint7_auth_gate_wireup.md
+  priority: P0
+
+steps:
+  # 1️⃣  Import AuthGate into router
+  - patch_file:
+      target: lib/router.dart
+      patch: |
+        @@
+        import 'package:tippmixapp/screens/badges/badge_screen.dart';
++       import 'package:tippmixapp/ui/auth/auth_gate.dart';
+
+  # 2️⃣  Replace root route builder with AuthGate
+  - patch_file:
+      target: lib/router.dart
+      patch: |
+        @@
+-        GoRoute(
+-          path: '/',
+-          name: AppRoute.home.name,
+-          builder: (context, state) => HomeScreen(
+-            state: state,
+-            showStats: true,
+-            child: const SizedBox.shrink(),
+-          ),
+-        ),
++        GoRoute(
++          path: '/',
++          name: AppRoute.home.name,
++          pageBuilder: (context, state) =>
++              const NoTransitionPage(child: AuthGate()),
++        ),
+
+  # 3️⃣  Update tests: verified & unverified flow should now pump router
+  - patch_file:
+      target: test/widget/unverified_user_redirect_test.dart
+      patch: |
+        @@
+-            await tester.pumpWidget(
+-              Provider<FirebaseAuth>.value(
+-                value: mockAuth,
+-                child: const MaterialApp(home: AuthGate()),
+-              ),
+-            );
++            await tester.pumpWidget(
++              Provider<FirebaseAuth>.value(
++                value: mockAuth,
++                child: const MaterialApp.router(
++                  routerConfig: router,
++                ),
++              ),
++            );
+
+  - patch_file:
+      target: test/widget/verified_user_goes_home_test.dart
+      patch: |
+        @@
+-            await tester.pumpWidget(
+-              Provider<FirebaseAuth>.value(
+-                value: mockAuth,
+-                child: const MaterialApp(home: AuthGate()),
+-              ),
+-            );
++            await tester.pumpWidget(
++              Provider<FirebaseAuth>.value(
++                value: mockAuth,
++                child: const MaterialApp.router(
++                  routerConfig: router,
++                ),
++              ),
++            );
+
+  # 4️⃣  Static checks & tests
+  - run: flutter analyze --fatal-infos
+  - run: flutter test
