@@ -15,3 +15,7 @@
 
 ## TODO report
 - See `todo_report.txt` for remaining TODO comments.
+
+## Register debug fix
+- Added debug log in `AuthService.registerWithEmail`.
+- Created widget and integration tests for registration flow.
