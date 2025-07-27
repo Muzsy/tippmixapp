@@ -60,6 +60,7 @@ void main() {
       logs.add(msg);
     }));
 
-    expect(logs.any((l) => l.contains('[REGISTER] registerWithEmail STARTED')), isTrue);
+    expect(logs.any((l) => l.contains('[REGISTER] STARTED')), isTrue);
+    expect(logs.any((l) => l.contains('[REGISTER] SUCCESS')), isTrue);
   });
 }
