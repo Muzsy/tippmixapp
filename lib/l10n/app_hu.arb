@@ -293,5 +293,6 @@
   "emailVerify_exit": "Kilépés",
   "password_pwned_error": "Ez a jelszó már kiszivárgott",
   "recaptcha_failed_error": "A reCAPTCHA ellenőrzés nem sikerült",
-  "unknown_network_error": "Ismeretlen hálózati hiba"
+  "unknown_network_error": "Ismeretlen hálózati hiba",
+  "unknown_error_try_again": "Ismeretlen hiba, kérlek próbáld újra"
 }
