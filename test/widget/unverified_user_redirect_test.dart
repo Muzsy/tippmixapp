@@ -21,7 +21,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [firebaseAuthProvider.overrideWithValue(mockAuth)],
-        child: const MaterialApp(home: AuthGate()),
+        child: const MaterialApp.router(
+          routerConfig: router,
+        ),
       ),
     );
     await tester.pumpAndSettle();
