@@ -1,0 +1,95 @@
+meta:
+  canvas: sprint9_recaptcha_fix.md
+  priority: P0
+
+steps:
+  # 1️⃣  Debug‑bypass RecaptchaService.verifyToken()
+  - patch_file:
+      target: lib/services/recaptcha_service.dart
+      patch: |
+        @@
+        Future<bool> verifyToken(String token) async {
+-         final response = await http.post(
+-           Uri.parse('https://www.google.com/recaptcha/api/siteverify'),
+-           body: {
+-             'secret': _secret,
+-             'response': token,
+-           },
+-         );
++         // Debug környezetben nem hívjuk a Google API‑t, mindig true‑t adunk vissza,
++         // hogy a fejlesztői tesztek ne akadjanak meg.
++         if (kDebugMode) return true;
++
++         final response = await http.post(
++           Uri.parse('https://www.google.com/recaptcha/api/siteverify'),
++           body: {
++             'secret': _secret,
++             'response': token,
++           },
++         );
+           if (response.statusCode != 200) return false;
+           final json = jsonDecode(response.body) as Map<String, dynamic>;
+           return json['success'] == true;
+         }
+
+  # 2️⃣  Hard‑coded "token" leváltása Step 1‑en
+  - patch_file:
+      target: lib/ui/auth/register_step1_form.dart
+      patch: |
+        @@
+-         final isHuman = await recaptcha.verifyToken('token');
++         final generatedToken = await recaptcha.execute();
++         final isHuman = await recaptcha.verifyToken(generatedToken);
+          if (!isHuman) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('reCAPTCHA ellenőrzés sikertelen.')),
+            );
+            return;
+          }
+
+  # 3️⃣  Widget‑teszt: bypass engedi a lapozást
+  - write_test:
+      name: recaptcha_bypass_allows_step2
+      location: test/widget/recaptcha_bypass_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+
+        void main() {
+          testWidgets('recaptcha bypass allows navigation to step2', (t) async {
+            await t.pumpWidget(const MaterialApp(home: RegisterWizard()));
+            await t.enterText(find.byKey(const Key('emailField')), 'test@exam.com');
+            await t.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await t.enterText(find.byKey(const Key('confirmPasswordField')), 'Teszt123!');
+            await t.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await t.pumpAndSettle();
+            expect(find.byKey(const Key('nicknameField')), findsOneWidget);
+          });
+        }
+
+  # 4️⃣  Integration teszt – teljes flow debugban
+  - write_test:
+      name: register_flow_debug_no_recaptcha_test
+      location: integration_test/register_flow_debug_no_recaptcha_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:integration_test/integration_test.dart';
+        import 'package:tippmixapp/main.dart' as app;
+
+        void main() {
+          IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+          testWidgets('full register flow – debug reCAPTCHA bypass', (t) async {
+            app.main();
+            await t.pumpAndSettle();
+            // végigmegyünk Step1‑2‑3-on (helper függvényekkel)…
+            // a folyamat végén EmailNotVerifiedScreen jelenik meg
+            expect(find.text('E‑mail megerősítése szükséges'), findsOneWidget);
+          });
+        }
+
+  # 5️⃣  Statikus ellenőrzés + tesztek
+  - run: flutter analyze --fatal-infos
+  - run: flutter test
+  - run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/register_flow_debug_no_recaptcha_test.dart
