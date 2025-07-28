@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import '../constants/firebase_constants.dart';
 
 /// Thrown when the checked email already exists in backend.
 class EmailAlreadyInUseFailure implements Exception {}
@@ -15,7 +16,11 @@ class AuthRepository {
   /// Throws [EmailAlreadyInUseFailure] when the backend
   /// responds with HTTP 409 or `already-exists` code.
   Future<bool> isEmailAvailable(String email) async {
-    final callable = _functions.httpsCallable('checkEmail');
+    final funcs = FirebaseFunctions.instanceFor(
+      app: _functions.app,
+      region: kFunctionsRegion,
+    );
+    final callable = funcs.httpsCallable('$kFunctionsRegion-checkEmail');
     try {
       await callable.call({'email': email});
       return true;
