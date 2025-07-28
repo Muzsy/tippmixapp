@@ -31,13 +31,17 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             child: DropdownButton<LeaderboardMode>(
               value: mode,
               onChanged: (m) {
-                if (m != null) ref.read(leaderboardModeProvider.notifier).state = m;
+                if (m != null) {
+                  ref.read(leaderboardModeProvider.notifier).state = m;
+                }
               },
               items: LeaderboardMode.values
-                  .map((m) => DropdownMenuItem(
-                        value: m,
-                        child: Text(_modeText(loc, m)),
-                      ))
+                  .map(
+                    (m) => DropdownMenuItem(
+                      value: m,
+                      child: Text(_modeText(loc, m)),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -55,8 +59,14 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                     return ListTile(
                       leading: Text('${index + 1}.'),
                       title: Text(
-                        isMe ? '${loc.leaderboard_you} (${item.displayName})' : item.displayName,
-                        style: TextStyle(fontWeight: isMe ? FontWeight.bold : FontWeight.normal),
+                        isMe
+                            ? '${loc.leaderboard_you} (${item.displayName})'
+                            : item.displayName,
+                        style: TextStyle(
+                          fontWeight: isMe
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
                       ),
                       subtitle: Text(_subtitle(loc, item, mode)),
                       tileColor: isMe
@@ -86,7 +96,11 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     }
   }
 
-  String _subtitle(AppLocalizations loc, UserStatsModel stats, LeaderboardMode mode) {
+  String _subtitle(
+    AppLocalizations loc,
+    UserStatsModel stats,
+    LeaderboardMode mode,
+  ) {
     switch (mode) {
       case LeaderboardMode.byCoin:
         return '${stats.coins} ${loc.home_coin}';

@@ -4,11 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:tippmixapp/ui/auth/auth_gate.dart';
 import 'package:tippmixapp/screens/home_screen.dart';
 import 'package:tippmixapp/providers/onboarding_provider.dart';
+import 'package:tippmixapp/router.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
 class MockUser extends Mock implements User {}
 
 void main() {
@@ -21,9 +22,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [firebaseAuthProvider.overrideWithValue(mockAuth)],
-        child: const MaterialApp.router(
-          routerConfig: router,
-        ),
+        child: MaterialApp.router(routerConfig: router),
       ),
     );
     await tester.pumpAndSettle();
