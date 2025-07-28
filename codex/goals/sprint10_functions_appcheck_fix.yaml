@@ -1,0 +1,107 @@
+meta:
+  canvas: sprint10_functions_appcheck_fix.md
+  priority: P0
+
+steps:
+  # 1️⃣  Konstans régió létrehozása
+  - add_file:
+      path: lib/constants/firebase_constants.dart
+      content: |
+        /// Globális Firebase‑konstansok
+        const kFunctionsRegion = 'europe-central2';
+
+  # 2️⃣  AuthRepository refaktor – régiós callable + név
+  - patch_file:
+      target: lib/services/auth_repository.dart
+      patch: |
+        @@
+-   final callable = _functions.httpsCallable('checkEmail');
++   final funcs = FirebaseFunctions.instanceFor(region: kFunctionsRegion);
++   final callable = funcs.httpsCallable('${kFunctionsRegion}-checkEmail');
+        final email = _functionsInputAdapter(cleanEmail);
+
+  # 3️⃣  AppCheck debug provider aktiválása
+  - patch_file:
+      target: lib/bootstrap.dart
+      patch: |
+        @@
+        await Firebase.initializeApp(/* ... */);
++
++       // App Check – fejlesztői / CI környezetben Debug providerre váltunk,
++       // hogy a Cloud Functions 403‑at elkerüljük.
++       if (kDebugMode) {
++         await FirebaseAppCheck.instance.activate(
++           androidProvider: AndroidProvider.debug,
++           appleProvider: AppleProvider.debug,
++         );
++       }
+
+  # 4️⃣  Unit teszt – régiós callable hívódik
+  - write_test:
+      name: auth_repository_email_check_test
+      location: test/unit/auth_repository_email_check_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:mocktail/mocktail.dart';
+        import 'package:firebase_functions_platform_interface/firebase_functions_platform_interface.dart';
+        import 'package:tippmixapp/constants/firebase_constants.dart';
+        import 'package:tippmixapp/services/auth_repository.dart';
+
+        class _MockFunctions extends Mock implements FirebaseFunctionsPlatform {}
+        class _MockCallable extends Mock implements HttpsCallablePlatform {}
+
+        void main() {
+          TestWidgetsFlutterBinding.ensureInitialized();
+          test('isEmailAvailable calls region aware function', () async {
+            final funcs = _MockFunctions();
+            final callable = _MockCallable();
+            when(() => funcs.httpsCallable('${kFunctionsRegion}-checkEmail'))
+                .thenReturn(callable);
+            when(() => callable.call(any())).thenAnswer((_) async =>
+                HttpsCallableResult({'exists': false}));
+
+            final repo = AuthRepository(functions: funcs);
+            final result = await repo.isEmailAvailable('x@y.com');
+            expect(result, true);
+            verify(() => funcs.httpsCallable('${kFunctionsRegion}-checkEmail'))
+                .called(1);
+          });
+        }
+
+  # 5️⃣  Widget teszt – email exists SnackBar
+  - write_test:
+      name: register_email_exists_shows_error_test
+      location: test/widget/register_email_exists_shows_error_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:mocktail/mocktail.dart';
+        import 'package:tippmixapp/ui/auth/register_wizard.dart';
+        import 'package:tippmixapp/services/auth_repository.dart';
+        import 'package:provider/provider.dart';
+
+        class _MockRepo extends Mock implements AuthRepository {}
+
+        void main() {
+          testWidgets('email exists shows snackbar', (t) async {
+            final repo = _MockRepo();
+            when(() => repo.isEmailAvailable(any())).thenThrow(EmailAlreadyInUseFailure());
+            await t.pumpWidget(
+              Provider<AuthRepository>.value(
+                value: repo,
+                child: const MaterialApp(home: RegisterWizard()),
+              ),
+            );
+            await t.enterText(find.byKey(const Key('emailField')), 'taken@x.com');
+            await t.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await t.enterText(find.byKey(const Key('confirmPasswordField')), 'Teszt123!');
+            await t.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await t.pump();
+            expect(find.text('Ez az e-mail már foglalt.'), findsOneWidget);
+          });
+        }
+
+  # 6️⃣  Code‑quality + tesztek (Guidelines)
+  - run: dart format . --set-exit-if-changed
+  - run: flutter analyze --fatal-infos --fatal-warnings
+  - run: flutter test --coverage
