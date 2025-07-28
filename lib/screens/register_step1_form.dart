@@ -42,11 +42,11 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
     final hibp = ref.read(hibpServiceProvider);
     final analytics = ref.read(analyticsServiceProvider);
     final recaptcha = ref.read(recaptchaServiceProvider);
-      if (await hibp.isPasswordPwned(_passCtrl.text)) {
-        analytics.logRegPasswordPwned();
-        // ignore: use_build_context_synchronously
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
+    if (await hibp.isPasswordPwned(_passCtrl.text)) {
+      analytics.logRegPasswordPwned();
+      // ignore: use_build_context_synchronously
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
         // ignore: use_build_context_synchronously
         SnackBar(
           // ignore: use_build_context_synchronously
@@ -55,10 +55,11 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
       );
       return;
     }
-      final generatedToken = await recaptcha.execute();
-      if (!await recaptcha.verifyToken(generatedToken)) {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
+    final generatedToken = await recaptcha.execute();
+    final isHuman = await recaptcha.verifyToken(generatedToken);
+    if (!isHuman) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
         // ignore: use_build_context_synchronously
         SnackBar(
           // ignore: use_build_context_synchronously
