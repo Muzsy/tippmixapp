@@ -20,7 +20,8 @@ class RecaptchaService {
   }
 
   Future<bool> verifyToken(String token) async {
-    // In debug environment skip the network call so developer tests run fast.
+    // Debug környezetben nem hívjuk a Google API-t, mindig true-t adunk vissza,
+    // hogy a fejlesztői tesztek ne akadjanak meg.
     if (kDebugMode) return true;
 
     final response = await _client
