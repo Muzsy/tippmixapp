@@ -14,7 +14,9 @@ Future<Map<String, dynamic>> callLogCoin(
   if (amount is! int || amount == 0) throw 'invalid-argument';
   const allowed = ['bet', 'deposit', 'withdraw', 'adjust'];
   if (!allowed.contains(type)) throw 'invalid-argument';
-  if (transactionId is! String || transactionId.isEmpty) throw 'invalid-argument';
+  if (transactionId is! String || transactionId.isEmpty) {
+    throw 'invalid-argument';
+  }
   final doc = firestore.collection('coin_logs').doc(transactionId);
   await doc.set({
     'userId': uid,
@@ -56,6 +58,7 @@ class FakeFirestore extends Fake {
     throw UnimplementedError();
   }
 }
+
 void main() {
   test('successfully stores log', () async {
     final fs = FakeFirestore();
@@ -70,10 +73,10 @@ void main() {
 
   test('unauthenticated throws', () async {
     final fs = FakeFirestore();
-    expect(() => callLogCoin(fs, {
-      'amount': 5,
-      'type': 'bet',
-      'transactionId': 't2',
-    }), throwsA('unauthenticated'));
+    expect(
+      () =>
+          callLogCoin(fs, {'amount': 5, 'type': 'bet', 'transactionId': 't2'}),
+      throwsA('unauthenticated'),
+    );
   });
 }
