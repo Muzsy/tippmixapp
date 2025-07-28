@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:tippmixapp/main.dart' as app;
 import 'package:tippmixapp/l10n/app_localizations_en.dart';
 
 void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final loc = AppLocalizationsEn();
 
   testWidgets('guest tap on bet slip shows login dialog', (tester) async {
