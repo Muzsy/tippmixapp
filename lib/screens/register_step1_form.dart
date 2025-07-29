@@ -55,7 +55,16 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
       );
       return;
     }
-    final generatedToken = await recaptcha.execute();
+    String generatedToken;
+    try {
+      generatedToken = await recaptcha.execute();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.recaptcha_failed_error)),
+      );
+      return;
+    }
     final isHuman = await recaptcha.verifyToken(generatedToken);
     if (!isHuman) {
       // ignore: use_build_context_synchronously
