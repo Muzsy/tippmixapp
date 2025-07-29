@@ -1,34 +1,32 @@
-import 'package:cloud_functions/cloud_functions.dart';
-import '../constants/firebase_constants.dart';
+// Cloud Functions import eltávolítva – nincs többé szükség
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 /// Thrown when the checked email already exists in backend.
 class EmailAlreadyInUseFailure implements Exception {}
 
 /// Repository handling auth related network calls.
 class AuthRepository {
-  final FirebaseFunctions _functions;
+  final FirebaseAuth _firebaseAuth;
 
-  AuthRepository({FirebaseFunctions? functions})
-    : _functions = functions ?? FirebaseFunctions.instance;
+  AuthRepository({FirebaseAuth? firebaseAuth})
+    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   /// Returns `true` if the email does not exist yet.
   ///
   /// Throws [EmailAlreadyInUseFailure] when the backend
   /// responds with HTTP 409 or `already-exists` code.
   Future<bool> isEmailAvailable(String email) async {
-    final funcs = FirebaseFunctions.instanceFor(
-      app: _functions.app,
-      region: kFunctionsRegion,
-    );
-    final callable = funcs.httpsCallable('$kFunctionsRegion-checkEmail');
     try {
-      await callable.call({'email': email});
-      return true;
-    } on FirebaseFunctionsException catch (e) {
-      if (e.code == 'already-exists' || e.details == 409) {
-        throw EmailAlreadyInUseFailure();
+      final methods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
+      return methods.isEmpty; // true ⇒ szabad e‑mail
+    } on FirebaseAuthException catch (e) {
+      // Offline vagy egyéb hiba → fail-open, de logoljuk
+      if (kDebugMode) {
+        // ignore: avoid_print
+        print('[EMAIL_CHECK] fetchSignInMethods error: ${e.code}');
       }
-      rethrow;
+      return true; // ne blokkoljuk a flow‑t
     }
   }
 }
