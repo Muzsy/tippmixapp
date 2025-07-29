@@ -1,0 +1,162 @@
+meta:
+canvas: sprint12\_recaptcha\_execute\_impl.md
+priority: P0
+
+steps:
+
+# 1️⃣  execute() implementálása
+
+* patch\_file:
+  target: lib/services/recaptcha\_service.dart
+  patch: |
+  @@
+* Future<String> execute() async {
+* ```
+  if (kDebugMode) return 'debug-token';
+  ```
+* ```
+  // TODO: integrate real reCAPTCHA execution
+  ```
+* ```
+  return '';
+  ```
+* }
+
+- Future<String> execute() async {
+- ```
+  // Debug / teszt környezetben shortcut token
+  ```
+- ```
+  if (kDebugMode) return 'debug-token';
+  ```
+-
+- ```
+  // Web – Firebase Auth invisible reCAPTCHA
+  ```
+- ```
+  if (kIsWeb) {
+  ```
+- ```
+    final completer = Completer<String>();
+  ```
+- ```
+    final verifier = fb.FirebaseAuth.instance.recaptchaVerifier(
+  ```
+- ```
+      RecaptchaVerifier(
+  ```
+- ```
+        size: RecaptchaVerifierSize.invisible,
+  ```
+- ```
+        callback: completer.complete,
+  ```
+- ```
+        onError: completer.completeError,
+  ```
+- ```
+      ),
+  ```
+- ```
+    );
+  ```
+- ```
+    await verifier.render();
+  ```
+- ```
+    await verifier.verify();
+  ```
+- ```
+    return completer.future.timeout(const Duration(seconds: 10));
+  ```
+- ```
+  }
+  ```
+-
+- ```
+  // Mobile – App Check token
+  ```
+- ```
+  final appCheckToken = await FirebaseAppCheck.instance.getToken();
+  ```
+- ```
+  final token = appCheckToken?.token ?? '';
+  ```
+- ```
+  if (token.isEmpty) {
+  ```
+- ```
+    throw Exception('Unable to acquire reCAPTCHA token');
+  ```
+- ```
+  }
+  ```
+- ```
+  return token;
+  ```
+- }
+-
+
++@@
++import 'package\:firebase\_auth/firebase\_auth.dart' as fb;
++import 'package\:firebase\_app\_check/firebase\_app\_check.dart';
++import 'package\:flutter/foundation.dart' show kIsWeb;
+
+# 2️⃣  UI hibakezelés
+
+* patch\_file:
+  target: lib/screens/register\_step1\_form.dart
+  patch: |
+  @@
+* ```
+  final generatedToken = await recaptcha.execute();
+  ```
+
+- ```
+  String generatedToken;
+  ```
+- ```
+  try {
+  ```
+- ```
+    generatedToken = await recaptcha.execute();
+  ```
+- ```
+  } catch (e) {
+  ```
+- ```
+    if (!mounted) return;
+  ```
+- ```
+    ScaffoldMessenger.of(context).showSnackBar(
+  ```
+- ```
+      SnackBar(content: Text(AppLocalizations.of(context)!.recaptcha_failed_error)),
+  ```
+- ```
+    );
+  ```
+- ```
+    return;
+  ```
+- ```
+  }
+  ```
+
+  # 3️⃣  Unit + widget tesztek helyfoglaló létrehozása
+
+  * add\_file:
+    target: test/widget/recaptcha\_web\_token\_test.dart
+    content: |
+    // TODO: mock RecaptchaVerifier and assert non-empty token.
+  * add\_file:
+    target: integration\_test/register\_flow\_recaptcha\_mobile\_test.dart
+    content: |
+    // TODO: drive full flow on mobile with debug build.
+
+  # 4️⃣  CI parancs futtatása
+
+  * run\_commands:
+    commands:
+    \- flutter analyze
+    \- flutter test
