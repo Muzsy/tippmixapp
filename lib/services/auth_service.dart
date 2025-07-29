@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
@@ -19,11 +20,12 @@ class AuthService {
     FacebookAuth? facebookAuth,
     FirebaseFunctions? functions,
     FirebaseAppCheck? appCheck,
-  })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-        _facebookAuth = facebookAuth ?? FacebookAuth.instance,
-        _functions =
-            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2'),
-        _appCheck = appCheck ?? FirebaseAppCheck.instance;
+  }) : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+       _facebookAuth = facebookAuth ?? FacebookAuth.instance,
+       _functions =
+           functions ??
+           FirebaseFunctions.instanceFor(region: 'europe-central2'),
+       _appCheck = appCheck ?? FirebaseAppCheck.instance;
 
   // Stream a bejelentkezési állapot figyelésére
   Stream<User?> authStateChanges() {
@@ -59,13 +61,14 @@ class AuthService {
   // Google sign-in using google_sign_in for a smoother UX
   Future<User?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser =
-          await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
+          .authenticate();
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
-      final GoogleSignInClientAuthorization authz =
-          await googleUser.authorizationClient.authorizeScopes(<String>['email']);
+      final GoogleSignInClientAuthorization authz = await googleUser
+          .authorizationClient
+          .authorizeScopes(<String>['email']);
 
       final credential = fb.GoogleAuthProvider.credential(
         accessToken: authz.accessToken,
@@ -109,8 +112,9 @@ class AuthService {
     try {
       final res = await _facebookAuth.login();
       if (res.status == LoginStatus.success) {
-        final credential =
-            fb.FacebookAuthProvider.credential(res.accessToken!.token);
+        final credential = fb.FacebookAuthProvider.credential(
+          res.accessToken!.token,
+        );
         final cred = await _firebaseAuth.signInWithCredential(credential);
         final user = cred.user;
         if (user == null) return null;
@@ -166,8 +170,9 @@ class AuthService {
   Future<bool> validateEmailUnique(String email) async {
     final callable = _functions.httpsCallable('checkEmailUnique');
     try {
-      final result =
-          await callable.call<Map<String, dynamic>>({'email': email});
+      final result = await callable.call<Map<String, dynamic>>({
+        'email': email,
+      });
       return result.data['unique'] as bool? ?? true;
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
@@ -188,24 +193,23 @@ class AuthService {
   }
 
   Future<bool> validateNicknameUnique(String nickname) async {
-    final callable = _functions.httpsCallable('checkNicknameUnique');
     try {
-      final result =
-          await callable.call<Map<String, dynamic>>({'nickname': nickname});
-      return result.data['unique'] as bool? ?? true;
-    } on FirebaseFunctionsException catch (e) {
-      if (e.code == 'permission-denied') {
-        if (kDebugMode) {
-          // ignore: avoid_print
-          print('validateNicknameUnique permission-denied, assuming unique');
-        }
-        return true;
+      final snap = await FirebaseFirestore.instance
+          .collection('profiles')
+          .where('nickname', isEqualTo: nickname)
+          .limit(1)
+          .get();
+      return snap.docs.isEmpty;
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        // ignore: avoid_print
+        print('[NICK_CHECK] FirebaseException ${e.code} – assume unique');
       }
-      rethrow;
+      return true; // offline → fail-open
     } on TimeoutException {
       if (kDebugMode) {
         // ignore: avoid_print
-        print('validateNicknameUnique timeout, assuming unique');
+        print('[NICK_CHECK] timeout – assume unique');
       }
       return true;
     }
