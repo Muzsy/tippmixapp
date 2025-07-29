@@ -1,0 +1,55 @@
+# 🗂️ codex_context_en.yaml – Global runtime context for Codex agents
+#
+# This YAML is loaded first when Codex starts. It provides project‑wide constants
+# and toggles that influence prompt building, feature flags and CI thresholds.
+# English version is the single source of truth; a Hungarian translation exists
+# for human readers (`codex_context_hu.yaml`).
+# ---------------------------------------------------------------------------
+
+project: TippmixApp
+version: "2025-07-29"
+
+# 🌐 Environment -------------------------------------------------------------
+environment:
+  default_locale: en
+  supported_locales: [hu, en, de]
+  timezone: Europe/Budapest
+  flutter_sdk: "3.22.1"
+
+# 🔥 Firebase setup ----------------------------------------------------------
+firebase:
+  project_id: tippmix-dev
+  emulator_ports:
+    firestore: 8080
+    auth: 9099
+
+# 🚩 Feature flags -----------------------------------------------------------
+feature_flags:
+  enable_cashout: true          # Enables cash‑out functionality in Bet screen
+  use_material3: true           # Forces Material 3 component usage
+  show_dev_banner: false        # Hide the debug banner in release flavour
+
+# 📊 Continuous Integration -----------------------------------------------
+ci:
+  target_platforms: [android, ios, macos]
+  coverage_threshold: 0.80      # 80 % min line coverage
+  golden_locales: [hu, en, de]
+
+# 👥 Maintainer groups ------------------------------------------------------
+codeowners_groups:
+  docs: [@alice, @bob]
+  core: [@core-dev1, @core-dev2]
+
+# 📁 Important paths --------------------------------------------------------
+paths:
+  docs_root: docs/
+  codex_root: codex_docs/
+  goals_root: codex/goals/
+
+# 🛑 Guard rails ------------------------------------------------------------
+# Codex must refuse to generate or modify files outside these roots.
+allowed_write_paths:
+  - lib/
+  - test/
+  - docs/
+  - codex/

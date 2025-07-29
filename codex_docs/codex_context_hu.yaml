@@ -1,0 +1,55 @@
+# 🗂️ codex_context_hu.yaml – Globális futásidejű kontextus a Codex ügynököknek
+#
+# Ezt a YAML-t tölti be elsőként a Codex indításkor. Projekt‑szintű konstansokat
+# és kapcsolókat tartalmaz, amelyek befolyásolják a promptépítést, feature flageket
+# és a CI küszöbértékeit. Az angol verzió az elsődleges forrás
+# (`codex_context_en.yaml`); ez a fájl annak magyar fordítása.
+# ---------------------------------------------------------------------------
+
+project: TippmixApp
+version: "2025-07-29"
+
+# 🌐 Környezet --------------------------------------------------------------
+environment:
+  default_locale: en            # Alapértelmezett nyelv (angol) – az app runtime‑ban váltható
+  supported_locales: [hu, en, de]
+  timezone: Europe/Budapest
+  flutter_sdk: "3.22.1"
+
+# 🔥 Firebase beállítás -----------------------------------------------------
+firebase:
+  project_id: tippmix-dev
+  emulator_ports:
+    firestore: 8080             # Firestore emulátor portja
+    auth: 9099                  # Firebase Auth emulátor portja
+
+# 🚩 Feature flagek ---------------------------------------------------------
+feature_flags:
+  enable_cashout: true          # Cash‑out funkció engedélyezése
+  use_material3: true           # Material 3 komponensek kényszerítése
+  show_dev_banner: false        # Debug banner elrejtése release buildben
+
+# 📊 CI beállítások ---------------------------------------------------------
+ci:
+  target_platforms: [android, ios, macos]
+  coverage_threshold: 0.80      # Minimum 80 % sorlefedettség
+  golden_locales: [hu, en, de]
+
+# 👥 Karbantartó csoportok ---------------------------------------------------
+codeowners_groups:
+  docs: [@alice, @bob]
+  core: [@core-dev1, @core-dev2]
+
+# 📁 Fontos útvonalak --------------------------------------------------------
+paths:
+  docs_root: docs/
+  codex_root: codex_docs/
+  goals_root: codex/goals/
+
+# 🛑 Védőkorlátok ------------------------------------------------------------
+# A Codex nem hozhat létre vagy módosíthat fájlokat a megadott gyökereken kívül.
+allowed_write_paths:
+  - lib/
+  - test/
+  - docs/
+  - codex/
