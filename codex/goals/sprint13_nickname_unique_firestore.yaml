@@ -1,0 +1,150 @@
+meta:
+canvas: sprint13\_nickname\_unique\_firestore.md
+priority: P0
+
+steps:
+
+# 1️⃣  Cloud Function eltávolítása
+
+* patch\_file:
+  target: lib/services/auth\_service.dart
+  patch: |
+  @@
+* import 'package\:cloud\_functions/cloud\_functions.dart';
+
+- import 'package\:cloud\_firestore/cloud\_firestore.dart';
+  @@
+
+* Future<bool> validateNicknameUnique(String nickname) async {
+* ```
+  final callable = _functions.httpsCallable('checkNicknameUnique');
+  ```
+* ```
+  try {
+  ```
+* ```
+    final result = await callable.call<Map<String, dynamic>>({'nickname': nickname});
+  ```
+* ```
+    return result.data['unique'] as bool? ?? true;
+  ```
+* ```
+  } on FirebaseFunctionsException catch (e) {
+  ```
+* ```
+    if (e.code == 'permission-denied') {
+  ```
+* ```
+      if (kDebugMode) {
+  ```
+* ```
+        print('validateNicknameUnique permission-denied, assuming unique');
+  ```
+* ```
+      }
+  ```
+* ```
+      return true;
+  ```
+* ```
+    }
+  ```
+* ```
+    rethrow;
+  ```
+* ```
+  } on TimeoutException {
+  ```
+* ```
+    if (kDebugMode) {
+  ```
+* ```
+      print('validateNicknameUnique timeout, assuming unique');
+  ```
+* ```
+    }
+  ```
+* ```
+    return true;
+  ```
+* ```
+  }
+  ```
+* }
+
+- Future<bool> validateNicknameUnique(String nickname) async {
+- ```
+  try {
+  ```
+- ```
+    final snap = await FirebaseFirestore.instance
+  ```
+- ```
+        .collection('profiles')
+  ```
+- ```
+        .where('nickname', isEqualTo: nickname)
+  ```
+- ```
+        .limit(1)
+  ```
+- ```
+        .get();
+  ```
+- ```
+    return snap.docs.isEmpty;
+  ```
+- ```
+  } on FirebaseException catch (e) {
+  ```
+- ```
+    if (kDebugMode) {
+  ```
+- ```
+      print('[NICK_CHECK] FirebaseException ${e.code} – assume unique');
+  ```
+- ```
+    }
+  ```
+- ```
+    return true; // offline → fail‑open
+  ```
+- ```
+  } on TimeoutException {
+  ```
+- ```
+    if (kDebugMode) {
+  ```
+- ```
+      print('[NICK_CHECK] timeout – assume unique');
+  ```
+- ```
+    }
+  ```
+- ```
+    return true;
+  ```
+- ```
+  }
+  ```
+- }
+- # 2️⃣  Unit‑teszt váz
+
+  * add\_file:
+    target: test/unit/auth\_service\_nickname\_test.dart
+    content: |
+    // TODO: mock FirebaseFirestore with fake\_async + cloud\_firestore\_mocks.
+
+  # 3️⃣  Widget‑teszt váz
+
+  * add\_file:
+    target: test/widget/register\_step2\_nickname\_taken\_test.dart
+    content: |
+    // TODO: pump RegisterStep2Form, enter taken nickname, expect errorText.
+
+  # 4️⃣  CI
+
+  * run\_commands:
+    commands:
+    \- flutter analyze
+    \- flutter test
