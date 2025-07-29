@@ -1,38 +1,39 @@
-# 🧠 AGENTS.md – TippmixApp Codex szerepleírás
+# 🧠 AGENTS.md – Codex Agent Configuration (TippmixApp)
 
-Ez a fájl a Codex működését szabályozó, **globálisan betöltendő** háttérleírás.
-A benne foglalt szabályok minden vászon (.md) + lépéslista (.yaml) az egyetlen elfogadott workflow
-
----
-
-## 📦 Projekt‐összefoglaló
-
-* **TippmixApp** – közösségi sportfogadási szimulátor (Flutter + Firebase)
-* Virtuális **TippCoin** pénznem (CoinService + Cloud Functions)
-* Biztonsági popup logika (GuardPopupService)
-* OddsAPI integráció a valós idejű odds‑okhoz
-* Enum‑alapú **AppLocalizations** rendszer + runtime nyelvváltás
-* **Codex‑alapú** fejlesztés: vászon (.md) + lépéslista (.yaml) az egyetlen elfogadott workflow
+This file is **loaded automatically** every time the Codex AI agents start. All generated code must comply with every rule listed below; otherwise the output is **invalid**.
 
 ---
 
-## 🧾 Kötelezően figyelembe veendő szabályfájlok
+## 📦 Project summary
 
-Az alábbi fájlok **automatikusan betöltődnek** minden Codex‑futás során; a kimenet akkor érvényes, ha *mindegyik* szabályrendszernek megfelel.
+* **TippmixApp** – community‑driven sports‑betting simulator (Flutter + Firebase)
+* Virtual **TippCoin** currency (`CoinService` + Cloud Functions)
+* Security pop‑up flow (`GuardPopupService`)
+* Live odds via **OddsAPI** integration
+* Enum‑based **AppLocalizations** system with runtime language switching
+* **Codex‑driven** development: *canvas (.md) + steps (.yaml)* is the only accepted workflow
 
-### 🔒 Codex szabályzat (`codex_docs/`)
+---
 
-| Fájl                         | Leírás                                                          |
-| ---------------------------- | --------------------------------------------------------------- |
-| `codex_context.yaml`         | Fájlszintű működés, naming‑konvenciók, általános tiltások       |
-| `routing_integrity.md`       | GoRouter navigáció – kötelező `context.goNamed()` használat     |
-| `localization_logic.md`      | Lokalizációs architektúra, `loc()` wrapper                      |
-| `service_dependencies.md`    | Engedélyezett service‑gráf, függőségi táblázat                  |
-| `priority_rules.md`          | P0–P3 feladat‑prioritási szabályok                              |
-| `codex_prompt_builder.yaml`  | Prompt felépítési irányelvek                                    |
-| `codex_dry_run_checklist.md` | Kötelező pre‑commit ellenőrzési lista                           |
-| `codex_theme_rules.md`       | **Színséma‑logika, FlexColorScheme, hard‑coded színek TILOS**   |
-| `testing_guidelines.md`      | Tesztesetek minimális követelményei (unit, widget, integrációs) |
+## 🧾 Mandatory policy files
+
+The files below live under **`codex_docs/`** and are **auto‑loaded** on every Codex run. A task is considered valid only if it satisfies *all* of these specifications.
+
+### 🔒 Codex policy (`codex_docs/`)
+
+| File                           | Description                                                        |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `codex_context_en.yaml`        | Global runtime constants, feature flags, CI thresholds             |
+| `codex_prompt_builder_en.yaml` | Prompt‑assembly rules for Codex                                    |
+| `priority_rules_en.md`         | P0–P3 priority & severity matrix                                   |
+| `routing_integrity_en.md`      | Required `GoRouter` patterns and navigation guards                 |
+| `localization_logic_en.md`     | i18n architecture and `loc()` wrapper guidelines                   |
+| `service_dependencies_en.md`   | Approved Service → Repository → DataSource graph                   |
+| `theme_rules_en.md`            | FlexColorScheme & brand‑colour constraints (no hard‑coded colours) |
+| `testing_guidelines_en.md`     | Minimum unit/widget/golden/E2E test requirements                   |
+| `precommit_checklist_en.md`    | Local checks that must pass **before** pushing                     |
+
+> **Note:** Each policy file has a Hungarian counterpart (`*_hu.*`) for human readers, but **only the English version is consumed by Codex**.
 
 ### 📚 Háttérdokumentáció (`docs/`)
 
@@ -49,38 +50,37 @@ Az alábbi fájlok **automatikusan betöltődnek** minden Codex‑futás során;
 | `coin_logs_cloud_function.md`          | Coin tranzakciók Cloud Function naplózása                        |
 | `security_rules_ci.md`                 | Firestore biztonsági szabályok és CI ellenőrzés                  |
 
-> **Megjegyzés:** a golden/a11y pipeline ideiglenesen szünetel, amíg legalább egy fő UI‑képernyő el nem éri az MVP státuszt (lásd `Golden_a11y QA Sprintek átmeneti szüneteltetése.pdf`).
-> A szabályzatok viszont már most is érvényben vannak, és a pipeline aktiválásakor azonnal betartandók.
+> **Megjegyzés:** a golden/a11y pipeline ideiglenesen szünetel, amíg legalább egy fő UI‑képernyő el nem éri az MVP státuszt. A szabályzatok viszont már most is érvényben vannak, és a pipeline aktiválásakor azonnal betartandók.
 
 ---
 
-## ⚠️ Globális tilalmak
+## ⚠️ Global prohibitions
 
-A Codex **soha nem** módosíthatja / commitolhatja:
+Codex **MUST NOT** create, modify or commit the following files:
 
 * `pubspec.yaml`
 * `firebase.json`
 * `l10n.yaml`
 * `.env`
-* **Bináris fájlok** (PNG, JPG, PDF, ZIP, stb.) – ezek manuális fejlesztői commitot igényelnek
+* **Binary assets** (PNG, JPG, PDF, ZIP, etc.) – these require a manual developer commit
 
-**Tilos továbbá:**
+**Further forbidden actions:**
 
-1. Új enum, service, screen vagy route létrehozása **vászon (.md) + YAML** nélkül
-2. Hard‑coded string a lokalizációban
-3. Hard‑coded szín (hex, rgb, `Colors.*`, stb.) bármely widgetben vagy `ThemeData`‑ban
-4. `context.go()` vagy `Navigator.push()` használata `GoRouter` helyett
-5. CI pipeline mellőzése – minden PR csak zöld CI‑vel mergelhető
+1. Creating a new enum, service, screen or route **without** a prior *canvas (.md) + YAML* definition
+2. Hard‑coded strings that bypass localization
+3. Hard‑coded colours (hex, RGB, `Colors.*`, etc.) in any widget or `ThemeData`
+4. Using `context.go()` or `Navigator.push()` instead of `GoRouter`
+5. Merging a PR with a failed CI pipeline – **every** CI step must be green
 
 ---
 
 ## ✅ Definition of Done (DoD)
 
-* **Új képernyő** → min. *1 widget test* (`test/widgets/`)
-* **Új service** → *unit test* a `test/services/` mappában
-* **Lokalizáció** → `hu`, `en`, `de` frissítés, `AppLocalizationsKey` enum bővítés
-* **Színséma** → Nincs hard‑coded szín, linter (`avoid-hard-coded-colors`) warningmentes
-* **CI pipeline** → `flutter analyze` + `flutter test --coverage` **minden lépése zöld**
+* **New screen** → at least *1 widget test* in `test/widgets/`
+* **New service** → *unit test* in `test/services/`
+* **Localization** → update `hu`, `en`, `de` ARB files and extend `AppLocalizationsKey` enum
+* **Theme** → zero hard‑coded colours; linter rule `avoid-hard-coded-colors` passes
+* **CI pipeline** → `flutter analyze` + `flutter test --coverage` **all** steps green
 
 ---
 
@@ -90,9 +90,8 @@ A Codex **soha nem** módosíthatja / commitolhatja:
 target_branch: main
 ```
 
-> Ha a Codex eltérne a fenti branch‑től, explicit utasítás (canvas) szükséges.
+If Codex needs to work on a different branch, an explicit instruction in the canvas is required.
 
 ---
 
-Ez a fájl **kötelező érvényű** a teljes TippmixApp projektre.
-Bármely generált kód, amely a fenti szabályok bármelyikét megszegi, **érvénytelen** és azonnali javításra, illetve PR‑visszavonásra szorul.
+This file is **binding** for the entire TippmixApp project. Any generated code violating these rules is **invalid** and must be fixed immediately before a pull request can be merged.

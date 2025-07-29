@@ -1,0 +1,62 @@
+# 🧾 codex_prompt_builder_en.yaml – Codex prompt strategy for TippmixApp
+#
+# This file defines how prompts are assembled for the Codex AI agent, ensuring
+# consistent context, tasks and acceptance criteria. The builder converts
+# structured YAML goals (e.g. `fill_canvas_*.yaml`) into natural‑language prompts.
+#
+# -----------------------------------------------------------------------------
+# 🟢 Core principles
+# -----------------------------------------------------------------------------
+# 1. Codex never "guesses" context – every prompt contains explicit files, goal
+#    description and Definition‑of‑Done (DoD) items.
+# 2. The source of truth is always a YAML goal file under `/codex/goals/`.
+# 3. Each prompt block contains: context, goal, file list and expected steps.
+#
+# -----------------------------------------------------------------------------
+# 🧠 Prompt logic
+# -----------------------------------------------------------------------------
+# A prompt is built from the following labelled blocks:
+#
+#   🧩 Context:
+#     - Project: TippmixApp – mobile sports‑betting simulator
+#     - Sprint: Sprint 1 (Leaderboard, Stats, Settings)
+#     - Module: leaderboard_screen
+#
+#   🎯 Goal:
+#     - Build a leaderboard screen based on Firestore data
+#     - Filter via SegmentedButton component
+#     - Highlight the current user
+#
+#   📎 Files:
+#     - lib/screens/leaderboard_screen.dart (output)
+#     - lib/viewmodel/leaderboard_vm.dart (output)
+#
+#   ✅ DoD:
+#     - Unit tests pass
+#     - Golden test green on hu/en/de locales
+#     - Route appears in GoRouter config
+#
+# -----------------------------------------------------------------------------
+# 🛠️ Prompt builder components
+# -----------------------------------------------------------------------------
+# * prompt_header  – project + sprint line.
+# * context        – module extract from canvas.
+# * steps          – YAML `steps:` rendered as ordered list.
+# * files          – absolute paths of all touched files.
+# * outputs        – list of created / modified files.
+#
+# -----------------------------------------------------------------------------
+# 🔒 Restrictions
+# -----------------------------------------------------------------------------
+# 1. Prompt must not reference undocumented files or classes.
+# 2. Codex should not ask follow‑up questions – all data must be present.
+# 3. Maximum token budget per prompt: 2,000 tokens.
+#
+# -----------------------------------------------------------------------------
+# 🏁 Build order (internal)
+# -----------------------------------------------------------------------------
+# When assembling, components are concatenated in this order:
+#   header → context → goal → files → steps → outputs → DoD
+#
+# Any deviation causes the prompt parser to throw and fail the CI check that
+# validates every `fill_canvas_*.yaml` during pull‑request.

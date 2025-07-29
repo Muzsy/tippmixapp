@@ -1,0 +1,63 @@
+# 🧾 codex_prompt_builder_hu.yaml – TippmixApp-specifikus Codex promptstratégia
+#
+# Ez a fájl határozza meg, hogyan épüljenek fel a Codex AI‑ügynök számára
+# küldött promtok, biztosítva a kontextus, a feladat és a DoD következetes
+# átadását. A builder a struktúrált YAML célfájlokat (pl. `fill_canvas_*.yaml`)
+# alakítja természetes nyelvű prompttá.
+#
+# -----------------------------------------------------------------------------
+# 🟢 Alapelvek
+# -----------------------------------------------------------------------------
+# 1. A Codex soha nem „találja ki” a kontextust – minden prompt tartalmazza a
+#    konkrét fájlokat, a feladat leírását és a Definition‑of‑Done pontokat.
+# 2. Az egyetlen igazolt forrás a `/codex/goals/` alatti YAML fájl.
+# 3. A prompt blokkjai: kontextus, cél, fájl‑lista és elvárt lépések.
+#
+# -----------------------------------------------------------------------------
+# 🧠 Prompt logika
+# -----------------------------------------------------------------------------
+# A prompt a következő címkézett blokkokból áll:
+#
+#   🧩 Kontextus:
+#     - Projekt: TippmixApp – mobil sportfogadási szimulátor
+#     - Sprint: Sprint 1 (Leaderboard, Stats, Settings)
+#     - Modul: leaderboard_screen
+#
+#   🎯 Feladat:
+#     - Képernyő létrehozása Firestore leaderboard alapján
+#     - SegmentedButton alapú szűrés
+#     - Saját user kiemelése
+#
+#   📎 Fájlok:
+#     - lib/screens/leaderboard_screen.dart (output)
+#     - lib/viewmodel/leaderboard_vm.dart (output)
+#
+#   ✅ DoD:
+#     - Unit tesztek zöldek
+#     - Golden teszt hu/en/de nyelven zöld
+#     - Útvonal bekerül a GoRouter konfigurációba
+#
+# -----------------------------------------------------------------------------
+# 🛠️ Promptépítő komponensek
+# -----------------------------------------------------------------------------
+# * prompt_header  – projekt + sprint sor.
+# * context        – modulleírás kivonat a canvasból.
+# * steps          – YAML `steps:` mező listába renderelve.
+# * files          – az érintett fájlok abszolút útvonallal.
+# * outputs        – létrejövő / módosított fájlok listája.
+#
+# -----------------------------------------------------------------------------
+# 🔒 Korlátozások
+# -----------------------------------------------------------------------------
+# 1. A prompt nem hivatkozhat nem dokumentált fájlra vagy osztályra.
+# 2. A Codex nem tehet fel visszakérdést – minden adatnak jelen kell lennie.
+# 3. Maximális token‑keret promptonként: 2000 token.
+#
+# -----------------------------------------------------------------------------
+# 🏁 Összefűzési sorrend (belső)
+# -----------------------------------------------------------------------------
+# A komponensek az alábbi sorrendben kerülnek összeépítésre:
+#   header → context → goal → files → steps → outputs → DoD
+#
+# Ettől való eltérés esetén a prompt parser hibát dob, és megbukik a CI‑lépés,
+# amely minden `fill_canvas_*.yaml` fájlt ellenőriz a pull‑request folyamatban.
