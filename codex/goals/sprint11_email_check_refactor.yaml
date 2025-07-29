@@ -1,0 +1,125 @@
+meta:
+  canvas: sprint11_email_check_refactor.md
+  priority: P0
+
+steps:
+  # 1️⃣  Cloud Functions hívás kivezetése, új implem.
+  - patch_file:
+      target: lib/services/auth_repository.dart
+      patch: |
+        @@
+-   final funcs = FirebaseFunctions.instanceFor(region: kFunctionsRegion);
+-   final callable = funcs.httpsCallable('${kFunctionsRegion}-checkEmail');
+-   final result = await callable.call(<String, dynamic>{'email': email});
+-   return !(result.data as Map)['exists'] as bool;
++   try {
++     final methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
++     return methods.isEmpty; // true ⇒ szabad e‑mail
++   } on FirebaseAuthException catch (e) {
++     // Offline vagy egyéb hiba → fail‑open, de logoljuk
++     if (kDebugMode) {
++       // ignore: avoid_print
++       print('[EMAIL_CHECK] fetchSignInMethods error: ${e.code}');
++     }
++     return true; // ne blokkoljuk a flow‑t
++   }
+
+  # 2️⃣  FirebaseFunctions import törlése, ha már nem kell
+  - patch_file:
+      target: lib/services/auth_repository.dart
+      patch: |
+        @@
+- import 'package:firebase_functions/firebase_functions.dart';
++ // Cloud Functions import eltávolítva – nincs többé szükség
+
+  # 3️⃣  Unit‑teszt – üres / nem üres methods lista
+  - write_test:
+      name: auth_repository_email_check_refactor_test
+      location: test/unit/auth_repository_email_check_refactor_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:mocktail/mocktail.dart';
+        import 'package:firebase_auth/firebase_auth.dart';
+        import 'package:tippmixapp/services/auth_repository.dart';
+
+        class _MockAuth extends Mock implements FirebaseAuth {}
+
+        void main() {
+          TestWidgetsFlutterBinding.ensureInitialized();
+          final mockAuth = _MockAuth();
+          test('email not in use returns true', () async {
+            when(() => mockAuth.fetchSignInMethodsForEmail(any()))
+                .thenAnswer((_) async => <String>[]);
+            final repo = AuthRepository(firebaseAuth: mockAuth);
+            expect(await repo.isEmailAvailable('x@y.hu'), true);
+          });
+
+          test('email exists returns false', () async {
+            when(() => mockAuth.fetchSignInMethodsForEmail(any()))
+                .thenAnswer((_) async => <String>['password']);
+            final repo = AuthRepository(firebaseAuth: mockAuth);
+            expect(await repo.isEmailAvailable('x@y.hu'), false);
+          });
+        }
+
+  # 4️⃣  Widget‑teszt – foglalt e‑mail SnackBar
+  - write_test:
+      name: register_email_taken_snackbar_test
+      location: test/widget/register_email_taken_snackbar_test.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:mocktail/mocktail.dart';
+        import 'package:provider/provider.dart';
+        import 'package:tippmixapp/services/auth_repository.dart';
+        import 'package:tippmixapp/ui/auth/register_step1_form.dart';
+
+        class _MockRepo extends Mock implements AuthRepository {}
+
+        void main() {
+          testWidgets('taken email shows snackbar', (t) async {
+            final repo = _MockRepo();
+            when(() => repo.isEmailAvailable(any())).thenAnswer((_) async => false);
+            await t.pumpWidget(
+              MaterialApp(
+                home: Scaffold(
+                  body: Provider<AuthRepository>.value(
+                    value: repo,
+                    child: const RegisterStep1Form(),
+                  ),
+                ),
+              ),
+            );
+            await t.enterText(find.byKey(const Key('emailField')), 'taken@x.com');
+            await t.enterText(find.byKey(const Key('passwordField')), 'Teszt123!');
+            await t.tap(find.widgetWithText(ElevatedButton, 'Tovább'));
+            await t.pump();
+            expect(find.textContaining('e‑mail cím már foglalt'), findsOneWidget);
+          });
+        }
+
+  # 5️⃣  Integration teszt – emulator flow
+  - write_test:
+      name: register_flow_email_check_refactor_test
+      location: integration_test/register_flow_email_check_refactor_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:integration_test/integration_test.dart';
+        import 'package:tippmixapp/main.dart' as app;
+
+        void main() {
+          IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+          testWidgets('happy path registration', (t) async {
+            app.main();
+            await t.pumpAndSettle();
+            // lépegetés Step1 → Step2 → Step3 (helper függvényekkel, lásd meglévő teszteket)
+            // végén várjuk Home vagy EmailVerif képernyőt
+            expect(find.textContaining('[REGISTER] SUCCESS'), findsOneWidget);
+          });
+        }
+
+  # 6️⃣  Futás: format, analyze, test, integration
+  - run: dart format . --set-exit-if-changed
+  - run: flutter analyze --fatal-infos --fatal-warnings
+  - run: flutter test --coverage
+  - run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/register_flow_email_check_refactor_test.dart
