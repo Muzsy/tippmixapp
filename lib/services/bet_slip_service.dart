@@ -101,7 +101,7 @@ class BetSlipService {
     await ticketsRef.doc(ticketId).set(ticket.toJson());
 
     if (kDebugMode) {
-      print(
+      debugPrint(
         '[BetSlipService] Ticket $ticketId saved (stake: $stake, odds: $totalOdd)',
       );
     }
