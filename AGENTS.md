@@ -1,4 +1,4 @@
-# 🧠 AGENTS.md – Codex Agent Configuration (TippmixApp)
+# 🧠 AGENTS.md – Codex Agent Configuration (TippmixApp)
 
 This file is **loaded automatically** every time the Codex AI agents start. All generated code must comply with every rule listed below; otherwise the output is **invalid**.
 
@@ -35,22 +35,28 @@ The files below live under **`codex_docs/`** and are **auto‑loaded** on every 
 
 > **Note:** Each policy file has a Hungarian counterpart (`*_hu.*`) for human readers, but **only the English version is consumed by Codex**.
 
-### 📚 Háttérdokumentáció (`docs/`)
+---
 
-| Fájl                                   | Téma                                                             |
-| -------------------------------------- | ---------------------------------------------------------------- |
-| `theme_management.md`                  | **Hivatalos színséma kezelési dokumentáció**                     |
-| `BrandColors_hasznalat.md`             | Brand színek használata `ThemeExtension`‑ön keresztül            |
-| `ThemeService_hasznalat.md`            | ThemeService API és perzisztencia‑logika                         |
-| `golden_and_accessibility_workflow.md` | Golden + a11y pipeline (jelenleg *inaktív*, lásd döntési doksit) |
-| `auth_best_practice.md`                | Firebase Auth irányelvek                                         |
-| `localization_best_practice.md`        | ARB struktúra, nyelvi kulcsok                                    |
-| `tippmix_app_teljes_adatmodell.md`     | Teljes adatmodell és entitás‑kapcsolatok                         |
-| `betting_ticket_data_model.md`         | TicketModel, TipModel részletes leírás                           |
-| `coin_logs_cloud_function.md`          | Coin tranzakciók Cloud Function naplózása                        |
-| `security_rules_ci.md`                 | Firestore biztonsági szabályok és CI ellenőrzés                  |
+## 📚 Background documentation (`docs/`)
 
-> **Megjegyzés:** a golden/a11y pipeline ideiglenesen szünetel, amíg legalább egy fő UI‑képernyő el nem éri az MVP státuszt. A szabályzatok viszont már most is érvényben vannak, és a pipeline aktiválásakor azonnal betartandók.
+| File                                             | Purpose                                         |
+| ------------------------------------------------ | ----------------------------------------------- |
+| `docs/backend/data_model_en.md`                  | UserModel, TicketModel, and TipModel structure  |
+| `docs/backend/coin_service_logic_en.md`          | CoinService rules and TippCoin transaction flow |
+| `docs/backend/security_rules_en.md`              | Firestore access and mutation security          |
+| `docs/frontend/auth_strategy_en.md`              | Authentication logic and UI flow                |
+| `docs/frontend/localization_best_practice_en.md` | ARB files and `loc()` usage                     |
+| `docs/frontend/theme_rules_en.md`                | Theme handling with FlexColorScheme             |
+| `docs/qa/golden_workflow_en.md`                  | Golden testing and a11y compliance              |
+| `docs/ci-cd/github_actions_pipeline_en.md`       | GitHub Actions pipeline and CI requirements     |
+| `docs/features/leaderboard_logic_en.md`          | Leaderboard structure and update strategy       |
+| `docs/features/badge_system_en.md`               | Badge types and achievement evaluation          |
+| `docs/features/feed_module_plan_en.md`           | Community activity feed plan and triggers       |
+| `docs/features/forum_module_plan_en.md`          | Forum design and thread/post logic              |
+| `docs/features/push_notification_strategy_en.md` | FCM setup and planned notification types        |
+| `docs/architecture/architecture_overview_en.md`  | Full system layer breakdown                     |
+
+> **Note:** All English docs have `_hu.md` translation pairs for local developers. Codex ignores the Hungarian versions.
 
 ---
 
