@@ -45,10 +45,14 @@ void main() {
       ProviderScope(
         overrides: [
           hibpServiceProvider.overrideWith((ref) => FakeHIBPService()),
-          recaptchaServiceProvider.overrideWith((ref) => FakeRecaptchaService()),
+          recaptchaServiceProvider.overrideWith(
+            (ref) => FakeRecaptchaService(),
+          ),
           authServiceProvider.overrideWith((ref) => MockAuthService()),
           authRepositoryProvider.overrideWith((ref) => FakeAuthRepository()),
-          analyticsServiceProvider.overrideWith((ref) => _FakeAnalyticsService()),
+          analyticsServiceProvider.overrideWith(
+            (ref) => _FakeAnalyticsService(),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -59,7 +63,10 @@ void main() {
       ),
     );
 
-    await tester.enterText(find.byType(TextFormField).first, 'test@example.com');
+    await tester.enterText(
+      find.byType(TextFormField).first,
+      'test@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'TestPassword1!');
     await tester.pump(const Duration(milliseconds: 350));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));

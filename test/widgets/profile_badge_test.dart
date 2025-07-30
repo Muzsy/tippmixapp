@@ -6,8 +6,8 @@ import 'package:tippmixapp/widgets/profile_badge.dart';
 
 void main() {
   testWidgets('ProfileBadgeGrid shows badges', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
+    await tester.pumpWidget(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale('en'),
@@ -30,8 +30,8 @@ void main() {
   });
 
   testWidgets('ProfileBadgeGrid empty state', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
+    await tester.pumpWidget(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale('en'),

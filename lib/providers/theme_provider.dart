@@ -6,9 +6,12 @@ class ThemeNotifier extends StateNotifier<AppColorTheme> {
   ThemeNotifier() : super(AppColorTheme.blue);
 
   void toggleTheme() {
-    state = state == AppColorTheme.pink ? AppColorTheme.blue : AppColorTheme.pink;
+    state = state == AppColorTheme.pink
+        ? AppColorTheme.blue
+        : AppColorTheme.pink;
   }
 }
 
-final themeProvider =
-    StateNotifierProvider<ThemeNotifier, AppColorTheme>((ref) => ThemeNotifier());
+final themeProvider = StateNotifierProvider<ThemeNotifier, AppColorTheme>(
+  (ref) => ThemeNotifier(),
+);

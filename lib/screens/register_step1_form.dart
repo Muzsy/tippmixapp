@@ -61,7 +61,9 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.recaptcha_failed_error)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.recaptcha_failed_error),
+        ),
       );
       return;
     }
@@ -87,8 +89,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.errorEmailExists),
+            content: Text(AppLocalizations.of(context)!.errorEmailExists),
           ),
         );
         return;
@@ -97,8 +98,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.errorEmailExists),
+            content: Text(AppLocalizations.of(context)!.errorEmailExists),
           ),
         );
         return;

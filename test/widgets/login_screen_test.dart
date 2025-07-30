@@ -66,7 +66,7 @@ Widget _buildApp({required Locale locale}) {
       GoRoute(
         path: '/home',
         name: AppRoute.home.name,
-        builder: (context, state) => const Scaffold(body: Text('Home')), 
+        builder: (context, state) => const Scaffold(body: Text('Home')),
       ),
     ],
   );
@@ -89,8 +89,9 @@ Widget _buildApp({required Locale locale}) {
 }
 
 void main() {
-  testWidgets('successful email login navigates to home for all locales',
-      (tester) async {
+  testWidgets('successful email login navigates to home for all locales', (
+    tester,
+  ) async {
     for (final locale in AppLocalizations.supportedLocales) {
       await tester.pumpWidget(_buildApp(locale: locale));
       await tester.pumpAndSettle();

@@ -41,10 +41,12 @@ Future<ThemeData> buildDynamicTheme({
   try {
     final palette = await DynamicColorPlugin.getCorePalette();
     if (palette != null) {
-      final colorScheme =
-          palette.toColorScheme(brightness: brightness).harmonized();
-      final brand =
-          brightness == Brightness.dark ? brandColorsDark : brandColorsLight;
+      final colorScheme = palette
+          .toColorScheme(brightness: brightness)
+          .harmonized();
+      final brand = brightness == Brightness.dark
+          ? brandColorsDark
+          : brandColorsLight;
       return ThemeData(
         colorScheme: colorScheme,
         useMaterial3: true,

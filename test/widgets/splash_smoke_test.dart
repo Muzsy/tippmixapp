@@ -76,10 +76,16 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          splashControllerProvider.overrideWith((ref) => _FakeSplashController()),
+          splashControllerProvider.overrideWith(
+            (ref) => _FakeSplashController(),
+          ),
           authServiceProvider.overrideWith((ref) => MockAuthService()),
-          analyticsServiceProvider.overrideWith((ref) => _FakeAnalyticsService()),
-          experimentServiceProvider.overrideWith((ref) => _FakeExperimentService()),
+          analyticsServiceProvider.overrideWith(
+            (ref) => _FakeAnalyticsService(),
+          ),
+          experimentServiceProvider.overrideWith(
+            (ref) => _FakeExperimentService(),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: router,

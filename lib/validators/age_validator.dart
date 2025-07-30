@@ -3,7 +3,8 @@ class AgeValidator {
     if (date == null) return null;
     final now = DateTime.now();
     int age = now.year - date.year;
-    if (now.month < date.month || (now.month == date.month && now.day < date.day)) {
+    if (now.month < date.month ||
+        (now.month == date.month && now.day < date.day)) {
       age--;
     }
     if (age < 18) return 'dob_error_underage';

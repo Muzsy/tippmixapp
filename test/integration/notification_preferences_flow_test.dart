@@ -12,7 +12,10 @@ class FakeUserService extends UserService {
   FakeUserService(super.firestore);
 
   @override
-  Future<UserModel> updateNotificationPrefs(String uid, Map<String, bool> prefs) async {
+  Future<UserModel> updateNotificationPrefs(
+    String uid,
+    Map<String, bool> prefs,
+  ) async {
     calls++;
     last = Map.from(prefs);
     return UserModel(
@@ -33,14 +36,16 @@ void main() {
     final firestore = FakeFirebaseFirestore();
     final service = FakeUserService(firestore);
 
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('en'),
-      home: Scaffold(
-        body: NotificationPrefsSection(uid: 'u1', service: service),
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: NotificationPrefsSection(uid: 'u1', service: service),
+        ),
       ),
-    ));
+    );
 
     await tester.tap(find.text('Tips'));
     await tester.pumpAndSettle();

@@ -25,7 +25,10 @@ class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
 void main() {
   group('ThemeService', () {
-    Future<ThemeService> createService({User? user, FakeFirebaseFirestore? fs}) async {
+    Future<ThemeService> createService({
+      User? user,
+      FakeFirebaseFirestore? fs,
+    }) async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       return ThemeService(
@@ -125,7 +128,10 @@ void main() {
     });
 
     test('hydrate falls back to defaults on error', () async {
-      SharedPreferences.setMockInitialValues({'theme_scheme': 2, 'theme_dark': true});
+      SharedPreferences.setMockInitialValues({
+        'theme_scheme': 2,
+        'theme_dark': true,
+      });
       final prefs = await SharedPreferences.getInstance();
       final firestore = MockFirebaseFirestore();
       when(() => firestore.collection(any())).thenThrow(Exception('fail'));

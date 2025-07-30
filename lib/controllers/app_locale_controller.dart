@@ -27,5 +27,5 @@ class AppLocaleController extends StateNotifier<Locale> {
 /// Riverpod provider for [AppLocaleController].
 final appLocaleControllerProvider =
     StateNotifierProvider<AppLocaleController, Locale>(
-  (ref) => AppLocaleController(),
-);
+      (ref) => AppLocaleController(),
+    );

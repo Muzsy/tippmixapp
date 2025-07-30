@@ -6,7 +6,7 @@ class NotificationService {
   final FirebaseFirestore _firestore;
 
   NotificationService([FirebaseFirestore? firestore])
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> _ref(String userId) {
     return _firestore.collection('users/$userId/notifications');
@@ -16,9 +16,11 @@ class NotificationService {
     return _ref(userId)
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => NotificationModel.fromJson(d.id, d.data()))
-            .toList());
+        .map(
+          (snap) => snap.docs
+              .map((d) => NotificationModel.fromJson(d.id, d.data()))
+              .toList(),
+        );
   }
 
   Future<void> markAsRead(String userId, String notificationId) async {

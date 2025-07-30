@@ -16,25 +16,22 @@ class TicketStatusChip extends StatelessWidget {
 
     switch (status) {
       case TicketStatus.won:
-          color = Theme.of(context).colorScheme.secondary;
+        color = Theme.of(context).colorScheme.secondary;
         label = loc.ticket_status_won;
         break;
-        case TicketStatus.lost:
-          color = Theme.of(context).colorScheme.error;
+      case TicketStatus.lost:
+        color = Theme.of(context).colorScheme.error;
         label = loc.ticket_status_lost;
         break;
-        case TicketStatus.pending:
-          color = Theme.of(context).colorScheme.outlineVariant;
+      case TicketStatus.pending:
+        color = Theme.of(context).colorScheme.outlineVariant;
         label = loc.ticket_status_pending;
         break;
-        case TicketStatus.voided:
-          color = Theme.of(context).colorScheme.outlineVariant;
+      case TicketStatus.voided:
+        color = Theme.of(context).colorScheme.outlineVariant;
         label = loc.ticket_status_void;
     }
 
-    return Chip(
-      backgroundColor: color,
-      label: Text(label),
-    );
+    return Chip(backgroundColor: color, label: Text(label));
   }
 }

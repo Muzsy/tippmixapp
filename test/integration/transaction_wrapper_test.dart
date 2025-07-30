@@ -70,11 +70,7 @@ void main() {
         functions: null,
       );
 
-      await service.debitCoin(
-        amount: 20,
-        reason: 'bet',
-        transactionId: 't1',
-      );
+      await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't1');
 
       final snap = await firestore.collection('wallets').doc('u1').get();
       expect(snap.data()!['coins'], 80);
@@ -99,7 +95,10 @@ void main() {
     });
 
     test('TW-03 retry deadline-exceeded twice', () async {
-      final firestore = StubFirestore(['deadline-exceeded', 'deadline-exceeded']);
+      final firestore = StubFirestore([
+        'deadline-exceeded',
+        'deadline-exceeded',
+      ]);
       await firestore.collection('wallets').doc('u1').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,

@@ -35,9 +35,7 @@ class NotificationItem extends StatelessWidget {
       leading: Icon(_iconForType(notification.type)),
       title: Text(notification.title),
       subtitle: Text(notification.description),
-      trailing: notification.isRead
-          ? null
-          : Text(loc.notificationMarkRead),
+      trailing: notification.isRead ? null : Text(loc.notificationMarkRead),
       onTap: onTap,
     );
   }

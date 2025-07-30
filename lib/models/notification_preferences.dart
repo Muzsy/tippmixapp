@@ -25,10 +25,10 @@ class NotificationPreferences {
   }
 
   Map<String, bool> toMap() => {
-        'tips': tips,
-        'friendActivity': friendActivity,
-        'badge': badge,
-        'rewards': rewards,
-        'system': system,
-      };
+    'tips': tips,
+    'friendActivity': friendActivity,
+    'badge': badge,
+    'rewards': rewards,
+    'system': system,
+  };
 }

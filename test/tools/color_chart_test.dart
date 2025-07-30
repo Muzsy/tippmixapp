@@ -8,7 +8,7 @@ void main() {
     (tester) async {
       // run chart.main() async, hogy ne blokkoljon a tesztpump
       await tester.runAsync(() async {
-        await chart.main();              // PNG elkészítése
+        await chart.main(); // PNG elkészítése
       });
 
       // várjunk, míg minden frame befejeződik

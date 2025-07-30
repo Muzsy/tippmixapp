@@ -8,8 +8,8 @@ class SocialService {
   final FirebaseAuth _auth;
 
   SocialService({FirebaseFirestore? firestore, FirebaseAuth? auth})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   String get _uid => _auth.currentUser!.uid;
 
@@ -45,11 +45,7 @@ class SocialService {
         .collection('relations')
         .doc(targetUid)
         .collection('friendRequests');
-    await col.add({
-      'fromUid': _uid,
-      'toUid': targetUid,
-      'accepted': false,
-    });
+    await col.add({'fromUid': _uid, 'toUid': targetUid, 'accepted': false});
   }
 
   Future<void> acceptFriendRequest(String requestId) async {
@@ -67,8 +63,10 @@ class SocialService {
         .doc(uid)
         .collection('friendRequests')
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => FriendRequest.fromJson(d.id, d.data()))
-            .toList());
+        .map(
+          (snap) => snap.docs
+              .map((d) => FriendRequest.fromJson(d.id, d.data()))
+              .toList(),
+        );
   }
 }

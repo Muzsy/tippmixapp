@@ -25,7 +25,9 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
 
   Future<void> _load() async {
     try {
-      final service = widget.coinService ?? CoinService(firestore: FirebaseFirestore.instance);
+      final service =
+          widget.coinService ??
+          CoinService(firestore: FirebaseFirestore.instance);
       final claimed = await service.hasClaimedToday();
       if (mounted) {
         setState(() {
@@ -41,7 +43,9 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
 
   Future<void> _claim() async {
     setState(() => _loading = true);
-    final service = widget.coinService ?? CoinService(firestore: FirebaseFirestore.instance);
+    final service =
+        widget.coinService ??
+        CoinService(firestore: FirebaseFirestore.instance);
     await service.claimDailyBonus();
     if (mounted) {
       setState(() {
@@ -68,7 +72,10 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
             children: [
               const Icon(Icons.card_giftcard, size: 48),
               const SizedBox(height: 8),
-              Text(loc.home_tile_daily_bonus_title, textAlign: TextAlign.center),
+              Text(
+                loc.home_tile_daily_bonus_title,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
               if (_claimed!)
                 Text(loc.home_tile_daily_bonus_claimed)

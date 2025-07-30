@@ -8,12 +8,15 @@ import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
 import 'package:go_router/go_router.dart';
 
-
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
   final bool showAppBar;
 
-  const EventsScreen({super.key, required this.sportKey, this.showAppBar = true});
+  const EventsScreen({
+    super.key,
+    required this.sportKey,
+    this.showAppBar = true,
+  });
 
   @override
   ConsumerState<EventsScreen> createState() => _EventsScreenState();
@@ -24,8 +27,10 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
   void initState() {
     super.initState();
     // Kick‑off the fetch exactly once after first frame
-    Future.microtask(() =>
-        ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey));
+    Future.microtask(
+      () =>
+          ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey),
+    );
   }
 
   @override
@@ -36,67 +41,69 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     final hasTips = ref.watch(betSlipProvider).tips.isNotEmpty;
 
     final body = Builder(
-        builder: (context) {
-          if (oddsState is OddsApiLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (oddsState is OddsApiError) {
-            return Center(child: Text(_localizeError(loc, oddsState.errorMessageKey)));
-          } else if (oddsState is OddsApiEmpty) {
+      builder: (context) {
+        if (oddsState is OddsApiLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (oddsState is OddsApiError) {
+          return Center(
+            child: Text(_localizeError(loc, oddsState.errorMessageKey)),
+          );
+        } else if (oddsState is OddsApiEmpty) {
+          return Center(child: Text(loc.events_screen_no_events));
+        } else if (oddsState is OddsApiData) {
+          final events = oddsState.events;
+          final quotaWarn = oddsState.quotaWarning;
+          if (events.isEmpty) {
             return Center(child: Text(loc.events_screen_no_events));
-          } else if (oddsState is OddsApiData) {
-            final events = oddsState.events;
-            final quotaWarn = oddsState.quotaWarning;
-            if (events.isEmpty) {
-              return Center(child: Text(loc.events_screen_no_events));
-            }
-            return Column(
-              children: [
-                if (quotaWarn)
-                  Container(
-                    color:
-                        Theme.of(context).colorScheme.tertiaryContainer,
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.warning,
-                          color:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            loc.events_screen_quota_warning,
-                            style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onTertiaryContainer,
-                            ),
+          }
+          return Column(
+            children: [
+              if (quotaWarn)
+                Container(
+                  color: Theme.of(context).colorScheme.tertiaryContainer,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.warning,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onTertiaryContainer,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          loc.events_screen_quota_warning,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onTertiaryContainer,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                      final event = events[index];
-                      return _EventCard(
-                        key: ValueKey(event.id),
-                        event: event,
-                        loc: loc,
-                      );
-                    },
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-      );
+              Expanded(
+                child: ListView.builder(
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    final event = events[index];
+                    return _EventCard(
+                      key: ValueKey(event.id),
+                      event: event,
+                      loc: loc,
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
 
     if (!widget.showAppBar) {
       return body;
@@ -105,9 +112,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
       return body;
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.bets_title),
-      ),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.bets_title)),
       body: body,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
@@ -129,7 +134,9 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
             heroTag: 'refreshOdds',
             tooltip: loc.events_screen_refresh,
             onPressed: () {
-              ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey);
+              ref
+                  .read(oddsApiProvider.notifier)
+                  .fetchOdds(sport: widget.sportKey);
             },
             child: const Icon(Icons.refresh),
           ),
@@ -202,20 +209,22 @@ class _EventCard extends ConsumerWidget {
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final tip = TipModel(
-                          eventId: event.id,
-                          eventName: '${event.homeTeam} – ${event.awayTeam}',
-                          startTime: event.commenceTime,
-                          sportKey: event.sportKey,
-                          bookmaker: bookmaker.key,
-                          marketKey: market.key,
-                          outcome: outcome.name,
-                          odds: outcome.price,
-                        );
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final tip = TipModel(
+                        eventId: event.id,
+                        eventName: '${event.homeTeam} – ${event.awayTeam}',
+                        startTime: event.commenceTime,
+                        sportKey: event.sportKey,
+                        bookmaker: bookmaker.key,
+                        marketKey: market.key,
+                        outcome: outcome.name,
+                        odds: outcome.price,
+                      );
 
-                      final added = ref.read(betSlipProvider.notifier).addTip(tip);
+                      final added = ref
+                          .read(betSlipProvider.notifier)
+                          .addTip(tip);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -230,7 +239,10 @@ class _EventCard extends ConsumerWidget {
                     },
                     child: Column(
                       children: [
-                        Text(outcome.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          outcome.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Text(outcome.price.toStringAsFixed(2)),
                       ],
                     ),

@@ -19,4 +19,5 @@ class ProfileController extends StateNotifier<AsyncValue<User?>> {
 
 final profileControllerProvider =
     StateNotifierProvider<ProfileController, AsyncValue<User?>>(
-        (ref) => ProfileController());
+      (ref) => ProfileController(),
+    );

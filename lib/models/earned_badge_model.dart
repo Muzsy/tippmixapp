@@ -1,4 +1,5 @@
 import "badge.dart";
+
 class EarnedBadgeModel {
   final BadgeData badge;
   final DateTime timestamp;

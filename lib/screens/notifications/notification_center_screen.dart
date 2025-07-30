@@ -80,7 +80,10 @@ class _NotificationCenterScreenState
                         }
                         ref
                             .read(notificationServiceProvider)
-                            .markAsRead(ref.read(authProvider).user!.id, item.id);
+                            .markAsRead(
+                              ref.read(authProvider).user!.id,
+                              item.id,
+                            );
                       },
                     );
                   },
@@ -93,9 +96,9 @@ class _NotificationCenterScreenState
         error: (e, _) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(e.toString())));
             }
           });
           return Center(child: Text(e.toString()));

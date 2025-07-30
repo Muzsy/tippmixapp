@@ -58,28 +58,30 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen>
             error: (_, _) => const SizedBox.shrink(),
           ),
           Center(
-            child: ref.watch(friendRequestsProvider(uid)).when(
-              data: (list) => ListView(
-                children: list
-                    .where((r) => !r.accepted)
-                    .map(
-                      (r) => ListTile(
-                        title: Text(r.fromUid),
-                        trailing: TextButton(
-                          onPressed: () {
-                            ref
-                                .read(socialServiceProvider)
-                                .acceptFriendRequest(r.id);
-                          },
-                          child: Text(loc.accept),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              loading: () => const CircularProgressIndicator(),
-              error: (_, _) => const SizedBox.shrink(),
-            ),
+            child: ref
+                .watch(friendRequestsProvider(uid))
+                .when(
+                  data: (list) => ListView(
+                    children: list
+                        .where((r) => !r.accepted)
+                        .map(
+                          (r) => ListTile(
+                            title: Text(r.fromUid),
+                            trailing: TextButton(
+                              onPressed: () {
+                                ref
+                                    .read(socialServiceProvider)
+                                    .acceptFriendRequest(r.id);
+                              },
+                              child: Text(loc.accept),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  loading: () => const CircularProgressIndicator(),
+                  error: (_, _) => const SizedBox.shrink(),
+                ),
           ),
         ],
       ),

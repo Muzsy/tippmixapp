@@ -33,10 +33,12 @@ class FakeDocumentReference extends Fake
   Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
     store[id] = data;
   }
+
   @override
   Future<void> update(Map<Object?, Object?> data) async {
     store[id]?.addAll(data.cast<String, dynamic>());
   }
+
   @override
   Future<void> delete() async {
     store.remove(id);
@@ -61,11 +63,13 @@ class FakeCollectionReference extends Fake
   FirebaseFirestore get firestore => _firestore;
   @override
   Future<DocumentReference<Map<String, dynamic>>> add(
-      Map<String, dynamic> data) async {
+    Map<String, dynamic> data,
+  ) async {
     final id = 'doc${store.length}';
     store[id] = data;
     return FakeDocumentReference(_firestore, '$path/$id', store, id);
   }
+
   @override
   DocumentReference<Map<String, dynamic>> doc([String? id]) {
     final key = id ?? 'doc${store.length}';

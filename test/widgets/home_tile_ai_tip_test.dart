@@ -31,10 +31,7 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
           home: Scaffold(
-            body: HomeTileAiTip(
-              tip: tip!,
-              onTap: () => tapped = true,
-            ),
+            body: HomeTileAiTip(tip: tip!, onTap: () => tapped = true),
           ),
         ),
       ),

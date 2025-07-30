@@ -37,13 +37,13 @@ class TippCoinLogModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'amount': amount,
-        'type': type,
-        'timestamp': timestamp.toIso8601String(),
-        if (txId != null) 'txId': txId,
-        if (meta != null) 'meta': meta,
-      };
+    'userId': userId,
+    'amount': amount,
+    'type': type,
+    'timestamp': timestamp.toIso8601String(),
+    if (txId != null) 'txId': txId,
+    if (meta != null) 'meta': meta,
+  };
 
   TippCoinLogModel copyWith({
     String? id,
@@ -120,20 +120,10 @@ class TippCoinLogModel {
   }
 
   @override
-  int get hashCode => Object.hash(
-        id,
-        userId,
-        amount,
-        type,
-        timestamp,
-        txId,
-        meta?.hashCode,
-      );
+  int get hashCode =>
+      Object.hash(id, userId, amount, type, timestamp, txId, meta?.hashCode);
 
-  static bool _mapEquals(
-    Map<String, dynamic>? a,
-    Map<String, dynamic>? b,
-  ) {
+  static bool _mapEquals(Map<String, dynamic>? a, Map<String, dynamic>? b) {
     if (a == null && b == null) return true;
     if (a == null || b == null) return false;
     if (a.length != b.length) return false;

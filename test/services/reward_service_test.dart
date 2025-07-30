@@ -13,7 +13,8 @@ class FakeHttpsCallable extends Fake implements HttpsCallable {
   }
 }
 
-class FakeHttpsCallableResult<T> extends Fake implements HttpsCallableResult<T> {
+class FakeHttpsCallableResult<T> extends Fake
+    implements HttpsCallableResult<T> {
   FakeHttpsCallableResult(this.data);
   @override
   final T data;

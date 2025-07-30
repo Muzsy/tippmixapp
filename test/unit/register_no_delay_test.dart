@@ -8,7 +8,9 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class _MockFirebaseAuth extends Mock implements fb.FirebaseAuth {}
+
 class _MockAppCheck extends Mock implements FirebaseAppCheck {}
+
 class _FakeFunctions extends Fake implements FirebaseFunctions {
   @override
   HttpsCallable httpsCallable(String name, {HttpsCallableOptions? options}) {
@@ -31,10 +33,12 @@ void main() {
       final mockAuth = _MockFirebaseAuth();
       final mockAppCheck = _MockAppCheck();
       when(() => mockAppCheck.getToken(true)).thenAnswer((_) async => 'token');
-      when(() => mockAuth.createUserWithEmailAndPassword(
-            email: any(named: 'email'),
-            password: any(named: 'password'),
-          )).thenAnswer((_) async => _FakeUserCredential());
+      when(
+        () => mockAuth.createUserWithEmailAndPassword(
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      ).thenAnswer((_) async => _FakeUserCredential());
       final service = AuthService(
         firebaseAuth: mockAuth,
         appCheck: mockAppCheck,

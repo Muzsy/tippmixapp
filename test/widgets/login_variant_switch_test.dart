@@ -37,13 +37,15 @@ class FakeExperimentService extends ExperimentService {
 }
 
 Widget _buildApp(ProviderContainer container) {
-  final router = GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      name: AppRoute.login.name,
-      builder: (context, state) => const LoginScreen(),
-    ),
-  ]);
+  final router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        name: AppRoute.login.name,
+        builder: (context, state) => const LoginScreen(),
+      ),
+    ],
+  );
   return UncontrolledProviderScope(
     container: container,
     child: MaterialApp.router(
@@ -56,10 +58,14 @@ Widget _buildApp(ProviderContainer container) {
 
 void main() {
   testWidgets('shows promo panel when variant B', (tester) async {
-    final container = ProviderContainer(overrides: [
-      experimentServiceProvider.overrideWith((ref) => FakeExperimentService()),
-      analyticsServiceProvider.overrideWith((ref) => FakeAnalyticsService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        experimentServiceProvider.overrideWith(
+          (ref) => FakeExperimentService(),
+        ),
+        analyticsServiceProvider.overrideWith((ref) => FakeAnalyticsService()),
+      ],
+    );
     await tester.pumpWidget(_buildApp(container));
     await tester.pumpAndSettle();
 

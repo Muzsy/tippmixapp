@@ -30,11 +30,7 @@ class FakeCoinService extends Fake implements CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    last = {
-      'amount': amount,
-      'reason': reason,
-      'transactionId': transactionId,
-    };
+    last = {'amount': amount, 'reason': reason, 'transactionId': transactionId};
   }
 }
 

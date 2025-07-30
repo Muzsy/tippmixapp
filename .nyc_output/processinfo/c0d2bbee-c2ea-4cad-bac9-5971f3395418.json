@@ -1,1 +1,18 @@
-{"parent":"2f96d9f2-bde7-4af2-9d0c-11afd50c2d35","pid":18560,"argv":["C:\\Program Files\\nodejs\\node.exe","C:\\Dev\\GitHub\\tippmixapp\\node_modules\\mocha\\bin\\mocha.js","--experimental-modules","test/security_rules.test.mjs"],"execArgv":[],"cwd":"C:\\Dev\\GitHub\\tippmixapp","time":1751298695171,"ppid":19012,"coverageFilename":"C:\\Dev\\GitHub\\tippmixapp\\.nyc_output\\c0d2bbee-c2ea-4cad-bac9-5971f3395418.json","externalId":"","uuid":"c0d2bbee-c2ea-4cad-bac9-5971f3395418","files":[]}
+{
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Dev\\GitHub\\tippmixapp\\node_modules\\mocha\\bin\\mocha.js",
+    "--experimental-modules",
+    "test/security_rules.test.mjs"
+  ],
+  "coverageFilename": "C:\\Dev\\GitHub\\tippmixapp\\.nyc_output\\c0d2bbee-c2ea-4cad-bac9-5971f3395418.json",
+  "cwd": "C:\\Dev\\GitHub\\tippmixapp",
+  "execArgv": [],
+  "externalId": "",
+  "files": [],
+  "parent": "2f96d9f2-bde7-4af2-9d0c-11afd50c2d35",
+  "pid": 18560,
+  "ppid": 19012,
+  "time": 1751298695171,
+  "uuid": "c0d2bbee-c2ea-4cad-bac9-5971f3395418"
+}

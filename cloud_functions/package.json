@@ -1,20 +1,20 @@
 {
-  "name": "cloud_functions",
-  "main": "lib/index.js",
-  "engines": {
-    "node": "20"
-  },
-  "scripts": {
-    "build": "tsc",
-    "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts"
-  },
   "dependencies": {
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.9.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
   },
-  "private": true
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "name": "cloud_functions",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts"
+  }
 }

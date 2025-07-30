@@ -22,11 +22,7 @@ class UserStatsHeader extends ConsumerWidget {
           CircleAvatar(
             radius: 24,
             child: user != null
-                ? Text(
-                    user.displayName.isNotEmpty
-                        ? user.displayName[0]
-                        : '?',
-                  )
+                ? Text(user.displayName.isNotEmpty ? user.displayName[0] : '?')
                 : const Icon(Icons.person),
           ),
           const SizedBox(width: 12),

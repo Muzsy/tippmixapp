@@ -1,15 +1,7 @@
 {
-  "name": "tippmixapp-root",
-  "private": true,
   "dependencies": {
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1"
-  },
-  "scripts": {
-    "build-fx": "npm run build --prefix cloud_functions",
-    "test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\"",
-    "test:rules:run": "mocha --experimental-modules \"test/security_rules.test.mjs\"",
-    "test:rules:coverage": "nyc --reporter=lcov npm run test:rules:run && npx coverage-badge --input coverage/coverage-final.json --output coverage/security_rules_badge.svg"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",
@@ -17,5 +9,13 @@
     "firebase-tools": "^14.9.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"
+  },
+  "name": "tippmixapp-root",
+  "private": true,
+  "scripts": {
+    "build-fx": "npm run build --prefix cloud_functions",
+    "test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\"",
+    "test:rules:coverage": "nyc --reporter=lcov npm run test:rules:run && npx coverage-badge --input coverage/coverage-final.json --output coverage/security_rules_badge.svg",
+    "test:rules:run": "mocha --experimental-modules \"test/security_rules.test.mjs\""
   }
 }

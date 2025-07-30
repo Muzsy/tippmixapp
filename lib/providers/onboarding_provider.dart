@@ -6,8 +6,8 @@ import '../services/analytics_service.dart';
 
 class OnboardingNotifier extends StateNotifier<int> {
   OnboardingNotifier(this._userService, this._analytics, [FirebaseAuth? auth])
-      : _auth = auth ?? FirebaseAuth.instance,
-        super(0);
+    : _auth = auth ?? FirebaseAuth.instance,
+      super(0);
 
   final UserService _userService;
   final AnalyticsService _analytics;
@@ -26,8 +26,9 @@ class OnboardingNotifier extends StateNotifier<int> {
   }
 }
 
-final onboardingProvider =
-    StateNotifierProvider<OnboardingNotifier, int>((ref) {
+final onboardingProvider = StateNotifierProvider<OnboardingNotifier, int>((
+  ref,
+) {
   final userService = ref.watch(userServiceProvider);
   final analytics = ref.watch(analyticsServiceProvider);
   final auth = ref.watch(firebaseAuthProvider);
@@ -35,4 +36,6 @@ final onboardingProvider =
 });
 
 final userServiceProvider = Provider<UserService>((ref) => UserService());
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
+final firebaseAuthProvider = Provider<FirebaseAuth>(
+  (ref) => FirebaseAuth.instance,
+);

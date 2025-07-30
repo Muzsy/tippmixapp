@@ -30,7 +30,9 @@ class HIBPService {
     final prefix = hash.substring(0, 5);
     final suffix = hash.substring(5);
     final uri = Uri.parse('https://api.pwnedpasswords.com/range/$prefix');
-    final response = await _client.get(uri).timeout(const Duration(seconds: 10));
+    final response = await _client
+        .get(uri)
+        .timeout(const Duration(seconds: 10));
     if (response.statusCode != 200) {
       throw http.ClientException('hibp_error');
     }

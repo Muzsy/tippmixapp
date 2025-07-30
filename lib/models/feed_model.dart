@@ -20,24 +20,23 @@ class FeedModel {
   });
 
   factory FeedModel.fromJson(Map<String, dynamic> json) => FeedModel(
-        userId: json['userId'] as String? ?? '',
-        eventType: FeedEventType.values.firstWhere(
-          (e) => e.name == (json['eventType'] as String? ?? 'comment'),
-          orElse: () => FeedEventType.comment,
-        ),
-        message: json['message'] as String? ?? '',
-        timestamp: DateTime.parse(json['timestamp'] as String),
-        extraData: Map<String, dynamic>.from(json['extraData'] ?? {}),
-        likes:
-            (json['likes'] as List<dynamic>? ?? <dynamic>[]).cast<String>(),
-      );
+    userId: json['userId'] as String? ?? '',
+    eventType: FeedEventType.values.firstWhere(
+      (e) => e.name == (json['eventType'] as String? ?? 'comment'),
+      orElse: () => FeedEventType.comment,
+    ),
+    message: json['message'] as String? ?? '',
+    timestamp: DateTime.parse(json['timestamp'] as String),
+    extraData: Map<String, dynamic>.from(json['extraData'] ?? {}),
+    likes: (json['likes'] as List<dynamic>? ?? <dynamic>[]).cast<String>(),
+  );
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'eventType': eventType.name,
-        'message': message,
-        'timestamp': timestamp.toIso8601String(),
-        'extraData': extraData,
-        'likes': likes,
-      };
+    'userId': userId,
+    'eventType': eventType.name,
+    'message': message,
+    'timestamp': timestamp.toIso8601String(),
+    'extraData': extraData,
+    'likes': likes,
+  };
 }

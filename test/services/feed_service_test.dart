@@ -4,7 +4,8 @@ import 'package:tippmixapp/services/feed_service.dart';
 import 'package:tippmixapp/models/feed_event_type.dart';
 
 // ignore: subtype_of_sealed_class
-class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
   @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
@@ -17,12 +18,15 @@ class FakeDocumentReference extends Fake implements DocumentReference<Map<String
 }
 
 // ignore: subtype_of_sealed_class
-class FakeCollectionReference extends Fake implements CollectionReference<Map<String, dynamic>> {
+class FakeCollectionReference extends Fake
+    implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
   FakeCollectionReference(this.store);
 
   @override
-  Future<DocumentReference<Map<String, dynamic>>> add(Map<String, dynamic> data) async {
+  Future<DocumentReference<Map<String, dynamic>>> add(
+    Map<String, dynamic> data,
+  ) async {
     final id = 'doc${store.length}';
     store[id] = data;
     return FakeDocumentReference(id, store);

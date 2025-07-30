@@ -24,10 +24,7 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
           home: Scaffold(
-            body: HomeTileTopTipster(
-              stats: stats,
-              onTap: () => tapped = true,
-            ),
+            body: HomeTileTopTipster(stats: stats, onTap: () => tapped = true),
           ),
         ),
       ),

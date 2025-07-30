@@ -9,7 +9,7 @@ class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;
   final UserService service;
   EditProfileScreen({super.key, this.initial, UserService? service})
-      : service = service ?? UserService();
+    : service = service ?? UserService();
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -29,8 +29,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController =
-        TextEditingController(text: widget.initial?.displayName ?? '');
+    _nameController = TextEditingController(
+      text: widget.initial?.displayName ?? '',
+    );
     _bioController = TextEditingController(text: widget.initial?.bio ?? '');
     _team = widget.initial?.favouriteTeam;
     _dob = widget.initial?.dateOfBirth;
@@ -40,17 +41,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
-    final changes = <String, dynamic>{
-      'displayName': _nameController.text.trim(),
-      'bio': _bioController.text.trim(),
-      'favouriteTeam': _team,
-      'dateOfBirth': _dob?.toIso8601String(),
-      'avatarUrl': _avatar,
-    }..removeWhere((key, value) => value == null || value == widget.initial?.toJson()[key]);
+    final changes =
+        <String, dynamic>{
+          'displayName': _nameController.text.trim(),
+          'bio': _bioController.text.trim(),
+          'favouriteTeam': _team,
+          'dateOfBirth': _dob?.toIso8601String(),
+          'avatarUrl': _avatar,
+        }..removeWhere(
+          (key, value) =>
+              value == null || value == widget.initial?.toJson()[key],
+        );
     await widget.service.updateProfile(widget.initial?.uid ?? '', changes);
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),
+    );
     Navigator.of(context).pop();
   }
 
@@ -105,7 +111,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saving ? null : _save,
-        child: _saving ? const CircularProgressIndicator() : const Icon(Icons.save),
+        child: _saving
+            ? const CircularProgressIndicator()
+            : const Icon(Icons.save),
       ),
     );
   }

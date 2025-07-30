@@ -9,7 +9,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -46,14 +47,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 controller: _emailCtrl,
                 decoration: InputDecoration(hintText: loc.email_hint),
                 keyboardType: TextInputType.emailAddress,
-                validator: (v) =>
-                    v != null && v.contains('@') ? null : loc.auth_error_invalid_email,
+                validator: (v) => v != null && v.contains('@')
+                    ? null
+                    : loc.auth_error_invalid_email,
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submit,
-                child: Text(loc.dialog_send),
-              ),
+              ElevatedButton(onPressed: _submit, child: Text(loc.dialog_send)),
             ],
           ),
         ),

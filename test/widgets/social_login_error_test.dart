@@ -15,7 +15,7 @@ class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {}
 
 class CancelFacebookAuthService extends AuthService {
   CancelFacebookAuthService()
-      : super(firebaseAuth: FakeFirebaseAuth(), functions: FakeFunctions());
+    : super(firebaseAuth: FakeFirebaseAuth(), functions: FakeFunctions());
 
   @override
   Future<User?> signInWithFacebook() async {

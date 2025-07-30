@@ -1,7 +1,22 @@
 {
+  "emulators": {
+    "firestore": {
+      "port": 8080
+    },
+    "functions": {
+      "port": 5001
+    },
+    "singleProjectMode": true,
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    }
+  },
+  "firestore": {
+    "rules": "firebase.rules"
+  },
   "functions": [
     {
-      "source": "cloud_functions",
       "codebase": "default",
       "ignore": [
         "node_modules",
@@ -9,23 +24,8 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ]
+      ],
+      "source": "cloud_functions"
     }
-  ],
-  "firestore": {
-    "rules": "firebase.rules"
-  },
-  "emulators": {
-    "functions": {
-      "port": 5001
-    },
-    "firestore": {
-      "port": 8080
-    },
-    "ui": {
-      "enabled": true,
-      "port": 4000
-    },
-    "singleProjectMode": true
-  }
+  ]
 }

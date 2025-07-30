@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/tip_model.dart';
 
-
 final ticketValidatorProvider = Provider<TicketValidator>((ref) {
   return TicketValidator();
 });

@@ -53,9 +53,7 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
         _showConsentError = !_consent;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Hiányos adatok, kérlek töltsd ki!'),
-        ),
+        const SnackBar(content: Text('Hiányos adatok, kérlek töltsd ki!')),
       );
       return;
     }
@@ -65,16 +63,13 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
       final unique = await auth.validateNicknameUnique(_nickCtrl.text);
       if (!unique) {
         setState(() {
-          _nickError =
-              AppLocalizations.of(context)!.auth_error_nickname_taken;
+          _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
         });
         return;
       }
-      ref.read(registerStateNotifierProvider.notifier).saveStep2(
-            _nickCtrl.text,
-            _birthDate!,
-            _consent,
-          );
+      ref
+          .read(registerStateNotifierProvider.notifier)
+          .saveStep2(_nickCtrl.text, _birthDate!, _consent);
       final controller = ref.read(registerPageControllerProvider);
       await controller.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -120,13 +115,16 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: loc.dob_hint,
-                  errorText: _showDateError ? loc.auth_error_invalid_date : null,
+                  errorText: _showDateError
+                      ? loc.auth_error_invalid_date
+                      : null,
                 ),
                 child: Text(
                   _birthDate == null
                       ? ''
-                      : MaterialLocalizations.of(context)
-                          .formatMediumDate(_birthDate!),
+                      : MaterialLocalizations.of(
+                          context,
+                        ).formatMediumDate(_birthDate!),
                 ),
               ),
             ),
@@ -154,8 +152,7 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
               children: [
                 OutlinedButton(
                   onPressed: () async {
-                    final controller =
-                        ref.read(registerPageControllerProvider);
+                    final controller = ref.read(registerPageControllerProvider);
                     await controller.previousPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,

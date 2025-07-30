@@ -319,17 +319,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             );
           }),
           const Divider(),
-          NotificationPrefsSection(
-            uid: uid,
-            service: UserService(),
-          ),
+          NotificationPrefsSection(uid: uid, service: UserService()),
           const SizedBox(height: 16),
           if (_error != null) ...[
             Text(
               _error!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             const SizedBox(height: 12),
           ],

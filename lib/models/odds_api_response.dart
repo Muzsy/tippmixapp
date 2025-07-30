@@ -1,12 +1,5 @@
 /// API-válasz objektum: adat és opcionális hiba.
-enum ApiErrorType {
-  none,
-  unauthorized,
-  rateLimit,
-  network,
-  empty,
-  unknown,
-}
+enum ApiErrorType { none, unauthorized, rateLimit, network, empty, unknown }
 
 class OddsApiResponse<T> {
   final T? data;

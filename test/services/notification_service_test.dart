@@ -5,7 +5,8 @@ import 'package:tippmixapp/services/notification_service.dart';
 import 'package:tippmixapp/models/notification_model.dart';
 
 // ignore: subtype_of_sealed_class
-class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
   @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
@@ -29,7 +30,8 @@ class FakeDocumentReference extends Fake implements DocumentReference<Map<String
 }
 
 // ignore: subtype_of_sealed_class
-class FakeCollectionReference extends Fake implements CollectionReference<Map<String, dynamic>> {
+class FakeCollectionReference extends Fake
+    implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
   FakeCollectionReference(this.store);
 
@@ -75,8 +77,9 @@ void main() {
     final firestore = FakeFirebaseFirestore();
     final service = NotificationService(firestore);
 
-      final collection =
-          firestore.collection('users/u1/notifications') as FakeCollectionReference;
+    final collection =
+        firestore.collection('users/u1/notifications')
+            as FakeCollectionReference;
     await collection.doc('n1').set({'isRead': false});
 
     await service.markAsRead('u1', 'n1');

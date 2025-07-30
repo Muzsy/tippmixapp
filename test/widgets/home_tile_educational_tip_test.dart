@@ -23,7 +23,8 @@ class FakeRandom implements Random {
   // The following methods are required by the Random interface in Dart SDK >=2.17
 
   // Not an override in Random, just a helper for testing
-  double nextDoubleInRange(double min, double max) => min + (value.toDouble() % (max - min));
+  double nextDoubleInRange(double min, double max) =>
+      min + (value.toDouble() % (max - min));
 
   int nextSign() => value.isEven ? 1 : -1;
 
@@ -34,7 +35,7 @@ class FakeRandom implements Random {
 }
 
 void main() {
-    const jsonData = '''
+  const jsonData = '''
   {"tips":[
     {"id":"tip_1","en":"e1","hu":"h1","de":"d1"},
     {"id":"tip_2","en":"e2","hu":"h2","de":"d2"},
@@ -43,24 +44,26 @@ void main() {
   ]}''';
 
   setUp(() {
-    TestWidgetsFlutterBinding.ensureInitialized()
-        .defaultBinaryMessenger
+    TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (ByteData? message) async {
-      final key = utf8.decode(message!.buffer.asUint8List());
-      if (key == 'lib/assets/educational_tips.json') {
-        return ByteData.view(Uint8List.fromList(utf8.encode(jsonData)).buffer);
-      }
-      return null;
-    });
+          final key = utf8.decode(message!.buffer.asUint8List());
+          if (key == 'lib/assets/educational_tips.json') {
+            return ByteData.view(
+              Uint8List.fromList(utf8.encode(jsonData)).buffer,
+            );
+          }
+          return null;
+        });
   });
 
   tearDown(() {
-    TestWidgetsFlutterBinding.ensureInitialized()
-        .defaultBinaryMessenger
+    TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', null);
   });
 
-  testWidgets('shows all tips based on random index and handles CTA', (tester) async {
+  testWidgets('shows all tips based on random index and handles CTA', (
+    tester,
+  ) async {
     final tips = <String>[];
     for (var i = 0; i < 4; i++) {
       await tester.pumpWidget(
@@ -69,16 +72,22 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
           home: Scaffold(
-            body: HomeTileEducationalTip(
-              random: FakeRandom(i),
-              onTap: () {},
-            ),
+            body: HomeTileEducationalTip(random: FakeRandom(i), onTap: () {}),
           ),
         ),
       );
       await tester.pumpAndSettle();
       tips.add(
-        tester.widget<Text>(find.descendant(of: find.byType(Column), matching: find.byType(Text)).at(1)).data!,
+        tester
+            .widget<Text>(
+              find
+                  .descendant(
+                    of: find.byType(Column),
+                    matching: find.byType(Text),
+                  )
+                  .at(1),
+            )
+            .data!,
       );
     }
     expect(tips.toSet().length, 4);

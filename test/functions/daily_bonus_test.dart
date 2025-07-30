@@ -51,7 +51,8 @@ class FakeCoinLogCollection extends Fake
 }
 
 // ignore: subtype_of_sealed_class
-class FakeUserDoc extends Fake implements DocumentReference<Map<String, dynamic>> {
+class FakeUserDoc extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
   final String uid;
   final Map<String, Map<String, dynamic>> logs;
   FakeUserDoc(this.uid, this.logs);

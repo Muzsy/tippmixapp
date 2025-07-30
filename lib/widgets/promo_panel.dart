@@ -21,10 +21,7 @@ class PromoPanel extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(
-            loc.login_variant_b_promo_subtitle,
-            textAlign: TextAlign.center,
-          ),
+          Text(loc.login_variant_b_promo_subtitle, textAlign: TextAlign.center),
         ],
       ),
     );

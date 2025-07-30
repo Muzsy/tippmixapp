@@ -46,7 +46,8 @@ class HomeTileChallengePrompt extends ConsumerWidget {
     switch (challenge.type) {
       case ChallengeType.friend:
         return loc.home_tile_challenge_friend_description(
-            challenge.username ?? '');
+          challenge.username ?? '',
+        );
       case ChallengeType.daily:
       case ChallengeType.weekly:
         return loc.home_tile_challenge_daily_description;

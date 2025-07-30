@@ -8,7 +8,7 @@ class FeedService {
   final FirebaseFirestore _firestore;
 
   FeedService([FirebaseFirestore? firestore])
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Add a new entry to the public feed.
   Future<void> addFeedEntry({
@@ -69,8 +69,10 @@ class FeedService {
           .collection('public_feed')
           .orderBy('timestamp', descending: true)
           .snapshots()
-          .map((snap) =>
-              snap.docs.map((doc) => FeedModel.fromJson(doc.data())).toList());
+          .map(
+            (snap) =>
+                snap.docs.map((doc) => FeedModel.fromJson(doc.data())).toList(),
+          );
     } catch (_) {
       return Stream.value(const <FeedModel>[]);
     }

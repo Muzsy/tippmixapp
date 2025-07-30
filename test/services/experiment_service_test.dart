@@ -38,8 +38,8 @@ void main() {
 
     test('fetches remote when cache expired', () async {
       final past = DateTime.now()
-              .subtract(const Duration(days: 30))
-              .millisecondsSinceEpoch;
+          .subtract(const Duration(days: 30))
+          .millisecondsSinceEpoch;
       SharedPreferences.setMockInitialValues({
         'login_variant': 'A',
         'login_variant_ts': past,

@@ -27,7 +27,10 @@ class HomeTileBadgeEarned extends ConsumerWidget {
             children: [
               Icon(getIconForBadge(badge.badge.iconName), size: 48),
               const SizedBox(height: 8),
-              Text(loc.home_tile_badge_earned_title, textAlign: TextAlign.center),
+              Text(
+                loc.home_tile_badge_earned_title,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
               Text(title, textAlign: TextAlign.center),
               const SizedBox(height: 4),
