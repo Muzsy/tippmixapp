@@ -1,92 +1,72 @@
-name: build
+name: flutter-ci
 
-on:
-  push:
-    branches: ['**']
-  pull_request:
-    branches: ['**']
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Flutter CI
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ►► Flutter 3.22.x
-      - name: Install Flutter SDK (GitHub Action)
+      # Flutter SDK with caching
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.x'
+          flutter-version: "3.22.1"
+          cache: true
 
-      # ►► Univerzális projekt‑setup (ugyanaz, mint Codexnél)
-      - name: Project setup
+      # Node & Firebase CLI (needed for emulator & rules tests)
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      # Install Dart/Flutter dependencies
+      - name: Install project dependencies
+        run: flutter pub get
+
+      # Project bootstrap (custom Codex script)
+      - name: Bootstrap Codex environment
         run: bash .codex/setup.sh
 
-      - name: Run linter
-        run: flutter analyze lib test --fatal-infos --fatal-warnings
+      # Ensure helper scripts are executable
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
 
-      - name: Run accessibility audit
-        run: flutter_a11y lib
+      # Pre‑commit checklist (lint ➜ tests ➜ coverage ➜ golden ➜ a11y ➜ integration)
+      - name: Run pre‑commit checklist
+        run: |
+          ./scripts/lint_docs.sh
+          ./scripts/precommit.sh
 
-      - name: Run tests with coverage
-        run: flutter test --coverage
-        # widget tests including register_step1_form_test.dart, register_step2_form_test.dart and forgot_password_flow_test.dart
-
-      - name: Run guest route guard e2e
-        run: flutter drive --target=integration_test/guest_routeguard_test.dart
-
-      # (innen lefelé: CI‑only részek)
-      - name: Run coverage + badge
+      # Upload coverage badge (run once on Linux)
+      - name: Publish coverage badge
+        if: matrix.os == 'ubuntu-latest'
         uses: whynotmake-it/dart-coverage-assistant@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           generate_badges: push
 
-      - name: Build Android appbundle
+      # Android release build (Linux)
+      - name: Build Android AAB
+        if: matrix.os == 'ubuntu-latest'
         run: flutter build appbundle --release
 
+      # iOS release build (macOS)
       - name: Build iOS IPA
+        if: matrix.os == 'macos-latest'
         run: flutter build ipa --no-codesign
 
-      # ---- Firebase security rules tesztek ----
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache Node modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Compile Cloud Functions
+      # Firebase security rules tests (optional)
+      - name: Test Firebase security rules
+        if: matrix.os == 'ubuntu-latest' && hashFiles('scripts/test_firebase_rules.sh') != ''
         run: |
-          npm ci --prefix cloud_functions
-          npm run --prefix cloud_functions build
-
-      - name: Cache Firebase emulator
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/firebase/emulators
-          key: ${{ runner.os }}-firebase-${{ hashFiles('firebase.json') }}
-          restore-keys: |
-            ${{ runner.os }}-firebase-
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Test Firestore security rules
-        run: |
-          chmod +x scripts/test_firebase_rules.sh
-          ./scripts/test_firebase_rules.sh | tee security_rules_test.log
-
-      - name: Upload security rules log
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-rules-log
-          path: security_rules_test.log
+          firebase emulators:exec --only firestore "scripts/test_firebase_rules.sh"
