@@ -10,6 +10,7 @@ void main() {
   final mockAuth = _MockAuth();
   test('email not in use returns true', () async {
     when(
+      // ignore: deprecated_member_use
       () => mockAuth.fetchSignInMethodsForEmail(any()),
     ).thenAnswer((_) async => <String>[]);
     final repo = AuthRepository(firebaseAuth: mockAuth);
@@ -18,6 +19,7 @@ void main() {
 
   test('email exists returns false', () async {
     when(
+      // ignore: deprecated_member_use
       () => mockAuth.fetchSignInMethodsForEmail(any()),
     ).thenAnswer((_) async => <String>['password']);
     final repo = AuthRepository(firebaseAuth: mockAuth);
