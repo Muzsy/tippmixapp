@@ -135,17 +135,13 @@ class AuthService {
 
   // Regisztráció email/jelszóval
   Future<User?> registerWithEmail(String email, String password) async {
-    // ignore: avoid_print
-    print('[REGISTER] STARTED');
-    // ignore: avoid_print
-    print('[REGISTER] registerWithEmail STARTED');
-    // ignore: avoid_print
-    print('🔵 registerWithEmail() STARTED');
+    debugPrint('[REGISTER] STARTED');
+    debugPrint('[REGISTER] registerWithEmail STARTED');
+    debugPrint('🔵 registerWithEmail() STARTED');
     try {
       final appCheckToken = await _appCheck.getToken(true);
       if (kDebugMode) {
-        // ignore: avoid_print
-        print('[APP_CHECK] token: $appCheckToken');
+        debugPrint('[APP_CHECK] token: $appCheckToken');
       }
 
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -155,8 +151,7 @@ class AuthService {
       await cred.user?.sendEmailVerification();
       final user = cred.user;
       if (user == null) return null;
-      // ignore: avoid_print
-      print('[REGISTER] SUCCESS');
+      debugPrint('[REGISTER] SUCCESS');
       return User(
         id: user.uid,
         email: user.email ?? '',
@@ -177,16 +172,14 @@ class AuthService {
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
         if (kDebugMode) {
-          // ignore: avoid_print
-          print('validateEmailUnique permission-denied, assuming unique');
+          debugPrint('validateEmailUnique permission-denied, assuming unique');
         }
         return true;
       }
       rethrow;
     } on TimeoutException {
       if (kDebugMode) {
-        // ignore: avoid_print
-        print('validateEmailUnique timeout, assuming unique');
+        debugPrint('validateEmailUnique timeout, assuming unique');
       }
       return true;
     }
@@ -202,14 +195,12 @@ class AuthService {
       return snap.docs.isEmpty;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
-        // ignore: avoid_print
-        print('[NICK_CHECK] FirebaseException ${e.code} – assume unique');
+        debugPrint('[NICK_CHECK] FirebaseException ${e.code} – assume unique');
       }
       return true; // offline → fail-open
     } on TimeoutException {
       if (kDebugMode) {
-        // ignore: avoid_print
-        print('[NICK_CHECK] timeout – assume unique');
+        debugPrint('[NICK_CHECK] timeout – assume unique');
       }
       return true;
     }

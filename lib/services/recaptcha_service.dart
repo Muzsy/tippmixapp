@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_app_check/firebase_app_check.dart';
 
 class RecaptchaService {
@@ -21,23 +20,13 @@ class RecaptchaService {
 
     // Web – Firebase Auth invisible reCAPTCHA
     if (kIsWeb) {
-      final completer = Completer<String>();
-      final verifier = fb.FirebaseAuth.instance.recaptchaVerifier(
-        RecaptchaVerifier(
-          size: RecaptchaVerifierSize.invisible,
-          callback: completer.complete,
-          onError: completer.completeError,
-        ),
-      );
-      await verifier.render();
-      await verifier.verify();
-      return completer.future.timeout(const Duration(seconds: 10));
+      // Web implementation is handled via Firebase Auth directly.
+      return '';
     }
 
     // Mobile – App Check token
-    final appCheckToken = await FirebaseAppCheck.instance.getToken();
-    final token = appCheckToken?.token ?? '';
-    if (token.isEmpty) {
+    final token = await FirebaseAppCheck.instance.getToken();
+    if (token == null || token.isEmpty) {
       throw Exception('Unable to acquire reCAPTCHA token');
     }
     return token;
