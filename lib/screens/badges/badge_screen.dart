@@ -63,7 +63,8 @@ class _BadgeScreenState extends ConsumerState<BadgeScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButton<BadgeFilter>(
                   value: _filter,
-                  onChanged: (f) => setState(() => _filter = f ?? BadgeFilter.all),
+                  onChanged: (f) =>
+                      setState(() => _filter = f ?? BadgeFilter.all),
                   items: [
                     DropdownMenuItem(
                       value: BadgeFilter.all,

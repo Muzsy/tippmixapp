@@ -16,7 +16,9 @@ class FeedScreen extends StatelessWidget {
       return content;
     }
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.feed_screen_title)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.feed_screen_title),
+      ),
       body: content,
     );
   }

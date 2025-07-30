@@ -10,7 +10,7 @@ class BadgeService {
   final FirebaseFirestore _firestore;
 
   BadgeService([FirebaseFirestore? firestore])
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Evaluate which badges the user has earned based on [stats].
   List<BadgeData> evaluateUserBadges(UserStatsModel stats) {
@@ -40,7 +40,8 @@ class BadgeService {
 
   bool _checkFirstWin(UserStatsModel stats) => stats.totalWins >= 1;
 
-  bool _checkStreak3(UserStatsModel stats) => (stats.currentWinStreak ?? 0) >= 3;
+  bool _checkStreak3(UserStatsModel stats) =>
+      (stats.currentWinStreak ?? 0) >= 3;
 
   bool _checkParlayWin(UserStatsModel stats) => false;
 
@@ -51,8 +52,10 @@ class BadgeService {
   /// Assign newly earned badges for [userId] based on [stats].
   Future<void> assignNewBadges(String userId, UserStatsModel stats) async {
     final earned = evaluateUserBadges(stats);
-    final badgesRef =
-        _firestore.collection('users').doc(userId).collection('badges');
+    final badgesRef = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('badges');
     final existing = await badgesRef.get();
     final existingKeys = existing.docs.map((d) => d.id).toSet();
 
@@ -68,8 +71,10 @@ class BadgeService {
 
   /// Returns the latest earned badge for [userId] with timestamp.
   Future<EarnedBadgeModel?> getLatestBadge(String userId) async {
-    final badgesRef =
-        _firestore.collection('users').doc(userId).collection('badges');
+    final badgesRef = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('badges');
     final snap = await badgesRef
         .orderBy('timestamp', descending: true)
         .limit(1)

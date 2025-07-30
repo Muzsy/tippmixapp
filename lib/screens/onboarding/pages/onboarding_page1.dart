@@ -12,13 +12,13 @@ class OnboardingPage1 extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Expanded(
-            child: Icon(Icons.sports_soccer, size: 120),
-          ),
+          const Expanded(child: Icon(Icons.sports_soccer, size: 120)),
           const SizedBox(height: 16),
-          Text(loc.onboarding_place_bet,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            loc.onboarding_place_bet,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
         ],
       ),
     );

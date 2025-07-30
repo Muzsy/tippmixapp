@@ -51,14 +51,14 @@ class NotificationModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'type': type.name,
-        'title': title,
-        'description': description,
-        'timestamp': timestamp.toIso8601String(),
-        'isRead': isRead,
-        'category': category.name,
-        'archived': archived,
-        'previewUrl': previewUrl,
-        'destination': destination,
-      };
+    'type': type.name,
+    'title': title,
+    'description': description,
+    'timestamp': timestamp.toIso8601String(),
+    'isRead': isRead,
+    'category': category.name,
+    'archived': archived,
+    'previewUrl': previewUrl,
+    'destination': destination,
+  };
 }

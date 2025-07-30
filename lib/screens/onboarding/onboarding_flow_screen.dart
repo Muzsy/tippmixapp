@@ -12,7 +12,8 @@ class OnboardingFlowScreen extends ConsumerStatefulWidget {
   const OnboardingFlowScreen({super.key});
 
   @override
-  ConsumerState<OnboardingFlowScreen> createState() => _OnboardingFlowScreenState();
+  ConsumerState<OnboardingFlowScreen> createState() =>
+      _OnboardingFlowScreenState();
 }
 
 class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
@@ -52,21 +53,20 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(
-              onPressed: _finish,
-              child: Text(loc.onboarding_skip),
+            TextButton(onPressed: _finish, child: Text(loc.onboarding_skip)),
+            Row(
+              children: List.generate(3, (i) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: i == page ? Colors.blue : Colors.grey,
+                  ),
+                );
+              }),
             ),
-            Row(children: List.generate(3, (i) {
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: i == page ? Colors.blue : Colors.grey,
-                ),
-              );
-            })),
             TextButton(
               onPressed: () {
                 if (page == 2) {
@@ -78,8 +78,10 @@ class _OnboardingFlowScreenState extends ConsumerState<OnboardingFlowScreen> {
                   );
                 }
               },
-              child: Text(page == 2 ? loc.onboarding_done : loc.onboarding_next),
-            )
+              child: Text(
+                page == 2 ? loc.onboarding_done : loc.onboarding_next,
+              ),
+            ),
           ],
         ),
       ),

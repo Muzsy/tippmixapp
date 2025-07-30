@@ -13,10 +13,7 @@ class AiTip {
   Map<String, dynamic> toJson() => {'team': team, 'percent': percent};
 
   factory AiTip.fromJson(Map<String, dynamic> json) {
-    return AiTip(
-      team: json['team'] as String,
-      percent: json['percent'] as int,
-    );
+    return AiTip(team: json['team'] as String, percent: json['percent'] as int);
   }
 }
 

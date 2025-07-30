@@ -10,12 +10,25 @@ final _hexRegex = RegExp(r'0xFF[0-9A-Fa-f]{6}');
 
 void main(List<String> args) {
   final parser = ArgParser()
-    ..addFlag('dry-run', abbr: 'n', defaultsTo: true, negatable: false,
-        help: 'List planned replacements without modifying files.')
-    ..addFlag('apply', abbr: 'a', negatable: false,
-        help: 'Apply replacements to files.')
-    ..addFlag('help', abbr: 'h', negatable: false,
-        help: 'Show usage information.');
+    ..addFlag(
+      'dry-run',
+      abbr: 'n',
+      defaultsTo: true,
+      negatable: false,
+      help: 'List planned replacements without modifying files.',
+    )
+    ..addFlag(
+      'apply',
+      abbr: 'a',
+      negatable: false,
+      help: 'Apply replacements to files.',
+    )
+    ..addFlag(
+      'help',
+      abbr: 'h',
+      negatable: false,
+      help: 'Show usage information.',
+    );
 
   final opts = parser.parse(args);
   if (opts['help'] as bool) {
@@ -42,8 +55,10 @@ void main(List<String> args) {
       for (final match in _hexRegex.allMatches(line).toList().reversed) {
         final hex = match.group(0)!;
         final repl = _suggestReplacement(hex);
-        logFile.writeAsStringSync('$rel:${i + 1}: $hex -> $repl\n',
-            mode: FileMode.append);
+        logFile.writeAsStringSync(
+          '$rel:${i + 1}: $hex -> $repl\n',
+          mode: FileMode.append,
+        );
         if (!dryRun) {
           line = line.replaceRange(match.start, match.end, repl);
           modified = true;
@@ -56,7 +71,9 @@ void main(List<String> args) {
     }
   }
 
-  stdout.writeln('Codemod ${dryRun ? 'dry-run' : 'apply'} finished. Log: ${logFile.path}');
+  stdout.writeln(
+    'Codemod ${dryRun ? 'dry-run' : 'apply'} finished. Log: ${logFile.path}',
+  );
 }
 
 String _suggestReplacement(String hex) {
@@ -76,6 +93,8 @@ void _printHelp(ArgParser parser) {
   stdout.writeln(parser.usage);
   stdout.writeln('');
   stdout.writeln('Examples:');
-  stdout.writeln('  dart run tools/codemods/codemod_replace_hex.dart --dry-run');
+  stdout.writeln(
+    '  dart run tools/codemods/codemod_replace_hex.dart --dry-run',
+  );
   stdout.writeln('  dart run tools/codemods/codemod_replace_hex.dart --apply');
 }

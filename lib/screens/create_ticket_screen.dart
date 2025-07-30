@@ -58,17 +58,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         });
         return;
       }
-      await BetSlipService.submitTicket(
-        tips: tips,
-        stake: stake.toInt(),
-      );
+      await BetSlipService.submitTicket(tips: tips, stake: stake.toInt());
       setState(() {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.ticket_submit_success)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.ticket_submit_success)));
         Navigator.of(context).pop();
       }
     } catch (e) {
@@ -91,9 +88,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         : 0.0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.createTicketTitle),
-      ),
+      appBar: AppBar(title: Text(loc.createTicketTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -103,9 +98,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             Expanded(
@@ -136,7 +129,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             const SizedBox(height: 8),
             TextField(
               controller: _stakeController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: InputDecoration(
                 labelText: '${loc.stakeHint} (Ft)',
                 border: const OutlineInputBorder(),
@@ -148,7 +143,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('${loc.total_odds_label}: $totalOdd'),
-                Text('${loc.potential_win_label}: ${potentialWin.toStringAsFixed(2)} Ft'),
+                Text(
+                  '${loc.potential_win_label}: ${potentialWin.toStringAsFixed(2)} Ft',
+                ),
               ],
             ),
             const SizedBox(height: 12),

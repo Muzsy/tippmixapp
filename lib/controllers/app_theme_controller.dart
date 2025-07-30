@@ -11,5 +11,5 @@ class AppThemeController extends StateNotifier<ThemeMode> {
 /// Riverpod provider for [AppThemeController].
 final appThemeControllerProvider =
     StateNotifierProvider<AppThemeController, ThemeMode>(
-  (ref) => AppThemeController(),
-);
+      (ref) => AppThemeController(),
+    );

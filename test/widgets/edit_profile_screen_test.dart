@@ -6,22 +6,24 @@ import 'package:tippmixapp/screens/profile/edit_profile_screen.dart';
 
 void main() {
   testWidgets('invalid name shows error', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('en'),
-      home: EditProfileScreen(
-        initial: UserModel(
-          uid: 'u1',
-          email: '',
-          displayName: 'old',
-          nickname: '',
-          avatarUrl: '',
-          isPrivate: false,
-          fieldVisibility: const {},
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: EditProfileScreen(
+          initial: UserModel(
+            uid: 'u1',
+            email: '',
+            displayName: 'old',
+            nickname: '',
+            avatarUrl: '',
+            isPrivate: false,
+            fieldVisibility: const {},
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.enterText(find.byType(TextFormField).first, 'ab');
     await tester.tap(find.byIcon(Icons.save));

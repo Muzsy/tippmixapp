@@ -29,7 +29,7 @@ class NotificationCache {
           final map = jsonDecode(str) as Map<String, dynamic>;
           final id = map.remove('id') as String? ?? '';
           return NotificationModel.fromJson(id, map);
-        })()
+        })(),
     ];
   }
 }

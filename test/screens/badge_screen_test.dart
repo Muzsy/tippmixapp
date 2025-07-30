@@ -18,9 +18,7 @@ Future<void> _pumpBadgeScreen(
 }) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        userBadgesProvider.overrideWith((ref) => controller.stream),
-      ],
+      overrides: [userBadgesProvider.overrideWith((ref) => controller.stream)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -49,7 +47,10 @@ void main() {
     controller.add([]);
     await tester.pump();
 
-    expect(find.text(AppLocalizationsEn().profile_badges_empty), findsOneWidget);
+    expect(
+      find.text(AppLocalizationsEn().profile_badges_empty),
+      findsOneWidget,
+    );
   });
 
   testWidgets('TC-03 filter missing hides owned badges', (tester) async {
@@ -111,7 +112,10 @@ void main() {
     controller.add([]);
     await tester.pump();
 
-    expect(find.text(AppLocalizationsHu().profile_badges_empty), findsOneWidget);
+    expect(
+      find.text(AppLocalizationsHu().profile_badges_empty),
+      findsOneWidget,
+    );
   });
 
   testWidgets('TC-08 localization DE', (tester) async {
@@ -120,7 +124,10 @@ void main() {
     controller.add([]);
     await tester.pump();
 
-    expect(find.text(AppLocalizationsDe().profile_badges_empty), findsOneWidget);
+    expect(
+      find.text(AppLocalizationsDe().profile_badges_empty),
+      findsOneWidget,
+    );
   });
 
   testWidgets('TC-09 scroll stability with many badges', (tester) async {

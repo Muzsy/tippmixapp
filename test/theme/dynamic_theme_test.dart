@@ -16,8 +16,7 @@ void main() {
       corePalette: SampleCorePalettes.green,
     );
     final theme = await buildDynamicTheme(brightness: Brightness.light);
-    final expected =
-        SampleColorSchemes.green(Brightness.light).harmonized();
+    final expected = SampleColorSchemes.green(Brightness.light).harmonized();
     expect(theme.colorScheme.primary, expected.primary);
     expect(theme.extension<BrandColors>(), brandColorsLight);
   });

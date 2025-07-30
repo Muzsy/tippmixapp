@@ -83,14 +83,18 @@ void main() {
 
     test('signInWithEmail throws on wrong password', () async {
       final auth = FakeFirebaseAuth()
-        ..signInException =
-            fb.FirebaseAuthException(code: 'wrong-password');
+        ..signInException = fb.FirebaseAuthException(code: 'wrong-password');
       final service = AuthService(firebaseAuth: auth);
 
       expect(
         () => service.signInWithEmail('a@test.com', 'pw'),
-        throwsA(isA<AuthServiceException>().having((e) => e.code, 'code',
-            'auth/wrong-password')),
+        throwsA(
+          isA<AuthServiceException>().having(
+            (e) => e.code,
+            'code',
+            'auth/wrong-password',
+          ),
+        ),
       );
     });
 
@@ -101,8 +105,13 @@ void main() {
 
       expect(
         () => service.signInWithEmail('a@test.com', 'pw'),
-        throwsA(isA<AuthServiceException>().having((e) => e.code, 'code',
-            'auth/unknown')),
+        throwsA(
+          isA<AuthServiceException>().having(
+            (e) => e.code,
+            'code',
+            'auth/unknown',
+          ),
+        ),
       );
     });
 

@@ -23,20 +23,18 @@ class FakeHttpsCallable extends Fake implements HttpsCallable {
     lastData = Map<String, dynamic>.from(parameters as Map);
     return FakeHttpsCallableResult<T>(response as T);
   }
-
 }
 
 class FakeFirebaseFunctions extends Fake implements FirebaseFunctions {
   final FakeHttpsCallable callable;
 
   FakeFirebaseFunctions([FakeHttpsCallable? callable])
-      : callable = callable ?? FakeHttpsCallable();
+    : callable = callable ?? FakeHttpsCallable();
 
   @override
   HttpsCallable httpsCallable(String name, {HttpsCallableOptions? options}) {
     return callable;
   }
-
 }
 
 // ignore: subtype_of_sealed_class
@@ -139,7 +137,6 @@ class FakeCoinLogsCollection extends Fake
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) async {
     return FakeQuery(store).get();
   }
-
 }
 
 // ignore: subtype_of_sealed_class
@@ -188,11 +185,7 @@ void main() {
       auth: FakeFirebaseAuth(FakeUser('u1')),
     );
 
-    await service.debitCoin(
-      amount: 10,
-      reason: 'bet',
-      transactionId: 't1',
-    );
+    await service.debitCoin(amount: 10, reason: 'bet', transactionId: 't1');
 
     expect(functions.callable.lastData, isNotNull);
     expect(functions.callable.lastData!['type'], 'debit');
@@ -207,11 +200,7 @@ void main() {
       auth: FakeFirebaseAuth(FakeUser('u1')),
     );
 
-    await service.creditCoin(
-      amount: 20,
-      reason: 'bonus',
-      transactionId: 't2',
-    );
+    await service.creditCoin(amount: 20, reason: 'bonus', transactionId: 't2');
 
     expect(functions.callable.lastData!['type'], 'credit');
     expect(functions.callable.lastData!['amount'], 20);
@@ -242,11 +231,8 @@ void main() {
     );
 
     expect(
-      () => service.creditCoin(
-        amount: 10,
-        reason: 'bonus',
-        transactionId: 't3',
-      ),
+      () =>
+          service.creditCoin(amount: 10, reason: 'bonus', transactionId: 't3'),
       throwsA(isA<FirebaseFunctionsException>()),
     );
   });
@@ -257,7 +243,7 @@ void main() {
       {
         'reason': 'daily_bonus',
         'timestamp': Timestamp.fromDate(DateTime.now()),
-      }
+      },
     ];
     final auth = FakeFirebaseAuth(FakeUser('u1'));
     final service = CoinService(firestore: firestore);
@@ -284,4 +270,3 @@ void main() {
     expect(result, isFalse);
   });
 }
-

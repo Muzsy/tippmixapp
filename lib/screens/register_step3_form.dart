@@ -47,7 +47,10 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
     );
     final dst = Rect.fromLTWH(0, 0, size, size);
     canvas.drawImageRect(img, src, dst, Paint());
-    final cropped = await recorder.endRecording().toImage(size.toInt(), size.toInt());
+    final cropped = await recorder.endRecording().toImage(
+      size.toInt(),
+      size.toInt(),
+    );
     final data = await cropped.toByteData(format: ui.ImageByteFormat.png);
     final bytesOut = data!.buffer.asUint8List();
     final out = await file.writeAsBytes(bytesOut, flush: true);
@@ -84,7 +87,9 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
   }
 
   Future<void> _skip() async {
-    await ref.read(registerStateNotifierProvider.notifier).completeRegistration();
+    await ref
+        .read(registerStateNotifierProvider.notifier)
+        .completeRegistration();
     // sikeres regisztráció után állapot törlése
     ref.read(registerStateNotifierProvider.notifier).reset();
     if (mounted) context.goNamed(AppRoute.home.name);
@@ -123,7 +128,10 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(onPressed: _skip, child: Text(loc.register_skip)),
-              ElevatedButton(onPressed: _finish, child: Text(loc.register_finish)),
+              ElevatedButton(
+                onPressed: _finish,
+                child: Text(loc.register_finish),
+              ),
             ],
           ),
         ],

@@ -1,23 +1,18 @@
 {
-  "project_info": {
-    "project_number": "981451223977",
-    "project_id": "tippmix-dev",
-    "storage_bucket": "tippmix-dev.firebasestorage.app"
-  },
   "client": [
     {
-      "client_info": {
-        "mobilesdk_app_id": "1:981451223977:android:3824377e7a3a44b6770ab8",
-        "android_client_info": {
-          "package_name": "com.example.tippmixapp"
-        }
-      },
-      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyBqIhOaLrb-rE38cgBiDztpEjz6EY8kyik"
         }
       ],
+      "client_info": {
+        "android_client_info": {
+          "package_name": "com.example.tippmixapp"
+        },
+        "mobilesdk_app_id": "1:981451223977:android:3824377e7a3a44b6770ab8"
+      },
+      "oauth_client": [],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": []
@@ -25,5 +20,10 @@
       }
     }
   ],
-  "configuration_version": "1"
+  "configuration_version": "1",
+  "project_info": {
+    "project_id": "tippmix-dev",
+    "project_number": "981451223977",
+    "storage_bucket": "tippmix-dev.firebasestorage.app"
+  }
 }

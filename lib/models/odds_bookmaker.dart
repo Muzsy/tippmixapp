@@ -2,8 +2,8 @@ import 'odds_market.dart';
 
 /// Egy fogadóiroda ajánlata egy eseményhez.
 class OddsBookmaker {
-  final String key;    // Pl. "bet365"
-  final String title;  // Pl. "Bet365"
+  final String key; // Pl. "bet365"
+  final String title; // Pl. "Bet365"
   final List<OddsMarket> markets;
 
   OddsBookmaker({

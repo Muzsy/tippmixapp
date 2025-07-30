@@ -10,7 +10,6 @@ import '../widgets/ticket_card.dart';
 import '../widgets/empty_ticket_placeholder.dart';
 import '../widgets/ticket_details_dialog.dart';
 
-
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid == null) {
@@ -21,8 +20,7 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
       .where('userId', isEqualTo: uid)
       .orderBy('createdAt', descending: true)
       .snapshots()
-      .map((snap) =>
-          snap.docs.map((d) => Ticket.fromJson(d.data())).toList());
+      .map((snap) => snap.docs.map((d) => Ticket.fromJson(d.data())).toList());
 });
 
 class MyTicketsScreen extends ConsumerWidget {
@@ -43,9 +41,9 @@ class MyTicketsScreen extends ConsumerWidget {
       content = ticketsAsync.when(
         data: (tickets) {
           return RefreshIndicator(
-              onRefresh: () async {
-                final _ = await ref.refresh(ticketsProvider.future);
-              },
+            onRefresh: () async {
+              final _ = await ref.refresh(ticketsProvider.future);
+            },
             child: tickets.isEmpty
                 ? ListView(children: const [EmptyTicketPlaceholder()])
                 : ListView.builder(

@@ -5,7 +5,10 @@ class VerifiedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.verified,
-        color: Theme.of(context).colorScheme.primary, size: 16);
+    return Icon(
+      Icons.verified,
+      color: Theme.of(context).colorScheme.primary,
+      size: 16,
+    );
   }
 }

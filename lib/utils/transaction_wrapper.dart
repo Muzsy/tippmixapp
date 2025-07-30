@@ -12,8 +12,8 @@ class TransactionWrapper {
     required Logger logger,
     this.maxRetries = 3,
     this.delayBetweenRetries = Duration.zero,
-  })  : _firestore = firestore,
-        _logger = logger;
+  }) : _firestore = firestore,
+       _logger = logger;
 
   final FirebaseFirestore _firestore;
   final Logger _logger;
@@ -38,8 +38,7 @@ class TransactionWrapper {
       } on UnimplementedError {
         return Future<T>.value(null);
       } on FirebaseException catch (e) {
-        final retriable =
-            e.code == 'aborted' || e.code == 'deadline-exceeded';
+        final retriable = e.code == 'aborted' || e.code == 'deadline-exceeded';
         if (!retriable) rethrow;
         if (attempt >= maxRetries) {
           throw TooManyAttemptsException();

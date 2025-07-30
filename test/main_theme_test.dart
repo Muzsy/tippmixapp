@@ -46,13 +46,12 @@ void main() {
       firestore: FakeFirebaseFirestore(),
       auth: FakeFirebaseAuth(null),
     );
-    final container = ProviderContainer(overrides: [
-      themeServiceProvider.overrideWith((ref) => themeService),
-    ]);
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: const _TestApp(),
-    ));
+    final container = ProviderContainer(
+      overrides: [themeServiceProvider.overrideWith((ref) => themeService)],
+    );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(container: container, child: const _TestApp()),
+    );
     await tester.pumpAndSettle();
 
     BuildContext context = tester.element(find.byType(SizedBox));

@@ -28,21 +28,19 @@ class _SecurityScreenState extends State<SecurityScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(loc.security_title)),
       body: SwitchListTile(
-        title: Text(_enabled
-            ? loc.disable_two_factor
-            : loc.enable_two_factor),
+        title: Text(_enabled ? loc.disable_two_factor : loc.enable_two_factor),
         value: _enabled,
-          onChanged: (v) async {
-            if (v) {
-              final ok = await widget.service.enable(TwoFactorType.sms);
-              if (!context.mounted) return;
-              if (ok) context.pushNamed(AppRoute.twoFactorWizard.name);
-            } else {
-              await widget.service.disable();
-              if (!context.mounted) return;
-            }
-            setState(() => _enabled = widget.service.status);
-          },
+        onChanged: (v) async {
+          if (v) {
+            final ok = await widget.service.enable(TwoFactorType.sms);
+            if (!context.mounted) return;
+            if (ok) context.pushNamed(AppRoute.twoFactorWizard.name);
+          } else {
+            await widget.service.disable();
+            if (!context.mounted) return;
+          }
+          setState(() => _enabled = widget.service.status);
+        },
       ),
     );
   }

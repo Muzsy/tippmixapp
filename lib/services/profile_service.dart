@@ -8,8 +8,10 @@ class ProfileService {
 
   static final List<_QueuedUpdate> _queued = [];
 
-  static Future<bool> isNicknameUnique(String nickname,
-      {required FirebaseFirestore firestore}) async {
+  static Future<bool> isNicknameUnique(
+    String nickname, {
+    required FirebaseFirestore firestore,
+  }) async {
     final query = await firestore
         .collection('users')
         .where('nickname', isEqualTo: nickname)
@@ -24,12 +26,14 @@ class ProfileService {
         .set(user.toJson());
   }
 
-  static Stream<UserModel?> streamUserProfile(String uid) =>
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .snapshots()
-          .map((snap) => snap.data() == null ? null : UserModel.fromJson(snap.data()!));
+  static Stream<UserModel?> streamUserProfile(String uid) => FirebaseFirestore
+      .instance
+      .collection('users')
+      .doc(uid)
+      .snapshots()
+      .map(
+        (snap) => snap.data() == null ? null : UserModel.fromJson(snap.data()!),
+      );
 
   static Future<UserModel> getProfile({
     required String uid,
@@ -97,10 +101,12 @@ class ProfileService {
         nickname: data['nickname'] ?? cached.nickname,
         avatarUrl: data['avatarUrl'] ?? cached.avatarUrl,
         isPrivate: data['isPrivate'] ?? cached.isPrivate,
-        fieldVisibility:
-            Map<String, bool>.from(cached.fieldVisibility)..addAll(
-                (data['fieldVisibility'] as Map<String, dynamic>? ?? {})
-                    .map((k, v) => MapEntry(k, v as bool))),
+        fieldVisibility: Map<String, bool>.from(cached.fieldVisibility)
+          ..addAll(
+            (data['fieldVisibility'] as Map<String, dynamic>? ?? {}).map(
+              (k, v) => MapEntry(k, v as bool),
+            ),
+          ),
       );
       cache.set(uid, updated, const Duration(hours: 1));
     } else {
@@ -159,10 +165,12 @@ class ProfileService {
           nickname: q.data['nickname'] ?? cached.nickname,
           avatarUrl: q.data['avatarUrl'] ?? cached.avatarUrl,
           isPrivate: q.data['isPrivate'] ?? cached.isPrivate,
-          fieldVisibility:
-              Map<String, bool>.from(cached.fieldVisibility)..addAll(
-                  (q.data['fieldVisibility'] as Map<String, dynamic>? ?? {})
-                      .map((k, v) => MapEntry(k, v as bool))),
+          fieldVisibility: Map<String, bool>.from(cached.fieldVisibility)
+            ..addAll(
+              (q.data['fieldVisibility'] as Map<String, dynamic>? ?? {}).map(
+                (k, v) => MapEntry(k, v as bool),
+              ),
+            ),
         );
         cache.set(q.uid, updated, const Duration(hours: 1));
       }

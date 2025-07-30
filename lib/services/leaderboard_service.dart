@@ -6,7 +6,7 @@ class LeaderboardService {
   final StatsService _statsService;
 
   LeaderboardService([StatsService? statsService])
-      : _statsService = statsService ?? StatsService();
+    : _statsService = statsService ?? StatsService();
 
   /// Returns the top tipster based on the default leaderboard statistics.
   Future<UserStatsModel?> fetchTopTipster() async {

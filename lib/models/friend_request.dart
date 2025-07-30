@@ -21,8 +21,8 @@ class FriendRequest {
   }
 
   Map<String, dynamic> toJson() => {
-        'fromUid': fromUid,
-        'toUid': toUid,
-        'accepted': accepted,
-      };
+    'fromUid': fromUid,
+    'toUid': toUid,
+    'accepted': accepted,
+  };
 }

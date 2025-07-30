@@ -44,14 +44,16 @@ class StatsService {
             .length;
         final winRate = totalBets == 0 ? 0.0 : totalWins / totalBets;
 
-        stats.add(UserStatsModel(
-          uid: uid,
-          displayName: displayName,
-          coins: coins,
-          totalBets: totalBets,
-          totalWins: totalWins,
-          winRate: winRate,
-        ));
+        stats.add(
+          UserStatsModel(
+            uid: uid,
+            displayName: displayName,
+            coins: coins,
+            totalBets: totalBets,
+            totalWins: totalWins,
+            winRate: winRate,
+          ),
+        );
       }
 
       _sortStats(stats, mode);
@@ -69,20 +71,20 @@ class StatsService {
       final uid = user['uid'] as String;
       final coins = user['coins'] as int? ?? 0;
       final displayName = user['nickname'] as String? ?? '';
-      final userTickets =
-          tickets.where((t) => t['userId'] == uid).toList();
+      final userTickets = tickets.where((t) => t['userId'] == uid).toList();
       final totalBets = userTickets.length;
-      final totalWins =
-          userTickets.where((t) => t['status'] == 'won').length;
+      final totalWins = userTickets.where((t) => t['status'] == 'won').length;
       final winRate = totalBets == 0 ? 0.0 : totalWins / totalBets;
-      stats.add(UserStatsModel(
-        uid: uid,
-        displayName: displayName,
-        coins: coins,
-        totalBets: totalBets,
-        totalWins: totalWins,
-        winRate: winRate,
-      ));
+      stats.add(
+        UserStatsModel(
+          uid: uid,
+          displayName: displayName,
+          coins: coins,
+          totalBets: totalBets,
+          totalWins: totalWins,
+          winRate: winRate,
+        ),
+      );
     }
     _sortStats(stats, mode);
     return stats;
@@ -96,8 +98,7 @@ class StatsService {
         case LeaderboardMode.byWinrate:
           return b.winRate.compareTo(a.winRate);
         case LeaderboardMode.byStreak:
-          return (b.currentWinStreak ?? 0)
-              .compareTo(a.currentWinStreak ?? 0);
+          return (b.currentWinStreak ?? 0).compareTo(a.currentWinStreak ?? 0);
       }
     });
   }

@@ -13,7 +13,7 @@ import 'coin_service.dart';
 /// * Kiszámítja az össz‐oddsot és a potenciális nyereményt.
 /// * Létrehoz egy `tickets/{ticketId}` dokumentumot Firestore‑ban.
 ///
-/// Egyetlen be‐járati pont: [submitTicket].  
+/// Egyetlen be‐járati pont: [submitTicket].
 /// Minden UI (CreateTicketScreen, BetSlipProvider) ezen keresztül ment.
 class BetSlipService {
   BetSlipService._(); // ne lehessen példányosítani
@@ -78,7 +78,9 @@ class BetSlipService {
     );
 
     // 4️⃣ TippCoin levonás
-    final cs = coinService ?? CoinService(firestore: firestore ?? FirebaseFirestore.instance);
+    final cs =
+        coinService ??
+        CoinService(firestore: firestore ?? FirebaseFirestore.instance);
     try {
       await cs.debitCoin(
         amount: stake,
@@ -99,7 +101,9 @@ class BetSlipService {
     await ticketsRef.doc(ticketId).set(ticket.toJson());
 
     if (kDebugMode) {
-      print('[BetSlipService] Ticket $ticketId saved (stake: $stake, odds: $totalOdd)');
+      print(
+        '[BetSlipService] Ticket $ticketId saved (stake: $stake, odds: $totalOdd)',
+      );
     }
   }
 }

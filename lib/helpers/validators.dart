@@ -11,7 +11,9 @@ String? validatePassword(String? password) {
   final hasLower = RegExp(r'[a-z]').hasMatch(password);
   final hasUpper = RegExp(r'[A-Z]').hasMatch(password);
   final hasDigit = RegExp(r'\d').hasMatch(password);
-  final hasSpecial = RegExp(r'[!@#\$&*~%^()_+=\-{}\[\]|:;<>,.?/]').hasMatch(password);
+  final hasSpecial = RegExp(
+    r'[!@#\$&*~%^()_+=\-{}\[\]|:;<>,.?/]',
+  ).hasMatch(password);
   final meetsLength = password.length >= 12;
   return hasLower && hasUpper && hasDigit && hasSpecial && meetsLength
       ? null

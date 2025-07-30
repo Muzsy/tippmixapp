@@ -12,13 +12,13 @@ class OnboardingPage3 extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Expanded(
-            child: Icon(Icons.people_alt, size: 120),
-          ),
+          const Expanded(child: Icon(Icons.people_alt, size: 120)),
           const SizedBox(height: 16),
-          Text(loc.onboarding_follow_tipsters,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            loc.onboarding_follow_tipsters,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
         ],
       ),
     );

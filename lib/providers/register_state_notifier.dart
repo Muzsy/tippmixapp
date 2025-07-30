@@ -57,7 +57,11 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   }
 
   void saveStep2(String nickname, DateTime birthDate, bool gdprConsent) {
-    state = state.copyWith(nickname: nickname, birthDate: birthDate, gdprConsent: gdprConsent);
+    state = state.copyWith(
+      nickname: nickname,
+      birthDate: birthDate,
+      gdprConsent: gdprConsent,
+    );
   }
 
   void saveAvatar(String url) {
@@ -77,7 +81,9 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
         email: state.email,
         displayName: state.nickname,
         nickname: state.nickname,
-        avatarUrl: state.avatarUrl.isEmpty ? kDefaultAvatarPath : state.avatarUrl,
+        avatarUrl: state.avatarUrl.isEmpty
+            ? kDefaultAvatarPath
+            : state.avatarUrl,
         isPrivate: false,
         fieldVisibility: const {},
         notificationPreferences: const {},
@@ -88,11 +94,14 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   }
 }
 
-final registerStateNotifierProvider = StateNotifierProvider<RegisterStateNotifier, RegisterData>(
-  (ref) => RegisterStateNotifier(ref.read(authServiceProvider)),
-);
+final registerStateNotifierProvider =
+    StateNotifierProvider<RegisterStateNotifier, RegisterData>(
+      (ref) => RegisterStateNotifier(ref.read(authServiceProvider)),
+    );
 
-final registerPageControllerProvider = Provider.autoDispose<PageController>((ref) {
+final registerPageControllerProvider = Provider.autoDispose<PageController>((
+  ref,
+) {
   final controller = PageController();
   ref.onDispose(controller.dispose);
   return controller;

@@ -20,10 +20,16 @@ void main() {
         ),
       ),
     );
-    await tester.enterText(find.byType(TextFormField).first, 'test@example.com');
+    await tester.enterText(
+      find.byType(TextFormField).first,
+      'test@example.com',
+    );
     expect(find.text('test@example.com'), findsOneWidget);
     await tester.pumpWidget(
-      ProviderScope(overrides: [authServiceProvider.overrideWithValue(mockAuth)], child: const MaterialApp(home: Placeholder())),
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuth)],
+        child: const MaterialApp(home: Placeholder()),
+      ),
     );
     await tester.pumpAndSettle();
     await tester.pumpWidget(

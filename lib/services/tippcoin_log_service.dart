@@ -6,8 +6,8 @@ class TippCoinLogService {
   final FirebaseFunctions _functions;
 
   TippCoinLogService([FirebaseFunctions? functions])
-      : _functions =
-            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
+    : _functions =
+          functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2');
 
   Future<TippCoinLogModel> logCredit({
     required String userId,

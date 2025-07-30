@@ -4,10 +4,10 @@ class TipModel {
   final String eventName;
   final DateTime startTime;
   final String sportKey;
-  final String bookmaker;   // pl. "Bet365"
-  final String marketKey;   // pl. "h2h"
-  final String outcome;     // pl. "Arsenal"
-  final double odds;        // pl. 2.15
+  final String bookmaker; // pl. "Bet365"
+  final String marketKey; // pl. "h2h"
+  final String outcome; // pl. "Arsenal"
+  final double odds; // pl. 2.15
 
   // + egyedi azonosító, user id, tét összege, stb. ha kell!
 

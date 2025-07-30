@@ -15,11 +15,11 @@ class _FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
 
 class MockThemeService extends ThemeService {
   MockThemeService()
-      : super(
-          prefs: null,
-          firestore: FakeFirebaseFirestore(),
-          auth: _FakeFirebaseAuth(),
-        );
+    : super(
+        prefs: null,
+        firestore: FakeFirebaseFirestore(),
+        auth: _FakeFirebaseAuth(),
+      );
 
   static const FlexScheme _defaultScheme = FlexScheme.dellGenoa;
 

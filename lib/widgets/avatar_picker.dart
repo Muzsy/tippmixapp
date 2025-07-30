@@ -25,7 +25,9 @@ class _AvatarPickerState extends State<AvatarPicker> {
       context: context,
       builder: (context) => SizedBox(
         height: 400,
-        child: AvatarGallery(onAvatarSelected: (p) => Navigator.pop(context, p)),
+        child: AvatarGallery(
+          onAvatarSelected: (p) => Navigator.pop(context, p),
+        ),
       ),
     );
     if (selected != null) {
@@ -42,8 +44,8 @@ class _AvatarPickerState extends State<AvatarPicker> {
         radius: 40,
         backgroundImage: _avatar != null
             ? (_avatar!.startsWith('http')
-                ? NetworkImage(_avatar!) as ImageProvider
-                : AssetImage(_avatar!))
+                  ? NetworkImage(_avatar!) as ImageProvider
+                  : AssetImage(_avatar!))
             : const AssetImage(kDefaultAvatarPath),
         child: _avatar == null ? const Icon(Icons.person) : null,
       ),

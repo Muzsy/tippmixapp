@@ -8,12 +8,12 @@ import '../models/user_stats_model.dart';
 final statsServiceProvider = Provider<StatsService>((ref) => StatsService());
 
 /// Currently selected leaderboard sorting mode.
-final leaderboardModeProvider =
-    StateProvider<LeaderboardMode>((ref) => LeaderboardMode.byCoin);
+final leaderboardModeProvider = StateProvider<LeaderboardMode>(
+  (ref) => LeaderboardMode.byCoin,
+);
 
 /// Streams leaderboard data based on the selected [LeaderboardMode].
-final leaderboardStreamProvider =
-    StreamProvider<List<UserStatsModel>>((ref) {
+final leaderboardStreamProvider = StreamProvider<List<UserStatsModel>>((ref) {
   final service = ref.watch(statsServiceProvider);
   final mode = ref.watch(leaderboardModeProvider);
   return service.streamUserStats(mode: mode);

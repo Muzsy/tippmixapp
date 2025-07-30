@@ -10,8 +10,8 @@ class OddsApiService {
 
   Future<OddsApiResponse<List<OddsEvent>>> getOdds({
     required String sport,
-    String? league,        // később: szűrés ligára is, ha támogatott
-    DateTime? from,        // később: időintervallum
+    String? league, // később: szűrés ligára is, ha támogatott
+    DateTime? from, // később: időintervallum
     DateTime? to,
   }) async {
     // Log API key usage in debug mode only
@@ -28,7 +28,7 @@ class OddsApiService {
     try {
       // Kötelező query-paraméterek ( régió + piac )
       String url =
-       '$_baseUrl/$sport/odds/?apiKey=$apiKey&regions=eu&markets=h2h';
+          '$_baseUrl/$sport/odds/?apiKey=$apiKey&regions=eu&markets=h2h';
       if (league != null && league.isNotEmpty) {
         url += '&regions=$league';
       }
@@ -39,9 +39,11 @@ class OddsApiService {
         url += '&dateTo=${to.toIso8601String()}';
       }
 
-        // Debug log before http request
-      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
-        // Debug log after http request
+      // Debug log before http request
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      // Debug log after http request
 
       if (response.statusCode == 429) {
         return OddsApiResponse(
@@ -101,12 +103,12 @@ class OddsApiService {
         errorType: ApiErrorType.network,
         errorMessage: 'api_error_network',
       );
-      } catch (e) {
-            // Log the error details
-        return OddsApiResponse(
-          data: null,
-          errorType: ApiErrorType.unknown,
-          errorMessage: 'api_error_unknown',
+    } catch (e) {
+      // Log the error details
+      return OddsApiResponse(
+        data: null,
+        errorType: ApiErrorType.unknown,
+        errorMessage: 'api_error_unknown',
       );
     }
   }

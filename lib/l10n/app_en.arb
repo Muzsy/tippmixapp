@@ -1,298 +1,298 @@
 {
-  "home_title": "Home",
-  "home_guest_message": "Log in or register to view your profile",
+  "accept": "Accept",
+  "addFriend": "Add Friend",
+  "add_tip": "Add",
+  "admin_only_field": "Only admin may modify this field.",
+  "amount_must_be_integer": "Amount must be an integer.",
+  "api_error_key": "Invalid Odds API key",
+  "api_error_limit": "Odds API rate limit exceeded",
+  "api_error_network": "Network error while contacting Odds API",
+  "api_error_unknown": "Unknown error from Odds API",
+  "apple_login": "Continue with Apple",
+  "auth_error_email_already_in_use": "Email already in use",
+  "auth_error_invalid_date": "Invalid date",
+  "auth_error_invalid_email": "Invalid email address",
+  "auth_error_invalid_nickname": "Nickname must be 3-20 characters",
+  "auth_error_nickname_taken": "Nickname already taken",
+  "auth_error_unknown": "Unknown authentication error",
+  "auth_error_user_not_found": "User not found",
+  "auth_error_weak_password": "Weak password",
+  "auth_error_wrong_password": "Wrong password",
+  "back_button": "Back",
+  "backup_codes_title": "Backup codes",
+  "badgeFilterAll": "All",
+  "badgeFilterMissing": "Missing",
+  "badgeFilterOwned": "Owned",
+  "badgeScreenTitle": "Available Badges",
+  "badge_comeback_kid_description": "Win after three losses.",
+  "badge_comeback_kid_title": "Comeback Kid",
+  "badge_hot_streak_description": "Three wins in a row.",
+  "badge_hot_streak_title": "Hot Streak",
+  "badge_night_owl_description": "Ticket won after midnight.",
+  "badge_night_owl_title": "Night Owl",
+  "badge_parlay_pro_description": "Winning a 5+ event parlay.",
+  "badge_parlay_pro_title": "Parlay Pro",
+  "badge_rookie_description": "First win completed.",
+  "badge_rookie_title": "Rookie",
+  "bets_title": "Bets",
+  "bio_hint": "Bio",
+  "bonus_daily_received": "Daily bonus: +50 TippCoin!",
+  "bonus_daily_received_description": "Thanks for being active!",
+  "bottom_nav_feed": "Feed",
+  "btnContinue": "Continue",
+  "confirm_password_hint": "Confirm Password",
+  "continue_button": "Continue",
+  "copy_edit_title": "Edit copied ticket",
+  "copy_invalid_state": "Ticket unmodified, cannot submit.",
+  "copy_submit_button": "Submit ticket",
+  "copy_success": "Ticket copied!",
+  "createTicketTitle": "Create Ticket",
+  "dialog_add_comment_hint": "Add a comment",
+  "dialog_cancel": "Cancel",
+  "dialog_comment_title": "Comment",
+  "dialog_reason_hint": "Reason",
+  "dialog_send": "Send",
+  "disable_two_factor": "Disable two-factor authentication",
+  "dob_error_future": "Date cannot be in the future",
+  "dob_error_underage": "You must be 18+",
+  "dob_hint": "Date of birth",
+  "drawer_feed": "Feed",
+  "drawer_title": "Drawer",
+  "edit_title": "Edit Profile",
+  "emailVerify_description": "Click the link in the verification email then return to the app.",
+  "emailVerify_exit": "Exit",
+  "emailVerify_resend": "Resend",
+  "emailVerify_sent": "Verification email sent",
+  "emailVerify_title": "Verify your email!",
+  "email_hint": "Email",
+  "empty_ticket_message": "You have no tickets yet",
+  "enable_two_factor": "Enable two-factor authentication",
+  "errorDuplicate": "Duplicate tips are not allowed",
+  "errorEmailExists": "This e-mail is already registered",
+  "errorInvalidEmail": "Invalid email address",
+  "errorInvalidStake": "Invalid stake",
+  "errorMatchConflict": "Conflicting tips on the same match",
+  "errorNotLoggedIn": "You are not logged in.",
+  "errorUserNotFound": "User not found. Please log in again.",
+  "errorWeakPassword": "Weak password",
+  "events_empty": "No events available",
+  "events_screen_no_events": "No events found",
+  "events_screen_no_market": "No market data",
+  "events_screen_no_odds": "No odds available",
+  "events_screen_quota_warning": "API quota is nearly exceeded",
+  "events_screen_refresh": "Refresh",
+  "events_screen_start_time": "Start time: {time}",
+  "events_screen_tip_added": "Tip added",
+  "events_screen_tip_duplicate": "Tip already added",
+  "events_title": "Events",
+  "facebook_login": "Continue with Facebook",
+  "feed_comment": "Comment",
+  "feed_empty_state": "No posts yet",
+  "feed_event_bet_placed": "Bet placed",
+  "feed_event_comment": "Comment",
+  "feed_event_like": "Like",
+  "feed_event_ticket_won": "Ticket won",
+  "feed_like": "Like",
+  "feed_report": "Report",
+  "feed_report_success": "The post has been reported.",
+  "feed_screen_title": "Feed",
+  "follow": "Follow",
+  "followers": "Followers",
+  "forgot_password": "Forgot password?",
+  "friends": "Friends",
+  "gdpr_consent": "I agree to the privacy policy",
+  "gdpr_required_error": "GDPR consent required",
+  "go_to_create_ticket": "Submit Ticket",
+  "google_login": "Continue with Google",
   "home_coin": "TippCoin",
-  "home_stats": "Stats",
+  "home_guest_message": "Log in or register to view your profile",
+  "home_highlight_coin": "TippCoin: Earn extra coins with activity!",
+  "home_highlight_motivation": "Motivation: Try a new strategy!",
+  "home_highlight_tip": "Daily Tip: Bayern wins",
+  "home_nav_forum": "Forum",
+  "home_nav_messages": "Messages",
   "home_nav_profile": "Profile",
   "home_nav_stats": "Stats",
-  "home_nav_messages": "Messages",
-  "home_nav_forum": "Forum",
-  "home_tile_bets": "Bets",
-  "home_tile_news": "News Feed",
-  "home_tile_my_bets": "My Bets",
-  "home_tile_friends": "Friends",
-  "home_highlight_tip": "Daily Tip: Bayern wins",
-  "home_highlight_motivation": "Motivation: Try a new strategy!",
-  "home_highlight_coin": "TippCoin: Earn extra coins with activity!",
-  "home_tile_daily_bonus_title": "Daily Bonus",
-  "home_tile_daily_bonus_collect": "Collect",
-  "home_tile_daily_bonus_claimed": "Collected",
-  "home_tile_new_badge_title": "New Badge",
-  "home_tile_badge_earned_title": "Badge Earned",
-  "home_tile_badge_earned_cta": "View all",
-  "home_tile_ai_tip_title": "AI Recommendation",
-  "home_tile_ai_tip_description": "According to AI, {team} is most likely to win today ({percent}%).",
+  "home_stats": "Stats",
   "home_tile_ai_tip_cta": "View details",
-  "home_tile_top_tipster_title": "Player of the Day",
-  "home_tile_top_tipster_description": "{username} hit all tips in your club today.",
-  "home_tile_top_tipster_cta": "View tips",
-  "home_tile_challenge_title": "Challenge awaits!",
+  "home_tile_ai_tip_description": "According to AI, {team} is most likely to win today ({percent}%).",
+  "home_tile_ai_tip_title": "AI Recommendation",
+  "home_tile_badge_earned_cta": "View all",
+  "home_tile_badge_earned_title": "Badge Earned",
+  "home_tile_bets": "Bets",
+  "home_tile_challenge_cta_accept": "Accept",
   "home_tile_challenge_daily_description": "Daily challenge: win 3 bets today.",
   "home_tile_challenge_friend_description": "{username} challenged you to a betting duel!",
-  "home_tile_challenge_cta_accept": "Accept",
-  "home_tile_educational_tip_title": "Betting tip",
+  "home_tile_challenge_title": "Challenge awaits!",
+  "home_tile_daily_bonus_claimed": "Collected",
+  "home_tile_daily_bonus_collect": "Collect",
+  "home_tile_daily_bonus_title": "Daily Bonus",
   "home_tile_educational_tip_1": "Did you know? Combining bets can increase your odds.",
   "home_tile_educational_tip_2": "Single bets carry less risk than accumulators.",
   "home_tile_educational_tip_3": "Track your betting history to learn from past results.",
   "home_tile_educational_tip_cta": "More tips",
-  "home_tile_feed_activity_title": "Latest activity",
-  "home_tile_feed_activity_text_template": "{username} shared a winning tip!",
+  "home_tile_educational_tip_title": "Betting tip",
   "home_tile_feed_activity_cta": "View",
-  "login_welcome": "Welcome to Tippmix!",
-  "login_title": "Sign In",
-  "login_tab": "Login",
-  "register_tab": "Register",
-  "email_hint": "Email",
-  "password_hint": "Password",
-  "confirm_password_hint": "Confirm Password",
-  "login_button": "Login",
-  "register_button": "Register",
-  "register_link": "Create account",
-  "forgot_password": "Forgot password?",
-  "verification_email_sent": "Verification email sent",
-  "password_reset_title": "Reset Password",
-  "password_reset_email_sent": "Password reset email sent",
-  "google_login": "Continue with Google"
-  ,"apple_login": "Continue with Apple"
-  ,"facebook_login": "Continue with Facebook"
-  ,"profile_title": "Profile"
-  ,"profile_logout": "Logout"
-  ,"profile_language": "Language"
-  ,"profile_theme": "Theme"
-  ,"profile_rank": "Rank"
-  ,"profile_guest": "Sign in as guest"
-  ,"createTicketTitle": "Create Ticket"
-  ,"stakeHint": "Stake"
-  ,"placeBet": "Place Bet"
-  ,"errorInvalidStake": "Invalid stake"
-  ,"errorDuplicate": "Duplicate tips are not allowed"
-  ,"errorMatchConflict": "Conflicting tips on the same match"
-  ,"my_tickets_title": "My Tickets"
-  ,"ticket_status_pending": "Pending"
-  ,"ticket_status_won": "Won"
-  ,"ticket_status_lost": "Lost"
-  ,"ticket_status_void": "Void"
-  ,"empty_ticket_message": "You have no tickets yet"
-  ,"ticket_details_title": "Ticket Details"
-  ,"api_error_limit": "Odds API rate limit exceeded"
-  ,"api_error_key": "Invalid Odds API key"
-  ,"api_error_network": "Network error while contacting Odds API"
-  ,"api_error_unknown": "Unknown error from Odds API"
-  ,"events_title": "Events"
-  ,"bets_title": "Bets"
-  ,"events_empty": "No events available"
-  ,"events_screen_no_events": "No events found"
-  ,"events_screen_quota_warning": "API quota is nearly exceeded"
-  ,"events_screen_refresh": "Refresh"
-  ,"events_screen_no_odds": "No odds available"
-  ,"events_screen_no_market": "No market data"
-  ,"events_screen_start_time": "Start time: {time}"
-  ,"events_screen_tip_added": "Tip added"
-  ,"events_screen_tip_duplicate": "Tip already added"
-  ,"add_tip": "Add"
-  ,"no_tips_selected": "No tips selected"
-  ,"ticket_submit_success": "Ticket submitted successfully"
-  ,"ticket_submit_error": "Error occurred:"
-  ,"odds_label": "Odds"
-  ,"total_odds_label": "Total odds"
-  ,"potential_win_label": "Potential win"
-  ,"ticket_id": "Ticket"
-  ,"tips_label": "Tips"
-  ,"ok": "OK"
-  ,"not_logged_in": "Not logged in"
-  ,"errorNotLoggedIn": "You are not logged in."
-  ,"profile_email": "Email"
-  ,"profile_name": "Name"
-  ,"profile_nickname": "Nickname"
-  ,"profile_is_private": "Private profile"
-  ,"profile_city": "City"
-  ,"profile_country": "Country"
-  ,"profile_friends": "Friends"
-  ,"profile_favorite_sports": "Favorite sports"
-  ,"profile_favorite_teams": "Favorite teams"
-  ,"profile_public": "Public"
-  ,"profile_private": "Private"
-  ,"profile_toggle_visibility": "Toggle visibility"
-  ,"profile_global_privacy": "Global privacy switch"
-  ,"drawer_title": "Drawer"
-  ,"errorUserNotFound": "User not found. Please log in again."
-  ,"go_to_create_ticket": "Submit Ticket"
-  ,"insufficient_permissions": "You do not have permission."
-  ,"invalid_transaction_type": "Invalid transaction type."
-  ,"missing_transaction_id": "Transaction ID is required."
-  ,"amount_must_be_integer": "Amount must be an integer."
-  ,"admin_only_field": "Only admin may modify this field.",
-  "leaderboard_title": "Leaderboard",
-  "leaderboard_you": "You",
+  "home_tile_feed_activity_text_template": "{username} shared a winning tip!",
+  "home_tile_feed_activity_title": "Latest activity",
+  "home_tile_friends": "Friends",
+  "home_tile_my_bets": "My Bets",
+  "home_tile_new_badge_title": "New Badge",
+  "home_tile_news": "News Feed",
+  "home_tile_top_tipster_cta": "View tips",
+  "home_tile_top_tipster_description": "{username} hit all tips in your club today.",
+  "home_tile_top_tipster_title": "Player of the Day",
+  "home_title": "Home",
+  "insufficient_permissions": "You do not have permission.",
+  "invalid_transaction_type": "Invalid transaction type.",
   "leaderboard_empty": "No users yet",
   "leaderboard_mode_coin": "TippCoin",
-  "leaderboard_mode_winrate": "Win rate",
   "leaderboard_mode_streak": "Win streak",
-  "feed_screen_title": "Feed",
-  "menuLeaderboard": "Leaderboard"
-  ,"menuProfile": "Profile"
-  ,"myTickets": "My Tickets"
-  ,"menuSettings": "Settings"
-  ,"drawer_feed": "Feed"
-  ,"bottom_nav_feed": "Feed"
-  ,"settings_title": "Settings"
-  ,"settings_theme": "Theme"
-  ,"settings_theme_system": "System"
-  ,"settings_theme_light": "Light"
-  ,"settings_theme_dark": "Dark"
-  ,"settings_dark_mode": "Dark mode"
-  ,"settings_language": "Language"
-  ,"settings_logout": "Logout"
-  ,"settings_ai_recommendations": "AI recommendations"
-  ,"settings_push_notifications": "Push notifications"
-  ,"settings_skin": "Skin"
-  ,"skin_dell_genoa_name": "Tippmix Green"
-  ,"skin_dell_genoa_description": "Default Tippmix green theme"
-  ,"skin_pink_m3_name": "Pink Party"
-  ,"skin_pink_m3_description": "Fun and vibrant pink skin"
-  ,"badge_rookie_title": "Rookie"
-  ,"badge_rookie_description": "First win completed."
-  ,"badge_hot_streak_title": "Hot Streak"
-  ,"badge_hot_streak_description": "Three wins in a row."
-  ,"badge_parlay_pro_title": "Parlay Pro"
-  ,"badge_parlay_pro_description": "Winning a 5+ event parlay."
-  ,"badge_night_owl_title": "Night Owl"
-  ,"badge_night_owl_description": "Ticket won after midnight."
-  ,"badge_comeback_kid_title": "Comeback Kid"
-  ,"badge_comeback_kid_description": "Win after three losses."
-  ,"profile_badges_empty": "No badges yet"
-  ,"bonus_daily_received": "Daily bonus: +50 TippCoin!"
-  ,"bonus_daily_received_description": "Thanks for being active!" 
- ,"feed_event_bet_placed": "Bet placed"
-  ,"feed_event_ticket_won": "Ticket won"
-  ,"feed_event_comment": "Comment"
-  ,"feed_event_like": "Like"
-  ,"feed_report_success": "The post has been reported."
-  ,"feed_empty_state": "No posts yet"
-  ,"feed_like": "Like"
-  ,"feed_comment": "Comment"
-   ,"feed_report": "Report",
-  "copy_success": "Ticket copied!",
-  "copy_edit_title": "Edit copied ticket",
-  "copy_submit_button": "Submit ticket",
-  "copy_invalid_state": "Ticket unmodified, cannot submit.",
-  "auth_error_user_not_found": "User not found",
-  "auth_error_wrong_password": "Wrong password",
-  "auth_error_email_already_in_use": "Email already in use",
-  "auth_error_invalid_email": "Invalid email address",
-  "auth_error_weak_password": "Weak password",
-  "auth_error_unknown": "Unknown authentication error"
-  ,"menuBadges": "Badges"
-  ,"badgeScreenTitle": "Available Badges"
-  ,"badgeFilterAll": "All"
-  ,"badgeFilterOwned": "Owned"
-  ,"badgeFilterMissing": "Missing"
-  ,"menuRewards": "Rewards"
-  ,"rewardTitle": "Available rewards"
-  ,"rewardClaim": "Claim"
-  ,"rewardClaimed": "Claimed"
-  ,"rewardEmpty": "No rewards available"
-  ,"reward_balance": "Coins: {coins}"
-  ,"reward_streak": "Streak: {days}/7"
-  ,"menuNotifications": "Notifications"
-  ,"notificationTitle": "Events"
-  ,"notificationEmpty": "No new notifications"
-  ,"notificationMarkRead": "Mark read"
-  ,"notificationFilterAll": "All"
-  ,"notificationFilterUnread": "Unread"
-  ,"notificationArchive": "Archive"
-  ,"notificationUndo": "Undo"
-  ,"notificationType_reward": "Reward"
-  ,"notificationType_badge": "Badge"
-  ,"notificationType_friend": "Friend request"
-  ,"notificationType_message": "Message"
-  ,"notificationType_challenge": "Challenge"
-  ,"dialog_cancel": "Cancel"
-  ,"dialog_send": "Send"
-  ,"dialog_reason_hint": "Reason"
-  ,"dialog_comment_title": "Comment"
-  ,"dialog_add_comment_hint": "Add a comment"
-  ,"profile_stats": "Stats"
-  ,"profile_badges": "Badges"
-  ,"profile_level": "Level"
-  ,"profile_coins": "TippCoin"
-  ,"profileAvatarGallery": "Avatar gallery"
-  ,"profileUploadPhoto": "Upload your own photo"
-  ,"profileResetAvatar": "Reset to default avatar"
-  ,"profileChooseAvatar": "Choose avatar"
-  ,"profile_avatar_error": "Error updating avatar"
-  ,"profile_avatar_updated": "Avatar updated"
-  ,"profile_avatar_cancelled": "Avatar upload cancelled"
-  ,"notif_tips": "Tips"
-  ,"notif_friend_activity": "Friend activity"
-  ,"notif_badge": "Badges"
-  ,"notif_rewards": "Rewards"
-  ,"notif_system": "System"
-  ,"edit_title": "Edit Profile"
-  ,"name_hint": "Display name"
-  ,"name_error_short": "Name too short"
-  ,"name_error_long": "Name too long"
-  ,"bio_hint": "Bio"
-  ,"team_hint": "Favourite team"
-  ,"dob_hint": "Date of birth"
-  ,"dob_error_underage": "You must be 18+"
-  ,"dob_error_future": "Date cannot be in the future"
-  ,"profile_updated": "Profile updated",
-  "security_title": "Security",
-  "enable_two_factor": "Enable two-factor authentication",
-  "disable_two_factor": "Disable two-factor authentication",
-  "otp_prompt_title": "Enter OTP",
+  "leaderboard_mode_winrate": "Win rate",
+  "leaderboard_title": "Leaderboard",
+  "leaderboard_you": "You",
+  "loaderCheckingEmail": "Checking e-mail...",
+  "login_button": "Login",
+  "login_required_message": "Please log in to continue",
+  "login_required_title": "Login required",
+  "login_tab": "Login",
+  "login_title": "Sign In",
+  "login_variant_b_promo_subtitle": "Join our community and win!",
+  "login_variant_b_promo_title": "Trusted by 50 000+",
+  "login_welcome": "Welcome to Tippmix!",
+  "menuBadges": "Badges",
+  "menuLeaderboard": "Leaderboard",
+  "menuNotifications": "Notifications",
+  "menuProfile": "Profile",
+  "menuRewards": "Rewards",
+  "menuSettings": "Settings",
+  "missing_transaction_id": "Transaction ID is required.",
+  "myTickets": "My Tickets",
+  "my_tickets_title": "My Tickets",
+  "name_error_long": "Name too long",
+  "name_error_short": "Name too short",
+  "name_hint": "Display name",
+  "no_tips_selected": "No tips selected",
+  "not_logged_in": "Not logged in",
+  "notif_badge": "Badges",
+  "notif_friend_activity": "Friend activity",
+  "notif_rewards": "Rewards",
+  "notif_system": "System",
+  "notif_tips": "Tips",
+  "notificationArchive": "Archive",
+  "notificationEmpty": "No new notifications",
+  "notificationFilterAll": "All",
+  "notificationFilterUnread": "Unread",
+  "notificationMarkRead": "Mark read",
+  "notificationTitle": "Events",
+  "notificationType_badge": "Badge",
+  "notificationType_challenge": "Challenge",
+  "notificationType_friend": "Friend request",
+  "notificationType_message": "Message",
+  "notificationType_reward": "Reward",
+  "notificationUndo": "Undo",
+  "odds_label": "Odds",
+  "ok": "OK",
+  "onboarding_done": "Done",
+  "onboarding_follow_tipsters": "Follow top tipsters",
+  "onboarding_next": "Next",
+  "onboarding_place_bet": "Place bets easily",
+  "onboarding_skip": "Skip",
+  "onboarding_track_rewards": "Track your rewards",
   "otp_enter_code": "Code",
   "otp_error_invalid": "Invalid code",
-  "backup_codes_title": "Backup codes",
-  "verified_badge_label": "Verified",
-  "follow": "Follow",
-  "unfollow": "Unfollow",
-  "addFriend": "Add Friend",
-  "requestSent": "Request sent",
-  "friends": "Friends",
-  "followers": "Followers",
-  "pending": "Pending",
-  "accept": "Accept",
-  "login_variant_b_promo_title": "Trusted by 50 000+",
-  "login_variant_b_promo_subtitle": "Join our community and win!",
-  "onboarding_place_bet": "Place bets easily",
-  "onboarding_track_rewards": "Track your rewards",
-  "onboarding_follow_tipsters": "Follow top tipsters",
-  "onboarding_skip": "Skip",
-  "onboarding_next": "Next",
-  "onboarding_done": "Done",
-  "continue_button": "Continue",
-    "password_strength_weak": "Weak",
+  "otp_prompt_title": "Enter OTP",
+  "passwordStrengthStrong": "Strong",
+  "passwordStrengthVeryWeak": "Very weak",
+  "password_hint": "Password",
+  "password_pwned_error": "This password has appeared in a data breach",
+  "password_reset_email_sent": "Password reset email sent",
+  "password_reset_title": "Reset Password",
   "password_strength_medium": "Medium",
   "password_strength_strong": "Strong",
-  "errorInvalidEmail": "Invalid email address",
-  "errorWeakPassword": "Weak password",
-  "errorEmailExists": "This e-mail is already registered",
-  "loaderCheckingEmail": "Checking e-mail...",
-  "passwordStrengthVeryWeak": "Very weak",
-  "passwordStrengthStrong": "Strong",
-  "btnContinue": "Continue",
-  "gdpr_consent": "I agree to the privacy policy",
-  "gdpr_required_error": "GDPR consent required",
-  "auth_error_invalid_nickname": "Nickname must be 3-20 characters",
-  "auth_error_invalid_date": "Invalid date",
-  "auth_error_nickname_taken": "Nickname already taken",
-  "register_take_photo": "Take photo",
+  "password_strength_weak": "Weak",
+  "pending": "Pending",
+  "placeBet": "Place Bet",
+  "potential_win_label": "Potential win",
+  "profileAvatarGallery": "Avatar gallery",
+  "profileChooseAvatar": "Choose avatar",
+  "profileResetAvatar": "Reset to default avatar",
+  "profileUploadPhoto": "Upload your own photo",
+  "profile_avatar_cancelled": "Avatar upload cancelled",
+  "profile_avatar_error": "Error updating avatar",
+  "profile_avatar_updated": "Avatar updated",
+  "profile_badges": "Badges",
+  "profile_badges_empty": "No badges yet",
+  "profile_city": "City",
+  "profile_coins": "TippCoin",
+  "profile_country": "Country",
+  "profile_email": "Email",
+  "profile_favorite_sports": "Favorite sports",
+  "profile_favorite_teams": "Favorite teams",
+  "profile_friends": "Friends",
+  "profile_global_privacy": "Global privacy switch",
+  "profile_guest": "Sign in as guest",
+  "profile_is_private": "Private profile",
+  "profile_language": "Language",
+  "profile_level": "Level",
+  "profile_logout": "Logout",
+  "profile_name": "Name",
+  "profile_nickname": "Nickname",
+  "profile_private": "Private",
+  "profile_public": "Public",
+  "profile_rank": "Rank",
+  "profile_stats": "Stats",
+  "profile_theme": "Theme",
+  "profile_title": "Profile",
+  "profile_toggle_visibility": "Toggle visibility",
+  "profile_updated": "Profile updated",
+  "recaptcha_failed_error": "reCAPTCHA verification failed",
+  "register_avatar_too_large": "Avatar image must be 2 MB or less",
+  "register_button": "Register",
   "register_choose_file": "Choose file",
   "register_finish": "Finish",
+  "register_link": "Create account",
   "register_skip": "Skip",
-  "register_avatar_too_large": "Avatar image must be 2 MB or less",
-  "back_button": "Back",
-  "login_required_title": "Login required",
-  "login_required_message": "Please log in to continue",
-  "emailVerify_title": "Verify your email!",
-  "emailVerify_description": "Click the link in the verification email then return to the app.",
-  "emailVerify_resend": "Resend",
-  "emailVerify_sent": "Verification email sent",
-  "emailVerify_exit": "Exit",
-  "password_pwned_error": "This password has appeared in a data breach",
-  "recaptcha_failed_error": "reCAPTCHA verification failed",
+  "register_tab": "Register",
+  "register_take_photo": "Take photo",
+  "requestSent": "Request sent",
+  "rewardClaim": "Claim",
+  "rewardClaimed": "Claimed",
+  "rewardEmpty": "No rewards available",
+  "rewardTitle": "Available rewards",
+  "reward_balance": "Coins: {coins}",
+  "reward_streak": "Streak: {days}/7",
+  "security_title": "Security",
+  "settings_ai_recommendations": "AI recommendations",
+  "settings_dark_mode": "Dark mode",
+  "settings_language": "Language",
+  "settings_logout": "Logout",
+  "settings_push_notifications": "Push notifications",
+  "settings_skin": "Skin",
+  "settings_theme": "Theme",
+  "settings_theme_dark": "Dark",
+  "settings_theme_light": "Light",
+  "settings_theme_system": "System",
+  "settings_title": "Settings",
+  "skin_dell_genoa_description": "Default Tippmix green theme",
+  "skin_dell_genoa_name": "Tippmix Green",
+  "skin_pink_m3_description": "Fun and vibrant pink skin",
+  "skin_pink_m3_name": "Pink Party",
+  "stakeHint": "Stake",
+  "team_hint": "Favourite team",
+  "ticket_details_title": "Ticket Details",
+  "ticket_id": "Ticket",
+  "ticket_status_lost": "Lost",
+  "ticket_status_pending": "Pending",
+  "ticket_status_void": "Void",
+  "ticket_status_won": "Won",
+  "ticket_submit_error": "Error occurred:",
+  "ticket_submit_success": "Ticket submitted successfully",
+  "tips_label": "Tips",
+  "total_odds_label": "Total odds",
+  "unfollow": "Unfollow",
+  "unknown_error_try_again": "Unknown error, please try again",
   "unknown_network_error": "Network error occurred",
-  "unknown_error_try_again": "Unknown error, please try again"
+  "verification_email_sent": "Verification email sent",
+  "verified_badge_label": "Verified"
 }

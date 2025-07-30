@@ -15,7 +15,10 @@ void main() {
     expect(other.uid, profile.uid);
     expect(other.displayName, profile.displayName);
     expect(other.avatarUrl, profile.avatarUrl);
-    expect(other.createdAt.toIso8601String(), profile.createdAt.toIso8601String());
+    expect(
+      other.createdAt.toIso8601String(),
+      profile.createdAt.toIso8601String(),
+    );
     expect(other.coins, profile.coins);
   });
 }

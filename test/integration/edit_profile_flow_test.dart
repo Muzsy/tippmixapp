@@ -9,7 +9,10 @@ class FakeUserService extends UserService {
   FakeUserService(super.firestore);
   Map<String, dynamic>? last;
   @override
-  Future<UserModel> updateProfile(String uid, Map<String, dynamic> changes) async {
+  Future<UserModel> updateProfile(
+    String uid,
+    Map<String, dynamic> changes,
+  ) async {
     last = Map.from(changes);
     return UserModel(
       uid: uid,
@@ -26,23 +29,25 @@ class FakeUserService extends UserService {
 void main() {
   testWidgets('happy path edit triggers service', (tester) async {
     final service = FakeUserService(null);
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('en'),
-      home: EditProfileScreen(
-        initial: UserModel(
-          uid: 'u1',
-          email: '',
-          displayName: 'old',
-          nickname: '',
-          avatarUrl: '',
-          isPrivate: false,
-          fieldVisibility: const {},
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: EditProfileScreen(
+          initial: UserModel(
+            uid: 'u1',
+            email: '',
+            displayName: 'old',
+            nickname: '',
+            avatarUrl: '',
+            isPrivate: false,
+            fieldVisibility: const {},
+          ),
+          service: service,
         ),
-        service: service,
       ),
-    ));
+    );
 
     await tester.enterText(find.byType(TextFormField).first, 'newname');
     await tester.tap(find.byIcon(Icons.save));

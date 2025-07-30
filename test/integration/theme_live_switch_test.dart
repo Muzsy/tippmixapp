@@ -54,16 +54,19 @@ void main() {
       auth: FakeFirebaseAuth(null),
     );
 
-    final container = ProviderContainer(overrides: [
-      themeServiceProvider.overrideWith((ref) => themeService),
-      appLocaleControllerProvider.overrideWith((ref) => AppLocaleController()),
-      appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        themeServiceProvider.overrideWith((ref) => themeService),
+        appLocaleControllerProvider.overrideWith(
+          (ref) => AppLocaleController(),
+        ),
+        appThemeControllerProvider.overrideWith((ref) => AppThemeController()),
+      ],
+    );
 
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: const _TestApp(),
-    ));
+    await tester.pumpWidget(
+      UncontrolledProviderScope(container: container, child: const _TestApp()),
+    );
     await tester.pumpAndSettle();
 
     BuildContext context = tester.element(find.byType(SettingsScreen));
@@ -78,7 +81,10 @@ void main() {
     await tester.tap(find.text('Pink Party'));
     await tester.pumpAndSettle();
     context = tester.element(find.byType(SettingsScreen));
-    expect(container.read(themeServiceProvider).schemeIndex, FlexScheme.pinkM3.index);
+    expect(
+      container.read(themeServiceProvider).schemeIndex,
+      FlexScheme.pinkM3.index,
+    );
     final expectedPrimary = buildTheme(
       scheme: FlexScheme.pinkM3,
       brightness: Brightness.dark,

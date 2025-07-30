@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/simple_logger.dart';
 import '../utils/transaction_wrapper.dart';
 
-
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
 // for details about the coin transaction model and integration points.
 
@@ -22,14 +21,11 @@ class CoinService {
     FirebaseFunctions? functions,
     FirebaseAuth? auth,
     Logger? logger,
-  })  : _functions = functions,
-        _firestore = firestore,
-        _auth = auth,
-        _logger = logger ?? Logger('CoinService') {
-    _wrapper = TransactionWrapper(
-      firestore: _firestore,
-      logger: _logger,
-    );
+  }) : _functions = functions,
+       _firestore = firestore,
+       _auth = auth,
+       _logger = logger ?? Logger('CoinService') {
+    _wrapper = TransactionWrapper(firestore: _firestore, logger: _logger);
   }
 
   FirebaseFirestore get _fs => _firestore;
@@ -119,7 +115,10 @@ class CoinService {
         .doc(user.uid)
         .collection('coin_logs')
         .where('reason', isEqualTo: 'daily_bonus')
-        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .where(
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+        )
         .where('timestamp', isLessThan: Timestamp.fromDate(endOfDay))
         .limit(1)
         .get();
@@ -142,12 +141,14 @@ class CoinService {
     }
     final callable = _functions.httpsCallable('coin_trx');
     try {
-      final result = await callable.call<Map<String, dynamic>>(<String, dynamic>{
-        'amount': amount,
-        'type': type,
-        'reason': reason,
-        'transactionId': transactionId,
-      });
+      final result = await callable.call<Map<String, dynamic>>(
+        <String, dynamic>{
+          'amount': amount,
+          'type': type,
+          'reason': reason,
+          'transactionId': transactionId,
+        },
+      );
       final data = result.data;
       if (data['success'] != true) {
         throw FirebaseFunctionsException(
@@ -156,10 +157,9 @@ class CoinService {
           details: data,
         );
       }
-      } on FirebaseFunctionsException catch (_) {
-        // Log the error and rethrow
-        rethrow;
+    } on FirebaseFunctionsException catch (_) {
+      // Log the error and rethrow
+      rethrow;
     }
   }
 }
-

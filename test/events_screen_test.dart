@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 class TestOddsApiProvider extends OddsApiProvider {
   bool fetchCalled = false;
   TestOddsApiProvider(OddsApiProviderState initialState)
-      : super(OddsCacheWrapper(OddsApiService())) {
+    : super(OddsCacheWrapper(OddsApiService())) {
     state = initialState;
   }
 
@@ -34,8 +34,9 @@ class _FakeBetSlipProvider extends BetSlipProvider {
 }
 
 void main() {
-  testWidgets('EventsScreen displays events and triggers refresh',
-      (WidgetTester tester) async {
+  testWidgets('EventsScreen displays events and triggers refresh', (
+    WidgetTester tester,
+  ) async {
     final event = OddsEvent(
       id: '1',
       sportKey: 'soccer',
@@ -54,7 +55,7 @@ void main() {
                 OddsOutcome(name: 'Team A', price: 1.5),
                 OddsOutcome(name: 'Team B', price: 2.5),
               ],
-            )
+            ),
           ],
         ),
       ],
@@ -64,9 +65,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          oddsApiProvider.overrideWith((ref) => provider),
-        ],
+        overrides: [oddsApiProvider.overrideWith((ref) => provider)],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
@@ -93,7 +92,9 @@ void main() {
       ProviderScope(
         overrides: [
           oddsApiProvider.overrideWith((ref) => provider),
-          betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: [])),
+          betSlipProvider.overrideWith(
+            (ref) => _FakeBetSlipProvider(initialTips: []),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -109,7 +110,9 @@ void main() {
     expect(find.byKey(const Key('create_ticket_button')), findsNothing);
   });
 
-  testWidgets('tapping create ticket navigates to screen when tips exist', (tester) async {
+  testWidgets('tapping create ticket navigates to screen when tips exist', (
+    tester,
+  ) async {
     final router = GoRouter(
       initialLocation: '/',
       routes: [
@@ -127,8 +130,12 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          oddsApiProvider.overrideWith((ref) => TestOddsApiProvider(OddsApiData([]))),
-          betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider(initialTips: [
+          oddsApiProvider.overrideWith(
+            (ref) => TestOddsApiProvider(OddsApiData([])),
+          ),
+          betSlipProvider.overrideWith(
+            (ref) => _FakeBetSlipProvider(
+              initialTips: [
                 TipModel(
                   eventId: 'e1',
                   eventName: 'e',
@@ -138,8 +145,10 @@ void main() {
                   marketKey: 'h2h',
                   outcome: 'o',
                   odds: 2.0,
-                )
-              ])),
+                ),
+              ],
+            ),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: router,

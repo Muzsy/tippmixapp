@@ -32,14 +32,14 @@ class NotificationBellWidget extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error,
+                  color: Theme.of(context).colorScheme.error,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 child: Text(
                   '$count',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onError,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onError,
                     fontSize: 10,
                   ),
                   textAlign: TextAlign.center,
