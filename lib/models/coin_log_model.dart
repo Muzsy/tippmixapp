@@ -20,22 +20,22 @@ class CoinLogModel {
   });
 
   factory CoinLogModel.fromJson(Map<String, dynamic> json) => CoinLogModel(
-        userId: json['userId'] as String,
-        amount: json['amount'] as int,
-        type: json['type'] as String,
-        reason: json['reason'] as String,
-        transactionId: json['transactionId'] as String,
-        timestamp: (json['timestamp'] as Timestamp).toDate(),
-        description: json['description'] as String? ?? '',
-      );
+    userId: json['userId'] as String,
+    amount: json['amount'] as int,
+    type: json['type'] as String,
+    reason: json['reason'] as String,
+    transactionId: json['transactionId'] as String,
+    timestamp: (json['timestamp'] as Timestamp).toDate(),
+    description: json['description'] as String? ?? '',
+  );
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'amount': amount,
-        'type': type,
-        'reason': reason,
-        'transactionId': transactionId,
-        'timestamp': timestamp.toIso8601String(),
-        'description': description,
-      };
+    'userId': userId,
+    'amount': amount,
+    'type': type,
+    'reason': reason,
+    'transactionId': transactionId,
+    'timestamp': timestamp.toIso8601String(),
+    'description': description,
+  };
 }

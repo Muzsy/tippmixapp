@@ -7,11 +7,7 @@ class RewardCard extends StatelessWidget {
   final RewardModel reward;
   final VoidCallback onClaim;
 
-  const RewardCard({
-    super.key,
-    required this.reward,
-    required this.onClaim,
-  });
+  const RewardCard({super.key, required this.reward, required this.onClaim});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +19,7 @@ class RewardCard extends StatelessWidget {
         subtitle: Text(reward.description),
         trailing: reward.isClaimed
             ? Text(loc.rewardClaimed)
-            : ElevatedButton(
-                onPressed: onClaim,
-                child: Text(loc.rewardClaim),
-              ),
+            : ElevatedButton(onPressed: onClaim, child: Text(loc.rewardClaim)),
       ),
     );
   }

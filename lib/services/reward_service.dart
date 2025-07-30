@@ -5,9 +5,9 @@ import '../models/reward_model.dart';
 
 class RewardService extends StateNotifier<List<RewardModel>> {
   RewardService([FirebaseFunctions? functions])
-      : _functions =
-            functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2'),
-        super([]);
+    : _functions =
+          functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2'),
+      super([]);
 
   final FirebaseFunctions _functions;
 
@@ -29,5 +29,5 @@ class RewardService extends StateNotifier<List<RewardModel>> {
 
 final rewardServiceProvider =
     StateNotifierProvider<RewardService, List<RewardModel>>(
-  (ref) => RewardService(),
-);
+      (ref) => RewardService(),
+    );

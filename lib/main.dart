@@ -28,14 +28,14 @@ import 'router.dart';
 Future<void> main() async {
   // Show any uncaught Flutter errors as a red screen with the exception.
   ErrorWidget.builder = (details) => Material(
-        color: Colors.red,
-        child: Center(
-          child: Text(
-            details.exceptionAsString(),
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      );
+    color: Colors.red,
+    child: Center(
+      child: Text(
+        details.exceptionAsString(),
+        style: const TextStyle(color: Colors.white),
+      ),
+    ),
+  );
 
   // Load environment variables from a .env file (if present).
   await dotenv.load();
@@ -65,16 +65,15 @@ Future<void> main() async {
   // plugin if the corresponding environment variable has been set. There is
   // no need to pass the token here in Dart.
   await FirebaseAppCheck.instance.activate(
-    androidProvider:
-        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-    appleProvider:
-        kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
   // --- end debug token configuration ---
 
   final container = ProviderContainer();
-  final themeFuture =
-      container.read(themeServiceProvider.notifier).hydrate();
+  final themeFuture = container.read(themeServiceProvider.notifier).hydrate();
   await container.read(appLocaleControllerProvider.notifier).loadLocale();
 
   runApp(
@@ -97,9 +96,7 @@ class _BootstrapApp extends ConsumerWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const MaterialApp(
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
           );
         }
         return const MyApp();
@@ -125,15 +122,17 @@ class MyApp extends ConsumerWidget {
       brightness: Brightness.dark,
     );
 
-    return FutureBuilder<List<ThemeData>>( 
+    return FutureBuilder<List<ThemeData>>(
       future: Future.wait([lightFuture, darkFuture]),
       builder: (context, snapshot) {
-        final light = snapshot.data?[0] ??
+        final light =
+            snapshot.data?[0] ??
             buildTheme(
               scheme: FlexScheme.values[theme.schemeIndex],
               brightness: Brightness.light,
             );
-        final dark = snapshot.data?[1] ??
+        final dark =
+            snapshot.data?[1] ??
             buildTheme(
               scheme: FlexScheme.values[theme.schemeIndex],
               brightness: Brightness.dark,
@@ -143,18 +142,15 @@ class MyApp extends ConsumerWidget {
           routerConfig: router,
           builder: (context, child) => child ?? const SizedBox.shrink(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: const [
-            Locale('hu'),
-            Locale('en'),
-            Locale('de'),
-          ],
-          localeResolutionCallback: (Locale? deviceLocale, Iterable<Locale> supported) {
-            if (deviceLocale == null) return const Locale('en');
-            return supported.firstWhere(
-              (l) => l.languageCode == deviceLocale.languageCode,
-              orElse: () => const Locale('en'),
-            );
-          },
+          supportedLocales: const [Locale('hu'), Locale('en'), Locale('de')],
+          localeResolutionCallback:
+              (Locale? deviceLocale, Iterable<Locale> supported) {
+                if (deviceLocale == null) return const Locale('en');
+                return supported.firstWhere(
+                  (l) => l.languageCode == deviceLocale.languageCode,
+                  orElse: () => const Locale('en'),
+                );
+              },
           theme: light,
           darkTheme: dark,
           themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,

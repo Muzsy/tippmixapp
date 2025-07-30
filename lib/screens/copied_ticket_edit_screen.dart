@@ -9,7 +9,11 @@ class CopiedTicketEditScreen extends StatefulWidget {
   final String copyId;
   final List<TipModel> tips;
 
-  const CopiedTicketEditScreen({super.key, required this.copyId, required this.tips});
+  const CopiedTicketEditScreen({
+    super.key,
+    required this.copyId,
+    required this.tips,
+  });
 
   @override
   State<CopiedTicketEditScreen> createState() => _CopiedTicketEditScreenState();
@@ -54,7 +58,10 @@ class _CopiedTicketEditScreenState extends State<CopiedTicketEditScreen> {
     await FirebaseFirestore.instance
         .collection('copied_bets/$userId')
         .doc(widget.copyId)
-        .update({'tips': _tips.map((e) => e.toJson()).toList(), 'wasModified': true});
+        .update({
+          'tips': _tips.map((e) => e.toJson()).toList(),
+          'wasModified': true,
+        });
     if (mounted) Navigator.of(context).pop(true);
   }
 
@@ -76,9 +83,7 @@ class _CopiedTicketEditScreenState extends State<CopiedTicketEditScreen> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
                   _error!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             Expanded(

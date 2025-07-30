@@ -5,8 +5,9 @@ import '../services/leaderboard_service.dart';
 import '../services/club_service.dart';
 
 /// Provides a single [LeaderboardService] instance.
-final leaderboardServiceProvider =
-    Provider<LeaderboardService>((ref) => LeaderboardService());
+final leaderboardServiceProvider = Provider<LeaderboardService>(
+  (ref) => LeaderboardService(),
+);
 
 /// Provides a single [ClubService] instance.
 final clubServiceProvider = Provider<ClubService>((ref) => ClubService());

@@ -23,10 +23,7 @@ void main() {
       nickname: 'Nick',
       avatarUrl: '',
       isPrivate: true,
-      fieldVisibility: const {
-        'city': true,
-        'country': true,
-      },
+      fieldVisibility: const {'city': true, 'country': true},
     );
     await tester.pumpWidget(_wrap(PublicProfileScreen(user: user)));
     await tester.pump();
@@ -43,10 +40,7 @@ void main() {
       nickname: 'Nick',
       avatarUrl: '',
       isPrivate: false,
-      fieldVisibility: const {
-        'city': true,
-        'country': false,
-      },
+      fieldVisibility: const {'city': true, 'country': false},
     );
     await tester.pumpWidget(_wrap(PublicProfileScreen(user: user)));
     await tester.pump();

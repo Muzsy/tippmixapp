@@ -7,8 +7,8 @@ class ExperimentService {
   ExperimentService({
     FirebaseRemoteConfig? remoteConfig,
     SharedPreferences? prefs,
-  })  : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance,
-        _prefs = prefs;
+  }) : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance,
+       _prefs = prefs;
 
   final FirebaseRemoteConfig _remoteConfig;
   SharedPreferences? _prefs;
@@ -30,8 +30,9 @@ class ExperimentService {
     final ts = _prefs!.getInt(_timestampKey);
     final cached = _prefs!.getString(_variantKey);
     if (ts != null && cached != null) {
-      final age = DateTime.now()
-          .difference(DateTime.fromMillisecondsSinceEpoch(ts));
+      final age = DateTime.now().difference(
+        DateTime.fromMillisecondsSinceEpoch(ts),
+      );
       if (age.inDays < 28) return cached;
     }
 
@@ -48,8 +49,7 @@ class ExperimentService {
 
   Future<void> _saveVariant(String variant) async {
     await _prefs!.setString(_variantKey, variant);
-    await _prefs!.setInt(
-        _timestampKey, DateTime.now().millisecondsSinceEpoch);
+    await _prefs!.setInt(_timestampKey, DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Overrides the variant for testing via the debug menu.

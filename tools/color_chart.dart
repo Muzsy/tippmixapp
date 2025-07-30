@@ -27,13 +27,15 @@ Future<void> main() async {
     final c = lines[i].split(',');
     if (c.length < 5) continue;
     final token = c[0];
-    final cnt   = int.tryParse(c[3]) ?? 1;
-    final catg  = c[4].isEmpty ? 'uncategorized' : c[4];
-    cat[catg]    = (cat[catg] ?? 0) + cnt;
-    tok[token]   = (tok[token] ?? 0) + cnt;
+    final cnt = int.tryParse(c[3]) ?? 1;
+    final catg = c[4].isEmpty ? 'uncategorized' : c[4];
+    cat[catg] = (cat[catg] ?? 0) + cnt;
+    tok[token] = (tok[token] ?? 0) + cnt;
   }
-  final top10 = (tok.entries.toList()..sort((a,b)=>b.value.compareTo(a.value)))
-                .take(10).toList();
+  final top10 =
+      (tok.entries.toList()..sort((a, b) => b.value.compareTo(a.value)))
+          .take(10)
+          .toList();
 
   // --- Widget-fa csak annyi, amennyi feltétlen kell ---
   final root = Directionality(
@@ -53,7 +55,10 @@ Future<void> main() async {
                   centerSpaceRadius: 40,
                   sections: [
                     for (final e in cat.entries)
-                      PieChartSectionData(title: e.key, value: e.value.toDouble()),
+                      PieChartSectionData(
+                        title: e.key,
+                        value: e.value.toDouble(),
+                      ),
                   ],
                 ),
               ),
@@ -65,17 +70,25 @@ Future<void> main() async {
                   gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
-                    leftTitles : const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles  : const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (v, _) {
                           final i = v.toInt();
                           if (i >= top10.length) return const SizedBox.shrink();
-                          return Text(top10[i].key.replaceFirst('Colors.', ''),
-                                      style: const TextStyle(fontSize: 10));
+                          return Text(
+                            top10[i].key.replaceFirst('Colors.', ''),
+                            style: const TextStyle(fontSize: 10),
+                          );
                         },
                       ),
                     ),
@@ -84,7 +97,9 @@ Future<void> main() async {
                     for (var i = 0; i < top10.length; i++)
                       BarChartGroupData(
                         x: i,
-                        barRods: [BarChartRodData(toY: top10[i].value.toDouble())],
+                        barRods: [
+                          BarChartRodData(toY: top10[i].value.toDouble()),
+                        ],
                       ),
                   ],
                 ),
@@ -97,8 +112,10 @@ Future<void> main() async {
   );
 
   // --- Screenshot ---
-  final bytes = await ScreenshotController()
-      .captureFromWidget(root, pixelRatio: 2.0);
+  final bytes = await ScreenshotController().captureFromWidget(
+    root,
+    pixelRatio: 2.0,
+  );
 
   final out = File('tools/reports/color_usage_chart.png')
     ..createSync(recursive: true)

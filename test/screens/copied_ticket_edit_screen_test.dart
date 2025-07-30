@@ -28,13 +28,17 @@ void main() {
       ),
     );
 
-    var button = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Submit ticket'));
+    var button = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, 'Submit ticket'),
+    );
     expect(button.onPressed, isNull);
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();
 
-    button = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Submit ticket'));
+    button = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, 'Submit ticket'),
+    );
     expect(button.onPressed, isNotNull);
   });
 }

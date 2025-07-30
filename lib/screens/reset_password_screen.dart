@@ -10,7 +10,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   const ResetPasswordScreen({super.key, required this.oobCode});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -52,22 +53,22 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 controller: _passCtrl,
                 obscureText: true,
                 decoration: InputDecoration(hintText: loc.password_hint),
-                validator: (v) =>
-                    v != null && v.length >= 8 ? null : loc.auth_error_weak_password,
+                validator: (v) => v != null && v.length >= 8
+                    ? null
+                    : loc.auth_error_weak_password,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _confirmCtrl,
                 obscureText: true,
-                decoration: InputDecoration(hintText: loc.confirm_password_hint),
+                decoration: InputDecoration(
+                  hintText: loc.confirm_password_hint,
+                ),
                 validator: (v) =>
                     v == _passCtrl.text ? null : loc.auth_error_weak_password,
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submit,
-                child: Text(loc.dialog_send),
-              ),
+              ElevatedButton(onPressed: _submit, child: Text(loc.dialog_send)),
             ],
           ),
         ),

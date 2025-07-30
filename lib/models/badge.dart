@@ -1,10 +1,4 @@
-enum BadgeCondition {
-  firstWin,
-  streak3,
-  parlayWin,
-  lateNightWin,
-  comebackWin,
-}
+enum BadgeCondition { firstWin, streak3, parlayWin, lateNightWin, comebackWin }
 
 class BadgeData {
   final String key;

@@ -1,298 +1,298 @@
 {
-  "home_title": "Főképernyő",
-  "home_guest_message": "Jelentkezz be vagy regisztrálj a profilod megtekintéséhez",
+  "accept": "Elfogad",
+  "addFriend": "Ismerősnek jelöl",
+  "add_tip": "Hozzáadás",
+  "admin_only_field": "Ezt a mezőt csak admin módosíthatja.",
+  "amount_must_be_integer": "Az összegnek egész számnak kell lennie.",
+  "api_error_key": "Érvénytelen OddsAPI kulcs",
+  "api_error_limit": "Túl sok kérés az OddsAPI felé",
+  "api_error_network": "Hálózati hiba az OddsAPI elérésekor",
+  "api_error_unknown": "Ismeretlen hiba az OddsAPI-tól",
+  "apple_login": "Folytatás Apple-lel",
+  "auth_error_email_already_in_use": "Az email cím már használatban van",
+  "auth_error_invalid_date": "Érvénytelen dátum",
+  "auth_error_invalid_email": "Érvénytelen email cím",
+  "auth_error_invalid_nickname": "A becenév 3-20 karakter hosszú legyen",
+  "auth_error_nickname_taken": "A becenév már foglalt",
+  "auth_error_unknown": "Ismeretlen hiba",
+  "auth_error_user_not_found": "Felhasználó nem található",
+  "auth_error_weak_password": "Gyenge jelszó",
+  "auth_error_wrong_password": "Hibás jelszó",
+  "back_button": "Vissza",
+  "backup_codes_title": "Mentőkódok",
+  "badgeFilterAll": "Összes",
+  "badgeFilterMissing": "Hiányzik",
+  "badgeFilterOwned": "Megvan",
+  "badgeScreenTitle": "Megszerezhető jelvények",
+  "badge_comeback_kid_description": "Három vereség után nyert szelvény.",
+  "badge_comeback_kid_title": "Visszatérő",
+  "badge_hot_streak_description": "Három egymást követő győzelem.",
+  "badge_hot_streak_title": "Forró széria",
+  "badge_night_owl_description": "Éjfél utáni nyerő szelvény.",
+  "badge_night_owl_title": "Éjjeli bagoly",
+  "badge_parlay_pro_description": "5+ eseményes kombi szelvény nyerése.",
+  "badge_parlay_pro_title": "Kombi szakértő",
+  "badge_rookie_description": "Első nyertes fogadásod.",
+  "badge_rookie_title": "Újonc",
+  "bets_title": "Fogadások",
+  "bio_hint": "Bemutatkozás",
+  "bonus_daily_received": "Napi bónusz: +50 TippCoin!",
+  "bonus_daily_received_description": "Köszönjük, hogy aktív vagy!",
+  "bottom_nav_feed": "Hírfolyam",
+  "btnContinue": "Folytatás",
+  "confirm_password_hint": "Confirm Password",
+  "continue_button": "Folytatás",
+  "copy_edit_title": "Másolt szelvény szerkesztése",
+  "copy_invalid_state": "A szelvény nem módosult, így nem adható fel.",
+  "copy_submit_button": "Szelvény feladása",
+  "copy_success": "Szelvény másolva!",
+  "createTicketTitle": "Szelvény készítése",
+  "dialog_add_comment_hint": "Adj hozzá megjegyzést",
+  "dialog_cancel": "Mégse",
+  "dialog_comment_title": "Hozzászólás",
+  "dialog_reason_hint": "Indok",
+  "dialog_send": "Küldés",
+  "disable_two_factor": "Kétlépcsős hitelesítés kikapcsolása",
+  "dob_error_future": "A dátum nem lehet jövőbeni",
+  "dob_error_underage": "Legalább 18 évesnek kell lenned",
+  "dob_hint": "Születési dátum",
+  "drawer_feed": "Hírfolyam",
+  "drawer_title": "Menü",
+  "edit_title": "Profil szerkesztése",
+  "emailVerify_description": "Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.",
+  "emailVerify_exit": "Kilépés",
+  "emailVerify_resend": "Újraküldés",
+  "emailVerify_sent": "Ellenőrző email elküldve!",
+  "emailVerify_title": "Erősítsd meg az emailed!",
+  "email_hint": "Email",
+  "empty_ticket_message": "Még nincs szelvényed",
+  "enable_two_factor": "Kétlépcsős hitelesítés bekapcsolása",
+  "errorDuplicate": "Duplikált tippek nem engedélyezettek",
+  "errorEmailExists": "Ez az e-mail már foglalt",
+  "errorInvalidEmail": "Érvénytelen email cím",
+  "errorInvalidStake": "Érvénytelen tét",
+  "errorMatchConflict": "Ütköző tippek ugyanarra a meccsre",
+  "errorNotLoggedIn": "Nem vagy bejelentkezve.",
+  "errorUserNotFound": "Felhasználó nem található. Jelentkezz be újra.",
+  "errorWeakPassword": "Gyenge jelszó",
+  "events_empty": "Nincs elérhető esemény",
+  "events_screen_no_events": "Nincs esemény",
+  "events_screen_no_market": "Nincs elérhető piac",
+  "events_screen_no_odds": "Nincs elérhető odds",
+  "events_screen_quota_warning": "Figyelem: az API kvóta hamarosan elfogy",
+  "events_screen_refresh": "Frissítés",
+  "events_screen_start_time": "Kezdés: {time}",
+  "events_screen_tip_added": "Tipp hozzáadva",
+  "events_screen_tip_duplicate": "A tipp már hozzá van adva",
+  "events_title": "Események",
+  "facebook_login": "Folytatás Facebookkal",
+  "feed_comment": "Hozzászólás",
+  "feed_empty_state": "Nincs megjeleníthető bejegyzés",
+  "feed_event_bet_placed": "Fogadást tett",
+  "feed_event_comment": "Komment",
+  "feed_event_like": "Lájk",
+  "feed_event_ticket_won": "Szelvényt nyert",
+  "feed_like": "Tetszik",
+  "feed_report": "Jelentés",
+  "feed_report_success": "A bejegyzést jelentettük moderátorainknak.",
+  "feed_screen_title": "Hírfolyam",
+  "follow": "Követés",
+  "followers": "Követők",
+  "forgot_password": "Elfelejtett jelszó?",
+  "friends": "Barátok",
+  "gdpr_consent": "Elfogadom az adatkezelési tájékoztatót",
+  "gdpr_required_error": "A GDPR hozzájárulás kötelező",
+  "go_to_create_ticket": "Szelvény elküldése",
+  "google_login": "Folytatás Google-lel",
   "home_coin": "TippCoin",
-  "home_stats": "Statisztika",
+  "home_guest_message": "Jelentkezz be vagy regisztrálj a profilod megtekintéséhez",
+  "home_highlight_coin": "TippCoin: Nyerj extra coinokat aktivitással!",
+  "home_highlight_motivation": "Motiváció: Próbálj ki egy új stratégiát!",
+  "home_highlight_tip": "Napi tipp: Bayern győz",
+  "home_nav_forum": "Fórum",
+  "home_nav_messages": "Üzenetek",
   "home_nav_profile": "Profil",
   "home_nav_stats": "Statisztika",
-  "home_nav_messages": "Üzenetek",
-  "home_nav_forum": "Fórum",
-  "home_tile_bets": "Fogadás",
-  "home_tile_news": "Hírcsatorna",
-  "home_tile_my_bets": "Fogadásaim",
-  "home_tile_friends": "Barátok",
-  "home_highlight_tip": "Napi tipp: Bayern győz",
-  "home_highlight_motivation": "Motiváció: Próbálj ki egy új stratégiát!",
-  "home_highlight_coin": "TippCoin: Nyerj extra coinokat aktivitással!",
-  "home_tile_daily_bonus_title": "Napi bónusz",
-  "home_tile_daily_bonus_collect": "Begyűjtés",
-  "home_tile_daily_bonus_claimed": "Begyűjtve",
-  "home_tile_new_badge_title": "Új jelvény",
-  "home_tile_badge_earned_title": "Új jelvényt szereztél",
-  "home_tile_badge_earned_cta": "Megtekintés",
-  "home_tile_ai_tip_title": "AI ajánlás",
-  "home_tile_ai_tip_description": "AI szerint ma a {team} győzelme a legvalószínűbb ({percent}%).",
+  "home_stats": "Statisztika",
   "home_tile_ai_tip_cta": "Részletek",
-  "home_tile_top_tipster_title": "A nap játékosa",
-  "home_tile_top_tipster_description": "{username} ma 5/5 tippet talált el a klubodban.",
-  "home_tile_top_tipster_cta": "Megnézem a tippjeit",
-  "home_tile_challenge_title": "Kihívás vár rád!",
+  "home_tile_ai_tip_description": "AI szerint ma a {team} győzelme a legvalószínűbb ({percent}%).",
+  "home_tile_ai_tip_title": "AI ajánlás",
+  "home_tile_badge_earned_cta": "Megtekintés",
+  "home_tile_badge_earned_title": "Új jelvényt szereztél",
+  "home_tile_bets": "Fogadás",
+  "home_tile_challenge_cta_accept": "Elfogadom",
   "home_tile_challenge_daily_description": "Napi kihívás: nyerj ma 3 fogadást.",
   "home_tile_challenge_friend_description": "{username} kihívott egy tipppárbajra!",
-  "home_tile_challenge_cta_accept": "Elfogadom",
-  "home_tile_educational_tip_title": "Fogadási tipp",
+  "home_tile_challenge_title": "Kihívás vár rád!",
+  "home_tile_daily_bonus_claimed": "Begyűjtve",
+  "home_tile_daily_bonus_collect": "Begyűjtés",
+  "home_tile_daily_bonus_title": "Napi bónusz",
   "home_tile_educational_tip_1": "Tudtad? Kombinált fogadással magasabb oddsszal nyerhetsz.",
   "home_tile_educational_tip_2": "Egyszerűbb fogadással kisebb a kockázat.",
   "home_tile_educational_tip_3": "Vezesd a fogadási naplód, hogy tanulhass a múltból.",
   "home_tile_educational_tip_cta": "További tippek",
-  "home_tile_feed_activity_title": "Legújabb aktivitás",
-  "home_tile_feed_activity_text_template": "{username} megosztott egy nyertes tippet!",
+  "home_tile_educational_tip_title": "Fogadási tipp",
   "home_tile_feed_activity_cta": "Megnézem",
-  "login_welcome": "Üdvözlünk a Tippmixen!",
-  "login_title": "Bejelentkezés",
-  "login_tab": "Belépés",
-  "register_tab": "Regisztráció",
-  "email_hint": "Email",
-  "password_hint": "Password",
-  "confirm_password_hint": "Confirm Password",
-  "login_button": "Login",
-  "register_button": "Regisztráció",
-  "register_link": "Fiók létrehozása",
-  "forgot_password": "Elfelejtett jelszó?",
-  "verification_email_sent": "Megerősítő email elküldve",
-  "password_reset_title": "Jelszó visszaállítása",
-  "password_reset_email_sent": "Jelszó visszaállító email elküldve",
-  "google_login": "Folytatás Google-lel"
-  ,"apple_login": "Folytatás Apple-lel"
-  ,"facebook_login": "Folytatás Facebookkal"
-  ,"profile_title": "Profil"
-  ,"profile_logout": "Kijelentkezés"
-  ,"profile_language": "Nyelv"
-  ,"profile_theme": "Téma"
-  ,"profile_rank": "Rang"
-  ,"profile_guest": "Bejelentkezés vendégként"
-  ,"createTicketTitle": "Szelvény készítése"
-  ,"stakeHint": "Tét"
-  ,"placeBet": "Fogadás leadása"
-  ,"errorInvalidStake": "Érvénytelen tét"
-  ,"errorDuplicate": "Duplikált tippek nem engedélyezettek"
-  ,"errorMatchConflict": "Ütköző tippek ugyanarra a meccsre"
-  ,"my_tickets_title": "Szelvényeim"
-  ,"ticket_status_pending": "Függőben"
-  ,"ticket_status_won": "Nyert"
-  ,"ticket_status_lost": "Veszített"
-  ,"ticket_status_void": "Érvénytelen"
-  ,"empty_ticket_message": "Még nincs szelvényed"
-  ,"ticket_details_title": "Szelvény részletei"
-  ,"api_error_limit": "Túl sok kérés az OddsAPI felé"
-  ,"api_error_key": "Érvénytelen OddsAPI kulcs"
-  ,"api_error_network": "Hálózati hiba az OddsAPI elérésekor"
-  ,"api_error_unknown": "Ismeretlen hiba az OddsAPI-tól"
-  ,"events_title": "Események"
-  ,"bets_title": "Fogadások"
-  ,"events_empty": "Nincs elérhető esemény"
-  ,"events_screen_no_events": "Nincs esemény"
-  ,"events_screen_quota_warning": "Figyelem: az API kvóta hamarosan elfogy"
-  ,"events_screen_refresh": "Frissítés"
-  ,"events_screen_no_odds": "Nincs elérhető odds"
-  ,"events_screen_no_market": "Nincs elérhető piac"
-  ,"events_screen_start_time": "Kezdés: {time}"
-  ,"events_screen_tip_added": "Tipp hozzáadva"
-  ,"events_screen_tip_duplicate": "A tipp már hozzá van adva"
-  ,"add_tip": "Hozzáadás"
-  ,"no_tips_selected": "Nincs kiválasztott tipp"
-  ,"ticket_submit_success": "Szelvény sikeresen elküldve"
-  ,"ticket_submit_error": "Hiba történt:"
-  ,"odds_label": "Odds"
-  ,"total_odds_label": "Össz odds"
-  ,"potential_win_label": "Várható nyeremény"
-  ,"ticket_id": "Szelvény"
-  ,"tips_label": "Tippek"
-  ,"ok": "OK"
-  ,"not_logged_in": "Nem vagy bejelentkezve."
-  ,"errorNotLoggedIn": "Nem vagy bejelentkezve."
-  ,"profile_email": "Email"
-  ,"profile_name": "Név"
-  ,"profile_nickname": "Becenév"
-  ,"profile_is_private": "Privát profil"
-  ,"profile_city": "Város"
-  ,"profile_country": "Ország"
-  ,"profile_friends": "Barátok"
-  ,"profile_favorite_sports": "Kedvenc sportok"
-  ,"profile_favorite_teams": "Kedvenc csapatok"
-  ,"profile_public": "Publikus"
-  ,"profile_private": "Privát"
-  ,"profile_toggle_visibility": "Mező láthatósága"
-  ,"profile_global_privacy": "Globális privát kapcsoló"
-  ,"drawer_title": "Menü"
-  ,"errorUserNotFound": "Felhasználó nem található. Jelentkezz be újra."
-  ,"go_to_create_ticket": "Szelvény elküldése"
-  ,"insufficient_permissions": "Nincs jogosultság."
-  ,"invalid_transaction_type": "Érvénytelen tranzakció típus."
-  ,"missing_transaction_id": "Hiányzik a tranzakció azonosító."
-  ,"amount_must_be_integer": "Az összegnek egész számnak kell lennie."
-  ,"admin_only_field": "Ezt a mezőt csak admin módosíthatja.",
-  "leaderboard_title": "Ranglista",
-  "leaderboard_you": "Te",
+  "home_tile_feed_activity_text_template": "{username} megosztott egy nyertes tippet!",
+  "home_tile_feed_activity_title": "Legújabb aktivitás",
+  "home_tile_friends": "Barátok",
+  "home_tile_my_bets": "Fogadásaim",
+  "home_tile_new_badge_title": "Új jelvény",
+  "home_tile_news": "Hírcsatorna",
+  "home_tile_top_tipster_cta": "Megnézem a tippjeit",
+  "home_tile_top_tipster_description": "{username} ma 5/5 tippet talált el a klubodban.",
+  "home_tile_top_tipster_title": "A nap játékosa",
+  "home_title": "Főképernyő",
+  "insufficient_permissions": "Nincs jogosultság.",
+  "invalid_transaction_type": "Érvénytelen tranzakció típus.",
   "leaderboard_empty": "Nincs megjeleníthető felhasználó",
   "leaderboard_mode_coin": "TippCoin",
-  "leaderboard_mode_winrate": "Nyerési arány",
   "leaderboard_mode_streak": "Sorozat",
-  "feed_screen_title": "Hírfolyam",
-  "menuLeaderboard": "Ranglista"
-  ,"menuProfile": "Profil"
-  ,"myTickets": "Szelvényeim"
-  ,"menuSettings": "Beállítások"
-  ,"drawer_feed": "Hírfolyam"
-  ,"bottom_nav_feed": "Hírfolyam"
-  ,"settings_title": "Beállítások"
-  ,"settings_theme": "Téma"
-  ,"settings_theme_system": "Rendszer"
-  ,"settings_theme_light": "Világos"
-  ,"settings_theme_dark": "Sötét"
-  ,"settings_dark_mode": "Sötét mód"
-  ,"settings_language": "Nyelv"
-  ,"settings_logout": "Kijelentkezés"
-  ,"settings_ai_recommendations": "AI ajánlások"
-  ,"settings_push_notifications": "Értesítések"
-  ,"settings_skin": "Skin"
-  ,"skin_dell_genoa_name": "Tippmix Zöld"
-  ,"skin_dell_genoa_description": "Alap Tippmix színséma (zöld)"
-  ,"skin_pink_m3_name": "Pink Party"
-  ,"skin_pink_m3_description": "Lányos, vidám skin"
-  ,"badge_rookie_title": "Újonc"
-  ,"badge_rookie_description": "Első nyertes fogadásod."
-  ,"badge_hot_streak_title": "Forró széria"
-  ,"badge_hot_streak_description": "Három egymást követő győzelem."
-  ,"badge_parlay_pro_title": "Kombi szakértő"
-  ,"badge_parlay_pro_description": "5+ eseményes kombi szelvény nyerése."
-  ,"badge_night_owl_title": "Éjjeli bagoly"
-  ,"badge_night_owl_description": "Éjfél utáni nyerő szelvény."
-  ,"badge_comeback_kid_title": "Visszatérő"
-  ,"badge_comeback_kid_description": "Három vereség után nyert szelvény."
-  ,"profile_badges_empty": "Még nem szereztél badge-et"
-  ,"bonus_daily_received": "Napi bónusz: +50 TippCoin!"
-  ,"bonus_daily_received_description": "Köszönjük, hogy aktív vagy!" 
- ,"feed_event_bet_placed": "Fogadást tett"
-  ,"feed_event_ticket_won": "Szelvényt nyert"
-  ,"feed_event_comment": "Komment"
-  ,"feed_event_like": "Lájk"
-  ,"feed_report_success": "A bejegyzést jelentettük moderátorainknak."
-  ,"feed_empty_state": "Nincs megjeleníthető bejegyzés"
-  ,"feed_like": "Tetszik"
-  ,"feed_comment": "Hozzászólás"
-  ,"feed_report": "Jelentés",
-  "copy_success": "Szelvény másolva!",
-  "copy_edit_title": "Másolt szelvény szerkesztése",
-  "copy_submit_button": "Szelvény feladása",
-  "copy_invalid_state": "A szelvény nem módosult, így nem adható fel.",
-  "auth_error_user_not_found": "Felhasználó nem található",
-  "auth_error_wrong_password": "Hibás jelszó",
-  "auth_error_email_already_in_use": "Az email cím már használatban van",
-  "auth_error_invalid_email": "Érvénytelen email cím",
-  "auth_error_weak_password": "Gyenge jelszó",
-  "auth_error_unknown": "Ismeretlen hiba"
-  ,"menuBadges": "Jelvényeim"
-  ,"badgeScreenTitle": "Megszerezhető jelvények"
-  ,"badgeFilterAll": "Összes"
-  ,"badgeFilterOwned": "Megvan"
-  ,"badgeFilterMissing": "Hiányzik"
-  ,"menuRewards": "Jutalmaim"
-  ,"rewardTitle": "Átvehető jutalmak"
-  ,"rewardClaim": "Átvétel"
-  ,"rewardClaimed": "Már átvetted"
-  ,"rewardEmpty": "Nincs elérhető jutalom"
-  ,"reward_balance": "Egyenleg: {coins}"
-  ,"reward_streak": "Sorozat: {days}/7"
-  ,"menuNotifications": "Értesítések"
-  ,"notificationTitle": "Események"
-  ,"notificationEmpty": "Nincs új esemény"
-  ,"notificationMarkRead": "Olvasottként jelölés"
-  ,"notificationFilterAll": "Összes"
-  ,"notificationFilterUnread": "Olvasatlan"
-  ,"notificationArchive": "Archiválás"
-  ,"notificationUndo": "Visszavonás"
-  ,"notificationType_reward": "Jutalom"
-  ,"notificationType_badge": "Jelvény"
-  ,"notificationType_friend": "Barátkérés"
-  ,"notificationType_message": "Üzenet"
-  ,"notificationType_challenge": "Kihívás"
-  ,"dialog_cancel": "Mégse"
-  ,"dialog_send": "Küldés"
-  ,"dialog_reason_hint": "Indok"
-  ,"dialog_comment_title": "Hozzászólás"
-  ,"dialog_add_comment_hint": "Adj hozzá megjegyzést"
-  ,"profile_stats": "Statisztikák"
-  ,"profile_badges": "Kitüntetések"
-  ,"profile_level": "Szint"
-  ,"profile_coins": "TippCoin"
-  ,"profileAvatarGallery": "Avatar galéria"
-  ,"profileUploadPhoto": "Saját kép feltöltése"
-  ,"profileResetAvatar": "Alap avatar visszaállítása"
-  ,"profileChooseAvatar": "Válassz avatart"
-  ,"profile_avatar_error": "Hiba történt az avatar beállításakor"
-  ,"profile_avatar_updated": "Avatar frissítve"
-  ,"profile_avatar_cancelled": "Avatar feltöltés megszakítva"
-  ,"notif_tips": "Tippek"
-  ,"notif_friend_activity": "Barátok aktivitása"
-  ,"notif_badge": "Jelvények"
-  ,"notif_rewards": "Jutalmak"
-  ,"notif_system": "Rendszer"
-  ,"edit_title": "Profil szerkesztése"
-  ,"name_hint": "Megjelenített név"
-  ,"name_error_short": "Túl rövid név"
-  ,"name_error_long": "Túl hosszú név"
-  ,"bio_hint": "Bemutatkozás"
-  ,"team_hint": "Kedvenc csapat"
-  ,"dob_hint": "Születési dátum"
-  ,"dob_error_underage": "Legalább 18 évesnek kell lenned"
-  ,"dob_error_future": "A dátum nem lehet jövőbeni"
-  ,"profile_updated": "Profil frissítve",
-  "security_title": "Biztonság",
-  "enable_two_factor": "Kétlépcsős hitelesítés bekapcsolása",
-  "disable_two_factor": "Kétlépcsős hitelesítés kikapcsolása",
-  "otp_prompt_title": "OTP megadása",
+  "leaderboard_mode_winrate": "Nyerési arány",
+  "leaderboard_title": "Ranglista",
+  "leaderboard_you": "Te",
+  "loaderCheckingEmail": "E-mail ellenőrzése...",
+  "login_button": "Login",
+  "login_required_message": "Kérjük, jelentkezz be a folytatáshoz",
+  "login_required_title": "Bejelentkezés szükséges",
+  "login_tab": "Belépés",
+  "login_title": "Bejelentkezés",
+  "login_variant_b_promo_subtitle": "Csatlakozz és játssz velünk!",
+  "login_variant_b_promo_title": "Már 50 000+ felhasználó",
+  "login_welcome": "Üdvözlünk a Tippmixen!",
+  "menuBadges": "Jelvényeim",
+  "menuLeaderboard": "Ranglista",
+  "menuNotifications": "Értesítések",
+  "menuProfile": "Profil",
+  "menuRewards": "Jutalmaim",
+  "menuSettings": "Beállítások",
+  "missing_transaction_id": "Hiányzik a tranzakció azonosító.",
+  "myTickets": "Szelvényeim",
+  "my_tickets_title": "Szelvényeim",
+  "name_error_long": "Túl hosszú név",
+  "name_error_short": "Túl rövid név",
+  "name_hint": "Megjelenített név",
+  "no_tips_selected": "Nincs kiválasztott tipp",
+  "not_logged_in": "Nem vagy bejelentkezve.",
+  "notif_badge": "Jelvények",
+  "notif_friend_activity": "Barátok aktivitása",
+  "notif_rewards": "Jutalmak",
+  "notif_system": "Rendszer",
+  "notif_tips": "Tippek",
+  "notificationArchive": "Archiválás",
+  "notificationEmpty": "Nincs új esemény",
+  "notificationFilterAll": "Összes",
+  "notificationFilterUnread": "Olvasatlan",
+  "notificationMarkRead": "Olvasottként jelölés",
+  "notificationTitle": "Események",
+  "notificationType_badge": "Jelvény",
+  "notificationType_challenge": "Kihívás",
+  "notificationType_friend": "Barátkérés",
+  "notificationType_message": "Üzenet",
+  "notificationType_reward": "Jutalom",
+  "notificationUndo": "Visszavonás",
+  "odds_label": "Odds",
+  "ok": "OK",
+  "onboarding_done": "Kész",
+  "onboarding_follow_tipsters": "Kövesd a tippmestereket",
+  "onboarding_next": "Tovább",
+  "onboarding_place_bet": "Fogadj könnyedén",
+  "onboarding_skip": "Kihagyom",
+  "onboarding_track_rewards": "Kövesd a jutalmakat",
   "otp_enter_code": "Kód",
   "otp_error_invalid": "Érvénytelen kód",
-  "backup_codes_title": "Mentőkódok",
-  "verified_badge_label": "Ellenőrzött",
-  "follow": "Követés",
-  "unfollow": "Követve",
-  "addFriend": "Ismerősnek jelöl",
-  "requestSent": "Kérelem elküldve",
-  "friends": "Barátok",
-  "followers": "Követők",
-  "pending": "Függőben",
-  "accept": "Elfogad",
-  "login_variant_b_promo_title": "Már 50 000+ felhasználó",
-  "login_variant_b_promo_subtitle": "Csatlakozz és játssz velünk!",
-  "onboarding_place_bet": "Fogadj könnyedén",
-  "onboarding_track_rewards": "Kövesd a jutalmakat",
-  "onboarding_follow_tipsters": "Kövesd a tippmestereket",
-  "onboarding_skip": "Kihagyom",
-  "onboarding_next": "Tovább",
-  "onboarding_done": "Kész",
-  "continue_button": "Folytatás",
-  "password_strength_weak": "Gyenge",
+  "otp_prompt_title": "OTP megadása",
+  "passwordStrengthStrong": "Erős",
+  "passwordStrengthVeryWeak": "Nagyon gyenge",
+  "password_hint": "Password",
+  "password_pwned_error": "Ez a jelszó már kiszivárgott",
+  "password_reset_email_sent": "Jelszó visszaállító email elküldve",
+  "password_reset_title": "Jelszó visszaállítása",
   "password_strength_medium": "Közepes",
   "password_strength_strong": "Erős",
-  "errorInvalidEmail": "Érvénytelen email cím",
-  "errorWeakPassword": "Gyenge jelszó",
-  "errorEmailExists": "Ez az e-mail már foglalt",
-  "loaderCheckingEmail": "E-mail ellenőrzése...",
-  "passwordStrengthVeryWeak": "Nagyon gyenge",
-  "passwordStrengthStrong": "Erős",
-  "btnContinue": "Folytatás",
-  "gdpr_consent": "Elfogadom az adatkezelési tájékoztatót",
-  "gdpr_required_error": "A GDPR hozzájárulás kötelező",
-  "auth_error_invalid_nickname": "A becenév 3-20 karakter hosszú legyen",
-  "auth_error_invalid_date": "Érvénytelen dátum",
-  "auth_error_nickname_taken": "A becenév már foglalt",
-  "register_take_photo": "Készíts fotót",
+  "password_strength_weak": "Gyenge",
+  "pending": "Függőben",
+  "placeBet": "Fogadás leadása",
+  "potential_win_label": "Várható nyeremény",
+  "profileAvatarGallery": "Avatar galéria",
+  "profileChooseAvatar": "Válassz avatart",
+  "profileResetAvatar": "Alap avatar visszaállítása",
+  "profileUploadPhoto": "Saját kép feltöltése",
+  "profile_avatar_cancelled": "Avatar feltöltés megszakítva",
+  "profile_avatar_error": "Hiba történt az avatar beállításakor",
+  "profile_avatar_updated": "Avatar frissítve",
+  "profile_badges": "Kitüntetések",
+  "profile_badges_empty": "Még nem szereztél badge-et",
+  "profile_city": "Város",
+  "profile_coins": "TippCoin",
+  "profile_country": "Ország",
+  "profile_email": "Email",
+  "profile_favorite_sports": "Kedvenc sportok",
+  "profile_favorite_teams": "Kedvenc csapatok",
+  "profile_friends": "Barátok",
+  "profile_global_privacy": "Globális privát kapcsoló",
+  "profile_guest": "Bejelentkezés vendégként",
+  "profile_is_private": "Privát profil",
+  "profile_language": "Nyelv",
+  "profile_level": "Szint",
+  "profile_logout": "Kijelentkezés",
+  "profile_name": "Név",
+  "profile_nickname": "Becenév",
+  "profile_private": "Privát",
+  "profile_public": "Publikus",
+  "profile_rank": "Rang",
+  "profile_stats": "Statisztikák",
+  "profile_theme": "Téma",
+  "profile_title": "Profil",
+  "profile_toggle_visibility": "Mező láthatósága",
+  "profile_updated": "Profil frissítve",
+  "recaptcha_failed_error": "A reCAPTCHA ellenőrzés nem sikerült",
+  "register_avatar_too_large": "Az avatar mérete legfeljebb 2 MB lehet",
+  "register_button": "Regisztráció",
   "register_choose_file": "Fájl kiválasztása",
   "register_finish": "Befejezés",
+  "register_link": "Fiók létrehozása",
   "register_skip": "Kihagyás",
-  "register_avatar_too_large": "Az avatar mérete legfeljebb 2 MB lehet",
-  "back_button": "Vissza",
-  "login_required_title": "Bejelentkezés szükséges",
-  "login_required_message": "Kérjük, jelentkezz be a folytatáshoz",
-  "emailVerify_title": "Erősítsd meg az emailed!",
-  "emailVerify_description": "Kattints a kapott emailben található linkre, majd térj vissza az alkalmazásba.",
-  "emailVerify_resend": "Újraküldés",
-  "emailVerify_sent": "Ellenőrző email elküldve!",
-  "emailVerify_exit": "Kilépés",
-  "password_pwned_error": "Ez a jelszó már kiszivárgott",
-  "recaptcha_failed_error": "A reCAPTCHA ellenőrzés nem sikerült",
+  "register_tab": "Regisztráció",
+  "register_take_photo": "Készíts fotót",
+  "requestSent": "Kérelem elküldve",
+  "rewardClaim": "Átvétel",
+  "rewardClaimed": "Már átvetted",
+  "rewardEmpty": "Nincs elérhető jutalom",
+  "rewardTitle": "Átvehető jutalmak",
+  "reward_balance": "Egyenleg: {coins}",
+  "reward_streak": "Sorozat: {days}/7",
+  "security_title": "Biztonság",
+  "settings_ai_recommendations": "AI ajánlások",
+  "settings_dark_mode": "Sötét mód",
+  "settings_language": "Nyelv",
+  "settings_logout": "Kijelentkezés",
+  "settings_push_notifications": "Értesítések",
+  "settings_skin": "Skin",
+  "settings_theme": "Téma",
+  "settings_theme_dark": "Sötét",
+  "settings_theme_light": "Világos",
+  "settings_theme_system": "Rendszer",
+  "settings_title": "Beállítások",
+  "skin_dell_genoa_description": "Alap Tippmix színséma (zöld)",
+  "skin_dell_genoa_name": "Tippmix Zöld",
+  "skin_pink_m3_description": "Lányos, vidám skin",
+  "skin_pink_m3_name": "Pink Party",
+  "stakeHint": "Tét",
+  "team_hint": "Kedvenc csapat",
+  "ticket_details_title": "Szelvény részletei",
+  "ticket_id": "Szelvény",
+  "ticket_status_lost": "Veszített",
+  "ticket_status_pending": "Függőben",
+  "ticket_status_void": "Érvénytelen",
+  "ticket_status_won": "Nyert",
+  "ticket_submit_error": "Hiba történt:",
+  "ticket_submit_success": "Szelvény sikeresen elküldve",
+  "tips_label": "Tippek",
+  "total_odds_label": "Össz odds",
+  "unfollow": "Követve",
+  "unknown_error_try_again": "Ismeretlen hiba, kérlek próbáld újra",
   "unknown_network_error": "Ismeretlen hálózati hiba",
-  "unknown_error_try_again": "Ismeretlen hiba, kérlek próbáld újra"
+  "verification_email_sent": "Megerősítő email elküldve",
+  "verified_badge_label": "Ellenőrzött"
 }

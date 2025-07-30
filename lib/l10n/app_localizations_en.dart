@@ -97,7 +97,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_challenge_title => 'Challenge awaits!';
 
   @override
-  String get home_tile_challenge_daily_description => 'Daily challenge: win 3 bets today.';
+  String get home_tile_challenge_daily_description =>
+      'Daily challenge: win 3 bets today.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -111,13 +112,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_educational_tip_title => 'Betting tip';
 
   @override
-  String get home_tile_educational_tip_1 => 'Did you know? Combining bets can increase your odds.';
+  String get home_tile_educational_tip_1 =>
+      'Did you know? Combining bets can increase your odds.';
 
   @override
-  String get home_tile_educational_tip_2 => 'Single bets carry less risk than accumulators.';
+  String get home_tile_educational_tip_2 =>
+      'Single bets carry less risk than accumulators.';
 
   @override
-  String get home_tile_educational_tip_3 => 'Track your betting history to learn from past results.';
+  String get home_tile_educational_tip_3 =>
+      'Track your betting history to learn from past results.';
 
   @override
   String get home_tile_educational_tip_cta => 'More tips';
@@ -887,7 +891,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailVerify_title => 'Verify your email!';
 
   @override
-  String get emailVerify_description => 'Click the link in the verification email then return to the app.';
+  String get emailVerify_description =>
+      'Click the link in the verification email then return to the app.';
 
   @override
   String get emailVerify_resend => 'Resend';
@@ -899,7 +904,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailVerify_exit => 'Exit';
 
   @override
-  String get password_pwned_error => 'This password has appeared in a data breach';
+  String get password_pwned_error =>
+      'This password has appeared in a data breach';
 
   @override
   String get recaptcha_failed_error => 'reCAPTCHA verification failed';

@@ -58,7 +58,10 @@ Future<void> main() async {
             debugShowCheckedModeBanner: false,
           ),
         );
-        final bytes = await controller.captureFromWidget(widget, pixelRatio: 1.0);
+        final bytes = await controller.captureFromWidget(
+          widget,
+          pixelRatio: 1.0,
+        );
         final name =
             '${entry.key.name}_skin${i}_${brightness == Brightness.light ? 'light' : 'dark'}.png';
         final outFile = File(p.join('test', 'goldens', name))

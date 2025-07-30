@@ -1,1 +1,18 @@
-{"parent":null,"pid":19688,"argv":["C:\\Program Files\\nodejs\\node.exe","C:\\Users\\korne\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js","run","test:rules:run"],"execArgv":[],"cwd":"C:\\Dev\\GitHub\\tippmixapp","time":1751298694054,"ppid":18312,"coverageFilename":"C:\\Dev\\GitHub\\tippmixapp\\.nyc_output\\2f96d9f2-bde7-4af2-9d0c-11afd50c2d35.json","externalId":"","uuid":"2f96d9f2-bde7-4af2-9d0c-11afd50c2d35","files":[]}
+{
+  "argv": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\korne\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "test:rules:run"
+  ],
+  "coverageFilename": "C:\\Dev\\GitHub\\tippmixapp\\.nyc_output\\2f96d9f2-bde7-4af2-9d0c-11afd50c2d35.json",
+  "cwd": "C:\\Dev\\GitHub\\tippmixapp",
+  "execArgv": [],
+  "externalId": "",
+  "files": [],
+  "parent": null,
+  "pid": 19688,
+  "ppid": 18312,
+  "time": 1751298694054,
+  "uuid": "2f96d9f2-bde7-4af2-9d0c-11afd50c2d35"
+}

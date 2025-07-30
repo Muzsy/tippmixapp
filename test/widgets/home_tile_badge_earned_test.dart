@@ -25,10 +25,7 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
           home: Scaffold(
-            body: HomeTileBadgeEarned(
-              badge: badge,
-              onTap: () => tapped = true,
-            ),
+            body: HomeTileBadgeEarned(badge: badge, onTap: () => tapped = true),
           ),
         ),
       ),

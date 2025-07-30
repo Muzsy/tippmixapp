@@ -42,8 +42,9 @@ final aiTipFutureProvider = FutureProvider<AiTip?>((ref) async {
 });
 
 /// Provides active challenges for the current user.
-final activeChallengesProvider =
-    FutureProvider<List<ChallengeModel>>((ref) async {
+final activeChallengesProvider = FutureProvider<List<ChallengeModel>>((
+  ref,
+) async {
   final uid = ref.watch(authProvider).user?.id;
   if (uid == null) return <ChallengeModel>[];
   return ChallengeService().fetchActiveChallenges(uid);
@@ -62,12 +63,7 @@ class HomeScreen extends ConsumerWidget {
   final Widget? child;
   final bool showStats;
 
-  const HomeScreen({
-    this.state,
-    this.child,
-    this.showStats = false,
-    super.key,
-  });
+  const HomeScreen({this.state, this.child, this.showStats = false, super.key});
 
   // --- private helpers -----------------------------------------------------
 
@@ -107,16 +103,20 @@ class HomeScreen extends ConsumerWidget {
     if (aiTip != null) tiles.add(HomeTileAiTip(tip: aiTip));
     if (topTipster != null) tiles.add(HomeTileTopTipster(stats: topTipster));
     if (feedActivity != null) {
-      tiles.add(HomeTileFeedActivity(
-        entry: feedActivity,
-        onTap: () => context.goNamed(AppRoute.bets.name),
-      ));
+      tiles.add(
+        HomeTileFeedActivity(
+          entry: feedActivity,
+          onTap: () => context.goNamed(AppRoute.bets.name),
+        ),
+      );
     }
     if (challenges != null && challenges.isNotEmpty) {
-      tiles.add(HomeTileChallengePrompt(
-        challenge: challenges.first,
-        onAccept: () => context.goNamed(AppRoute.createTicket.name),
-      ));
+      tiles.add(
+        HomeTileChallengePrompt(
+          challenge: challenges.first,
+          onAccept: () => context.goNamed(AppRoute.createTicket.name),
+        ),
+      );
     }
     if (ref.watch(dailyBonusAvailableProvider)) {
       tiles.add(const HomeTileDailyBonus());
@@ -125,10 +125,12 @@ class HomeScreen extends ConsumerWidget {
     final earned = ref.watch(latestBadgeProvider).asData?.value;
     if (earned != null &&
         DateTime.now().difference(earned.timestamp).inDays <= 3) {
-      tiles.add(HomeTileBadgeEarned(
-        badge: earned,
-        onTap: () => context.goNamed(AppRoute.badges.name),
-      ));
+      tiles.add(
+        HomeTileBadgeEarned(
+          badge: earned,
+          onTap: () => context.goNamed(AppRoute.badges.name),
+        ),
+      );
     }
 
     // --- assemble layout ---------------------------------------------------

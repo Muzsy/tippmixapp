@@ -5,10 +5,7 @@ class OddsMarket {
   final String key; // Pl. "h2h"
   final List<OddsOutcome> outcomes;
 
-  OddsMarket({
-    required this.key,
-    required this.outcomes,
-  });
+  OddsMarket({required this.key, required this.outcomes});
 
   factory OddsMarket.fromJson(Map<String, dynamic> json) {
     return OddsMarket(

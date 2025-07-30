@@ -13,7 +13,8 @@ class NotificationPrefsSection extends StatefulWidget {
   });
 
   @override
-  State<NotificationPrefsSection> createState() => _NotificationPrefsSectionState();
+  State<NotificationPrefsSection> createState() =>
+      _NotificationPrefsSectionState();
 }
 
 class _NotificationPrefsSectionState extends State<NotificationPrefsSection> {
@@ -32,9 +33,6 @@ class _NotificationPrefsSectionState extends State<NotificationPrefsSection> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationPreferencesTile(
-      prefs: _prefs,
-      onChanged: _update,
-    );
+    return NotificationPreferencesTile(prefs: _prefs, onChanged: _update);
   }
 }

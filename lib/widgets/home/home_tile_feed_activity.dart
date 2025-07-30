@@ -22,9 +22,7 @@ class HomeTileFeedActivity extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               CircleAvatar(
-                child: Text(
-                  entry.userId.isNotEmpty ? entry.userId[0] : '?',
-                ),
+                child: Text(entry.userId.isNotEmpty ? entry.userId[0] : '?'),
               ),
               const SizedBox(height: 8),
               Text(

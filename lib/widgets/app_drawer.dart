@@ -19,12 +19,9 @@ class AppDrawer extends StatelessWidget {
             ),
             child: Text(
               loc.drawer_title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
           ),
           ListTile(

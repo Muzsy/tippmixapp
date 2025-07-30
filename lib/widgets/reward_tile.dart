@@ -17,10 +17,7 @@ class RewardTile extends StatelessWidget {
       subtitle: Text(reward.description),
       trailing: reward.isClaimed
           ? Text(loc.rewardClaimed)
-          : ElevatedButton(
-              onPressed: onClaim,
-              child: Text(loc.rewardClaim),
-            ),
+          : ElevatedButton(onPressed: onClaim, child: Text(loc.rewardClaim)),
     );
   }
 }

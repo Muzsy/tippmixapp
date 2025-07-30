@@ -5,7 +5,8 @@ import 'package:tippmixapp/flows/copy_bet_flow.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 
 // ignore: subtype_of_sealed_class
-class FakeDocumentReference extends Fake implements DocumentReference<Map<String, dynamic>> {
+class FakeDocumentReference extends Fake
+    implements DocumentReference<Map<String, dynamic>> {
   @override
   final String id;
   final Map<String, Map<String, dynamic>> store;
@@ -18,7 +19,8 @@ class FakeDocumentReference extends Fake implements DocumentReference<Map<String
 }
 
 // ignore: subtype_of_sealed_class
-class FakeCollectionReference extends Fake implements CollectionReference<Map<String, dynamic>> {
+class FakeCollectionReference extends Fake
+    implements CollectionReference<Map<String, dynamic>> {
   final Map<String, Map<String, dynamic>> store;
   FakeCollectionReference(this.store);
 

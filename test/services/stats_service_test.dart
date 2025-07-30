@@ -15,16 +15,22 @@ void main() {
     ];
 
     test('sorts by coin by default', () {
-      final result =
-          StatsService.computeStats(users, tickets, LeaderboardMode.byCoin);
+      final result = StatsService.computeStats(
+        users,
+        tickets,
+        LeaderboardMode.byCoin,
+      );
 
       expect(result.first.uid, 'u1');
       expect(result[1].uid, 'u2');
     });
 
     test('calculates winrate correctly and sorts by winrate', () {
-      final result =
-          StatsService.computeStats(users, tickets, LeaderboardMode.byWinrate);
+      final result = StatsService.computeStats(
+        users,
+        tickets,
+        LeaderboardMode.byWinrate,
+      );
 
       expect(result.first.uid, 'u2');
       expect(result.first.winRate, 1.0);

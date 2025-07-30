@@ -23,10 +23,7 @@ class HomeGuestCtaTile extends StatelessWidget {
             children: [
               const Icon(Icons.login, size: 48),
               const SizedBox(height: 8),
-              Text(
-                loc.home_guest_message,
-                textAlign: TextAlign.center,
-              ),
+              Text(loc.home_guest_message, textAlign: TextAlign.center),
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () => _navigate(context),

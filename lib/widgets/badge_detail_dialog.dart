@@ -46,10 +46,7 @@ class BadgeDetailDialog extends StatelessWidget {
         children: [
           Hero(
             tag: 'badge-${badge.key}',
-            child: Icon(
-              getIconForBadge(badge.iconName),
-              size: 64,
-            ),
+            child: Icon(getIconForBadge(badge.iconName), size: 64),
           ),
           const SizedBox(height: 12),
           Text(description, textAlign: TextAlign.center),

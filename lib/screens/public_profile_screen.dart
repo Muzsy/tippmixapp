@@ -25,12 +25,12 @@ class PublicProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             CircleAvatar(
+            CircleAvatar(
               radius: 40,
               backgroundImage: user.avatarUrl.isNotEmpty
                   ? (user.avatarUrl.startsWith('http')
-                      ? NetworkImage(user.avatarUrl)
-                      : AssetImage(user.avatarUrl) as ImageProvider)
+                        ? NetworkImage(user.avatarUrl)
+                        : AssetImage(user.avatarUrl) as ImageProvider)
                   : null,
               child: user.avatarUrl.isEmpty ? const Icon(Icons.person) : null,
             ),

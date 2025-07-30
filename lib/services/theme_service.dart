@@ -43,10 +43,10 @@ class ThemeService extends StateNotifier<ThemeState> {
     SharedPreferences? prefs,
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _prefs = prefs,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance,
-        super(const ThemeState());
+  }) : _prefs = prefs,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance,
+       super(const ThemeState());
 
   SharedPreferences? _prefs;
   final FirebaseFirestore _firestore;
@@ -151,5 +151,6 @@ class ThemeService extends StateNotifier<ThemeState> {
 }
 
 /// Riverpod provider for [ThemeService].
-final themeServiceProvider =
-    StateNotifierProvider<ThemeService, ThemeState>((ref) => ThemeService());
+final themeServiceProvider = StateNotifierProvider<ThemeService, ThemeState>(
+  (ref) => ThemeService(),
+);

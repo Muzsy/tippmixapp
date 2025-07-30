@@ -46,27 +46,34 @@ void main() {
         ),
       ],
     );
-    await runZoned(() async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authServiceProvider.overrideWithValue(mockAuth),
-            registerStateNotifierProvider.overrideWith((ref) => FakeRegisterNotifier(mockAuth)),
-          ],
-          child: MaterialApp.router(
-            routerConfig: router,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: const Locale('en'),
+    await runZoned(
+      () async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authServiceProvider.overrideWithValue(mockAuth),
+              registerStateNotifierProvider.overrideWith(
+                (ref) => FakeRegisterNotifier(mockAuth),
+              ),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: const Locale('en'),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Finish'));
-      await tester.pumpAndSettle();
-    }, zoneSpecification: ZoneSpecification(print: (self, parent, zone, String msg) {
-      logs.add(msg);
-    }));
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Finish'));
+        await tester.pumpAndSettle();
+      },
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, String msg) {
+          logs.add(msg);
+        },
+      ),
+    );
 
     expect(logs.any((l) => l.contains('[REGISTER] STARTED')), isTrue);
     expect(logs.any((l) => l.contains('[REGISTER] SUCCESS')), isTrue);

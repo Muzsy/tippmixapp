@@ -17,9 +17,14 @@ class _AvatarGalleryState extends State<AvatarGallery> {
 
   Future<List<String>> _loadAvatars() async {
     final manifest = await rootBundle.loadString('AssetManifest.json');
-    final Map<String, dynamic> map = json.decode(manifest) as Map<String, dynamic>;
+    final Map<String, dynamic> map =
+        json.decode(manifest) as Map<String, dynamic>;
     return map.keys
-        .where((k) => k.startsWith('assets/avatar/') && (k.endsWith('.png') || k.endsWith('.jpg')))
+        .where(
+          (k) =>
+              k.startsWith('assets/avatar/') &&
+              (k.endsWith('.png') || k.endsWith('.jpg')),
+        )
         .toList();
   }
 
@@ -45,7 +50,9 @@ class _AvatarGalleryState extends State<AvatarGallery> {
         return GridView.builder(
           shrinkWrap: true,
           itemCount: avatars.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+          ),
           itemBuilder: (context, index) {
             final path = avatars[index];
             return GestureDetector(

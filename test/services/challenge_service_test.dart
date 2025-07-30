@@ -35,7 +35,6 @@ class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
     }
     return FakeQuerySnapshot(snapshots);
   }
-
 }
 
 // ignore: subtype_of_sealed_class
@@ -62,7 +61,9 @@ class FakeCollectionReference extends Fake
     List<Map<String, dynamic>> filtered = store;
     if (field == 'endTime' && isGreaterThan is Timestamp) {
       filtered = store
-          .where((d) => (d['endTime'] as Timestamp).compareTo(isGreaterThan) > 0)
+          .where(
+            (d) => (d['endTime'] as Timestamp).compareTo(isGreaterThan) > 0,
+          )
           .toList();
     }
     // Add more filter logic here if needed for other parameters
@@ -92,12 +93,16 @@ void main() {
     firestore.collections[path] = [
       {
         'type': 'daily',
-        'endTime': Timestamp.fromDate(DateTime.now().subtract(const Duration(days: 1)))
+        'endTime': Timestamp.fromDate(
+          DateTime.now().subtract(const Duration(days: 1)),
+        ),
       },
       {
         'type': 'friend',
         'username': 'Bob',
-        'endTime': Timestamp.fromDate(DateTime.now().add(const Duration(hours: 1)))
+        'endTime': Timestamp.fromDate(
+          DateTime.now().add(const Duration(hours: 1)),
+        ),
       },
     ];
 

@@ -23,10 +23,11 @@ class BetSlipProvider extends StateNotifier<BetSlipProviderState> {
   /// true: sikerült, false: duplikált vagy túl sok tipp.
   bool addTip(TipModel tip) {
     // Duplikáció: eseményId+piac+kimenetel alapján (csak egy ilyen lehet)
-    final isDuplicate = state.tips.any((t) =>
-      t.eventId == tip.eventId &&
-      t.marketKey == tip.marketKey &&
-      t.outcome == tip.outcome
+    final isDuplicate = state.tips.any(
+      (t) =>
+          t.eventId == tip.eventId &&
+          t.marketKey == tip.marketKey &&
+          t.outcome == tip.outcome,
     );
     if (isDuplicate || state.tips.length >= maxTips) {
       return false;
@@ -38,11 +39,14 @@ class BetSlipProvider extends StateNotifier<BetSlipProviderState> {
   /// Tipp törlése esemény+piac+kimenetel alapján.
   void removeTip(TipModel tip) {
     state = state.copyWith(
-      tips: state.tips.where((t) =>
-        !(t.eventId == tip.eventId &&
-          t.marketKey == tip.marketKey &&
-          t.outcome == tip.outcome)
-      ).toList(),
+      tips: state.tips
+          .where(
+            (t) =>
+                !(t.eventId == tip.eventId &&
+                    t.marketKey == tip.marketKey &&
+                    t.outcome == tip.outcome),
+          )
+          .toList(),
     );
   }
 
@@ -55,4 +59,5 @@ class BetSlipProvider extends StateNotifier<BetSlipProviderState> {
 /// Globális Riverpod provider.
 final betSlipProvider =
     StateNotifierProvider<BetSlipProvider, BetSlipProviderState>(
-        (ref) => BetSlipProvider());
+      (ref) => BetSlipProvider(),
+    );

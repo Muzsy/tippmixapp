@@ -47,9 +47,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         .read(authProvider.notifier)
         .login(_emailCtrl.text, _passCtrl.text);
     if (error == null) {
-      await ref
-          .read(analyticsServiceProvider)
-          .logLoginSuccess(widget.variant);
+      await ref.read(analyticsServiceProvider).logLoginSuccess(widget.variant);
     }
   }
 
@@ -97,10 +95,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               obscureText: true,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submit,
-              child: Text(loc.login_button),
-            ),
+            ElevatedButton(onPressed: _submit, child: Text(loc.login_button)),
             const SizedBox(height: 16),
             const SocialLoginButtons(),
             const SizedBox(height: 16),

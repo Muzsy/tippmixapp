@@ -22,8 +22,9 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
   Future<void> _loadTip() async {
     try {
       final lang = Localizations.localeOf(context).languageCode;
-      final jsonStr =
-          await rootBundle.loadString('lib/assets/educational_tips.json');
+      final jsonStr = await rootBundle.loadString(
+        'lib/assets/educational_tips.json',
+      );
       final data = jsonDecode(jsonStr) as Map<String, dynamic>;
       final tips = (data['tips'] as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
@@ -71,8 +72,10 @@ class _HomeTileEducationalTipState extends State<HomeTileEducationalTip> {
             children: [
               const Icon(Icons.school, size: 48),
               const SizedBox(height: 8),
-              Text(loc.home_tile_educational_tip_title,
-                  textAlign: TextAlign.center),
+              Text(
+                loc.home_tile_educational_tip_title,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
               Text(_tip, textAlign: TextAlign.center),
               const SizedBox(height: 8),

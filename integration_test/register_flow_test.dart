@@ -10,39 +10,52 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('register flow prints log', (tester) async {
     final logs = <String>[];
-    await runZoned(() async {
-      app.main();
-      await tester.pumpAndSettle();
-      router.go('/register');
-      await tester.pumpAndSettle();
+    await runZoned(
+      () async {
+        app.main();
+        await tester.pumpAndSettle();
+        router.go('/register');
+        await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextFormField).at(0), 'user@test.com');
-      await tester.enterText(find.byType(TextFormField).at(1), 'Password1!');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
-      await tester.pumpAndSettle(const Duration(milliseconds: 400));
+        await tester.enterText(
+          find.byType(TextFormField).at(0),
+          'user@test.com',
+        );
+        await tester.enterText(find.byType(TextFormField).at(1), 'Password1!');
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+        await tester.pumpAndSettle(const Duration(milliseconds: 400));
 
-      await tester.enterText(find.byKey(const Key('nicknameField')), 'tester');
-      await tester.tap(find.byKey(const Key('birthDateField')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('1'));
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(CheckboxListTile));
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
-      await tester.pumpAndSettle(const Duration(milliseconds: 400));
+        await tester.enterText(
+          find.byKey(const Key('nicknameField')),
+          'tester',
+        );
+        await tester.tap(find.byKey(const Key('birthDateField')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('1'));
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(CheckboxListTile));
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+        await tester.pumpAndSettle(const Duration(milliseconds: 400));
 
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Finish'));
-      await tester.pumpAndSettle();
-    }, zoneSpecification: ZoneSpecification(print: (_, __, ___, String msg) {
-      logs.add(msg);
-    }));
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Finish'));
+        await tester.pumpAndSettle();
+      },
+      zoneSpecification: ZoneSpecification(
+        print: (_, __, ___, String msg) {
+          logs.add(msg);
+        },
+      ),
+    );
 
     expect(logs.any((l) => l.contains('[REGISTER] STARTED')), isTrue);
     expect(logs.any((l) => l.contains('[REGISTER] SUCCESS')), isTrue);
   });
 
   testWidgets('shows error for weak password', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: RegisterStep1Form())));
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: RegisterStep1Form())),
+    );
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).at(0), 'bad@test');
     await tester.enterText(find.byType(TextFormField).at(1), 'weak');

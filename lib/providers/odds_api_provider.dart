@@ -45,7 +45,9 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
         state = OddsApiEmpty();
       } else {
         state = OddsApiError(
-            response.errorMessage ?? 'api_error_unknown', response.errorType);
+          response.errorMessage ?? 'api_error_unknown',
+          response.errorType,
+        );
       }
       return;
     }
@@ -61,6 +63,7 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
 }
 
 /// Globális Riverpod provider.
-final oddsApiProvider = StateNotifierProvider<OddsApiProvider, OddsApiProviderState>(
-  (ref) => OddsApiProvider(OddsCacheWrapper(OddsApiService())),
-);
+final oddsApiProvider =
+    StateNotifierProvider<OddsApiProvider, OddsApiProviderState>(
+      (ref) => OddsApiProvider(OddsCacheWrapper(OddsApiService())),
+    );

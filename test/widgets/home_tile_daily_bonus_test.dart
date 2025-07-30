@@ -7,7 +7,9 @@ import 'package:tippmixapp/services/coin_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 class FakeCoinService extends CoinService {
-  FakeCoinService({required super.firestore}); // Pass required arguments here if needed
+  FakeCoinService({
+    required super.firestore,
+  }); // Pass required arguments here if needed
 
   bool claimed = false;
   int claimCalls = 0;
@@ -32,9 +34,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
-          home: Scaffold(
-            body: HomeTileDailyBonus(coinService: fakeService),
-          ),
+          home: Scaffold(body: HomeTileDailyBonus(coinService: fakeService)),
         ),
       ),
     );

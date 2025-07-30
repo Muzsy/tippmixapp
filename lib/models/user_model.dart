@@ -37,65 +37,65 @@ class UserModel {
     this.bio,
     this.favouriteTeam,
     this.dateOfBirth,
-  })  : assert(uid.isNotEmpty),
-        assert(email.isNotEmpty),
-        assert(displayName.isNotEmpty),
-        assert(nickname.isNotEmpty),
-        assert(avatarUrl.isNotEmpty);
+  }) : assert(uid.isNotEmpty),
+       assert(email.isNotEmpty),
+       assert(displayName.isNotEmpty),
+       assert(nickname.isNotEmpty),
+       assert(avatarUrl.isNotEmpty);
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        uid: json['uid'] as String,
-        email: json['email'] as String,
-        displayName: json['displayName'] as String,
-        nickname: json['nickname'] as String,
-        avatarUrl: json['avatarUrl'] as String,
-        isPrivate: json['isPrivate'] as bool? ?? false,
-        fieldVisibility: Map<String, bool>.from(
-          (json['fieldVisibility'] as Map?) ?? {},
-        ),
-        notificationPreferences: Map<String, bool>.from(
-          (json['notificationPreferences'] as Map?) ?? {},
-        ),
-        twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
-        twoFactorType: json['twoFactorType'] != null
-            ? TwoFactorType.values.firstWhere(
-                (e) => e.name == json['twoFactorType'],
-                orElse: () => TwoFactorType.sms,
-              )
-            : null,
-        verifiedAt: json['verifiedAt'] != null
-            ? DateTime.tryParse(json['verifiedAt'] as String)
-            : null,
-        totpSecret: json['totpSecret'] as String?,
-        onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
-        onboardingCompletedAt: json['onboardingCompletedAt'] != null
-            ? DateTime.tryParse(json['onboardingCompletedAt'] as String)
-            : null,
-        bio: json['bio'] as String?,
-        favouriteTeam: json['favouriteTeam'] as String?,
-        dateOfBirth: json['dateOfBirth'] != null
-            ? DateTime.tryParse(json['dateOfBirth'] as String)
-            : null,
-      );
+    uid: json['uid'] as String,
+    email: json['email'] as String,
+    displayName: json['displayName'] as String,
+    nickname: json['nickname'] as String,
+    avatarUrl: json['avatarUrl'] as String,
+    isPrivate: json['isPrivate'] as bool? ?? false,
+    fieldVisibility: Map<String, bool>.from(
+      (json['fieldVisibility'] as Map?) ?? {},
+    ),
+    notificationPreferences: Map<String, bool>.from(
+      (json['notificationPreferences'] as Map?) ?? {},
+    ),
+    twoFactorEnabled: json['twoFactorEnabled'] as bool? ?? false,
+    twoFactorType: json['twoFactorType'] != null
+        ? TwoFactorType.values.firstWhere(
+            (e) => e.name == json['twoFactorType'],
+            orElse: () => TwoFactorType.sms,
+          )
+        : null,
+    verifiedAt: json['verifiedAt'] != null
+        ? DateTime.tryParse(json['verifiedAt'] as String)
+        : null,
+    totpSecret: json['totpSecret'] as String?,
+    onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
+    onboardingCompletedAt: json['onboardingCompletedAt'] != null
+        ? DateTime.tryParse(json['onboardingCompletedAt'] as String)
+        : null,
+    bio: json['bio'] as String?,
+    favouriteTeam: json['favouriteTeam'] as String?,
+    dateOfBirth: json['dateOfBirth'] != null
+        ? DateTime.tryParse(json['dateOfBirth'] as String)
+        : null,
+  );
 
   Map<String, dynamic> toJson() => {
-        'uid': uid,
-        'email': email,
-        'displayName': displayName,
-        'nickname': nickname,
-        'avatarUrl': avatarUrl,
-        'isPrivate': isPrivate,
-        'fieldVisibility': fieldVisibility,
-        'notificationPreferences': notificationPreferences,
-        'twoFactorEnabled': twoFactorEnabled,
-        if (twoFactorType != null) 'twoFactorType': twoFactorType!.name,
-        if (verifiedAt != null) 'verifiedAt': verifiedAt!.toIso8601String(),
-        if (totpSecret != null) 'totpSecret': totpSecret,
-        'onboardingCompleted': onboardingCompleted,
-        if (onboardingCompletedAt != null)
-          'onboardingCompletedAt': onboardingCompletedAt!.toIso8601String(),
-        if (bio != null) 'bio': bio,
-        if (favouriteTeam != null) 'favouriteTeam': favouriteTeam,
-        if (dateOfBirth != null) 'dateOfBirth': dateOfBirth!.toIso8601String(),
-      };
+    'uid': uid,
+    'email': email,
+    'displayName': displayName,
+    'nickname': nickname,
+    'avatarUrl': avatarUrl,
+    'isPrivate': isPrivate,
+    'fieldVisibility': fieldVisibility,
+    'notificationPreferences': notificationPreferences,
+    'twoFactorEnabled': twoFactorEnabled,
+    if (twoFactorType != null) 'twoFactorType': twoFactorType!.name,
+    if (verifiedAt != null) 'verifiedAt': verifiedAt!.toIso8601String(),
+    if (totpSecret != null) 'totpSecret': totpSecret,
+    'onboardingCompleted': onboardingCompleted,
+    if (onboardingCompletedAt != null)
+      'onboardingCompletedAt': onboardingCompletedAt!.toIso8601String(),
+    if (bio != null) 'bio': bio,
+    if (favouriteTeam != null) 'favouriteTeam': favouriteTeam,
+    if (dateOfBirth != null) 'dateOfBirth': dateOfBirth!.toIso8601String(),
+  };
 }

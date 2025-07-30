@@ -15,11 +15,15 @@ class CoinBalanceWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Icon(Icons.monetization_on,
-              color: Theme.of(context).colorScheme.primary),
+          Icon(
+            Icons.monetization_on,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(width: 8),
-          Text('${loc.home_coin}: $coin',
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            '${loc.home_coin}: $coin',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           const Spacer(),
           Chip(label: Text('${loc.profile_rank}: $rank')),
         ],

@@ -30,6 +30,7 @@ class PassAuthRepository implements AuthRepository {
 }
 
 class FakeFirebaseAnalytics extends Fake implements FirebaseAnalytics {}
+
 class _FakeAnalyticsService extends AnalyticsService {
   _FakeAnalyticsService() : super(FakeFirebaseAnalytics());
 }
@@ -40,9 +41,13 @@ void main() {
       ProviderScope(
         overrides: [
           hibpServiceProvider.overrideWith((ref) => FakeHIBPService()),
-          recaptchaServiceProvider.overrideWith((ref) => FakeRecaptchaService()),
+          recaptchaServiceProvider.overrideWith(
+            (ref) => FakeRecaptchaService(),
+          ),
           authRepositoryProvider.overrideWith((ref) => PassAuthRepository()),
-          analyticsServiceProvider.overrideWith((ref) => _FakeAnalyticsService()),
+          analyticsServiceProvider.overrideWith(
+            (ref) => _FakeAnalyticsService(),
+          ),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -53,7 +58,10 @@ void main() {
       ),
     );
 
-    await tester.enterText(find.byType(TextFormField).first, 'test@example.com');
+    await tester.enterText(
+      find.byType(TextFormField).first,
+      'test@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'Test123!');
     await tester.tap(find.widgetWithText(ElevatedButton, 'Folytatás'));
     await tester.pumpAndSettle();

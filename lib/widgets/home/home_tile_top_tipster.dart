@@ -23,14 +23,14 @@ class HomeTileTopTipster extends StatelessWidget {
               CircleAvatar(
                 radius: 24,
                 child: Text(
-                  stats.displayName.isNotEmpty
-                      ? stats.displayName[0]
-                      : '?',
+                  stats.displayName.isNotEmpty ? stats.displayName[0] : '?',
                 ),
               ),
               const SizedBox(height: 8),
-              Text(loc.home_tile_top_tipster_title,
-                  textAlign: TextAlign.center),
+              Text(
+                loc.home_tile_top_tipster_title,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
               Text(
                 loc.home_tile_top_tipster_description(stats.displayName),

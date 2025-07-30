@@ -16,7 +16,9 @@ void main() {
     });
     final service = UserService(firestore);
 
-    final updated = await service.updateNotificationPrefs('u1', {'tips': false});
+    final updated = await service.updateNotificationPrefs('u1', {
+      'tips': false,
+    });
 
     final doc = await firestore.collection('users').doc('u1').get();
     expect(doc.data()?['notificationPreferences']['tips'], false);

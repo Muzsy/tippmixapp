@@ -10,27 +10,31 @@ import 'package:tippmixapp/services/security_service.dart';
 void main() {
   testWidgets('toggle navigates to wizard', (tester) async {
     final service = SecurityService();
-    final router = GoRouter(routes: [
-      GoRoute(
-        path: '/',
-        name: AppRoute.security.name,
-        builder: (c, s) => SecurityScreen(service: service),
-        routes: [
-          GoRoute(
-            path: 'wizard',
-            name: AppRoute.twoFactorWizard.name,
-            builder: (c, s) => TwoFactorWizard(service: service),
-          )
-        ],
-      )
-    ]);
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          name: AppRoute.security.name,
+          builder: (c, s) => SecurityScreen(service: service),
+          routes: [
+            GoRoute(
+              path: 'wizard',
+              name: AppRoute.twoFactorWizard.name,
+              builder: (c, s) => TwoFactorWizard(service: service),
+            ),
+          ],
+        ),
+      ],
+    );
 
-    await tester.pumpWidget(MaterialApp.router(
-      routerConfig: router,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('en'),
-    ));
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+      ),
+    );
 
     await tester.tap(find.byType(SwitchListTile));
     await tester.pumpAndSettle();

@@ -13,10 +13,6 @@ class SplashScreen extends ConsumerWidget {
       next.whenData((route) => context.goNamed(route.name));
     });
     ref.watch(splashControllerProvider);
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

@@ -26,7 +26,10 @@ class _NotificationCenterScreenV2State
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: NotificationCategory.values.length + 1, vsync: this);
+    _controller = TabController(
+      length: NotificationCategory.values.length + 1,
+      vsync: this,
+    );
   }
 
   @override
@@ -58,58 +61,62 @@ class _NotificationCenterScreenV2State
           }
           return TabBarView(
             controller: _controller,
-            children: List.generate(
-              NotificationCategory.values.length + 1,
-              (tabIndex) {
-                var filtered = list.where((n) => !n.archived).toList();
-                if (tabIndex > 0) {
-                  final cat = NotificationCategory.values[tabIndex - 1];
-                  filtered = filtered.where((n) => n.category == cat).toList();
-                }
-                filtered.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-                if (filtered.isEmpty) {
-                  return Center(child: Text(loc.notificationEmpty));
-                }
-                return ListView.builder(
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) {
-                    final item = filtered[index];
-                    return Dismissible(
-                      key: ValueKey(item.id),
-                      background: Container(color: Theme.of(context).colorScheme.error),
-                      onDismissed: (_) {
+            children: List.generate(NotificationCategory.values.length + 1, (
+              tabIndex,
+            ) {
+              var filtered = list.where((n) => !n.archived).toList();
+              if (tabIndex > 0) {
+                final cat = NotificationCategory.values[tabIndex - 1];
+                filtered = filtered.where((n) => n.category == cat).toList();
+              }
+              filtered.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+              if (filtered.isEmpty) {
+                return Center(child: Text(loc.notificationEmpty));
+              }
+              return ListView.builder(
+                itemCount: filtered.length,
+                itemBuilder: (context, index) {
+                  final item = filtered[index];
+                  return Dismissible(
+                    key: ValueKey(item.id),
+                    background: Container(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    onDismissed: (_) {
+                      ref
+                          .read(notificationServiceProvider)
+                          .archive(ref.read(authProvider).user!.id, item.id);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(loc.notificationArchive),
+                          action: SnackBarAction(
+                            label: loc.notificationUndo,
+                            onPressed: () {},
+                          ),
+                        ),
+                      );
+                    },
+                    child: NotificationPreviewCard(
+                      notification: item,
+                      onTap: () {
+                        ref
+                            .read(notificationHandlerProvider)
+                            .handle(context, item);
+                        ref
+                            .read(analyticsServiceProvider)
+                            .logNotificationOpened(item.category.name);
                         ref
                             .read(notificationServiceProvider)
-                            .archive(ref.read(authProvider).user!.id, item.id);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(loc.notificationArchive),
-                            action: SnackBarAction(
-                              label: loc.notificationUndo,
-                              onPressed: () {},
-                            ),
-                          ),
-                        );
+                            .markAsRead(
+                              ref.read(authProvider).user!.id,
+                              item.id,
+                            );
                       },
-                      child: NotificationPreviewCard(
-                        notification: item,
-                        onTap: () {
-                          ref
-                              .read(notificationHandlerProvider)
-                              .handle(context, item);
-                          ref
-                              .read(analyticsServiceProvider)
-                              .logNotificationOpened(item.category.name);
-                          ref
-                              .read(notificationServiceProvider)
-                              .markAsRead(ref.read(authProvider).user!.id, item.id);
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                    ),
+                  );
+                },
+              );
+            }),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -45,9 +45,7 @@ class ProfileHeader extends StatelessWidget {
             backgroundImage: user!.photoURL != null
                 ? NetworkImage(user!.photoURL!)
                 : null,
-            child: user!.photoURL == null
-                ? const Icon(Icons.person)
-                : null,
+            child: user!.photoURL == null ? const Icon(Icons.person) : null,
           ),
           const SizedBox(width: 16),
           Expanded(

@@ -44,12 +44,16 @@ class _EmailNotVerifiedScreenState extends State<EmailNotVerifiedScreen> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _sending ? null : _resend,
-              child: _sending ? const CircularProgressIndicator() : const Text('Újra küldés'),
+              child: _sending
+                  ? const CircularProgressIndicator()
+                  : const Text('Újra küldés'),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: _reloading ? null : _refresh,
-              child: _reloading ? const CircularProgressIndicator() : const Text('Megerősítettem'),
+              child: _reloading
+                  ? const CircularProgressIndicator()
+                  : const Text('Megerősítettem'),
             ),
           ],
         ),

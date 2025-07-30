@@ -9,6 +9,7 @@ import 'package:tippmixapp/providers/onboarding_provider.dart';
 import 'package:tippmixapp/router.dart'; // Make sure this imports the router object
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
 class MockUser extends Mock implements User {}
 
 void main() {
@@ -20,12 +21,8 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          firebaseAuthProvider.overrideWithValue(mockAuth),
-        ],
-        child: MaterialApp.router(
-          routerConfig: router,
-        ),
+        overrides: [firebaseAuthProvider.overrideWithValue(mockAuth)],
+        child: MaterialApp.router(routerConfig: router),
       ),
     );
     await tester.pumpAndSettle();

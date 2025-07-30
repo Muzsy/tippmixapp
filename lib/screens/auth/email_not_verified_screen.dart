@@ -22,18 +22,15 @@ class EmailNotVerifiedScreen extends ConsumerWidget {
           children: [
             const Icon(Icons.mark_email_unread_outlined, size: 96),
             const SizedBox(height: 24),
-            Text(
-              loc.emailVerify_description,
-              textAlign: TextAlign.center,
-            ),
+            Text(loc.emailVerify_description, textAlign: TextAlign.center),
             const SizedBox(height: 24),
             CooldownButton(
               onPressed: () async {
                 await ref.read(authProvider.notifier).sendEmailVerification();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(loc.emailVerify_sent)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(loc.emailVerify_sent)));
                 }
               },
             ),

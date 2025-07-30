@@ -97,7 +97,8 @@ class HomeFeedWidget extends ConsumerWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                      AppLocalizations.of(context)!.copy_success),
+                                    AppLocalizations.of(context)!.copy_success,
+                                  ),
                                 ),
                               );
                             }
@@ -153,10 +154,7 @@ class _ShimmerListState extends State<_ShimmerList>
                 key: const Key('shimmer'),
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                  .colorScheme
-                  .outlineVariant
-                  .withAlpha(
+                  color: Theme.of(context).colorScheme.outlineVariant.withAlpha(
                     (((0.3 + 0.3 * _controller.value) * 255).round()).toInt(),
                   ),
                   borderRadius: BorderRadius.circular(8),

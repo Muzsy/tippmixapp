@@ -53,9 +53,7 @@ class FakeCache<T> implements Cache<T> {
 
 class MutableClock extends Clock {
   DateTime _time;
-  MutableClock(DateTime start)
-      : _time = start,
-        super(() => start);
+  MutableClock(DateTime start) : _time = start, super(() => start);
 
   void advance(Duration d) {
     _time = _time.add(d);
@@ -95,7 +93,8 @@ class TestOddsApiService extends OddsApiService {
       try {
         final response = await client.get(Uri.parse('https://api.test/$sport'));
         if (response.statusCode == 429) {
-          final retryAfter = int.tryParse(response.headers['retry-after'] ?? '1') ?? 1;
+          final retryAfter =
+              int.tryParse(response.headers['retry-after'] ?? '1') ?? 1;
           if (clock is MutableClock) {
             (clock as MutableClock).advance(Duration(seconds: retryAfter));
           } else {
@@ -144,9 +143,16 @@ void main() {
       final cache = FakeCache<OddsApiResponse<List<OddsEvent>>>(clock);
       final cached = OddsApiResponse(data: [OddsEvent.fromJson(sampleEvent)]);
       cache.set('soccer', cached, const Duration(minutes: 5));
-      final service = TestOddsApiService(client: client, cache: cache, clock: clock);
+      final service = TestOddsApiService(
+        client: client,
+        cache: cache,
+        clock: clock,
+      );
 
-      final result = await withClock(clock, () => service.getOdds(sport: 'soccer'));
+      final result = await withClock(
+        clock,
+        () => service.getOdds(sport: 'soccer'),
+      );
 
       expect(result, same(cached));
       expect(httpCalls, 0);
@@ -160,10 +166,20 @@ void main() {
       });
       final clock = MutableClock(DateTime(2024));
       final cache = FakeCache<OddsApiResponse<List<OddsEvent>>>(clock);
-      final service = TestOddsApiService(client: client, cache: cache, clock: clock);
+      final service = TestOddsApiService(
+        client: client,
+        cache: cache,
+        clock: clock,
+      );
 
-      final first = await withClock(clock, () => service.getOdds(sport: 'soccer'));
-      final second = await withClock(clock, () => service.getOdds(sport: 'soccer'));
+      final first = await withClock(
+        clock,
+        () => service.getOdds(sport: 'soccer'),
+      );
+      final second = await withClock(
+        clock,
+        () => service.getOdds(sport: 'soccer'),
+      );
 
       expect(httpCalls, 1);
       expect(first.data!.length, 1);
@@ -179,9 +195,16 @@ void main() {
       });
       final clock = MutableClock(DateTime(2024));
       final cache = FakeCache<OddsApiResponse<List<OddsEvent>>>(clock);
-      final service = TestOddsApiService(client: client, cache: cache, clock: clock);
+      final service = TestOddsApiService(
+        client: client,
+        cache: cache,
+        clock: clock,
+      );
 
-      final result = await withClock(clock, () => service.getOdds(sport: 'soccer'));
+      final result = await withClock(
+        clock,
+        () => service.getOdds(sport: 'soccer'),
+      );
 
       expect(httpCalls, 2);
       expect(result.data, isNotNull);
@@ -220,7 +243,11 @@ void main() {
       });
       final clock = MutableClock(DateTime(2024));
       final cache = FakeCache<OddsApiResponse<List<OddsEvent>>>(clock);
-      final service = TestOddsApiService(client: client, cache: cache, clock: clock);
+      final service = TestOddsApiService(
+        client: client,
+        cache: cache,
+        clock: clock,
+      );
 
       final result = await withClock(clock, () async {
         final future = service.getOdds(sport: 'soccer');
