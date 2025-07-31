@@ -72,9 +72,12 @@ Future<void> main() async {
   );
 
   if (kDebugMode) {
-  // Mindig friss tokent kérünk és kiírjuk, ha van
-  final debugToken = await FirebaseAppCheck.instance.getToken(true);
-  debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL (nem érkezett)'}');
+    try {
+      final debugToken = await FirebaseAppCheck.instance.getToken(true);
+      debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL'}');
+    } on FirebaseException catch (e) {
+      debugPrint('[APP_CHECK] startup getToken FAILED – ignore (${e.code})');
+    }
   }
 
   // --- end debug token configuration ---
