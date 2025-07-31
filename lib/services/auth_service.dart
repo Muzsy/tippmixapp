@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_core/firebase_core.dart'; // ignore: unnecessary_import
 import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -139,9 +140,14 @@ class AuthService {
     debugPrint('[REGISTER] registerWithEmail STARTED');
     debugPrint('🔵 registerWithEmail() STARTED');
     try {
-      final appCheckToken = await _appCheck.getToken(true);
-      if (kDebugMode) {
-        debugPrint('[APP_CHECK] token: $appCheckToken');
+      // App Check token lekérése. Debug / teszt buildben
+      // nem szakítjuk meg a flow-t, ha a backend 403-at dob.
+      try {
+        await _appCheck.getToken(true);
+      } on FirebaseException catch (e) {
+        if (kDebugMode) {
+          debugPrint('[APP_CHECK] getToken FAILED – ignore (${e.code})');
+        }
       }
 
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
