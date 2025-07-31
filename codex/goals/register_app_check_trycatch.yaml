@@ -4,6 +4,8 @@ priority: P1
 
 steps:
 
+# 1️⃣ AuthService – védd le a getToken()-t
+
 * patch\_file:
   target: lib/services/auth\_service.dart
   patch: |
@@ -16,8 +18,8 @@ steps:
   \-      if (kDebugMode) {
   \-        debugPrint('\[APP\_CHECK] token: \$appCheckToken');
   \-      }
-  \+      // App Check token lekérése. Debug / teszt buildben
-  \+      // nem szakítjuk meg a flow‑t, ha a backend 403‑at dob.
+  \+      // App Check token lekérése. Debug / teszt buildben
+  \+      // nem szakítjuk meg a flow-t, ha a backend 403-at dob.
   \+      try {
   \+        await \_appCheck.getToken(true);
   \+      } on FirebaseException catch (e) {
@@ -26,6 +28,29 @@ steps:
   \+              ' (\${e.code})');
   \+        }
   \+      }
+
+# 2️⃣ main.dart – app induláskor is védjük le a token-lekérést
+
+* patch\_file:
+  target: lib/main.dart
+  patch: |
+  @@
+  \-  if (kDebugMode) {
+  \-    // Mindig friss tokent kérünk és kiírjuk, ha van
+  \-    final debugToken = await FirebaseAppCheck.instance.getToken(true);
+  \-    debugPrint('🔐 DEBUG App Check token: \${debugToken ?? 'NULL (nem érkezett)'}');
+  \-  }
+  \+  if (kDebugMode) {
+  \+    try {
+  \+      final debugToken = await FirebaseAppCheck.instance.getToken(true);
+  \+      debugPrint('🔐 DEBUG App Check token: \${debugToken ?? 'NULL'}');
+  \+    } on FirebaseException catch (e) {
+  \+      debugPrint('\[APP\_CHECK] startup getToken FAILED – ignore (\${e.code})');
+  \+    }
+  \+  }
+
+# 3️⃣ statikus analízis + tesztek
+
 * run: flutter analyze --no-pub
 * write\_test:
   name: register\_with\_email\_does\_not\_throw\_on\_appcheck\_error
