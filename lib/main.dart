@@ -53,12 +53,15 @@ Future<void> main() async {
     defaultValue: '',
   );
 
-  assert(
-    !kDebugMode || debugToken.isNotEmpty,
-    '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN nincs megadva!\n'
-    'Adj meg --dart-define paramétert a build parancsban, '
-    'és állítsd be a környezeti változót a natív plugin számára (lásd launch.json).',
-  );
+  // Do not halt execution if the compile-time debug token is missing. The
+  // native plugin can still read the token from the
+  // `FIREBASE_APP_CHECK_DEBUG_TOKEN` environment variable.
+  if (kDebugMode && debugToken.isEmpty) {
+    debugPrint(
+      '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN compile-time value missing – '
+      'folytatom futást (env változó még tartalmazhat tokent).',
+    );
+  }
 
   // Activate App Check. In debug mode the Android/iOS provider is set
   // accordingly. The debug token is picked up automatically by the native
