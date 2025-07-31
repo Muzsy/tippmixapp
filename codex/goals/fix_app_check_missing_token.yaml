@@ -1,0 +1,36 @@
+meta:
+canvas: fix\_app\_check\_missing\_token.md
+priority: P0
+
+steps:
+
+# 1️⃣ Cseréld le az assert‑et infologra
+
+* patch\_file:
+  target: lib/main.dart
+  patch: |
+  @@
+* assert(
+* !kDebugMode || debugToken.isNotEmpty,
+* '⚠️  FIREBASE\_APP\_CHECK\_DEBUG\_TOKEN nincs megadva!\n'
+* 'Adj meg --dart-define paramétert a build parancsban, '
+* 'és állítsd be a környezeti változót a natív plugin számára (lásd launch.json).',
+* );
+
+- // Ne dobjunk kivételt, ha a compile‑time debug token hiányzik. A natív
+- // plugin továbbra is fel tudja venni a `FIREBASE_APP_CHECK_DEBUG_TOKEN`
+- // környezeti változóból.
+- if (kDebugMode && debugToken.isEmpty) {
+- debugPrint(
+- ```
+   '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN compile‑time value missing – '
+  ```
+- ```
+   'folytatom futást (env változó még tartalmazhat tokent).',
+  ```
+- );
+- }
+
+# 2️⃣ Tesztek lefuttatása
+
+* run: flutter test --coverage
