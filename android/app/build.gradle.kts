@@ -21,6 +21,9 @@ android {
     }
 
     dependencies {
+        // Firebase BOM – mindig platform("…")
+        implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+        // Debug provider
         implementation("com.google.firebase:firebase-appcheck-debug:17.0.0")
         implementation("androidx.core:core-ktx:1.9.0")
     }
@@ -37,6 +40,11 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // környezeti változó → manifestPlaceholder
+            val secret = System.getenv("FIREBASE_APP_CHECK_DEBUG_TOKEN") ?: ""
+            manifestPlaceholders["firebase_app_check_debug_secret"] = secret
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
