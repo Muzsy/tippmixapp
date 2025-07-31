@@ -1,0 +1,76 @@
+meta:
+canvas: register\_app\_check\_trycatch.md
+priority: P1
+
+steps:
+
+* patch\_file:
+  target: lib/services/auth\_service.dart
+  patch: |
+  @@
+  -import 'package\:firebase\_app\_check/firebase\_app\_check.dart';
+  +import 'package\:firebase\_app\_check/firebase\_app\_check.dart';
+  +import 'package\:firebase\_core/firebase\_core.dart';
+  @@
+  \-      final appCheckToken = await \_appCheck.getToken(true);
+  \-      if (kDebugMode) {
+  \-        debugPrint('\[APP\_CHECK] token: \$appCheckToken');
+  \-      }
+  \+      // App Check token lekérése. Debug / teszt buildben
+  \+      // nem szakítjuk meg a flow‑t, ha a backend 403‑at dob.
+  \+      try {
+  \+        await \_appCheck.getToken(true);
+  \+      } on FirebaseException catch (e) {
+  \+        if (kDebugMode) {
+  \+          debugPrint('\[APP\_CHECK] getToken FAILED – ignore'&#x20;
+  \+              ' (\${e.code})');
+  \+        }
+  \+      }
+* run: flutter analyze --no-pub
+* write\_test:
+  name: register\_with\_email\_does\_not\_throw\_on\_appcheck\_error
+  location: test/services/auth\_service\_appcheck\_test.dart
+  content: |
+  import 'package\:flutter\_test/flutter\_test.dart';
+  import 'package\:mockito/mockito.dart';
+  import 'package\:firebase\_app\_check/firebase\_app\_check.dart';
+  import 'package\:firebase\_auth/firebase\_auth.dart' as fb;
+  import 'package\:tippmixapp/services/auth\_service.dart';
+
+  ```
+  class _MockAppCheck extends Mock implements FirebaseAppCheck {}
+  class _MockFirebaseAuth extends Mock implements fb.FirebaseAuth {}
+  class _MockUserCredential extends Mock implements fb.UserCredential {}
+  class _MockUser extends Mock implements fb.User {}
+
+  void main() {
+    group('AuthService.registerWithEmail', () {
+      test('does not throw if getToken() fails', () async {
+        final mockAuth = _MockFirebaseAuth();
+        final mockAppCheck = _MockAppCheck();
+        when(mockAppCheck.getToken(any)).thenThrow(
+          FirebaseException(plugin: 'firebase_app_check', code: '403'),
+        );
+
+        final cred = _MockUserCredential();
+        final user = _MockUser();
+        when(cred.user).thenReturn(user);
+        when(mockAuth.createUserWithEmailAndPassword(
+          email: anyNamed('email'),
+          password: anyNamed('password'),
+        )).thenAnswer((_) async => cred);
+
+        final service = AuthService(
+          firebaseAuth: mockAuth,
+          appCheck: mockAppCheck,
+        );
+
+        await expectLater(
+          () => service.registerWithEmail('a@b.c', 'pw123456'),
+          returnsNormally,
+        );
+      });
+    });
+  }
+  ```
+* run: flutter test --coverage
