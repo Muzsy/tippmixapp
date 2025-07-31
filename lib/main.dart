@@ -70,6 +70,13 @@ Future<void> main() async {
         : AndroidProvider.playIntegrity,
     appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
   );
+
+  if (kDebugMode) {
+  // Mindig friss tokent kérünk és kiírjuk, ha van
+  final debugToken = await FirebaseAppCheck.instance.getToken(true);
+  debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL (nem érkezett)'}');
+  }
+
   // --- end debug token configuration ---
 
   final container = ProviderContainer();
