@@ -18,16 +18,16 @@ class FakeUserService extends UserService {
   ) async {
     calls++;
     last = Map.from(prefs);
-    return UserModel(
-      uid: uid,
-      email: '',
-      displayName: '',
-      nickname: '',
-      avatarUrl: '',
-      isPrivate: false,
-      fieldVisibility: const {},
-      notificationPreferences: prefs,
-    );
+      return UserModel(
+        uid: uid,
+        email: 'e',
+        displayName: 'd',
+        nickname: 'n',
+        avatarUrl: 'a',
+        isPrivate: false,
+        fieldVisibility: const {},
+        notificationPreferences: prefs,
+      );
   }
 }
 
