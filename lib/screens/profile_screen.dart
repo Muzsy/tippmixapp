@@ -319,7 +319,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             );
           }),
           const Divider(),
-          NotificationPrefsSection(uid: uid, service: UserService()),
+          if (Firebase.apps.isNotEmpty)
+            NotificationPrefsSection(uid: uid, service: UserService()),
           const SizedBox(height: 16),
           if (_error != null) ...[
             Text(
