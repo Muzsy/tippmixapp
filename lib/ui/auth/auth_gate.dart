@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../screens/auth/login_screen.dart';
-import '../../screens/home_screen.dart';
+// HomeScreen-import kivezetve – a ShellRoute hozza be
 import '../../providers/auth_provider.dart';
 import 'email_not_verified_screen.dart';
 
@@ -21,6 +22,10 @@ class AuthGate extends ConsumerWidget {
     if (!notifier.isEmailVerified) {
       return const EmailNotVerifiedScreen();
     }
-    return const HomeScreen();
+    // A ShellRoute már tartalmazza a Home-héjat; itt csak átirányítunk
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) context.go('/feed');
+    });
+    return const SizedBox.shrink();
   }
 }
