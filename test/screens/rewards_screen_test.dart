@@ -8,10 +8,40 @@ import 'package:tippmixapp/l10n/app_localizations_hu.dart';
 import 'package:tippmixapp/models/reward_model.dart';
 import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
 import 'package:tippmixapp/services/reward_service.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
+class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
+  @override
+  final T data;
+  FakeHttpsCallableResult(this.data);
+}
+
+class FakeHttpsCallable extends Fake implements HttpsCallable {
+  @override
+  Future<HttpsCallableResult<T>> call<T>([dynamic parameters]) async {
+    return FakeHttpsCallableResult<T>(null as T);
+  }
+}
+
+class FakeFirebaseFunctions extends Fake implements FirebaseFunctions {
+  final FakeHttpsCallable callable = FakeHttpsCallable();
+
+  @override
+  HttpsCallable httpsCallable(String name, {HttpsCallableOptions? options}) {
+    return callable;
+  }
+}
 
 class FakeRewardService extends RewardService {
-  FakeRewardService(List<RewardModel> rewards) : super() {
+  FakeRewardService(List<RewardModel> rewards) : super(FakeFirebaseFunctions()) {
     loadRewards(rewards);
+  }
+
+  @override
+  Future<void> claimReward(RewardModel reward) async {
+    await reward.onClaim();
+    reward.isClaimed = true;
+    state = state.where((r) => r.id != reward.id).toList();
   }
 }
 
