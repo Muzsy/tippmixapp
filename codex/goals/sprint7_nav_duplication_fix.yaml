@@ -1,0 +1,48 @@
+meta:
+  canvas: sprint7_nav_duplication_fix.md
+  priority: P0
+
+steps:
+  # 1️⃣ Dupla HomeScreen eltávolítása
+  - patch_file:
+      target: lib/ui/auth/auth_gate.dart
+      patch: |
+        @@
+-     return const HomeScreen();
++     // A ShellRoute már tartalmazza a Home‑héjat; itt csak átirányítunk
++     WidgetsBinding.instance.addPostFrameCallback((_) {
++       if (context.mounted) context.go('/feed');
++     });
++     return const SizedBox.shrink();
+
+  # 2️⃣ Fölös import törlése (ha létezett)
+  - patch_file:
+      target: lib/ui/auth/auth_gate.dart
+      patch: |
+        @@
+-import '../home/home_screen.dart';
++// HomeScreen‑import kivezetve – a ShellRoute hozza be
+
+  # 3️⃣ Widget‑teszt – egyetlen AppBar & BottomNavigationBar
+  - write_test:
+      name: home_navigation_duplication_test
+      location: test/widget/home_navigation_duplication_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/main.dart';
+        import 'package:flutter/material.dart';
+
+        void main() {
+          testWidgets('Home route has single AppBar and BottomNavigationBar', (tester) async {
+            await tester.pumpWidget(const TippmixApp());
+            await tester.pumpAndSettle();
+
+            expect(find.byType(AppBar), findsOneWidget);
+            expect(find.byType(BottomNavigationBar), findsOneWidget);
+          });
+        }
+
+  # 4️⃣ Statikus elemzések & tesztek
+  - run: flutter analyze --fatal-warnings
+  - run: flutter test --coverage
+  - assert: exit_code == 0
