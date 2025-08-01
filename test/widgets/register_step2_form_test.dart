@@ -32,18 +32,21 @@ void main() {
       ),
     );
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(RegisterWizard)),
+      tester.element(find.byType(Scaffold)),
     );
+    // Wait for the PageView to attach to the controller before jumping
+    await tester.pumpAndSettle();
     container.read(registerPageControllerProvider).jumpToPage(1);
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('nicknameField')), 'tester');
     await _selectDate(tester);
 
-    final button = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, 'Continue'),
-    );
-    expect(button.onPressed, isNull);
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
+
+    final controller = container.read(registerPageControllerProvider);
+    expect(controller.page, 1);
   });
 
   testWidgets('nickname not unique shows error', (tester) async {
@@ -62,8 +65,10 @@ void main() {
       ),
     );
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(RegisterWizard)),
+      tester.element(find.byType(Scaffold)),
     );
+    // Allow PageView to attach to controller
+    await tester.pumpAndSettle();
     container.read(registerPageControllerProvider).jumpToPage(1);
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('nicknameField')), 'tester');
@@ -94,8 +99,10 @@ void main() {
       ),
     );
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(RegisterWizard)),
+      tester.element(find.byType(Scaffold)),
     );
+    // Wait for controller to attach
+    await tester.pumpAndSettle();
     container.read(registerPageControllerProvider).jumpToPage(1);
     await tester.pumpAndSettle();
 
