@@ -38,7 +38,15 @@ void main() {
     });
 
     test('uploads file and updates profile', () async {
-      await firestore.collection('users').doc('u1').set({'uid': 'u1'});
+      await firestore.collection('users').doc('u1').set({
+        'uid': 'u1',
+        'email': 'a@b.com',
+        'displayName': 'Test',
+        'nickname': 'nick',
+        'avatarUrl': 'old.png',
+        'isPrivate': false,
+        'fieldVisibility': {},
+      });
       final file = File('avatar.png');
       final url = await ProfileService.uploadAvatar(
         uid: 'u1',
