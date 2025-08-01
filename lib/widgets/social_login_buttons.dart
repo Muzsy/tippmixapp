@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../theme/brand_colors.dart';
+import '../theme/brand_colors_presets.dart';
 import '../services/auth_service.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
@@ -14,7 +15,8 @@ class SocialLoginButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
-    final colors = Theme.of(context).extension<BrandColors>()!;
+    final colors =
+        Theme.of(context).extension<BrandColors>() ?? brandColorsLight;
     final auth = ref.read(authServiceProvider);
 
     final messenger = ScaffoldMessenger.of(context);

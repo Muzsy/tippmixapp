@@ -9,11 +9,10 @@ void main() {
         email: 'a@b.com',
         displayName: 'Disp',
         nickname: 'Nick',
-        avatarUrl: '',
+        avatarUrl: 'https://example.com/a.png',
         isPrivate: false,
         fieldVisibility: const {'city': true, 'country': false},
       );
-      // TODO: evaluate visible fields based on privacy settings
       expect(user.fieldVisibility['city'], isTrue);
     });
 
@@ -23,11 +22,10 @@ void main() {
         email: 'a@b.com',
         displayName: 'Disp',
         nickname: 'Nick',
-        avatarUrl: '',
+        avatarUrl: 'https://example.com/a.png',
         isPrivate: true,
         fieldVisibility: const {'city': true},
       );
-      // TODO: evaluate global private flag
       expect(user.isPrivate, isTrue);
     });
   });
