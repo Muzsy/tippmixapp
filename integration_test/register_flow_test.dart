@@ -42,7 +42,7 @@ void main() {
         await tester.pumpAndSettle();
       },
       zoneSpecification: ZoneSpecification(
-        print: (_, __, ___, String msg) {
+        print: (self, parent, zone, String msg) {
           logs.add(msg);
         },
       ),
