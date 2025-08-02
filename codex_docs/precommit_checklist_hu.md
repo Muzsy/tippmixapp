@@ -21,15 +21,15 @@ depends\_on: \[precommit\_checklist\_en.md]
 
 ## 2. Mit csinál a script
 
-| Lépés                     | Eszköz                              | Hibafeltétel                           |                       |
-| ------------------------- | ----------------------------------- | -------------------------------------- | --------------------- |
-| **Dart formázás**         | `dart format --set-exit-if-changed` | Bármely fájl módosul                   |                       |
-| **Statikus analízis**     | `flutter analyze --fatal-infos`     | Info szintű vagy súlyosabb hiba        |                       |
-| **Unit & widget tesztek** | `flutter test --coverage`           | Teszt hiba vagy lefedettség < **80 %** |                       |
-| **Markdown lint**         | `markdownlint '**/*.md'`            | Stílushiba                             |                       |
-| **Fájlnév‑szabály**       | Bash regex \`^\[a-z0-9\_]+.(dart    | md)$\`                                 | Nem megfelelő fájlnév |
-| **PDF detektálás**        | \`git diff --name-only --cached     | grep '.pdf\$'\`                        | PDF stage‑elve        |
-| **Commit üzenet lint**    | Conventional Commits – `commitlint` | Nem megfelelő üzenet                   |                       |
+| Lépés                     | Eszköz                                   | Hibafeltétel                           |                       |
+| ------------------------- | ---------------------------------------- | -------------------------------------- | --------------------- |
+| **Dart formázás**         | `dart format --set-exit-if-changed`      | Bármely fájl módosul                   |                       |
+| **Statikus analízis**     | `flutter analyze --fatal-infos`          | Info szintű vagy súlyosabb hiba        |                       |
+| **Unit & widget tesztek** | `flutter test --coverage --concurrency=4`| Teszt hiba vagy lefedettség < **80 %** |                       |
+| **Markdown lint**         | `markdownlint '**/*.md'`                 | Stílushiba                             |                       |
+| **Fájlnév‑szabály**       | Bash regex \`^\[a-z0-9\_]+.(dart         | md)$\`                                 | Nem megfelelő fájlnév |
+| **PDF detektálás**        | \`git diff --name-only --cached          | grep '.pdf\$'\`                        | PDF stage‑elve        |
+| **Commit üzenet lint**    | Conventional Commits – `commitlint`      | Nem megfelelő üzenet                   |                       |
 
 > *Tipp*: `./scripts/precommit.sh --fix` automatikusan javítja a formázást és az import‑rendezést.
 
