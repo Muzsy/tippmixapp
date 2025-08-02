@@ -46,9 +46,7 @@ jobs:
 
       # Pre‑commit checklist (lint ➜ tests ➜ coverage ➜ golden ➜ a11y ➜ integration)
       - name: Run pre‑commit checklist
-        run: |
-          ./scripts/lint_docs.sh
-          ./scripts/precommit.sh
+        run: bash ./scripts/precommit.sh
 
       # Upload coverage badge (run once on Linux)
       - name: Publish coverage badge
