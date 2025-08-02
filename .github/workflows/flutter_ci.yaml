@@ -20,7 +20,7 @@ jobs:
           flutter-version: "3.32.8"
           cache: true
 
-      # Node & Firebase CLI (needed for emulator & rules tests)
+      # Node & Firebase CLI & markdownlint (needed for emulator & rules tests)
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -28,6 +28,9 @@ jobs:
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
+      
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
 
       # Install Dart/Flutter dependencies
       - name: Install project dependencies
