@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/user_model.dart';
