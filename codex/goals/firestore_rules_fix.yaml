@@ -1,0 +1,39 @@
+meta:
+  canvas: firestore_rules_fix.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: firebase.rules
+      patch: |
+        @@
+-     match /users/{userId} {
+-       allow read, write: if request.auth != null && request.auth.uid == userId;
++     /* ——— users ——— */
++     match /users/{userId} {
++       // Leaderboard‑hoz minden bejelentkezett user olvashat, írni csak a tulajdonos
++       allow read:  if signedIn();
++       allow write: if isOwner(userId);
+        // subcollection (settings, badges, stb.) örökli a jogot
+       }
++
++     /* ——— wallets ——— */
++     match /wallets/{userId} {
++       allow read, write: if isOwner(userId);
++       allow delete: if false;
++     }
++
++     /* ——— tickets ——— */
++     match /tickets/{ticketId} {
++       // CREATE: csak saját szelvény, fix mezők
++       allow create: if signedIn()
++         && request.resource.data.userId == request.auth.uid
++         && request.resource.data.keys().hasOnly(['userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
++
++       // READ: leaderboard és saját szelvények megtekintéséhez
++       allow read: if signedIn();
++
++       // UPDATE/DELETE: tiltva kliens oldalon (server‑side Cloud Function frissítheti)
++       allow update, delete: if false;
++     }
+  - run: flutter analyze
