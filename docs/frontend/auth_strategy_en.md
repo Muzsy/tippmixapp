@@ -6,9 +6,9 @@ This document outlines the authentication system in **TippmixApp**, including Fi
 
 ## 🔧 Technology Used
 
-* **Firebase Authentication** (email + password)
-* **Riverpod** for session state management
-* **GoRouter** redirects based on auth state
+- **Firebase Authentication** (email + password)
+- **Riverpod** for session state management
+- **GoRouter** redirects based on auth state
 
 ## 🧭 Login Flow
 
@@ -22,20 +22,20 @@ This document outlines the authentication system in **TippmixApp**, including Fi
 
 ## 🧪 Components
 
-* `LoginScreen` – form with email/password, validation
-* `RegisterScreen` – creates Firebase user, sets initial TippCoin
-* `AuthController` – handles signIn, register, signOut
-* `auth_provider.dart` – exposes `authStateChanges` stream
-* `GoRouter` redirects based on auth state (`redirect:` logic)
+- `LoginScreen` – form with email/password, validation
+- `RegisterScreen` – creates Firebase user, sets initial TippCoin
+- `AuthController` – handles signIn, register, signOut
+- `auth_provider.dart` – exposes `authStateChanges` stream
+- `GoRouter` redirects based on auth state (`redirect:` logic)
 
 ## 🎯 Codex Rules
 
-* Always use `authStateChanges()` – not `currentUser`
-* After registration, write `UserModel` to Firestore
-* Registration must set default TippCoin (e.g. 1000)
-* Add email verification support if needed
+- Always use `authStateChanges()` – not `currentUser`
+- After registration, write `UserModel` to Firestore
+- Registration must set default TippCoin (e.g. 1000)
+- Add email verification support if needed
 
 ## 🚧 Known Issues
 
-* No client-side password validation rules
-* No email verification flow (planned)
+- No client-side password validation rules
+- No email verification flow (planned)

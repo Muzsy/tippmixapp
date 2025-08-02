@@ -4,14 +4,14 @@ Ez a vászon a fogadószelvény véglegesítésére és beküldésére szolgál�
 
 ## 🎯 Funkció
 
-* **Tét megadása** – a felhasználó TippCoin összeg megadásával fogadhat【985473509556952†L2-L4】.
-* **Szelvény előnézet** – a képernyő felsorolja a kiválasztott tippeket és azok adatait (meccs, odds, stb.).
-* **Mentés** – a `submitTicket()` művelet a `BetSlipService` segítségével véglegesíti a szelvényt【985473509556952†L6-L9】.  A jelenlegi megoldás FirebaseAuth‑ből kéri le a `uid`‑t; Codex audit alapján javasolt a `authProvider` használata a konzisztens állapotkezeléshez【985473509556952†L10-L14】.
+- **Tét megadása** – a felhasználó TippCoin összeg megadásával fogadhat【985473509556952†L2-L4】.
+- **Szelvény előnézet** – a képernyő felsorolja a kiválasztott tippeket és azok adatait (meccs, odds, stb.).
+- **Mentés** – a `submitTicket()` művelet a `BetSlipService` segítségével véglegesíti a szelvényt【985473509556952†L6-L9】.  A jelenlegi megoldás FirebaseAuth‑ből kéri le a `uid`‑t; Codex audit alapján javasolt a `authProvider` használata a konzisztens állapotkezeléshez【985473509556952†L10-L14】.
 
 ## 🧠 Felépítés
 
-* A képernyő `ConsumerStatefulWidget`, Riverpod alapú állapotfigyeléssel【985473509556952†L6-L8】.
-* Az autentikációs ág javasolt módosítása:
+- A képernyő `ConsumerStatefulWidget`, Riverpod alapú állapotfigyeléssel【985473509556952†L6-L8】.
+- Az autentikációs ág javasolt módosítása:
 
 ```dart
 final user = ref.watch(authProvider);
@@ -22,7 +22,7 @@ if (user == null) {
 }
 ```
 
-* Az űrlap validációt végez a tét mezőn, és hiba esetén figyelmeztető üzenetet jelenít meg.
+- Az űrlap validációt végez a tét mezőn, és hiba esetén figyelmeztető üzenetet jelenít meg.
 
 ## 🧪 Tesztállapot
 

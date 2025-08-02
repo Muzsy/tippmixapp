@@ -51,4 +51,3 @@
 
 **Ez a szabályfájl minden Codex-alapú színséma módosításhoz vagy generált kódhoz kötelezően alkalmazandó!  
 A szabályfájl a /codex_docs könyvtárban helyezendő el.**
-

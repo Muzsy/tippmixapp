@@ -4,18 +4,18 @@ Ez a vászon a TippmixApp bejelentkező képernyőjének újravizsgált, WCAG‑
 
 ## 🎯 Cél
 
-* **E‑mail/jelszó és social login** – támogatja a Google, Apple és Facebook bejelentkezést【522359040739838†L7-L10】.
-* **Navigáció** – sikeres bejelentkezés után a Home képernyőre (`HomeLogged`), sikertelen esetben hibakezelés; a regisztrációs varázslóra mutató link a képernyő alján【522359040739838†L27-L33】.
-* **Teljes lokalizáció** – a képernyő három nyelven (hu/en/de) jelenik meg, a szövegek minden esetben lokalizált kulcsokra épülnek【522359040739838†L9-L10】【522359040739838†L43-L47】.
-* **CI és tesztek** – a megvalósítást linter‑ és tesztkötések kísérik (`flutter analyze`, `flutter test --coverage`)【522359040739838†L20-L22】.
+- **E‑mail/jelszó és social login** – támogatja a Google, Apple és Facebook bejelentkezést【522359040739838†L7-L10】.
+- **Navigáció** – sikeres bejelentkezés után a Home képernyőre (`HomeLogged`), sikertelen esetben hibakezelés; a regisztrációs varázslóra mutató link a képernyő alján【522359040739838†L27-L33】.
+- **Teljes lokalizáció** – a képernyő három nyelven (hu/en/de) jelenik meg, a szövegek minden esetben lokalizált kulcsokra épülnek【522359040739838†L9-L10】【522359040739838†L43-L47】.
+- **CI és tesztek** – a megvalósítást linter‑ és tesztkötések kísérik (`flutter analyze`, `flutter test --coverage`)【522359040739838†L20-L22】.
 
 ## 🧠 Felépítés
 
-* **login_screen.dart** – scaffold, logó és cta‑k; a social login gombok különálló rectangular button widgetek【522359040739838†L15-L20】.
-* **login_form.dart** – email és jelszó mezők, jelszó láthatóság toggle【522359040739838†L15-L19】.
-* **AuthService refactor** – típusos metódusok (`signInWithEmail`, `signInWithGoogle`, stb.), amelyek `Either<Failure, User>` eredménnyel térnek vissza【522359040739838†L19-L20】.
-* **Vendég‑flow** – ha a felhasználó már be van jelentkezve (`uid != null`), automatikusan a HomeLogged képernyőre jut【522359040739838†L33-L35】.
-* **Unit- és widget‑tesztek** – sikeres és sikertelen login útvonalak, három nyelv screenshot‑golden; CI guard biztosítja a 80 % feletti test‑coverage‑et【522359040739838†L20-L36】.
+- **login_screen.dart** – scaffold, logó és cta‑k; a social login gombok különálló rectangular button widgetek【522359040739838†L15-L20】.
+- **login_form.dart** – email és jelszó mezők, jelszó láthatóság toggle【522359040739838†L15-L19】.
+- **AuthService refactor** – típusos metódusok (`signInWithEmail`, `signInWithGoogle`, stb.), amelyek `Either<Failure, User>` eredménnyel térnek vissza【522359040739838†L19-L20】.
+- **Vendég‑flow** – ha a felhasználó már be van jelentkezve (`uid != null`), automatikusan a HomeLogged képernyőre jut【522359040739838†L33-L35】.
+- **Unit- és widget‑tesztek** – sikeres és sikertelen login útvonalak, három nyelv screenshot‑golden; CI guard biztosítja a 80 % feletti test‑coverage‑et【522359040739838†L20-L36】.
 
 ## 📄 Kapcsolódó YAML fájlok
 

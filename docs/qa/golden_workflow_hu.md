@@ -10,9 +10,9 @@ A golden tesztek képernyőképet készítenek a widgetről, és összehasonlít
 
 ### Eszközök
 
-* `flutter_test` + `matchesGoldenFile()` használata
-* Tesztfájlok: `test/golden/`
-* Referencia képek: `test/golden/_goldens/`
+- `flutter_test` + `matchesGoldenFile()` használata
+- Tesztfájlok: `test/golden/`
+- Referencia képek: `test/golden/_goldens/`
 
 ### Munkamenet
 
@@ -32,9 +32,9 @@ testWidgets('ProfileHeader golden test', (tester) async {
 
 ### Szabályok
 
-* Mind világos, mind sötét témát tesztelj
-* Külön fájlok: `*_light.png`, `*_dark.png`
-* Kerüld a dinamikus tartalmakat (pl. időbélyeg)
+- Mind világos, mind sötét témát tesztelj
+- Külön fájlok: `*_light.png`, `*_dark.png`
+- Kerüld a dinamikus tartalmakat (pl. időbélyeg)
 
 ---
 
@@ -42,16 +42,16 @@ testWidgets('ProfileHeader golden test', (tester) async {
 
 A TippmixApp célja az alapvető akadálymentes megfelelés.
 
-* Fontos elemekhez `Semantics()` használata
-* `Text()` widgeteknél megfelelő kontraszt
-* Egyedi elemek (gombok, ikonok) kapjanak tooltipet vagy leírást
+- Fontos elemekhez `Semantics()` használata
+- `Text()` widgeteknél megfelelő kontraszt
+- Egyedi elemek (gombok, ikonok) kapjanak tooltipet vagy leírást
 
-### Eszközök
+### Eszközök és beállítások
 
-* `flutter_test` támogatja az alap semantics ellenőrzést
-* Golden tesztek futtathatók `accessibilityChecksEnabled: true` opcióval
+- `flutter_test` támogatja az alap semantics ellenőrzést
+- Golden tesztek futtathatók `accessibilityChecksEnabled: true` opcióval
 
 ### Terv
 
-* `accessibility_test` csomag bevezetése
-* CI pipeline-ban akadálymentességi ellenőrzés
+- `accessibility_test` csomag bevezetése
+- CI pipeline-ban akadálymentességi ellenőrzés

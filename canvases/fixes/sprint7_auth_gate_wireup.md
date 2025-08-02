@@ -13,10 +13,10 @@ A **Sprint 5** során létrehozott `AuthGate`, illetve `EmailNotVerifiedScreen
 
 ## Acceptance Criteria
 
-* [ ] Nem ellenőrzött fiók `/` navigáció után `EmailNotVerifiedScreen`‑t lát.
-* [ ] Ellenőrzött fiók `/` navigáció után `HomeScreen`‑t lát.
-* [ ] Anonymous / nem bejelentkezett felhasználó `/` navigáció után `LoginScreen`‑t lát.
-* [ ] `flutter analyze` és összes teszt zöld.
+- [ ] Nem ellenőrzött fiók `/` navigáció után `EmailNotVerifiedScreen`‑t lát.
+- [ ] Ellenőrzött fiók `/` navigáció után `HomeScreen`‑t lát.
+- [ ] Anonymous / nem bejelentkezett felhasználó `/` navigáció után `LoginScreen`‑t lát.
+- [ ] `flutter analyze` és összes teszt zöld.
 
 ---
 

@@ -6,14 +6,14 @@ A TippCoinLogModel modul célja, hogy pénzügyi tranzakciók naplóját (**coin
 
 ## 🧠 Felépítés
 
-* **Adatmodell** – a modell mezői: `id`, `userId`, `amount`, `type`, `timestamp`, opcionálisan `txId` és `meta`【411777154765550†L12-L20】.
-* **Firestore útvonal** – a tranzakciók a `/coin_logs/{id}` útvonalon tárolódnak, a lekérdezés `where('userId', isEqualTo: uid)` és `orderBy('timestamp', descending: true)` feltételekkel történik【411777154765550†L24-L27】.
-* **Implementációs lépések** – új `lib/models/tippcoin_log_model.dart` fájl gyári konstruktorokkal, `collection` getterrel és konverziós metódusokkal; új `lib/services/tippcoin_log_service.dart` wrapper a `logDebit` és `logCredit` műveletekhez【411777154765550†L30-L38】.
-* **Null‑safety & coverage** – a modul null‑safety kompatibilis és magas tesztlefedettséget céloz.
+- **Adatmodell** – a modell mezői: `id`, `userId`, `amount`, `type`, `timestamp`, opcionálisan `txId` és `meta`【411777154765550†L12-L20】.
+- **Firestore útvonal** – a tranzakciók a `/coin_logs/{id}` útvonalon tárolódnak, a lekérdezés `where('userId', isEqualTo: uid)` és `orderBy('timestamp', descending: true)` feltételekkel történik【411777154765550†L24-L27】.
+- **Implementációs lépések** – új `lib/models/tippcoin_log_model.dart` fájl gyári konstruktorokkal, `collection` getterrel és konverziós metódusokkal; új `lib/services/tippcoin_log_service.dart` wrapper a `logDebit` és `logCredit` műveletekhez【411777154765550†L30-L38】.
+- **Null‑safety & coverage** – a modul null‑safety kompatibilis és magas tesztlefedettséget céloz.
 
 ## 📄 Kapcsolódó YAML fájlok
 
-* `codex/goals/fill_canvas_tippcoin_log_model.yaml` – a Codex futtatási cél, mely a modellhez és a service‑hez tartozó lépéseket definiálja【411777154765550†L97-L103】.
+- `codex/goals/fill_canvas_tippcoin_log_model.yaml` – a Codex futtatási cél, mely a modellhez és a service‑hez tartozó lépéseket definiálja【411777154765550†L97-L103】.
 
 ## 🐞 Fixek és tanulságok
 
@@ -25,5 +25,5 @@ A modellhez három unit‑teszt (fromJson/toJson, pozitív/negatív amount kezel
 
 ## 📎 Modul hivatkozások
 
-* `modules/coin_service.md` – meglévő debit/credit hívások, amelyekhez a TippCoinLogService kapcsolódik【411777154765550†L76-L78】.
-* `modules/security_rules_coin_logs.md` – a coin_logs kollekcióhoz tartozó Firestore security rules.
+- `modules/coin_service.md` – meglévő debit/credit hívások, amelyekhez a TippCoinLogService kapcsolódik【411777154765550†L76-L78】.
+- `modules/security_rules_coin_logs.md` – a coin_logs kollekcióhoz tartozó Firestore security rules.

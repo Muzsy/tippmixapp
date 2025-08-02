@@ -20,8 +20,8 @@ depends\_on: \[]
 
 ### Coverage target
 
-* **Unit + widget tests combined ≥ 80 %** lines per package (enforced by CI).
-* Golden and E2E tests are **additive**; they do not count toward coverage.
+- **Unit + widget tests combined ≥ 80 %** lines per package (enforced by CI).
+- Golden and E2E tests are **additive**; they do not count toward coverage.
 
 ---
 
@@ -40,16 +40,16 @@ test/
     <flow_name>_test.dart
 ```
 
-* Use **snake\_case** for all test files.
-* Golden baselines live under `test/golden/baseline/` and are checked into Git.
+- Use **snake\_case** for all test files.
+- Golden baselines live under `test/golden/baseline/` and are checked into Git.
 
 ---
 
 ## 3. Mocking & fixtures
 
-* **mocktail** for lightweight stubs; avoid Mockito.
-* Provide fake implementations via **provider overrides** (Riverpod).
-* JSON fixtures live in `test/fixtures/` and loaded with `FixtureReader` helper.
+- **mocktail** for lightweight stubs; avoid Mockito.
+- Provide fake implementations via **provider overrides** (Riverpod).
+- JSON fixtures live in `test/fixtures/` and loaded with `FixtureReader` helper.
 
 ---
 
@@ -69,8 +69,8 @@ Any failure aborts the pipeline.
 
 ## 5. Accessibility & globalization
 
-* Golden tests run for **hu/en/de** locales.
-* `flutter_a11y` checks contrast & tappable target sizes.
+- Golden tests run for **hu/en/de** locales.
+- `flutter_a11y` checks contrast & tappable target sizes.
 
 ---
 

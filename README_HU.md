@@ -14,17 +14,17 @@ TippCoin virtuális gazdaságot, valós idejű OddsAPI-integrációt, Firebase b
 
 ## 🚀 Funkciók
 
-* **Firebase autentikáció** – email/jelszavas bejelentkezés és regisztráció
-* **TippCoin gazdaság** – tétek, nyeremények, tranzakciónapló (CoinService tervben)
-* **Firestore backend** – felhasználók, szelvények, badge-ek, ranglista kezelése
-* **OddsAPI integráció** – sportesemények és szorzók valós időben
-* **Szelvény munkafolyamat** – tippek hozzáadása, szelvény beküldése
-* **Gamifikáció** – badge-ek, ranglista, közösségi feed (terv)
-* **Fórum modul** – felhasználói beszélgetések, szálak és válaszok (terv)
-* **Push értesítések** – FCM-en keresztül fontos eseményekről
-* **GoRouter navigáció** és ARB-alapú lokalizáció enum kulcsokkal
-* **Témakezelés** – világos/sötét mód FlexColorScheme segítségével
-* **Widget + golden tesztek** – CI-vezérelt minőségbiztosítás
+- **Firebase autentikáció** – email/jelszavas bejelentkezés és regisztráció
+- **TippCoin gazdaság** – tétek, nyeremények, tranzakciónapló (CoinService tervben)
+- **Firestore backend** – felhasználók, szelvények, badge-ek, ranglista kezelése
+- **OddsAPI integráció** – sportesemények és szorzók valós időben
+- **Szelvény munkafolyamat** – tippek hozzáadása, szelvény beküldése
+- **Gamifikáció** – badge-ek, ranglista, közösségi feed (terv)
+- **Fórum modul** – felhasználói beszélgetések, szálak és válaszok (terv)
+- **Push értesítések** – FCM-en keresztül fontos eseményekről
+- **GoRouter navigáció** és ARB-alapú lokalizáció enum kulcsokkal
+- **Témakezelés** – világos/sötét mód FlexColorScheme segítségével
+- **Widget + golden tesztek** – CI-vezérelt minőségbiztosítás
 
 ---
 
@@ -37,12 +37,14 @@ TippCoin virtuális gazdaságot, valós idejű OddsAPI-integrációt, Firebase b
    ```bash
    ODDS_API_KEY=ide_írd_a_saját_kulcsod
    ```
+
 4. Állítsd be a Firebase-t (`google-services.json`, `GoogleService-Info.plist`)
 5. Indítsd az appot:
 
    ```bash
    flutter run
    ```
+
 6. Tesztelés futtatása:
 
    ```bash
@@ -72,29 +74,29 @@ Csak az angol fájlokat (`*_en.md`) használja a Codex.
 
 ### 🔨 Backend logika
 
-* `docs/backend/data_model_en.md`
-* `docs/backend/coin_service_logic_en.md`
-* `docs/backend/security_rules_en.md`
+- `docs/backend/data_model_en.md`
+- `docs/backend/coin_service_logic_en.md`
+- `docs/backend/security_rules_en.md`
 
 ### 🎯 Főbb funkciók
 
-* `docs/features/leaderboard_logic_en.md`
-* `docs/features/badge_system_en.md`
-* `docs/features/feed_module_plan_en.md`
-* `docs/features/forum_module_plan_en.md`
-* `docs/features/push_notification_strategy_en.md`
+- `docs/features/leaderboard_logic_en.md`
+- `docs/features/badge_system_en.md`
+- `docs/features/feed_module_plan_en.md`
+- `docs/features/forum_module_plan_en.md`
+- `docs/features/push_notification_strategy_en.md`
 
 ### 💡 Frontend működés
 
-* `docs/frontend/auth_strategy_en.md`
-* `docs/frontend/localization_best_practice_en.md`
-* `docs/frontend/theme_rules_en.md`
+- `docs/frontend/auth_strategy_en.md`
+- `docs/frontend/localization_best_practice_en.md`
+- `docs/frontend/theme_rules_en.md`
 
 ### 📐 Architektúra és QA
 
-* `docs/architecture/architecture_overview_en.md`
-* `docs/qa/golden_workflow_en.md`
-* `docs/ci-cd/github_actions_pipeline_en.md`
+- `docs/architecture/architecture_overview_en.md`
+- `docs/qa/golden_workflow_en.md`
+- `docs/ci-cd/github_actions_pipeline_en.md`
 
 Minden dokumentumhoz tartozik `_hu.md` fordítás emberi olvasásra.
 

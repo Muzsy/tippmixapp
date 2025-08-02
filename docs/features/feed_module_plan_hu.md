@@ -6,17 +6,17 @@ Ez a dokumentum a TippmixApp közösségi feed moduljának felépítését és m
 
 ## 🎯 Célja
 
-* Megjeleníteni a legfrissebb nyilvános felhasználói aktivitásokat
-* Növelni az alkalmazás közösségi élményét
-* Inspirációt és mintát adni új usereknek
+- Megjeleníteni a legfrissebb nyilvános felhasználói aktivitásokat
+- Növelni az alkalmazás közösségi élményét
+- Inspirációt és mintát adni új usereknek
 
 ---
 
 ## 📋 Mi kerül bele a feedbe?
 
-* Fogadás megtétele (szelvény kivonat)
-* Nyeremény (szelvény nyert)
-* Új badge szerzése
+- Fogadás megtétele (szelvény kivonat)
+- Nyeremény (szelvény nyert)
+- Új badge szerzése
 
 ---
 
@@ -36,34 +36,34 @@ feed_events/{eventId}
 }
 ```
 
-* Csak nem érzékeny adatokat tároljunk
-* Figyelni kell az adatméretre (Firestore kvóta)
+- Csak nem érzékeny adatokat tároljunk
+- Figyelni kell az adatméretre (Firestore kvóta)
 
 ---
 
 ## 🔁 Feed generálás
 
-* Trigger: szelvény beküldés, szelvény eredmény, badge szerzés
-* Cloud Function adja hozzá a `feed_events` kollekcióhoz
-* Opcionális: időzített törlés (max. 7–14 nap tárolás)
+- Trigger: szelvény beküldés, szelvény eredmény, badge szerzés
+- Cloud Function adja hozzá a `feed_events` kollekcióhoz
+- Opcionális: időzített törlés (max. 7–14 nap tárolás)
 
 ---
 
 ## 🧠 UI terv
 
-* `HomeScreen`: függőleges feed lista
-* Kártyatípusok:
+- `HomeScreen`: függőleges feed lista
+- Kártyatípusok:
 
-  * TicketPlacedCard
-  * TicketWonCard
-  * BadgeEarnedCard
-* Felhasználónév lehet anonimizált vagy `displayName`
-* Profilkép megjelenhet, ha elérhető
+  - TicketPlacedCard
+  - TicketWonCard
+  - BadgeEarnedCard
+- Felhasználónév lehet anonimizált vagy `displayName`
+- Profilkép megjelenhet, ha elérhető
 
 ---
 
 ## 🧪 Tesztelés
 
-* Widget tesztek kártyákhoz
-* Lista görgetési teszt (virtuális lista)
-* Mock Firebase lekérdezés integrációs teszt
+- Widget tesztek kártyákhoz
+- Lista görgetési teszt (virtuális lista)
+- Mock Firebase lekérdezés integrációs teszt

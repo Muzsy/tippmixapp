@@ -1,0 +1,7 @@
+# Build/cache/generated
+.dar_tool/
+.dart_tool/
+build/
+linux/flutter/ephemeral/
+node_modules/
+ios/Runner/Assets.xcassets/

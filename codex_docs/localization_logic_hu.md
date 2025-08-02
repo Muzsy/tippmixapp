@@ -44,8 +44,8 @@ l10n.yaml                            # Flutter gen konfiguráció
 Text(loc(context).selectLanguage)
 ```
 
-* A `loc(BuildContext)` wrapper kötelező, az `AppLocalizations.of(context)!` hívást helyettesíti.
-* A kulcsokat az `AppLocalizationsKey` enum típusosan kezeli – **nyers string nem megengedett**.
+- A `loc(BuildContext)` wrapper kötelező, az `AppLocalizations.of(context)!` hívást helyettesíti.
+- A kulcsokat az `AppLocalizationsKey` enum típusosan kezeli – **nyers string nem megengedett**.
 
 ---
 

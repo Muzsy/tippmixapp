@@ -20,8 +20,8 @@ depends\_on: \[testing\_guidelines\_en.md]
 
 ### Lefedettségi cél
 
-* **Unit + widget tesztek együtt ≥ 80 %** sorkimaradás csomagonként (CI ellenőrzi).
-* A Golden és E2E tesztek **kiegészítők**; nem számítanak bele a százalékba.
+- **Unit + widget tesztek együtt ≥ 80 %** sorkimaradás csomagonként (CI ellenőrzi).
+- A Golden és E2E tesztek **kiegészítők**; nem számítanak bele a százalékba.
 
 ---
 
@@ -40,16 +40,16 @@ test/
     <folyamat>_test.dart
 ```
 
-* Minden tesztfájl **snake\_case**.
-* Golden baseline‑ok a `test/golden/baseline/` alatt vannak, Gitben verziózva.
+- Minden tesztfájl **snake\_case**.
+- Golden baseline‑ok a `test/golden/baseline/` alatt vannak, Gitben verziózva.
 
 ---
 
 ## 3. Mockok & fixek
 
-* **mocktail** könnyű stubokhoz; Mockito kerülendő.
-* Fake implementációk **provider override**-dal (Riverpod).
-* JSON fixek a `test/fixtures/` mappában, `FixtureReader` helperrel.
+- **mocktail** könnyű stubokhoz; Mockito kerülendő.
+- Fake implementációk **provider override**-dal (Riverpod).
+- JSON fixek a `test/fixtures/` mappában, `FixtureReader` helperrel.
 
 ---
 
@@ -69,8 +69,8 @@ Bármely hiba megszakítja a pipeline-t.
 
 ## 5. Akadálymentesség & globalizáció
 
-* Golden tesztek **hu/en/de** nyelveken futnak.
-* `flutter_a11y` ellenőrzi a kontrasztot és a tappolható méretet.
+- Golden tesztek **hu/en/de** nyelveken futnak.
+- `flutter_a11y` ellenőrzi a kontrasztot és a tappolható méretet.
 
 ---
 

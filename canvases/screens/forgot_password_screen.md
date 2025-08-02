@@ -2,7 +2,8 @@
 
 🎯 **Funkció**
 
-A modul háromlépcsős folyamatot biztosít azoknak a felhasználóknak, akik elfelejtették jelszavukat: 
+A modul háromlépcsős folyamatot biztosít azoknak a felhasználóknak, akik elfelejtették jelszavukat:
+
 1. **Elfelejtett jelszó képernyő** – email cím megadása,
 2. **Megerősítő képernyő** – értesítés a sikeres emailküldésről,
 3. **Jelszó-visszaállító képernyő** – új jelszó beállítása a dinamikus linkből megnyitva【471745219585009†L7-L16】.

@@ -36,10 +36,10 @@ graph TD
   %% No reverse arrows permitted
 ```
 
-* UI **may depend on** Service & Provider layers only.
-* Services depend **only on** repositories; **no service-to-service** calls (except `AuthService` may be injected for token refresh).
-* Repositories depend on one or more data sources.
-* Data sources have **no higher‑level dependencies**.
+- UI **may depend on** Service & Provider layers only.
+- Services depend **only on** repositories; **no service-to-service** calls (except `AuthService` may be injected for token refresh).
+- Repositories depend on one or more data sources.
+- Data sources have **no higher‑level dependencies**.
 
 ---
 
@@ -48,9 +48,9 @@ graph TD
 1. Use **Riverpod** for all DI – no global singletons.
 2. Provider naming convention:
 
-   * `dataSource` – `<name>DataSourceProvider`
-   * `repository` – `<name>RepositoryProvider`
-   * `service` – `<name>ServiceProvider`
+   - `dataSource` – `<name>DataSourceProvider`
+   - `repository` – `<name>RepositoryProvider`
+   - `service` – `<name>ServiceProvider`
 3. Services are constructed with `ref.read(<RepositoryProvider>)` inside their provider.
 4. **Do not** call `context.read()` inside services – UI context is forbidden at these layers.
 
