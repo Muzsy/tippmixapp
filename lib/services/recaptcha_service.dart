@@ -8,9 +8,13 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 class RecaptchaService {
   final http.Client _client;
   final String secret;
+  final bool bypassDebug;
 
-  RecaptchaService({required this.secret, http.Client? client})
-    : _client = client ?? http.Client();
+  RecaptchaService({
+    required this.secret,
+    http.Client? client,
+    this.bypassDebug = false,
+  }) : _client = client ?? http.Client();
 
   /// Returns a token from the platform's reCAPTCHA implementation.
   /// In debug mode a dummy value is returned.
@@ -35,7 +39,7 @@ class RecaptchaService {
   Future<bool> verifyToken(String token) async {
     // Debug környezetben nem hívjuk a Google API-t, mindig true-t adunk vissza,
     // hogy a fejlesztői tesztek ne akadjanak meg.
-    if (kDebugMode) return true;
+    if (kDebugMode && !bypassDebug) return true;
 
     final response = await _client
         .post(

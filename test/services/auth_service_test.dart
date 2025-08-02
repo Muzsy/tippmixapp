@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/models/user.dart';
@@ -69,11 +72,22 @@ class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
   }
 }
 
+class FakeFunctions extends Fake implements FirebaseFunctions {}
+
+class FakeFacebook extends Fake implements FacebookAuth {}
+
+class FakeFirebaseAppCheck extends Fake implements FirebaseAppCheck {}
+
 void main() {
   group('AuthService', () {
     test('signInWithEmail returns user on success', () async {
       final auth = FakeFirebaseAuth();
-      final service = AuthService(firebaseAuth: auth);
+      final service = AuthService(
+        firebaseAuth: auth,
+        functions: FakeFunctions(),
+        facebookAuth: FakeFacebook(),
+        appCheck: FakeFirebaseAppCheck(),
+      );
 
       final user = await service.signInWithEmail('test@example.com', 'pw');
 
@@ -84,7 +98,12 @@ void main() {
     test('signInWithEmail throws on wrong password', () async {
       final auth = FakeFirebaseAuth()
         ..signInException = fb.FirebaseAuthException(code: 'wrong-password');
-      final service = AuthService(firebaseAuth: auth);
+      final service = AuthService(
+        firebaseAuth: auth,
+        functions: FakeFunctions(),
+        facebookAuth: FakeFacebook(),
+        appCheck: FakeFirebaseAppCheck(),
+      );
 
       expect(
         () => service.signInWithEmail('a@test.com', 'pw'),
@@ -101,7 +120,12 @@ void main() {
     test('signInWithEmail maps server error to unknown', () async {
       final auth = FakeFirebaseAuth()
         ..signInException = fb.FirebaseAuthException(code: 'internal-error');
-      final service = AuthService(firebaseAuth: auth);
+      final service = AuthService(
+        firebaseAuth: auth,
+        functions: FakeFunctions(),
+        facebookAuth: FakeFacebook(),
+        appCheck: FakeFirebaseAppCheck(),
+      );
 
       expect(
         () => service.signInWithEmail('a@test.com', 'pw'),
@@ -117,7 +141,12 @@ void main() {
 
     test('authStateChanges emits user then null on signOut', () async {
       final auth = FakeFirebaseAuth();
-      final service = AuthService(firebaseAuth: auth);
+      final service = AuthService(
+        firebaseAuth: auth,
+        functions: FakeFunctions(),
+        facebookAuth: FakeFacebook(),
+        appCheck: FakeFirebaseAppCheck(),
+      );
       final emitted = <User?>[];
 
       final sub = service.authStateChanges().listen(emitted.add);

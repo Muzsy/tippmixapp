@@ -30,7 +30,7 @@ class FakeFirebaseFunctions extends Fake implements FirebaseFunctions {
 
 void main() {
   test('claimReward marks reward and removes it from state', () async {
-    final service = RewardService();
+    final service = RewardService(FakeFirebaseFunctions());
     final reward = RewardModel(
       id: 'r1',
       type: 'daily',
