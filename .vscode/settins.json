@@ -1,1 +1,18 @@
-{}
+{
+  "todo-tree.tree.showScanModeButton": false,
+  "todo-tree.general.tags": [
+    "P0","P1","P2","TODO","FIXME","IDEA","PLAN","DONE","DROP"
+  ],
+  "todo-tree.regex.regex": "(//|#|;|<!--|^|\\*)\\s*(@TAG)\\b",
+  "todo-tree.highlights.customHighlight": {
+    "P0": { "icon": "flame", "type": "tag", "background": "rgba(255,0,0,0.2)" },
+    "P1": { "icon": "alert", "type": "tag", "background": "rgba(255,165,0,0.2)" },
+    "P2": { "icon": "check", "type": "tag", "background": "rgba(255,255,0,0.2)" },
+    "IDEA": { "icon": "light-bulb", "type": "tag", "background": "rgba(0,128,255,0.2)" },
+    "PLAN": { "icon": "beaker", "type": "tag", "background": "rgba(128,0,255,0.2)" },
+    "DONE": { "icon": "check-all", "type": "tag", "rulerColour": "green" },
+    "DROP": { "icon": "trash", "type": "tag", "rulerColour": "gray" }
+  },
+  "markdown.extension.toc.levels": "1..3",
+  "markdown.extension.list.toggleTaskOnCheckboxClick": true
+}
