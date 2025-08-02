@@ -8,7 +8,11 @@ void main() {
     final client = MockClient((request) async {
       return http.Response('{"success":true,"score":0.9}', 200);
     });
-    final service = RecaptchaService(secret: 's', client: client);
+    final service = RecaptchaService(
+      secret: 's',
+      client: client,
+      bypassDebug: true,
+    );
     final result = await service.verifyToken('t');
     expect(result, isTrue);
   });
@@ -17,7 +21,11 @@ void main() {
     final client = MockClient((request) async {
       return http.Response('{"success":true,"score":0.1}', 200);
     });
-    final service = RecaptchaService(secret: 's', client: client);
+    final service = RecaptchaService(
+      secret: 's',
+      client: client,
+      bypassDebug: true,
+    );
     final result = await service.verifyToken('t');
     expect(result, isFalse);
   });

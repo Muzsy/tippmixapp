@@ -140,6 +140,8 @@ void main() {
         'uid': 'u1',
         'email': 'a@b.com',
         'displayName': 'Test',
+        'nickname': 'Tester',
+        'avatarUrl': 'avatar.png',
       });
 
       final profile = await withClock(Clock.fixed(DateTime(2024)), () {
@@ -163,7 +165,7 @@ void main() {
           email: 'cache@a.com',
           displayName: 'Cached',
           nickname: 'CachedNick',
-          avatarUrl: '',
+          avatarUrl: 'avatar.png',
           isPrivate: false,
           fieldVisibility: const {},
         ),
@@ -186,6 +188,8 @@ void main() {
         'uid': 'u1',
         'email': 'a@b.com',
         'displayName': 'Old',
+        'nickname': 'Tester',
+        'avatarUrl': 'avatar.png',
       });
 
       await ProfileService.updateProfile(
