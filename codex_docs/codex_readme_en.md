@@ -21,6 +21,7 @@
    last_updated_by: <GitHub‑felhasználó / user>
    depends_on: [<egyéb_fájlok / other_files>]
    ```
+
 3. **Szerkesztéskor / When editing**: növeld a `version` értéket, add meg a neved a `last_updated_by` mezőben, és törekedj atomikus commitra.
    Bump `version`, fill `last_updated_by`, and keep commits atomic.
 4. **Lintelés / Linting**: push előtt futtasd a `./scripts/lint_docs.sh` szkriptet (markdownlint + fájlnév‑regex).

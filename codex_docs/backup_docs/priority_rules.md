@@ -17,51 +17,51 @@ Ez a dokumentum definiálja a TippmixApp Codex-kompatibilis fejlesztési priorit
 
 ## 🔝 P0 – Kritikus elemek
 
-* `CoinService` és `coin_trx.ts` működése
-* Tranzakciós rollback, naplózás (TippCoinLogModel)
-* Firestore security rules (create / read elkülönítve)
-* `odds_cache_wrapper.dart` – TTL-alapú cache és kvótavédelem
-* CI pipeline (`ci.yaml`) – automatikus build & teszt
-* Lokalizációs rendszer enum + ARB + runtime váltás kombinációja
+- `CoinService` és `coin_trx.ts` működése
+- Tranzakciós rollback, naplózás (TippCoinLogModel)
+- Firestore security rules (create / read elkülönítve)
+- `odds_cache_wrapper.dart` – TTL-alapú cache és kvótavédelem
+- CI pipeline (`ci.yaml`) – automatikus build & teszt
+- Lokalizációs rendszer enum + ARB + runtime váltás kombinációja
 
 ---
 
 ## 🥇 P1 – Fontos bővítések
 
-* `BadgeService` (pl. 10 nyertes fogadás utáni badge)
-* `LeaderboardScreen` – Coin / Winrate alapú ranglista
-* `SettingsScreen` – Téma / nyelv / kijelentkezés
-* `NotificationService` – Push értesítések eseményekre
-* Widget és unit tesztek bevezetése (80% feletti coverage cél)
+- `BadgeService` (pl. 10 nyertes fogadás utáni badge)
+- `LeaderboardScreen` – Coin / Winrate alapú ranglista
+- `SettingsScreen` – Téma / nyelv / kijelentkezés
+- `NotificationService` – Push értesítések eseményekre
+- Widget és unit tesztek bevezetése (80% feletti coverage cél)
 
 ---
 
 ## 🧩 P2 – Közösségi kiegészítések
 
-* `FeedService` – Like, komment, CopyBet
-* `ProfileBadgeWidget` – Profilon badge-ek valós időben
-* `ChallengeService` – baráti kihívások logikája
-* `ClubModel` – klubtagság, logó, közös feed
-* `DailyBonusJob` – időzített CF napi coinra
+- `FeedService` – Like, komment, CopyBet
+- `ProfileBadgeWidget` – Profilon badge-ek valós időben
+- `ChallengeService` – baráti kihívások logikája
+- `ClubModel` – klubtagság, logó, közös feed
+- `DailyBonusJob` – időzített CF napi coinra
 
 ---
 
 ## 🔮 P3 – AI és haladó
 
-* `AIRecommender` – LogisticRegression alapú javaslatok
-* `UserPrefModel` – felhasználói preferenciák alapján AI input
-* `tip_reco_widget.dart` – ajánlott tipp megjelenítése odds alatt
-* A/B tesztelés támogatása (Settings toggle)
-* BigQuery backend kapcsolatok mélyítése
+- `AIRecommender` – LogisticRegression alapú javaslatok
+- `UserPrefModel` – felhasználói preferenciák alapján AI input
+- `tip_reco_widget.dart` – ajánlott tipp megjelenítése odds alatt
+- A/B tesztelés támogatása (Settings toggle)
+- BigQuery backend kapcsolatok mélyítése
 
 ---
 
 ## 📎 Kapcsolódások
 
-* `codex_context.yaml` – globális szabályzat
-* `fill_canvas_*.yaml` – minden YAML fájl tartalmaz `priority:` mezőt
-* `sprint*.md` – sprinttervek és státuszok meghatározása
-* `audit_report.md` – audit alapján javasolt prioritáslista
+- `codex_context.yaml` – globális szabályzat
+- `fill_canvas_*.yaml` – minden YAML fájl tartalmaz `priority:` mezőt
+- `sprint*.md` – sprinttervek és státuszok meghatározása
+- `audit_report.md` – audit alapján javasolt prioritáslista
 
 ---
 

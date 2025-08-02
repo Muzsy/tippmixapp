@@ -7,15 +7,15 @@ A `badge.dart` fájl definiálja a badge rendszer típusait és adatmodelljét. 
 ### 🧠 Felépítés
 
 - **`BadgeCondition` enum** – az egyes feltételeket sorolja fel, például:
-  * `firstWin` – az első nyertes fogadásért【180772964092141†L8-L13】.
-  * `streak3` – három egymást követő nyertes fogadásért【180772964092141†L10-L13】.
-  * `parlayWin` – legalább 5 eseményes nyertes kombi szelvényért【180772964092141†L12-L13】.
-  * `lateNightWin` – éjfél után nyert szelvényért【180772964092141†L12-L13】.
-  * `comebackWin` – 3 vesztes után nyertes szelvényért【180772964092141†L14-L15】.
+  - `firstWin` – az első nyertes fogadásért【180772964092141†L8-L13】.
+  - `streak3` – három egymást követő nyertes fogadásért【180772964092141†L10-L13】.
+  - `parlayWin` – legalább 5 eseményes nyertes kombi szelvényért【180772964092141†L12-L13】.
+  - `lateNightWin` – éjfél után nyert szelvényért【180772964092141†L12-L13】.
+  - `comebackWin` – 3 vesztes után nyertes szelvényért【180772964092141†L14-L15】.
 - **`BadgeData` osztály** – a badge metaadatait tárolja:
-  * `key` – lokalizációs azonosító, pl. `badge_rookie`【180772964092141†L17-L20】.
-  * `iconName` – a badge‑hez tartozó ikon neve【180772964092141†L18-L19】.
-  * `condition` – a badge feltételeinek típusa (enum)【180772964092141†L18-L20】.
+  - `key` – lokalizációs azonosító, pl. `badge_rookie`【180772964092141†L17-L20】.
+  - `iconName` – a badge‑hez tartozó ikon neve【180772964092141†L18-L19】.
+  - `condition` – a badge feltételeinek típusa (enum)【180772964092141†L18-L20】.
 
 ### 🧪 Tesztállapot
 

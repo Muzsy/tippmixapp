@@ -34,10 +34,10 @@ graph TD
   repo --> ds
 ```
 
-* A UI **csak** szervizektől / providerektől függhet.
-* A szervizek **csak** repositoryktól függhetnek; **nincs szerviz→szerviz** hívás (kivétel `AuthService`, ha tokenfrissítéshez szükséges).
-* A repositoryk egy vagy több data source-ra támaszkodnak.
-* A data source rétegnek **nincs felfelé mutató függése**.
+- A UI **csak** szervizektől / providerektől függhet.
+- A szervizek **csak** repositoryktól függhetnek; **nincs szerviz→szerviz** hívás (kivétel `AuthService`, ha tokenfrissítéshez szükséges).
+- A repositoryk egy vagy több data source-ra támaszkodnak.
+- A data source rétegnek **nincs felfelé mutató függése**.
 
 ---
 
@@ -46,9 +46,9 @@ graph TD
 1. Minden DI-hoz **Riverpod**‑ot használunk – globális singleton tilos.
 2. Provider névkonvenció:
 
-   * `dataSource` – `<name>DataSourceProvider`
-   * `repository` – `<name>RepositoryProvider`
-   * `service` – `<name>ServiceProvider`
+   - `dataSource` – `<name>DataSourceProvider`
+   - `repository` – `<name>RepositoryProvider`
+   - `service` – `<name>ServiceProvider`
 3. A szerviz konstrukciója a providerben történik `ref.read(<RepositoryProvider>)` hívással.
 4. **Ne** használd a `context.read()`-ot szervizben – az UI-kontekstus tiltott ezeken a rétegeken.
 

@@ -6,25 +6,25 @@ Ez a dokumentum a TippmixApp alkalmazásban használt témakezelési szabályoka
 
 ## 🎯 Dizájn célok
 
-* Material 3 + FlexColorScheme használata
-* Konzisztens világos/sötét témák
-* Könnyen cserélhető színpaletta
+- Material 3 + FlexColorScheme használata
+- Konzisztens világos/sötét témák
+- Könnyen cserélhető színpaletta
 
 ---
 
 ## 🎨 Használt technológia
 
-* `flex_color_scheme` csomag (Material 3)
-* `ThemeService` kezeli a téma váltást
-* Központi konfigurációban történik a téma definiálása
+- `flex_color_scheme` csomag (Material 3)
+- `ThemeService` kezeli a téma váltást
+- Központi konfigurációban történik a téma definiálása
 
 ---
 
 ## 🌈 Színek
 
-* `BrandColors` osztály tartalmazza
-* Elérési út: `lib/constants/colors.dart`
-* Példa:
+- `BrandColors` osztály tartalmazza
+- Elérési út: `lib/constants/colors.dart`
+- Példa:
 
 ```dart
 class BrandColors {
@@ -38,15 +38,15 @@ class BrandColors {
 
 ## 🧠 Ajánlások
 
-* Ne használj hardcoded színeket widgetekben
-* Használd: `Theme.of(context).colorScheme.*`
-* Téma mód váltásához `ThemeService` ajánlott
-* Ne írj felül globális témát belső widgeteknél
-* Adj színneveknek szemantikus nevet (`primary`, `error`, `surface`, stb.)
+- Ne használj hardcoded színeket widgetekben
+- Használd: `Theme.of(context).colorScheme.*`
+- Téma mód váltásához `ThemeService` ajánlott
+- Ne írj felül globális témát belső widgeteknél
+- Adj színneveknek szemantikus nevet (`primary`, `error`, `surface`, stb.)
 
 ---
 
 ## 🧪 Tesztelési elvárások
 
-* Golden tesztek kötelezőek világos és sötét módhoz is
-* Accessibility kontrasztvizsgálat javasolt
+- Golden tesztek kötelezőek világos és sötét módhoz is
+- Accessibility kontrasztvizsgálat javasolt

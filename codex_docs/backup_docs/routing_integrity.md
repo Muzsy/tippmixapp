@@ -6,10 +6,10 @@ Ez a dokumentum a Codex számára előírt útválasztási (routing) integritás
 
 ## 🎯 Funkció
 
-* A navigáció deklaratív módon történik `GoRouter` segítségével
-* Minden képernyő route-ként szerepel a `router.dart` fájlban
-* A navigáció kizárólag `context.pushNamed()` vagy `context.goNamed()` hívással történhet
-* Minden route egyedi névvel (`name:`) van regisztrálva
+- A navigáció deklaratív módon történik `GoRouter` segítségével
+- Minden képernyő route-ként szerepel a `router.dart` fájlban
+- A navigáció kizárólag `context.pushNamed()` vagy `context.goNamed()` hívással történhet
+- Minden route egyedi névvel (`name:`) van regisztrálva
 
 ---
 
@@ -17,24 +17,24 @@ Ez a dokumentum a Codex számára előírt útválasztási (routing) integritás
 
 ### Route-definíciók
 
-* A `router.dart` fájl tartalmazza az összes route-ot, névvel ellátva
-* A route típus: `GoRoute`
-* A fő router definíció: `final router = GoRouter(routes: [...])`
-* A root route alatt `ShellRoute` is használva van, pl. BottomNavBar támogatására
+- A `router.dart` fájl tartalmazza az összes route-ot, névvel ellátva
+- A route típus: `GoRoute`
+- A fő router definíció: `final router = GoRouter(routes: [...])`
+- A root route alatt `ShellRoute` is használva van, pl. BottomNavBar támogatására
 
-### Navigációs hívások:
+### Navigációs hívások
 
 ```dart
 context.pushNamed(AppRoute.settings.name); // helyes
 context.goNamed(AppRoute.leaderboard.name); // helyes
 ```
 
-* A `AppRoute` egy enum vagy class, amely a route neveket tartalmazza konzisztens módon
-* Direkt string alapú hívások (pl. `context.go('/settings')`) tilosak
+- A `AppRoute` egy enum vagy class, amely a route neveket tartalmazza konzisztens módon
+- Direkt string alapú hívások (pl. `context.go('/settings')`) tilosak
 
-### Paraméteres route:
+### Paraméteres route
 
-* Ha paramétert is fogad (pl. userId):
+- Ha paramétert is fogad (pl. userId):
 
 ```dart
 GoRoute(
@@ -47,7 +47,7 @@ GoRoute(
 )
 ```
 
-* Navigáció:
+- Navigáció:
 
 ```dart
 context.goNamed('userProfile', pathParameters: {'id': userId});
@@ -57,22 +57,22 @@ context.goNamed('userProfile', pathParameters: {'id': userId});
 
 ## 🧪 Tesztállapot
 
-* A Codex által generált minden új képernyőhöz ellenőrizni kell:
+- A Codex által generált minden új képernyőhöz ellenőrizni kell:
 
-  * szerepel-e a `router.dart` fájlban megfelelő route-ként
-  * rendelkezik-e `name:` értékkel
-  * lehet-e rá navigálni tesztben (widget test: push → expect screen)
-* A `flutter analyze` ellenőrzi, ha route hivatkozás hibás
-* Widget teszt javasolt új képernyő navigációs útvonalának validálására
+  - szerepel-e a `router.dart` fájlban megfelelő route-ként
+  - rendelkezik-e `name:` értékkel
+  - lehet-e rá navigálni tesztben (widget test: push → expect screen)
+- A `flutter analyze` ellenőrzi, ha route hivatkozás hibás
+- Widget teszt javasolt új képernyő navigációs útvonalának validálására
 
 ---
 
 ## 📎 Kapcsolódások
 
-* `lib/router.dart` – főútvonal-regisztráció
-* `lib/screens/**/*.dart` – képernyők, amik route célpontok
-* `lib/controllers/navigation_controller.dart` – ha van központi nav wrapper
-* `settings_screen.dart`, `leaderboard_screen.dart` – konkrét példák működő named route-ra
+- `lib/router.dart` – főútvonal-regisztráció
+- `lib/screens/**/*.dart` – képernyők, amik route célpontok
+- `lib/controllers/navigation_controller.dart` – ha van központi nav wrapper
+- `settings_screen.dart`, `leaderboard_screen.dart` – konkrét példák működő named route-ra
 
 ---
 

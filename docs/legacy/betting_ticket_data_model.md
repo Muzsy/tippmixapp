@@ -81,4 +81,3 @@ Ez a modell tökéletesen tükrözi a valódi fogadási rendszerek működését
 - Jövőbeli fejlesztésnél támogatott: rész-kifizetés (cashout), rendszer-fogadás, komplex odds-összegzés.
 
 Ez a struktúra hosszú távon biztosítja a bővíthetőséget, auditálhatóságot, fejlesztőbarát és AI/elemzésre is kész.
-

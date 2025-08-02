@@ -10,18 +10,18 @@ A „/” útvonal betöltésekor **csak egyetlen** AppBar és BottomNavigationB
 
 ## Feladatok
 
-* [ ] *auth\_gate.dart* – a bejelentkezett, e‑mail‑ben megerősített ágon **ne** `HomeScreen()`‑t adjon vissza, hanem egy üres widget (pl. `SizedBox.shrink()`), és egy `PostFrameCallback`‑ben navigáljon a default fülre (`/feed`).
-* [ ] Töröljük a feleslegessé vált `HomeScreen`‑importot az *auth\_gate.dart*‑ból.
-* [ ] Widget‑teszt: a „/” route‑on a widget‑fa **pontosan egy** `AppBar`‑t és **egy** `BottomNavigationBar`‑t tartalmazzon.
-* [ ] `flutter analyze` hibamentes.
-* [ ] Tesztlefedettség ≥ 80 %.
+- [ ] *auth\_gate.dart* – a bejelentkezett, e‑mail‑ben megerősített ágon **ne** `HomeScreen()`‑t adjon vissza, hanem egy üres widget (pl. `SizedBox.shrink()`), és egy `PostFrameCallback`‑ben navigáljon a default fülre (`/feed`).
+- [ ] Töröljük a feleslegessé vált `HomeScreen`‑importot az *auth\_gate.dart*‑ból.
+- [ ] Widget‑teszt: a „/” route‑on a widget‑fa **pontosan egy** `AppBar`‑t és **egy** `BottomNavigationBar`‑t tartalmazzon.
+- [ ] `flutter analyze` hibamentes.
+- [ ] Tesztlefedettség ≥ 80 %.
 
 ## Acceptance Criteria / Done Definition
 
-* [ ] A Home képernyőn a dupla navigáció megszűnt.
-* [ ] A Fogadás képernyőjén a `FloatingActionButton` nem takarásban van.
-* [ ] Minden teszt és elemzés zöld.
+- [ ] A Home képernyőn a dupla navigáció megszűnt.
+- [ ] A Fogadás képernyőjén a `FloatingActionButton` nem takarásban van.
+- [ ] Minden teszt és elemzés zöld.
 
 ## Hivatkozások
 
-* Canvas → `/codex/goals/sprint7_nav_duplication_fix.yaml`
+- Canvas → `/codex/goals/sprint7_nav_duplication_fix.yaml`

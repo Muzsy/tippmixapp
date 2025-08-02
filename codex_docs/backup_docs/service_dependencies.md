@@ -6,15 +6,15 @@ Ez a dokumentum definiálja a TippmixApp projekt Codex-kompatibilis szolgáltat�
 
 ## 🎯 Funkció
 
-* Áttekinthetővé és deklaratívvá tenni a szolgáltatások közötti kapcsolatokat
-* Biztosítani, hogy a Codex csak konzisztens módon bővítse vagy használja a service-eket
-* Minimalizálni a rejtett állapot- vagy adatkonfliktusokat
+- Áttekinthetővé és deklaratívvá tenni a szolgáltatások közötti kapcsolatokat
+- Biztosítani, hogy a Codex csak konzisztens módon bővítse vagy használja a service-eket
+- Minimalizálni a rejtett állapot- vagy adatkonfliktusokat
 
 ---
 
 ## 🧠 Fejlesztési részletek
 
-### Kulcsmodulok:
+### Kulcsmodulok
 
 | Szolgáltatás          | Függőségei                                                               |
 | --------------------- | ------------------------------------------------------------------------ |
@@ -41,19 +41,19 @@ Ez a dokumentum definiálja a TippmixApp projekt Codex-kompatibilis szolgáltat�
 
 ## 📎 Kapcsolódó fájlok
 
-* `lib/services/*.dart` – szolgáltatások forráskódja
-* `cloud_functions/*.ts` – tranzakciós és időzített logika
-* `lib/controllers/` – összetett aggregációk / logikai routing
-* `lib/models/` – minden adatmodell (ticket, tip, user, stats, stb.)
-* `codex_context.yaml` – globális Codex szabályzat
+- `lib/services/*.dart` – szolgáltatások forráskódja
+- `cloud_functions/*.ts` – tranzakciós és időzített logika
+- `lib/controllers/` – összetett aggregációk / logikai routing
+- `lib/models/` – minden adatmodell (ticket, tip, user, stats, stb.)
+- `codex_context.yaml` – globális Codex szabályzat
 
 ---
 
 ## 🧪 Tesztelés
 
-* Minden új service-hívásnál Codex-nek unit tesztet is kell generálnia
-* Tesztek `test/services/<név>_test.dart` alá kerülnek
-* Mock adatmodell használata ajánlott: `mock_user_model.dart`, `mock_ticket_model.dart`, stb.
+- Minden új service-hívásnál Codex-nek unit tesztet is kell generálnia
+- Tesztek `test/services/<név>_test.dart` alá kerülnek
+- Mock adatmodell használata ajánlott: `mock_user_model.dart`, `mock_ticket_model.dart`, stb.
 
 ---
 

@@ -6,9 +6,9 @@ This document defines the security model and Firestore access rules for TippmixA
 
 ## 🔐 Goals
 
-* Users can only read/write their own data
-* Prevent manipulation of TippCoin or tickets
-* Ensure data integrity during bet placement
+- Users can only read/write their own data
+- Prevent manipulation of TippCoin or tickets
+- Ensure data integrity during bet placement
 
 ---
 
@@ -49,16 +49,16 @@ service cloud.firestore {
 
 ## 🧠 Best Practices
 
-* Deny all by default, allow per collection
-* Validate required fields with Firestore `rules`
-* Do not trust client data (e.g. TippCoin values)
-* Offload TippCoin logic to Cloud Functions
+- Deny all by default, allow per collection
+- Validate required fields with Firestore `rules`
+- Do not trust client data (e.g. TippCoin values)
+- Offload TippCoin logic to Cloud Functions
 
 ---
 
 ## 📌 Planned Enhancements
 
-* Add validation for `ticket.status` and `stake`
-* Create rule unit tests via Firebase Emulator
-* Split rules into separate files (CI-friendly)
-* Add moderator/admin roles (future)
+- Add validation for `ticket.status` and `stake`
+- Create rule unit tests via Firebase Emulator
+- Split rules into separate files (CI-friendly)
+- Add moderator/admin roles (future)

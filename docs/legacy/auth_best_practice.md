@@ -107,4 +107,3 @@ kerül.
 - Modern auth: Google/Apple/Firebase Auth
 - UX: először mutass, csak utána kérj regisztrációt
 - GoRouter: deklaratív, skálázható route védelem, hosszú távon kötelező
-

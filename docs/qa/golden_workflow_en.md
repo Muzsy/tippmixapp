@@ -10,9 +10,9 @@ Golden tests capture widget screenshots and compare them with a reference.
 
 ### Tooling
 
-* Uses `flutter_test` and `matchesGoldenFile()`
-* Test files in `test/golden/`
-* Reference images stored under `test/golden/_goldens/`
+- Uses `flutter_test` and `matchesGoldenFile()`
+- Test files in `test/golden/`
+- Reference images stored under `test/golden/_goldens/`
 
 ### Workflow
 
@@ -32,9 +32,9 @@ testWidgets('ProfileHeader golden test', (tester) async {
 
 ### Rules
 
-* Test both light and dark mode
-* Separate files: `*_light.png`, `*_dark.png`
-* Avoid dynamic content (e.g. timestamps)
+- Test both light and dark mode
+- Separate files: `*_light.png`, `*_dark.png`
+- Avoid dynamic content (e.g. timestamps)
 
 ---
 
@@ -42,16 +42,16 @@ testWidgets('ProfileHeader golden test', (tester) async {
 
 TippmixApp aims for basic a11y compliance:
 
-* Uses `Semantics()` for important elements
-* Ensures `Text()` widgets have sufficient contrast
-* Custom widgets (e.g. buttons, icons) should have tooltips or semantic labels
+- Uses `Semantics()` for important elements
+- Ensures `Text()` widgets have sufficient contrast
+- Custom widgets (e.g. buttons, icons) should have tooltips or semantic labels
 
 ### Tools
 
-* `flutter_test` supports basic semantics testing
-* Golden tests can be run with `accessibilityChecksEnabled: true`
+- `flutter_test` supports basic semantics testing
+- Golden tests can be run with `accessibilityChecksEnabled: true`
 
 ### Future Plan
 
-* Integrate `accessibility_test` package
-* Add CI checks for a11y failures
+- Integrate `accessibility_test` package
+- Add CI checks for a11y failures

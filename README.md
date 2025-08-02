@@ -14,17 +14,17 @@ It features a virtual coin economy, real-time odds from [OddsAPI](https://the-od
 
 ## 🚀 Features
 
-* **Firebase Authentication** – email/password login and registration
-* **TippCoin economy** – stake, reward, and coin logs (CoinService planned)
-* **Firestore backend** – stores user, tickets, badge, and leaderboard data
-* **OddsAPI integration** – fetch real-time sports events and odds
-* **Bet slip workflow** – add tips and submit tickets
-* **Gamification** – badges, leaderboard, community feed (planned)
-* **Forum module** – user discussions with threads and replies (planned)
-* **Push notifications** – key event alerts via Firebase Cloud Messaging
-* **GoRouter navigation** and ARB-based localization with enum keys
-* **Theming** – light/dark mode via FlexColorScheme
-* **Widget + golden testing** – CI-enforced quality gates
+- **Firebase Authentication** – email/password login and registration
+- **TippCoin economy** – stake, reward, and coin logs (CoinService planned)
+- **Firestore backend** – stores user, tickets, badge, and leaderboard data
+- **OddsAPI integration** – fetch real-time sports events and odds
+- **Bet slip workflow** – add tips and submit tickets
+- **Gamification** – badges, leaderboard, community feed (planned)
+- **Forum module** – user discussions with threads and replies (planned)
+- **Push notifications** – key event alerts via Firebase Cloud Messaging
+- **GoRouter navigation** and ARB-based localization with enum keys
+- **Theming** – light/dark mode via FlexColorScheme
+- **Widget + golden testing** – CI-enforced quality gates
 
 ---
 
@@ -37,12 +37,14 @@ It features a virtual coin economy, real-time odds from [OddsAPI](https://the-od
    ```bash
    ODDS_API_KEY=your_api_key_here
    ```
+
 4. Configure Firebase (via `google-services.json`, `GoogleService-Info.plist`)
 5. Run the app:
 
    ```bash
    flutter run
    ```
+
 6. Run tests:
 
    ```bash
@@ -72,29 +74,29 @@ Only the English versions (`*_en.md`) are used by Codex agents.
 
 ### 🔨 Backend Logic
 
-* `docs/backend/data_model_en.md`
-* `docs/backend/coin_service_logic_en.md`
-* `docs/backend/security_rules_en.md`
+- `docs/backend/data_model_en.md`
+- `docs/backend/coin_service_logic_en.md`
+- `docs/backend/security_rules_en.md`
 
 ### 🎯 Core Features
 
-* `docs/features/leaderboard_logic_en.md`
-* `docs/features/badge_system_en.md`
-* `docs/features/feed_module_plan_en.md`
-* `docs/features/forum_module_plan_en.md`
-* `docs/features/push_notification_strategy_en.md`
+- `docs/features/leaderboard_logic_en.md`
+- `docs/features/badge_system_en.md`
+- `docs/features/feed_module_plan_en.md`
+- `docs/features/forum_module_plan_en.md`
+- `docs/features/push_notification_strategy_en.md`
 
 ### 💡 Frontend Behavior
 
-* `docs/frontend/auth_strategy_en.md`
-* `docs/frontend/localization_best_practice_en.md`
-* `docs/frontend/theme_rules_en.md`
+- `docs/frontend/auth_strategy_en.md`
+- `docs/frontend/localization_best_practice_en.md`
+- `docs/frontend/theme_rules_en.md`
 
 ### 📐 Architecture & QA
 
-* `docs/architecture/architecture_overview_en.md`
-* `docs/qa/golden_workflow_en.md`
-* `docs/ci-cd/github_actions_pipeline_en.md`
+- `docs/architecture/architecture_overview_en.md`
+- `docs/qa/golden_workflow_en.md`
+- `docs/ci-cd/github_actions_pipeline_en.md`
 
 All documentation has a `_hu.md` Hungarian version for human readers.
 

@@ -23,10 +23,10 @@ A `checkEmail` felhőfüggvény hiányzik a projektből, és a kliens alapértel
 
 ## Acceptance Criteria
 
-* [ ] `AuthRepository.isEmailAvailable()` a `europe-central2` régiót használja.
-* [ ] Debug buildben App Check token mindig generálódik (Debug provider).
-* [ ] Unit + widget teszt PASS, coverage ≥90 %.
-* [ ] `flutter analyze` hibamentes.
+- [ ] `AuthRepository.isEmailAvailable()` a `europe-central2` régiót használja.
+- [ ] Debug buildben App Check token mindig generálódik (Debug provider).
+- [ ] Unit + widget teszt PASS, coverage ≥90 %.
+- [ ] `flutter analyze` hibamentes.
 
 ## Hivatkozások
 

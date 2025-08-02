@@ -13,8 +13,8 @@ Ez a dokumentum bemutatja, hogyan kell manuálisan frissíteni a golden screensh
 flutter test --update-goldens
 ```
 
-3. A parancs létrehozza vagy frissíti a PNG baseline fájlokat a `test/goldens/` mappában.
-4. Ellenőrizd vizuálisan a képeket, majd commitold őket a repositoryba.
+1. A parancs létrehozza vagy frissíti a PNG baseline fájlokat a `test/goldens/` mappában.
+2. Ellenőrizd vizuálisan a képeket, majd commitold őket a repositoryba.
 
 ## 2. Accessibility audit
 

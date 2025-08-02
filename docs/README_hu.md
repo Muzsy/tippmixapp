@@ -29,10 +29,10 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 
 ## 📌 Notes / Megjegyzések
 
-* All future documents must follow the naming: `[topic]_en.md` and `[topic]_hu.md`
-* Codex only loads the **EN** files, the `_hu.md` versions are for human review only.
-* Minden új dokumentumot ebben a struktúrában kell elhelyezni.
-* A fordításokat a Git commit hook ellenőrzi (szinkronban vannak-e).
+- All future documents must follow the naming: `[topic]_en.md` and `[topic]_hu.md`
+- Codex only loads the **EN** files, the `_hu.md` versions are for human review only.
+- Minden új dokumentumot ebben a struktúrában kell elhelyezni.
+- A fordításokat a Git commit hook ellenőrzi (szinkronban vannak-e).
 
 ## 🧭 Legacy / Örökség
 

@@ -90,4 +90,3 @@ class Bet {
 ## 💬 Kiegészítő magyarázat
 
 A jelen vászon minden MVP-hez szükséges szempontot rögzít: kizárólag élő OddsAPI-adat használata, kulcs biztonságos kezelése, workflow-k, tesztelési és adatmodellezési alapelvek. A projekt továbbfejlesztéséhez, auditálásához vagy új fejlesztők belépéséhez ajánlott a folyamatábrák, konkrét endpoint listák, valamint a service- és provider-kapcsolatok pontos dokumentálása.
-

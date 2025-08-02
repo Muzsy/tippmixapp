@@ -4,15 +4,15 @@ A BadgeScreen önálló, teljes képernyős felület, amely a felhasználó ált
 
 ## 🎯 Funkció
 
-* A badge‑ek grid vagy lista elrendezésben jelennek meg, opcionális szűrőkkel („Összes”, „Megvan”, „Hiányzik”)【157201158825201†L10-L13】.
-* Jelvényre kattintva modal jeleníthet meg részleteket (ikon, feltétel, leírás)【157201158825201†L13-L15】.
-* A képernyő a főmenüben (`/badges` útvonal) érhető el, valamint a Profil képernyőről „További jelvények” gomb vezet ide【157201158825201†L10-L16】.
+- A badge‑ek grid vagy lista elrendezésben jelennek meg, opcionális szűrőkkel („Összes”, „Megvan”, „Hiányzik”)【157201158825201†L10-L13】.
+- Jelvényre kattintva modal jeleníthet meg részleteket (ikon, feltétel, leírás)【157201158825201†L13-L15】.
+- A képernyő a főmenüben (`/badges` útvonal) érhető el, valamint a Profil képernyőről „További jelvények” gomb vezet ide【157201158825201†L10-L16】.
 
 ## 🧠 Felépítés
 
-* A jelvények metaadatai a `badge_model.md` és `badge_config.md` modulokban definiáltak.
-* A megszerzett jelvények a `badge_service.md` segítségével kerülnek kiértékelésre és tárolásra【676551470588128†L6-L24】.
-* A `BadgeScreen` a `profile_badge_widget` grid komponensét refaktorálja önálló widgetbe (pl. `BadgeGridView`)【157201158825201†L10-L12】.
+- A jelvények metaadatai a `badge_model.md` és `badge_config.md` modulokban definiáltak.
+- A megszerzett jelvények a `badge_service.md` segítségével kerülnek kiértékelésre és tárolásra【676551470588128†L6-L24】.
+- A `BadgeScreen` a `profile_badge_widget` grid komponensét refaktorálja önálló widgetbe (pl. `BadgeGridView`)【157201158825201†L10-L12】.
 
 ## 🧪 Tesztállapot
 

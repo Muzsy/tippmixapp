@@ -6,9 +6,9 @@ This document describes the CI/CD pipeline setup for TippmixApp using GitHub Act
 
 ## ⚙️ Goals
 
-* Run tests automatically on push/PR
-* Ensure documentation quality
-* Prepare for future deployment steps
+- Run tests automatically on push/PR
+- Ensure documentation quality
+- Prepare for future deployment steps
 
 ---
 
@@ -33,24 +33,24 @@ Basic steps:
 
 ## 🧪 Quality Gates
 
-* All tests must pass (`flutter test`)
-* At least 80% coverage (TODO: add coverage check)
-* No broken links in Markdown
-* No hardcoded secrets committed (use secret scanning)
+- All tests must pass (`flutter test`)
+- At least 80% coverage (TODO: add coverage check)
+- No broken links in Markdown
+- No hardcoded secrets committed (use secret scanning)
 
 ---
 
 ## 🧰 Recommended Tools
 
-* [`actions/setup-flutter`](https://github.com/marketplace/actions/setup-flutter)
-* \[`peaceiris/actions-mdbook`]\(for future doc builds)
-* `markdownlint`, `markdown-link-check`
+- [`actions/setup-flutter`](https://github.com/marketplace/actions/setup-flutter)
+- \[`peaceiris/actions-mdbook`]\(for future doc builds)
+- `markdownlint`, `markdown-link-check`
 
 ---
 
 ## 🚧 Planned Extensions
 
-* Firebase Test Lab integration (instrumentation)
-* Codemagic integration for APK build (optional)
-* Deploy Docs to GitHub Pages (via MkDocs)
-* Pre-push hook: validate YAML + run lint locally
+- Firebase Test Lab integration (instrumentation)
+- Codemagic integration for APK build (optional)
+- Deploy Docs to GitHub Pages (via MkDocs)
+- Pre-push hook: validate YAML + run lint locally
