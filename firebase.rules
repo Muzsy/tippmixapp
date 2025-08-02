@@ -6,24 +6,52 @@ service cloud.firestore {
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
 
-    /* ——— coin_logs ——— */
-    match /coin_logs/{logId} {
-      function validCoinLog() {
-        return request.resource != null
+    /* ——— coin\_logs ——— */
+    match /coin\_logs/{logId} {
+      // helper: bejelentkezett?
+      function authed() { return request.auth != null; }
+
+      // Engedélyezett típusok
+      function validType() { return request.resource.data.type in ['bet','deposit','withdraw','adjust']; }
+
+      // CREATE: saját userId, fix mezők, createdAt timestamp
+      function createShapeOK() {
+        return authed()
+          && request.resource != null
           && request.resource.data != null
-          && request.auth.uid == request.resource.data.userId
+          && request.resource.data.keys().hasOnly(['userId','amount','type','createdAt'])
+          && request.resource.data.userId == request.auth.uid
           && request.resource.data.amount is int
-          && request.resource.data.type in ['bet','deposit','withdraw','adjust'];
+          && validType()
+          && request.resource.data.createdAt is timestamp;
       }
-      allow create: if false;
-      allow read:   if isOwner(resource.data.userId);
-      allow update, delete: if false;
+
+      // UPDATE: csak tulaj, és csak "ártalmatlan" mezők változhatnak (példa: meta, read)
+      function updateShapeOK() {
+        return authed()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['meta','read'])
+          && !( 'userId' in request.resource.data )
+          && !( 'amount' in request.resource.data )
+          && !( 'type' in request.resource.data )
+          && !( 'createdAt' in request.resource.data );
+      }
+
+      // READ: csak a tulajdonos
+      allow read: if authed() && resource.data.userId == request.auth.uid;
+
+      // CREATE/UPDATE jogok
+      allow create: if createShapeOK();
+      allow update: if updateShapeOK();
+
+      // Törlés tiltva
+      allow delete: if false;
     }
 
     // user dokumentum
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
-       // subcollection
+      // subcollection
       match /settings/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
