@@ -2,9 +2,10 @@
 
 🎯 **Funkció**
 
-Többlépéses folyamatot biztosít új felhasználók regisztrációjához. A varázsló három szakaszból áll: 
-1. **Belépési adatok** – email és jelszó megadása; 
-2. **Profil és adatkezelési hozzájárulás** – becenév, születési dátum, jogi nyilatkozatok elfogadása; 
+Többlépéses folyamatot biztosít új felhasználók regisztrációjához. A varázsló három szakaszból áll:
+
+1. **Belépési adatok** – email és jelszó megadása;
+2. **Profil és adatkezelési hozzájárulás** – becenév, születési dátum, jogi nyilatkozatok elfogadása;
 3. **Avatar kiválasztás** – fénykép feltöltése vagy kamerával való készítése【144900569284079†L7-L11】【547170822863401†L7-L10】【345137367284607†L7-L10】.
 
 🧠 **Felépítés**

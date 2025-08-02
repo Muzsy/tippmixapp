@@ -44,8 +44,8 @@ l10n.yaml                            # Flutter gen config
 Text(loc(context).selectLanguage)
 ```
 
-* `loc(BuildContext)` is a mandatory wrapper around `AppLocalizations.of(context)!`.
-* Keys are strongly typed via the `AppLocalizationsKey` enum – **no** raw strings.
+- `loc(BuildContext)` is a mandatory wrapper around `AppLocalizations.of(context)!`.
+- Keys are strongly typed via the `AppLocalizationsKey` enum – **no** raw strings.
 
 ---
 

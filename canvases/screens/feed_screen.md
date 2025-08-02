@@ -4,16 +4,16 @@ Ez a vászon leírja a feed funkció önálló képernyős változatát.  A Feed
 
 ## 🎯 Funkciók
 
-* A feed listázza a legfrissebb eseményeket: tippajánlatokat, közösségi aktivitásokat és motivációs üzeneteket【154869855900165†L6-L9】.
-* A képernyő teljes szélességű, nem csak komponensként jelenik meg【154869855900165†L8-L10】.
+- A feed listázza a legfrissebb eseményeket: tippajánlatokat, közösségi aktivitásokat és motivációs üzeneteket【154869855900165†L6-L9】.
+- A képernyő teljes szélességű, nem csak komponensként jelenik meg【154869855900165†L8-L10】.
 
 ## 🔧 Technikai követelmények
 
-* Új widget: `FeedScreen` (fájl: `lib/screens/feed_screen.dart`)【154869855900165†L15-L16】.
-* Új útvonal: `/feed` (`AppRoute.feed`)【154869855900165†L15-L17】.
-* Integráció a `router.dart` fájlba és menübe (Home képernyő drawer + alsó navigációs sáv)【154869855900165†L17-L20】.
-* A képernyő tartalma a meglévő `FeedWidget` komponensre épül【154869855900165†L19-L20】.
-* A lokalizációs kulcsok ellenőrzése szükséges (`menuFeed`, `home_nav_feed`, `feed_title`)【154869855900165†L32-L39】.
+- Új widget: `FeedScreen` (fájl: `lib/screens/feed_screen.dart`)【154869855900165†L15-L16】.
+- Új útvonal: `/feed` (`AppRoute.feed`)【154869855900165†L15-L17】.
+- Integráció a `router.dart` fájlba és menübe (Home képernyő drawer + alsó navigációs sáv)【154869855900165†L17-L20】.
+- A képernyő tartalma a meglévő `FeedWidget` komponensre épül【154869855900165†L19-L20】.
+- A lokalizációs kulcsok ellenőrzése szükséges (`menuFeed`, `home_nav_feed`, `feed_title`)【154869855900165†L32-L39】.
 
 ## 🧪 Tesztelés
 

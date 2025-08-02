@@ -6,25 +6,25 @@ Ez a dokumentum szabályrendszerként szolgál a Codex felé a TippmixApp lokali
 
 ## 🎯 Funkció
 
-* Az alkalmazás többnyelvű (hu, en, de) működést támogat
-* A nyelvváltás valósidejű (runtime), nem igényel restartot
-* Minden szöveg lokalizált és csak az `AppLocalizations` struktúrán keresztül érhető el
-* A SettingsScreen-ből választható a nyelv
+- Az alkalmazás többnyelvű (hu, en, de) működést támogat
+- A nyelvváltás valósidejű (runtime), nem igényel restartot
+- Minden szöveg lokalizált és csak az `AppLocalizations` struktúrán keresztül érhető el
+- A SettingsScreen-ből választható a nyelv
 
 ---
 
 ## 🧠 Fejlesztési logika
 
-### Fő elemek:
+### Fő elemek
 
-* `lib/l10n/` tartalmazza:
+- `lib/l10n/` tartalmazza:
 
-  * `app_hu.arb`, `app_en.arb`, `app_de.arb`
-  * `app_localizations.dart` + per-nyelv Dart generált fájlok
-* `l10n.yaml` konfigurálja az l10n generálást
-* A kulcsokat kizárólag enum reprezentálja: `AppLocalizationsKey`
+  - `app_hu.arb`, `app_en.arb`, `app_de.arb`
+  - `app_localizations.dart` + per-nyelv Dart generált fájlok
+- `l10n.yaml` konfigurálja az l10n generálást
+- A kulcsokat kizárólag enum reprezentálja: `AppLocalizationsKey`
 
-### Lokalizált szöveg elérése:
+### Lokalizált szöveg elérése
 
 ```dart
 loc(context).my_key // ahelyett, hogy AppLocalizations.of(context) kézileg lenne használva
@@ -32,29 +32,29 @@ loc(context).my_key // ahelyett, hogy AppLocalizations.of(context) kézileg lenn
 
 A `loc` függvény egy shortcut wrapper, amit mindig használni kell.
 
-### Nyelvváltás kezelése:
+### Nyelvváltás kezelése
 
-* `AppLocaleController` állítja a nyelvet
-* A beállított locale a `shared_preferences`-ben tárolódik
-* A `MaterialApp.router` konstruktor `locale:` paramétere az aktuális nyelv
-* A beállítás valós időben frissüli (notifyListeners)
+- `AppLocaleController` állítja a nyelvet
+- A beállított locale a `shared_preferences`-ben tárolódik
+- A `MaterialApp.router` konstruktor `locale:` paramétere az aktuális nyelv
+- A beállítás valós időben frissüli (notifyListeners)
 
 ---
 
 ## 🧪 Tesztelhetőség
 
-* `settings_screen_localization_test.dart` validálja, hogy minden toggle, menü és prompt lokalizálva van
-* `flutter gen-l10n` futtatása CI pipeline-ban biztosítja a valid szinkront
-* Lokalizációs sanity test lefuttatandó: `hu`, `en`, `de` nyelven
+- `settings_screen_localization_test.dart` validálja, hogy minden toggle, menü és prompt lokalizálva van
+- `flutter gen-l10n` futtatása CI pipeline-ban biztosítja a valid szinkront
+- Lokalizációs sanity test lefuttatandó: `hu`, `en`, `de` nyelven
 
 ---
 
 ## 📎 Kapcsolódások
 
-* `lib/controllers/app_locale_controller.dart` – nyelvváltás logika
-* `settings_screen.dart` – nyelvválasztás UI
-* `lib/l10n/` – ARB struktúra és generált fájlok
-* `codex/goals/fill_canvas_settings_screen.yaml` – Codex-feladat definíció
+- `lib/controllers/app_locale_controller.dart` – nyelvváltás logika
+- `settings_screen.dart` – nyelvválasztás UI
+- `lib/l10n/` – ARB struktúra és generált fájlok
+- `codex/goals/fill_canvas_settings_screen.yaml` – Codex-feladat definíció
 
 ---
 

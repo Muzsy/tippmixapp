@@ -138,4 +138,3 @@ Lásd: külön vászon "Betting Ticket Data Model"
 ---
 
 Ez a vászon a projekt végleges adatmodellje. Bármilyen további bővítés, új piac vagy közösségi/AI funkció könnyen beépíthető – zárt, bővíthető és auditálható szerkezet. Hivatkozási alap minden backend/frontend/AI vagy analitikai fejlesztéshez.
-

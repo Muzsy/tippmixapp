@@ -1,0 +1,10 @@
+globs:
+  - "**/*.md"
+ignores:
+  - ".dart_tool/**"
+  - "build/**"
+  - "node_modules/**"
+  - "linux/flutter/ephemeral/**"
+  - "windows/flutter/ephemeral/**"
+  - "macos/Flutter/ephemeral/**"
+  - "ios/Runner/Assets.xcassets/**"

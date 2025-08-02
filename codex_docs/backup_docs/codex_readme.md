@@ -12,11 +12,11 @@ A Codex egy fejlesztéstámogató AI rendszer, amely fájlszintű, determiniszti
 
 ## 📦 Alapkönyvtárak
 
-* `canvases/` – ember által írt modulleírások (pl. `coin_service.md`)
-* `codex/goals/` – YAML utasításfájlok (pl. `fill_canvas_coin_service.yaml`)
-* `lib/`, `cloud_functions/` – tényleges implementációs célfájlok
-* `docs/` – háttéranyagok: adatmodell, auth, odds API, stb.
-* `codex_docs/` – szabályfájlok: `codex_context.yaml`, `localization_logic.md`, stb.
+- `canvases/` – ember által írt modulleírások (pl. `coin_service.md`)
+- `codex/goals/` – YAML utasításfájlok (pl. `fill_canvas_coin_service.yaml`)
+- `lib/`, `cloud_functions/` – tényleges implementációs célfájlok
+- `docs/` – háttéranyagok: adatmodell, auth, odds API, stb.
+- `codex_docs/` – szabályfájlok: `codex_context.yaml`, `localization_logic.md`, stb.
 
 ---
 
@@ -46,25 +46,25 @@ A Codex egy fejlesztéstámogató AI rendszer, amely fájlszintű, determiniszti
 
 ## 🚦 Futási kritériumok
 
-* Minden fájl szerepel a canvasban és a YAML `outputs:` mezőjében
-* Nincs nem dokumentált fájl / class / funkció használat
-* Csak típusbiztos, CI-kompatibilis Dart/TS kód keletkezhet
+- Minden fájl szerepel a canvasban és a YAML `outputs:` mezőjében
+- Nincs nem dokumentált fájl / class / funkció használat
+- Csak típusbiztos, CI-kompatibilis Dart/TS kód keletkezhet
 
 ---
 
 ## 🧪 Tesztelési elvárások
 
-* Widget test minden képernyőhöz
-* Unit test minden új service-hez
-* Lokalizáció teszt: `hu`, `en`, `de`
+- Widget test minden képernyőhöz
+- Unit test minden új service-hez
+- Lokalizáció teszt: `hu`, `en`, `de`
 
 ---
 
 ## ⚠️ Tiltások
 
-* `pubspec.yaml`, `firebase.json`, `l10n.yaml` fájlok módosítása tilos
-* `Navigator.push` hívás tilos, csak `context.goNamed()`
-* Hardcoded stringek helyett mindig `loc(context).kulcs`
+- `pubspec.yaml`, `firebase.json`, `l10n.yaml` fájlok módosítása tilos
+- `Navigator.push` hívás tilos, csak `context.goNamed()`
+- Hardcoded stringek helyett mindig `loc(context).kulcs`
 
 ---
 

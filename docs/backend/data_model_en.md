@@ -20,9 +20,9 @@ UserModel {
 }
 ```
 
-* Created on registration
-* Default `tippCoin = 1000`
-* Stored under `users/{uid}`
+- Created on registration
+- Default `tippCoin = 1000`
+- Stored under `users/{uid}`
 
 ## 🎯 TipModel
 
@@ -38,8 +38,8 @@ TipModel {
 }
 ```
 
-* Attached to a ticket (not stored standalone)
-* Odds refreshed on submit via OddsAPI
+- Attached to a ticket (not stored standalone)
+- Odds refreshed on submit via OddsAPI
 
 ## 🎟️ TicketModel
 
@@ -57,12 +57,12 @@ TicketModel {
 }
 ```
 
-* Stored under `tickets/{userId}/{ticketId}`
-* Status updated after match finalization
+- Stored under `tickets/{userId}/{ticketId}`
+- Status updated after match finalization
 
 ## 🔜 Planned Models
 
-* `TippCoinLogModel`: logs coin transactions
-* `BadgeModel`: for achievements and badge rules
-* `LeaderboardEntryModel`: cached leaderboard data
-* `FeedEventModel`: recent user activity (for Feed)
+- `TippCoinLogModel`: logs coin transactions
+- `BadgeModel`: for achievements and badge rules
+- `LeaderboardEntryModel`: cached leaderboard data
+- `FeedEventModel`: recent user activity (for Feed)

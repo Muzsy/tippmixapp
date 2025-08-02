@@ -4,15 +4,15 @@ Ez a vászon a TippmixApp jutalomgyűjtő képernyőjét írja le.  A RewardsScr
 
 ## 🎯 Funkció
 
-* A képernyő route neve `/rewards`, és a főmenüben (drawer menü: `menuRewards`) érhető el【264444429103067†L10-L15】.
-* Minden jutalom kártyaként jelenik meg: ikon, név, leírás és átvételi gomb【264444429103067†L16-L19】.
-* A jutalom állapotától függően a gomb aktív („Átvétel”) vagy passzív („Már átvetted”)【264444429103067†L16-L20】.
+- A képernyő route neve `/rewards`, és a főmenüben (drawer menü: `menuRewards`) érhető el【264444429103067†L10-L15】.
+- Minden jutalom kártyaként jelenik meg: ikon, név, leírás és átvételi gomb【264444429103067†L16-L19】.
+- A jutalom állapotától függően a gomb aktív („Átvétel”) vagy passzív („Már átvetted”)【264444429103067†L16-L20】.
 
 ## 💡 Működési logika
 
-* `RewardModel` definiálja az egyes jutalmak mezőit (id, type, title, description, iconName, isClaimed, onClaim())【264444429103067†L23-L28】.
-* `RewardService` gyűjti össze a napi és egyedi jutalmakat, a claim műveleteket pedig a megfelelő szolgáltatások (pl. `DailyBonusService.claim()`) hajtják végre【264444429103067†L25-L30】.
-* Animációk: jutalom átvételekor animált pipa vagy konfetti, majd fade‑out animációval eltűnik a kártya【264444429103067†L33-L45】.
+- `RewardModel` definiálja az egyes jutalmak mezőit (id, type, title, description, iconName, isClaimed, onClaim())【264444429103067†L23-L28】.
+- `RewardService` gyűjti össze a napi és egyedi jutalmakat, a claim műveleteket pedig a megfelelő szolgáltatások (pl. `DailyBonusService.claim()`) hajtják végre【264444429103067†L25-L30】.
+- Animációk: jutalom átvételekor animált pipa vagy konfetti, majd fade‑out animációval eltűnik a kártya【264444429103067†L33-L45】.
 
 ## 🧪 Tesztállapot
 

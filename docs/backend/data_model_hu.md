@@ -20,9 +20,9 @@ UserModel {
 }
 ```
 
-* Regisztrációkor jön létre
-* Alapértelmezett `tippCoin = 1000`
-* Elérési út: `users/{uid}`
+- Regisztrációkor jön létre
+- Alapértelmezett `tippCoin = 1000`
+- Elérési út: `users/{uid}`
 
 ## 🎯 TipModel
 
@@ -38,8 +38,8 @@ TipModel {
 }
 ```
 
-* Csak szelvényhez csatolva jelenik meg
-* Odds érték a beküldés pillanatában frissül az OddsAPI-ból
+- Csak szelvényhez csatolva jelenik meg
+- Odds érték a beküldés pillanatában frissül az OddsAPI-ból
 
 ## 🎟️ TicketModel
 
@@ -57,12 +57,12 @@ TicketModel {
 }
 ```
 
-* Elérési út: `tickets/{userId}/{ticketId}`
-* Státusz később frissül a meccsek lezárása után
+- Elérési út: `tickets/{userId}/{ticketId}`
+- Státusz később frissül a meccsek lezárása után
 
 ## 🔜 Tervezett modellek
 
-* `TippCoinLogModel`: coin tranzakciók naplózása
-* `BadgeModel`: badge-szabályok és megszerzett címek
-* `LeaderboardEntryModel`: ranglista gyorsított tárolása
-* `FeedEventModel`: közösségi események (feed)
+- `TippCoinLogModel`: coin tranzakciók naplózása
+- `BadgeModel`: badge-szabályok és megszerzett címek
+- `LeaderboardEntryModel`: ranglista gyorsított tárolása
+- `FeedEventModel`: közösségi események (feed)

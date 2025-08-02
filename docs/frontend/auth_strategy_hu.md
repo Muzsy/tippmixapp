@@ -6,9 +6,9 @@ Ez a dokumentum bemutatja a **TippmixApp** hitelesítési rendszerét: Firebase 
 
 ## 🔧 Használt technológiák
 
-* **Firebase Authentication** (email + jelszó)
-* **Riverpod** – állapotfigyeléshez
-* **GoRouter** – auth alapú navigáció
+- **Firebase Authentication** (email + jelszó)
+- **Riverpod** – állapotfigyeléshez
+- **GoRouter** – auth alapú navigáció
 
 ## 🧭 Bejelentkezési folyamat
 
@@ -22,20 +22,20 @@ Ez a dokumentum bemutatja a **TippmixApp** hitelesítési rendszerét: Firebase 
 
 ## 🧪 Komponensek
 
-* `LoginScreen` – űrlap email/jelszóval, validációval
-* `RegisterScreen` – Firebase user létrehozás + TippCoin beállítás
-* `AuthController` – belépés, regisztráció, kijelentkezés logika
-* `auth_provider.dart` – `authStateChanges` stream expozíció
-* `GoRouter` – `redirect:` használat auth állapot alapján
+- `LoginScreen` – űrlap email/jelszóval, validációval
+- `RegisterScreen` – Firebase user létrehozás + TippCoin beállítás
+- `AuthController` – belépés, regisztráció, kijelentkezés logika
+- `auth_provider.dart` – `authStateChanges` stream expozíció
+- `GoRouter` – `redirect:` használat auth állapot alapján
 
 ## 🎯 Codex szabályok
 
-* Használj `authStateChanges()`-t – ne `currentUser`-t
-* Regisztráció után ments `UserModel`-t a Firestore-ba
-* TippCoin mezőt kötelező beállítani (pl. 1000)
-* Email megerősítés támogatása javasolt
+- Használj `authStateChanges()`-t – ne `currentUser`-t
+- Regisztráció után ments `UserModel`-t a Firestore-ba
+- TippCoin mezőt kötelező beállítani (pl. 1000)
+- Email megerősítés támogatása javasolt
 
 ## 🚧 Ismert problémák
 
-* Nincs jelszó erősség ellenőrzés az űrlapon
-* Email megerősítés nincs implementálva (tervezett)
+- Nincs jelszó erősség ellenőrzés az űrlapon
+- Email megerősítés nincs implementálva (tervezett)

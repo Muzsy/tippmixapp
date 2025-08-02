@@ -8,30 +8,30 @@ Ez a Codex ügynök ellenőrzi, hogy a Firebase AppCheck token validálódik-e m
 
 ### 🧠 Fejlesztési részletek
 
-* A Codex ellenőrzi, hogy a `FirebaseAppCheck.instance.activate()` időben lefut-e.
-* Késleltetést iktat be a Firebase Auth regisztráció előtt, amennyiben a token még nem elérhető.
-* Lekéri a `FirebaseAppCheck.instance.getToken()` értékét és logolja.
-* Beavatkozik a `createUserWithEmailAndPassword()` előtti folyamatba, ha token érvénytelen vagy hiányzik.
+- A Codex ellenőrzi, hogy a `FirebaseAppCheck.instance.activate()` időben lefut-e.
+- Késleltetést iktat be a Firebase Auth regisztráció előtt, amennyiben a token még nem elérhető.
+- Lekéri a `FirebaseAppCheck.instance.getToken()` értékét és logolja.
+- Beavatkozik a `createUserWithEmailAndPassword()` előtti folyamatba, ha token érvénytelen vagy hiányzik.
 
 ---
 
 ### 🧪 Tesztállapot
 
-* ✅ A logban megjelenik érvényes AppCheck token.
-* ✅ A regisztráció nem dob reCAPTCHA hibát.
-* ❌ Hiba, ha a regisztráció megelőzi az AppCheck aktiválást, vagy token `null`.
+- ✅ A logban megjelenik érvényes AppCheck token.
+- ✅ A regisztráció nem dob reCAPTCHA hibát.
+- ❌ Hiba, ha a regisztráció megelőzi az AppCheck aktiválást, vagy token `null`.
 
 ---
 
 ### 🌍 Lokalizáció
 
-* A log angol nyelvű (Firebase SDK alapértelmezett), de a riport magyarul készül.
+- A log angol nyelvű (Firebase SDK alapértelmezett), de a riport magyarul készül.
 
 ---
 
 ### 📌 Kapcsolódások
 
-* `lib/firebase_options.dart`
-* `main.dart` (AppCheck init)
-* `auth_service.dart` vagy hasonló fájl, ahol az Auth regisztráció történik
-* Flutter debug log ("reCAPTCHA ellenőrzés nem sikerült")
+- `lib/firebase_options.dart`
+- `main.dart` (AppCheck init)
+- `auth_service.dart` vagy hasonló fájl, ahol az Auth regisztráció történik
+- Flutter debug log ("reCAPTCHA ellenőrzés nem sikerült")

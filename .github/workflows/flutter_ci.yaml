@@ -29,8 +29,8 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
       
-      - name: Install markdownlint-cli
-        run: npm install -g markdownlint-cli
+      - name: Install markdownlint-clis
+        run: npm i -g markdownlint-cli markdownlint-cli2
 
       # Install Dart/Flutter dependencies
       - name: Install project dependencies
@@ -73,3 +73,4 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && hashFiles('scripts/test_firebase_rules.sh') != ''
         run: |
           firebase emulators:exec --only firestore "scripts/test_firebase_rules.sh"
+

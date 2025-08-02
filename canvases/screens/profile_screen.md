@@ -4,9 +4,9 @@ Ez a vászon a felhasználói profil felületét írja le, ahol a TippmixApp já
 
 ## 🎯 Funkció
 
-* A profiloldal megjeleníti az **avatar** és **nickname** mezőket (mindig publikus), valamint opcionális adatokat, mint város, ország, kedvenc sport és csapat【977227879272921†L6-L7】.
-* Minden mezőhöz publikus/privát kapcsoló tartozik, kivéve az avatar és a nickname mezőket【977227879272921†L19-L27】.
-* Globális privát mód állítható be, amely esetén csak az avatar és nickname látható mások számára【977227879272921†L23-L25】.
+- A profiloldal megjeleníti az **avatar** és **nickname** mezőket (mindig publikus), valamint opcionális adatokat, mint város, ország, kedvenc sport és csapat【977227879272921†L6-L7】.
+- Minden mezőhöz publikus/privát kapcsoló tartozik, kivéve az avatar és a nickname mezőket【977227879272921†L19-L27】.
+- Globális privát mód állítható be, amely esetén csak az avatar és nickname látható mások számára【977227879272921†L23-L25】.
 
 ## 🧠 Felépítés
 

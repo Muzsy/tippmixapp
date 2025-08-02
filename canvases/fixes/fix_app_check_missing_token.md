@@ -2,9 +2,9 @@
 
 ### 🎯 Cél
 
-* **Megszüntetni a regisztráció (és valójában az egész app) indulásakor bekövetkező *AssertionError*-t**, amely akkor dobódik, ha *debug* módban **nem** érkezik `--dart-define FIREBASE_APP_CHECK_DEBUG_TOKEN=…` compile‑time paraméter.
-* A hibát a `lib/main.dart` 55–60. sorában lévő `assert` okozza.
-* A futtatásnak nem szabad leállnia – elég, ha figyelmeztető logot írunk.
+- **Megszüntetni a regisztráció (és valójában az egész app) indulásakor bekövetkező *AssertionError*-t**, amely akkor dobódik, ha *debug* módban **nem** érkezik `--dart-define FIREBASE_APP_CHECK_DEBUG_TOKEN=…` compile‑time paraméter.
+- A hibát a `lib/main.dart` 55–60. sorában lévő `assert` okozza.
+- A futtatásnak nem szabad leállnia – elég, ha figyelmeztető logot írunk.
 
 ### 📝 Változtatások
 
@@ -38,8 +38,8 @@
 
 ### 🧪 Teszt
 
-* Manuális: `flutter clean && flutter run` *token nélkül* → app indul, regisztráció működik.
-* Unit‑ / widget‑tesztek változatlanok, nem érinti őket.
+- Manuális: `flutter clean && flutter run` *token nélkül* → app indul, regisztráció működik.
+- Unit‑ / widget‑tesztek változatlanok, nem érinti őket.
 
 ### 📋 Teendők listája
 

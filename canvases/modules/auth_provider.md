@@ -21,7 +21,8 @@ Az eredeti vászon rámutatott, hogy a hibakezelés nem megfelelő (például ne
 
 🧪 **Tesztállapot**
 
-A modul jelenleg részleges teszttel lefedett: hiányoznak a negatív esetek (rossz jelszó, nem létező felhasználó) és a sikeres token frissítés ellenőrzése. A javasolt tesztek: 
+A modul jelenleg részleges teszttel lefedett: hiányoznak a negatív esetek (rossz jelszó, nem létező felhasználó) és a sikeres token frissítés ellenőrzése. A javasolt tesztek:
+
 - `AuthProvider.signIn` sikeres és sikertelen hívások,
 - `AuthService` hibaágak validálása,
 - Avatar és felhasználónév frissítési logika.

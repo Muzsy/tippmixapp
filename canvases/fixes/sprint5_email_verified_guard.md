@@ -15,26 +15,26 @@ Amíg a `FirebaseAuth.instance.currentUser!.emailVerified == false`, a felhaszn�
 
 ## Feladatok
 
-* [ ] **AuthGate** módosítása
+- [ ] **AuthGate** módosítása
 
-  * Ha `user != null && !user.emailVerified` → `EmailNotVerifiedScreen`.
-* [ ] **EmailNotVerifiedScreen** (ha még nincs)
+  - Ha `user != null && !user.emailVerified` → `EmailNotVerifiedScreen`.
+- [ ] **EmailNotVerifiedScreen** (ha még nincs)
 
-  * Gomb: *„Újra küldés”* → `user.sendEmailVerification()`
-  * Gomb: *„Megerősítettem”* → `user.reload()` majd refresh AuthGate.
-* [ ] **Widget‑tesztek**
+  - Gomb: *„Újra küldés”* → `user.sendEmailVerification()`
+  - Gomb: *„Megerősítettem”* → `user.reload()` majd refresh AuthGate.
+- [ ] **Widget‑tesztek**
 
-  * `unverified_user_redirected_test` – mock FirebaseAuth, `emailVerified=false`; assert, hogy `EmailNotVerifiedScreen` jelenik meg.
-  * `verified_user_goes_home_test` – `emailVerified=true`; assert, hogy `HomeScreen` jelenik meg.
-* [ ] **Analyze + Test** zöld.
+  - `unverified_user_redirected_test` – mock FirebaseAuth, `emailVerified=false`; assert, hogy `EmailNotVerifiedScreen` jelenik meg.
+  - `verified_user_goes_home_test` – `emailVerified=true`; assert, hogy `HomeScreen` jelenik meg.
+- [ ] **Analyze + Test** zöld.
 
 ## Acceptance Criteria
 
-* [ ] Nem verified user sosem lát Home‑ot.
-* [ ] *„Újra küldés”* SnackBar „Verifikációs e‑mail elküldve”.
-* [ ] *„Megerősítettem”* után, ha `emailVerified==true`, AuthGate átengedi Home‑ra.
-* [ ] Minden teszt zöld, analyze hibamentes.
+- [ ] Nem verified user sosem lát Home‑ot.
+- [ ] *„Újra küldés”* SnackBar „Verifikációs e‑mail elküldve”.
+- [ ] *„Megerősítettem”* után, ha `emailVerified==true`, AuthGate átengedi Home‑ra.
+- [ ] Minden teszt zöld, analyze hibamentes.
 
 ## Hivatkozás
 
-* Canvas → `/codex/goals/sprint5_email_verified_guard.yaml`
+- Canvas → `/codex/goals/sprint5_email_verified_guard.yaml`

@@ -10,18 +10,18 @@ Garantálni, hogy a Step 1 valid kitöltése után a PageView **mindig** sikere
 
 ## Feladatok
 
-* [ ] `register_step1_form.dart` – adjunk `if (!mounted) return;` guardot az `await animateToPage()` elé.
-* [ ] Csomagoljuk `animateToPage()` hívást `try/catch`‑be, `catch`‑ágban `showSnackBarError()` mutasson hibaüzenetet.
-* [ ] Widget‑teszt: „step1\_to\_step2\_navigation” – kitölti a mezőket, megnyomja **Tovább**, majd assertálja, hogy megjelenik a Step 2‑höz tartozó `nickname` mező.
-* [ ] `flutter analyze`, `flutter test` – mindkettő zöld.
+- [ ] `register_step1_form.dart` – adjunk `if (!mounted) return;` guardot az `await animateToPage()` elé.
+- [ ] Csomagoljuk `animateToPage()` hívást `try/catch`‑be, `catch`‑ágban `showSnackBarError()` mutasson hibaüzenetet.
+- [ ] Widget‑teszt: „step1\_to\_step2\_navigation” – kitölti a mezőket, megnyomja **Tovább**, majd assertálja, hogy megjelenik a Step 2‑höz tartozó `nickname` mező.
+- [ ] `flutter analyze`, `flutter test` – mindkettő zöld.
 
 ## Acceptance Criteria
 
-* [ ] A felhasználó minden sikeres első lépés után Step 2‑re jut.
-* [ ] Hiba esetén SnackBar jelenik meg „Ismeretlen hiba, próbáld újra” szöveggel.
-* [ ] Nincs analyze‑figyelmeztetés, minden teszt zöld.
+- [ ] A felhasználó minden sikeres első lépés után Step 2‑re jut.
+- [ ] Hiba esetén SnackBar jelenik meg „Ismeretlen hiba, próbáld újra” szöveggel.
+- [ ] Nincs analyze‑figyelmeztetés, minden teszt zöld.
 
 ## Hivatkozás
 
-* Canvas → `/codex/goals/sprint3_pageview_fix.yaml`
-* Sablon: Codex Canvas Yaml Guide
+- Canvas → `/codex/goals/sprint3_pageview_fix.yaml`
+- Sablon: Codex Canvas Yaml Guide

@@ -6,9 +6,9 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 
 ## 🔐 Célok
 
-* A felhasználó csak a saját adatait érhesse el / módosíthassa
-* Ne lehessen manipulálni TippCoin vagy szelvény adatokat
-* Fogadásoknál biztosítani kell a konzisztens adatbevitelt
+- A felhasználó csak a saját adatait érhesse el / módosíthassa
+- Ne lehessen manipulálni TippCoin vagy szelvény adatokat
+- Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 
 ---
 
@@ -49,16 +49,16 @@ service cloud.firestore {
 
 ## 🧠 Legjobb gyakorlatok
 
-* Alapértelmezetten tiltani, majd kollekciónként engedni
-* Ellenőrizni kötelező mezőket (`rules` validáció)
-* Ne bízz a kliens oldali adatban (pl. TippCoin érték)
-* TippCoin logika inkább Cloud Function-ben fusson
+- Alapértelmezetten tiltani, majd kollekciónként engedni
+- Ellenőrizni kötelező mezőket (`rules` validáció)
+- Ne bízz a kliens oldali adatban (pl. TippCoin érték)
+- TippCoin logika inkább Cloud Function-ben fusson
 
 ---
 
 ## 📌 Tervezett fejlesztések
 
-* `ticket.status` és `stake` mezők validálása
-* Firebase Emulatorral szabály-tesztek írása
-* Szabályok külön fájlokba szedése (CI kompatibilitás)
-* Moderator / admin jogosultsági szintek bevezetése (később)
+- `ticket.status` és `stake` mezők validálása
+- Firebase Emulatorral szabály-tesztek írása
+- Szabályok külön fájlokba szedése (CI kompatibilitás)
+- Moderator / admin jogosultsági szintek bevezetése (később)

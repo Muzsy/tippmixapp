@@ -4,14 +4,14 @@ A NotificationCenterScreen egy központi eseménykezelő felület, ahol a felhas
 
 ## 🌟 Funkció
 
-* A képernyő `/notifications` útvonalon érhető el, és a jobb felső sarokban elhelyezett NotificationBell ikonról nyílik meg【742591530855780†L10-L17】.
-* A különféle értesítések típusokra vannak csoportosítva (jutalom, badge, barátkérés), és kattintás esetén a megfelelő képernyőre navigálnak (pl. `RewardsScreen`, `BadgeScreen`)【742591530855780†L12-L18】.
+- A képernyő `/notifications` útvonalon érhető el, és a jobb felső sarokban elhelyezett NotificationBell ikonról nyílik meg【742591530855780†L10-L17】.
+- A különféle értesítések típusokra vannak csoportosítva (jutalom, badge, barátkérés), és kattintás esetén a megfelelő képernyőre navigálnak (pl. `RewardsScreen`, `BadgeScreen`)【742591530855780†L12-L18】.
 
 ## 🧠 Felépítés
 
-* **NotificationModel** – leírja az értesítések adatait (id, típus, cím, leírás, időbélyeg, olvasottság)【742591530855780†L21-L29】.
-* **NotificationService** – Firestore streamet nyit a felhasználó értesítéseire (`users/{userId}/notifications`), kezeli az olvasottság frissítését, és új értesítés generálását【742591530855780†L21-L31】.
-* **NotificationBell widget** – az AppBarban elhelyezett ikon, amely piros jelzőszámot mutat az olvasatlan értesítések számára és navigál a NotificationCenterScreen‑re【742591530855780†L34-L38】.
+- **NotificationModel** – leírja az értesítések adatait (id, típus, cím, leírás, időbélyeg, olvasottság)【742591530855780†L21-L29】.
+- **NotificationService** – Firestore streamet nyit a felhasználó értesítéseire (`users/{userId}/notifications`), kezeli az olvasottság frissítését, és új értesítés generálását【742591530855780†L21-L31】.
+- **NotificationBell widget** – az AppBarban elhelyezett ikon, amely piros jelzőszámot mutat az olvasatlan értesítések számára és navigál a NotificationCenterScreen‑re【742591530855780†L34-L38】.
 
 ## 🧪 Tesztállapot
 

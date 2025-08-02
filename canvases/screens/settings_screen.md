@@ -4,10 +4,10 @@ Ez a vászon a TippmixApp beállításait összegző képernyőt írja le.  A fe
 
 ## 🎯 Funkció
 
-* **Téma mód** – a felhasználó választhatja a rendszer, világos vagy sötét módot【366344286210520†L8-L11】.
-* **Nyelv** – három támogatott nyelv (hu/en/de) közötti váltás【366344286210520†L10-L12】.
-* **Kijelentkezés** – lehetőség a fiókból való kijelentkezésre (`FirebaseAuth.signOut()`)【366344286210520†L12-L13】.
-* **Előkészített funkciókapcsolók** – push értesítések, AI‑ajánlások kapcsolása, kedvenc sportágak megadása (jövőbeni bővítés)【366344286210520†L14-L17】.
+- **Téma mód** – a felhasználó választhatja a rendszer, világos vagy sötét módot【366344286210520†L8-L11】.
+- **Nyelv** – három támogatott nyelv (hu/en/de) közötti váltás【366344286210520†L10-L12】.
+- **Kijelentkezés** – lehetőség a fiókból való kijelentkezésre (`FirebaseAuth.signOut()`)【366344286210520†L12-L13】.
+- **Előkészített funkciókapcsolók** – push értesítések, AI‑ajánlások kapcsolása, kedvenc sportágak megadása (jövőbeni bővítés)【366344286210520†L14-L17】.
 
 ## 🧠 Felépítés
 

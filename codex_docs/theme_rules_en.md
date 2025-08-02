@@ -48,10 +48,10 @@ depends\_on: \[codex\_context.yaml]
 
 ## Component guidelines
 
-* Use `ElevatedButton` default styles – **no** custom gradient buttons.
-* Padding/margin must respect the 8‑dp grid (Material baseline).
-* Icon sizes: 24 dp, 20 dp for dense lists.
-* Dark theme must achieve **AA** contrast for body text (>= 4.5). Use `flutter_a11y` CI step.
+- Use `ElevatedButton` default styles – **no** custom gradient buttons.
+- Padding/margin must respect the 8‑dp grid (Material baseline).
+- Icon sizes: 24 dp, 20 dp for dense lists.
+- Dark theme must achieve **AA** contrast for body text (>= 4.5). Use `flutter_a11y` CI step.
 
 ---
 

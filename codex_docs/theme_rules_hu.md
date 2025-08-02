@@ -48,10 +48,10 @@ A `themeModeProvider` (Riverpod) teszi elérhetővé az aktuális módot az UI s
 
 ## Komponens irányelvek
 
-* Használd az `ElevatedButton` alapstílusát – **ne** készíts egyedi gradientes gombot.
-* Padding/margin igazodjon a 8 dp-es gridhez (Material baseline).
-* Ikonméretek: 24 dp, listákban sűrítve 20 dp.
-* Dark téma esetén a szöveg kontrasztja érje el az **AA** szintet (>= 4.5). Ezt a CI‑ben a `flutter_a11y` lépés ellenőrzi.
+- Használd az `ElevatedButton` alapstílusát – **ne** készíts egyedi gradientes gombot.
+- Padding/margin igazodjon a 8 dp-es gridhez (Material baseline).
+- Ikonméretek: 24 dp, listákban sűrítve 20 dp.
+- Dark téma esetén a szöveg kontrasztja érje el az **AA** szintet (>= 4.5). Ezt a CI‑ben a `flutter_a11y` lépés ellenőrzi.
 
 ---
 
