@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import '../mocks/mock_facebook_auth.dart';
 
 // ignore: subtype_of_sealed_class
@@ -34,6 +36,10 @@ class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
   }
 }
 
+class FakeFunctions extends Fake implements FirebaseFunctions {}
+
+class FakeFirebaseAppCheck extends Fake implements FirebaseAppCheck {}
+
 void main() {
   test('signInWithFacebook returns user when login success', () async {
     final fbAuth = FakeFirebaseAuth();
@@ -44,6 +50,8 @@ void main() {
       facebookAuth: MockFacebookAuth(
         LoginResult(LoginStatus.success, accessToken: AccessToken('t')),
       ),
+      functions: FakeFunctions(),
+      appCheck: FakeFirebaseAppCheck(),
     );
 
     final result = await service.signInWithFacebook();
@@ -58,6 +66,8 @@ void main() {
     final service = AuthService(
       firebaseAuth: fbAuth,
       facebookAuth: MockFacebookAuth(LoginResult(LoginStatus.cancelled)),
+      functions: FakeFunctions(),
+      appCheck: FakeFirebaseAppCheck(),
     );
 
     expect(

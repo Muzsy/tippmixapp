@@ -10,12 +10,19 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:tippmixapp/models/user.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:tippmixapp/theme/brand_colors_presets.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {}
 
 class CancelFacebookAuthService extends AuthService {
   CancelFacebookAuthService()
-    : super(firebaseAuth: FakeFirebaseAuth(), functions: FakeFunctions());
+    : super(
+        firebaseAuth: FakeFirebaseAuth(),
+        functions: FakeFunctions(),
+        facebookAuth: FakeFacebook(),
+        appCheck: FakeFirebaseAppCheck(),
+      );
 
   @override
   Future<User?> signInWithFacebook() async {
@@ -48,6 +55,10 @@ class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
   final T data;
   FakeHttpsCallableResult(this.data);
 }
+
+class FakeFacebook extends Fake implements FacebookAuth {}
+
+class FakeFirebaseAppCheck extends Fake implements FirebaseAppCheck {}
 
 void main() {
   testWidgets('shows snackbar when Facebook login cancelled', (tester) async {
