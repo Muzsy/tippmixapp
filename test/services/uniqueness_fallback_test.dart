@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 class ThrowingCallable extends Fake implements HttpsCallable {
   @override
@@ -20,12 +21,17 @@ class FakeFunctions extends Fake implements FirebaseFunctions {
 
 class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {}
 
+class FakeFacebook extends Fake implements FacebookAuth {}
+
+class FakeFirebaseAppCheck extends Fake implements FirebaseAppCheck {}
+
 void main() {
   test('validateEmailUnique returns true on permission-denied', () async {
     final service = AuthService(
       firebaseAuth: FakeFirebaseAuth(),
-      facebookAuth: FacebookAuth.instance,
+      facebookAuth: FakeFacebook(),
       functions: FakeFunctions(),
+      appCheck: FakeFirebaseAppCheck(),
     );
     final result = await service.validateEmailUnique('email@test.com');
     expect(result, isTrue);
