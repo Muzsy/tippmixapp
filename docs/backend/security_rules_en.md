@@ -16,11 +16,8 @@ This document defines the security model and Firestore access rules for TippmixA
 
 ```
 users/{uid}
-  → UserModel
-  → coin_logs/{logId} (planned)
-
-tickets/{uid}/{ticketId}
-  → TicketModel
+wallets/{uid}
+tickets/{ticketId}
 ```
 
 ---
@@ -33,13 +30,22 @@ service cloud.firestore {
   match /databases/{db}/documents {
 
     match /users/{userId} {
-      allow read, write: if request.auth.uid == userId;
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    match /tickets/{userId}/{ticketId} {
-      allow read: if request.auth.uid == userId;
-      allow write: if request.auth.uid == userId &&
-                    request.resource.data.userId == request.auth.uid;
+    match /wallets/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    match /tickets/{ticketId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+      allow read: if request.auth != null;
+      allow update, delete: if false;
     }
   }
 }
