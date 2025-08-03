@@ -21,10 +21,10 @@ class CoinService {
     FirebaseFunctions? functions,
     FirebaseAuth? auth,
     Logger? logger,
-  }) : _functions = functions,
-       _firestore = firestore,
-       _auth = auth,
-       _logger = logger ?? Logger('CoinService') {
+  })  : _functions = functions,
+        _firestore = firestore,
+        _auth = auth,
+        _logger = logger ?? Logger('CoinService') {
     _wrapper = TransactionWrapper(firestore: _firestore, logger: _logger);
   }
 
@@ -143,7 +143,20 @@ class CoinService {
 
     await _fs.runTransaction((txn) async {
       final walletSnap = await txn.get(walletRef);
-      final current = (walletSnap.data()?['coins'] as int?) ?? 0;
+      int current;
+      if (walletSnap.exists && walletSnap.data()!.containsKey('coins')) {
+        current = walletSnap.data()!['coins'] as int;
+      } else {
+        // ➡️ fallback: read balance from users doc
+        final userSnap = await txn.get(userRef);
+        current = (userSnap.data()?['coins'] as int?) ?? 0;
+
+        // ➡️ LAZY‑CREATE wallet doc so subsequent requests use it
+        txn.set(walletRef, {
+          'coins': current,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       if (current < stake) {
         throw FirebaseException(
@@ -153,7 +166,7 @@ class CoinService {
         );
       }
 
-      txn.set(walletRef, {'coins': current - stake}, SetOptions(merge: true));
+      txn.update(walletRef, {'coins': current - stake});
       txn.set(userRef, {'coins': current - stake}, SetOptions(merge: true));
       txn.set(ticketRef, ticketData);
     });
