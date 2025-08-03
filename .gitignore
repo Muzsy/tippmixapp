@@ -12,6 +12,8 @@
 .swiftpm/
 migrate_working_dir/
 llama_index/
+*.env
+
 
 
 # IntelliJ related
