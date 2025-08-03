@@ -74,11 +74,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         _isLoading = false;
       });
       if (e.code == 'insufficient_coins') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Nincs elegendő TippCoin az egyenlegeden.'),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Nincs elegendő TippCoin az egyenlegeden.'),
+            ),
+          );
+        }
       } else {
         rethrow;
       }
