@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -81,24 +80,7 @@ class BetSlipService {
     final cs =
         coinService ??
         CoinService(firestore: firestore ?? FirebaseFirestore.instance);
-    try {
-      await cs.debitCoin(
-        amount: stake,
-        reason: 'bet_stake',
-        transactionId: 'ticket_$ticketId',
-      );
-    } on FirebaseFunctionsException catch (e) {
-      if (e.code == 'unauthenticated') {
-        // Authentication required when using CoinService
-      }
-      rethrow;
-    }
-
-    // 5️⃣ Írás Firestore‑ba (transactions nélkül – S2‑3‑ban bővítjük)
-    final db = firestore ?? FirebaseFirestore.instance;
-    final ticketsRef = db.collection('tickets');
-
-    await ticketsRef.doc(ticketId).set(ticket.toJson());
+    await cs.debitAndCreateTicket(stake: stake, ticketData: ticket.toJson());
 
     if (kDebugMode) {
       debugPrint(

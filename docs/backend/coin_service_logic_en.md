@@ -22,8 +22,15 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On placing a ticket
 
-- Subtract stake amount from `user.tippCoin`
-- Block submission if not enough balance
+- A `debitAndCreateTicket()` method runs a Firestore transaction
+  that:
+  - reads the current balance from `wallets/{uid}.coins`;
+  - aborts with `FirebaseException(insufficient_coins)` if balance < stake;
+  - subtracts `stake` from both `wallets/{uid}.coins` and `users/{uid}.coins`;
+  - writes the new `tickets/{ticketId}` document in the same transaction.
+
+This guarantees atomicity – the user can never end up with a negative
+balance and a missing ticket.
 
 ### On result finalization
 
@@ -56,10 +63,11 @@ TippCoinLog {
 
 ## ⚠️ Current Status
 
-- Only static value exists in UserModel
-- No mutation logic implemented
-- No CoinService class or functions yet
-- No log collection defined
+- `CoinService.debitAndCreateTicket()` implemented for atomic stake
+  deduction and ticket creation.
+- Balance updates are visible immediately via `users/{uid}.coins` and
+  `wallets/{uid}.coins`.
+- Logging to `coin_logs` pending implementation.
 
 ---
 
