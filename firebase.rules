@@ -6,8 +6,8 @@ service cloud.firestore {
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
 
-    /* ——— coin\_logs ——— */
-    match /coin\_logs/{logId} {
+    /* ——— coin_logs ——— */
+    match /coin_logs/{logId} {
       // helper: bejelentkezett?
       function authed() { return request.auth != null; }
 
@@ -22,95 +22,85 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['userId','amount','type','createdAt'])
           && request.resource.data.userId == request.auth.uid
           && request.resource.data.amount is int
-          && validType()
-          && request.resource.data.createdAt is timestamp;
+          && request.resource.data.amount >= 0
+          && request.resource.data.type in ['bet','deposit','withdraw','adjust']
+          && request.resource.data.createdAt == request.time;
       }
 
-      // UPDATE: csak tulaj, és csak "ártalmatlan" mezők változhatnak (példa: meta, read)
-      function updateShapeOK() {
-        return authed()
-          && resource.data.userId == request.auth.uid
-          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['meta','read'])
-          && !( 'userId' in request.resource.data )
-          && !( 'amount' in request.resource.data )
-          && !( 'type' in request.resource.data )
-          && !( 'createdAt' in request.resource.data );
-      }
-
-      // READ: csak a tulajdonos
-      allow read: if authed() && resource.data.userId == request.auth.uid;
-
-      // CREATE/UPDATE jogok
       allow create: if createShapeOK();
-      allow update: if updateShapeOK();
-
-      // Törlés tiltva
-      allow delete: if false;
-    }
-    /* ——— users ——— */
-    match /users/{userId} {
-      // Leaderboard‑hoz minden bejelentkezett user olvashat, írni csak a tulajdonos
-      allow read:  if signedIn();
-      allow write: if isOwner(userId);
-      // subcollection (settings, badges, stb.) örökli a jogot
-    }
-
-    /* ——— wallets ——— */
-    match /wallets/{userId} {
-      allow read, write: if isOwner(userId);
-      allow delete: if false;
+      allow read:   if isOwner(resource.data.userId);
+      allow update, delete: if false;
     }
 
     /* ——— tickets ——— */
     match /tickets/{ticketId} {
-      // CREATE: csak saját szelvény, fix mezők
       allow create: if signedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.keys().hasOnly(['userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
-
-      // READ: leaderboard és saját szelvények megtekintéséhez
       allow read: if signedIn();
-
-      // UPDATE/DELETE: tiltva kliens oldalon (server‑side Cloud Function frissítheti)
       allow update, delete: if false;
     }
 
-    /* ——— badges (publikus read) ——— */
+    /* ——— badges (public read) ——— */
     match /badges/{badgeId} {
-      allow read:  if true;
-      allow write: if false;
+      allow read: if true;
     }
 
-    /* ——— notifications ——— */
-    match /notifications/{userId}/n/{notifId} {
-      allow create: if false;
+    /* ——— leaderboards ——— */
+    match /leaderboards/{periodId} {
+      allow read: if true;
+      allow write, delete: if false;
+    }
+
+    /* ——— users collection ——— */
+    match /users/{userId} {
+      allow create: if signedIn() && request.auth.uid == userId;
       allow read:   if isOwner(userId);
-      allow update: if isOwner(userId)
-        && request.resource != null
-        && request.resource.data.read == true;
+      allow update: if isOwner(userId);
       allow delete: if false;
+
+      /* ——— subcollection: notifications ——— */
+      match /notifications/{notifId} {
+        allow create: if false;
+        allow read:   if isOwner(userId);
+        allow update: if isOwner(userId) && request.resource.data.read == true;
+        allow delete: if false;
+      }
+
+      /* ——— subcollection: friendRequests ——— */
+      match /friendRequests/{requestId} {
+        allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid;
+        allow read:   if signedIn() && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
+        allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
+        allow delete: if false;
+      }
     }
 
     /* ——— relations (followers & friends) ——— */
     match /relations/{uid} {
       match /followers/{followerUid} {
-        allow create: if signedIn() && request.auth.uid == followerUid;
-        allow delete: if signedIn() && request.auth.uid == followerUid;
+        allow create, delete: if signedIn() && request.auth.uid == followerUid;
         allow read: if true;
         allow update: if false;
       }
 
-      match /friendRequests/{requestId} {
-        allow create: if signedIn()
-          && request.resource.data.fromUid == request.auth.uid;
-        allow read: if signedIn()
-          && (request.auth.uid == resource.data.fromUid
-              || request.auth.uid == resource.data.toUid);
-        allow update: if signedIn()
-          && request.resource.data.accepted == true
-          && request.auth.uid == resource.data.toUid;
-        allow delete: if false;
+      match /following/{targetUid} {
+        allow create, delete: if signedIn() && request.auth.uid == uid;
+        allow read: if true;
+        allow update: if false;
       }
+    }
+
+    /* ——— badgesProgress ——— */
+    match /badgesProgress/{uid} {
+      allow read: if isOwner(uid);
+      allow write, delete: if false;
+    }
+
+    /* ——— misc public collections ——— */
+    match /appConfig/{docId} {
+      allow read: if true;
+      allow write, delete: if false;
     }
   }
 }
