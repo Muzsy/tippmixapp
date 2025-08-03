@@ -1,0 +1,55 @@
+meta:
+  canvas: env-setup-task.md
+  priority: P1
+
+steps:
+  - create_file:
+      target: env.settings.dev
+      content: |
+        SCORE_POLL_CRON=0 */2 * * *
+        SCORE_SWEEP_CRON=0 9,21 * * *
+        KICKOFF_TRACKER_CRON=*/30 * * * *
+        ALLOWED_SPORTS=soccer_epl,basketball_nba
+        QUOTA_WARN_AT=50
+
+  - create_file:
+      target: env.settings.prod
+      content: |
+        SCORE_POLL_CRON=*/10 * * * *
+        SCORE_SWEEP_CRON=0 */2 * * *
+        KICKOFF_TRACKER_CRON=*/15 * * * *
+        ALLOWED_SPORTS=*
+        QUOTA_WARN_AT=1000
+
+  - create_file:
+      target: functions/src/config.ts
+      content: |
+        import fs from 'fs';
+        import path from 'path';
+        import dotenv from 'dotenv';
+
+        // 1. Load secrets & MODE from .env (git‑ignored)
+        dotenv.config({ path: '.env' });
+
+        const mode = process.env.MODE ?? 'prod';
+        const settingsPath = path.resolve(`env.settings.${mode}`);
+
+        if (fs.existsSync(settingsPath)) {
+          dotenv.config({ path: settingsPath, override: false });
+        }
+
+        export const Config = process.env; // egyszerű re‑export
+
+  - write_test:
+      name: loads_correct_dev_settings
+      location: functions/test/config.test.ts
+      content: |
+        import { Config } from '../src/config';
+        describe('Config loader', () => {
+          it('uses dev settings when MODE=dev', () => {
+            expect(Config.SCORE_POLL_CRON).toBe('0 */2 * * *');
+          });
+        });
+
+  - run: npm run lint --prefix functions
+  - run: npm test --prefix functions
