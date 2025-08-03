@@ -1,0 +1,130 @@
+meta:
+  canvas: wallet_lazy_init_docs.md
+  priority: P0
+
+steps:
+  # 1️⃣ CoinService – wallet lazy‑create finomhangolása
+  - patch_file:
+      target: lib/services/coin_service.dart
+      patch: |
+        @@
+-              if (walletSnap.exists && walletSnap.data()!.containsKey('coins')) {
+-                current = walletSnap.data()!['coins'] as int;
+-              } else {
+-                final userSnap = await txn.get(userRef);
+-                current = (userSnap.data()?['coins'] as int?) ?? 0;
+-
+-                // LAZY‑CREATE wallet doc so next ops hit it directly
+-                txn.set(walletRef, {
+-                  'coins': current,
+-                  'createdAt': FieldValue.serverTimestamp(),
+-                }, SetOptions(merge: true));
+-              }
++              if (walletSnap.exists && walletSnap.data()!.containsKey('coins')) {
++                current = walletSnap.data()!['coins'] as int;
++              } else {
++                // ➡️ fallback: read balance from users doc
++                final userSnap = await txn.get(userRef);
++                current = (userSnap.data()?['coins'] as int?) ?? 0;
++
++                // ➡️ LAZY‑CREATE wallet doc so subsequent requests use it
++                txn.set(walletRef, {
++                  'coins': current,
++                  'createdAt': FieldValue.serverTimestamp(),
++                });
++              }
+@@
+-              // write back to wallet (now guaranteed to exist)
+-              txn.set(walletRef, {'coins': current - stake}, SetOptions(merge: true));
++              // write back to wallet (now guaranteed to exist)
++              txn.update(walletRef, {'coins': current - stake});
+
+  # 2️⃣ Data Model EN – deprecate coins + add WalletModel
+  - patch_file:
+      target: docs/backend/data_model_en.md
+      patch: |
+        @@
+-Stores registered user data and TippCoin balance.
++Stores registered user data. **TippCoin balance moved to the WalletModel (see below).**
++
++> ⚠️ **Deprecated field**: `coins` – kept temporarily for backward compatibility. It will be removed after the Cloud Function‑based wallet initialisation rollout.
+@@
+-```dart
+-UserModel {
+-  String uid;
+-  String email;
+-  String? displayName;
++```dart
++UserModel {
++  String uid;
++  String email;
++  String? displayName;
++  // int coins; // DEPRECATED – see WalletModel
+@@
++# 💰 WalletModel (NEW)
++
++Stores TippCoin balance per user.
++
++```dart
++WalletModel {
++  String userId;   // same as auth.uid
++  int coins;       // Current TippCoin balance
++  Timestamp createdAt;
++}
++```
++
++- Location: `wallets/{userId}`
++- This document is **lazy‑created** by the mobile client on the first bet.
++- Later it will be initialised automatically via an **Auth onCreate Cloud Function**.
++
+  ## 🔜 Planned models
+
+  - `Tip...`
+
+  # (keep rest unchanged)
+
+  # 3️⃣ Data Model HU – ugyanaz magyarul
+  - patch_file:
+      target: docs/backend/data_model_hu.md
+      patch: |
+        @@
+-A felhasználó adatait és TippCoin egyenlegét tárolja.
++A felhasználó adatait tárolja. **A TippCoin‑egyenleg átkerült a WalletModel‑be.**
++
++> ⚠️ **Elavult mező**: `tippCoin` – ideiglenesen marad a kompatibilitás kedvéért, de hamarosan törlésre kerül, miután a Cloud Function inicializálja a wallet doksit.
+@@
+-```dart
+-UserModel {
+-  String uid;
+-  String email;
+-  String? displayName;
++```dart
++UserModel {
++  String uid;
++  String email;
++  String? displayName;
++  // int tippCoin; // ELAVULT – lásd WalletModel
+@@
++# 💰 WalletModel (ÚJ)
++
++TippCoin‑egyenleg tárolása felhasználónként.
++
++```dart
++WalletModel {
++  String userId;   // ugyanaz, mint az auth.uid
++  int coins;       // aktuális TippCoin egyenleg
++  Timestamp createdAt;
++}
++```
++
++- Elérési út: `wallets/{userId}`
++- A dokumentum **lazy‑create** módon jön létre az első fogadáskor.  
++  Később egy **Auth onCreate** Cloud Function fogja automatikusan létrehozni.
++
+  ## 🔜 Tervezett modellek
+
+  - `TippCoinLogModel` ... (marad változatlan)
+
+  # 4️⃣ CI – elemzés + tesztek + markdown-lint (ha van)
+  - run: flutter analyze
+  - run: flutter test
