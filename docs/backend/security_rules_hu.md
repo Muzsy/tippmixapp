@@ -19,6 +19,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 ```
 users/{uid}
   badges/{badgeId}
+  settings/{settingId}
 wallets/{uid}
 tickets/{ticketId}
 public_feed/{postId}
@@ -50,7 +51,7 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.keys().hasOnly([
-          'userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+          'id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
       allow read: if request.auth != null;
       allow update, delete: if false;
     }
@@ -75,6 +76,10 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.auth.uid == userId;
       allow update, delete: if false;
+    }
+
+    match /users/{userId}/settings/{settingId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
     match /copied_bets/{userId} {

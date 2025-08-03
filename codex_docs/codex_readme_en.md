@@ -62,3 +62,4 @@
 | ------------ | --------------- | -------------------------------------------------------------------------------- |
 | 2025‑07‑29   | @docs‑bot       | Első README létrehozva, bilingvális struktúra / Initial bilingual README created |
 | 2025‑08‑03   | @codex-bot      | TOC refreshed after security rules update                                       |
+| 2025‑08‑03   | @codex-bot      | TOC refreshed after ticket permissions fix                                      |
