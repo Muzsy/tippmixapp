@@ -22,8 +22,13 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 
 ### Szelvény beküldésekor
 
-- Levonás: `user.tippCoin -= stake`
-- Ha nincs elég egyenleg → blokkolás
+- A `debitAndCreateTicket()` metódus Firestore tranzakciót futtat, amely:
+  - beolvassa az aktuális egyenleget a `wallets/{uid}.coins` mezőből;
+  - ha az egyenleg < tét, `FirebaseException(insufficient_coins)` hibával megszakad;
+  - levonja a tétet mind a `wallets/{uid}.coins`, mind a `users/{uid}.coins` mezőből;
+  - ugyanebben a tranzakcióban létrehozza a `tickets/{ticketId}` dokumentumot.
+
+Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenlegbe szelvény nélkül.
 
 ### Eredmény kiértékelésekor
 
@@ -56,9 +61,9 @@ TippCoinLog {
 
 ## ⚠️ Jelenlegi állapot
 
-- Csak statikus TippCoin mező van a UserModel-ben
-- Nincs CoinService osztály vagy logika
-- Nincs log kollekció vagy UI komponens
+- Megvalósult a `CoinService.debitAndCreateTicket()` atomikus levonás és szelvénylétrehozás.
+- Az egyenleg azonnal tükröződik a `users/{uid}.coins` és `wallets/{uid}.coins` dokumentumokon.
+- A `coin_logs` naplózás még hiányzik.
 
 ---
 
