@@ -164,4 +164,31 @@ describe('Firestore security rules', () => {
       })
     );
   });
+
+  // SR‑13 — user can create his own ticket
+  it('SR-13 tickets create saját uid OK', async () => {
+    const db = authed('user1');
+    const id = `user1_${Date.now()}`;
+    await assertSucceeds(
+      setDoc(doc(db, `tickets/${id}`), {
+        id,
+        userId: 'user1',
+        tips: [],
+        stake: 5,
+        totalOdd: 2.4,
+        potentialWin: 12,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        status: 'open',
+      })
+    );
+  });
+
+  // SR‑14 — user can read & write his own settings
+  it('SR-14 settings read/write saját uid OK', async () => {
+    const db = authed('user1');
+    const ref = doc(db, 'users/user1/settings/theme');
+    await assertSucceeds(setDoc(ref, { value: 'dark' }));
+    await assertSucceeds(getDoc(ref));
+  });
 });
