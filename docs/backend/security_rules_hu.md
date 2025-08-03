@@ -9,6 +9,8 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - A felhasználó csak a saját adatait érhesse el / módosíthassa
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
+- A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
+- TippCoin egyenleg a `wallets/{uid}` kollekcióban tárolódik, amelyet csak a tulajdonos írhat
 
 ---
 
