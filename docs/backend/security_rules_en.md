@@ -9,6 +9,8 @@ This document defines the security model and Firestore access rules for TippmixA
 - Users can only read/write their own data
 - Prevent manipulation of TippCoin or tickets
 - Ensure data integrity during bet placement
+- Leaderboard requires read-only access to all `users/{uid}` docs for signed-in users
+- Each TippCoin balance lives under `wallets/{uid}` and is writable only by its owner
 
 ---
 

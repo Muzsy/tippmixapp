@@ -89,7 +89,8 @@ service cloud.firestore {
     /* ——— users collection ——— */
     match /users/{userId} {
       allow create: if signedIn() && request.auth.uid == userId;
-      allow read:   if isOwner(userId);
+      // Ranglistához minden hitelesített user olvashatja
+      allow read:   if signedIn();
       allow update: if isOwner(userId);
       allow delete: if false;
 
@@ -108,6 +109,13 @@ service cloud.firestore {
         allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
         allow delete: if false;
       }
+    }
+
+    // TippCoin egyenleg tárolása – saját wallet kezelés
+    match /wallets/{userId} {
+      allow create: if isOwner(userId);
+      allow read:   if isOwner(userId);
+      allow update: if isOwner(userId);
     }
 
     /* ——— relations (followers & friends) ——— */

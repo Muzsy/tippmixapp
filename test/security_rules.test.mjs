@@ -45,7 +45,7 @@ describe('Firestore security rules', () => {
       setDoc(doc(db, 'coin_logs/log1'), {
         userId: 'user1',
         amount: 50,
-        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
         type: 'bet',
       })
     );
@@ -58,7 +58,7 @@ describe('Firestore security rules', () => {
       setDoc(doc(db, 'coin_logs/log2'), {
         userId: 'user2',
         amount: 20,
-        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
         type: 'bet',
       })
     );
@@ -69,7 +69,7 @@ describe('Firestore security rules', () => {
     await seed('coin_logs/id1', {
       userId: 'user1',
       amount: 10,
-      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
       type: 'deposit',
     });
     await new Promise((r) => setTimeout(r, 500));
@@ -83,7 +83,7 @@ describe('Firestore security rules', () => {
     await seed('coin_logs/id2', {
       userId: 'user2',
       amount: 10,
-      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
       type: 'deposit',
     });
     await new Promise((r) => setTimeout(r, 500));
@@ -97,7 +97,7 @@ describe('Firestore security rules', () => {
     await seed('coin_logs/id3', {
       userId: 'user1',
       amount: 5,
-      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
       type: 'bet',
     });
     await new Promise((r) => setTimeout(r, 500));
@@ -116,33 +116,52 @@ describe('Firestore security rules', () => {
 
   // SR‑07 — user can read own notification
   it('SR-07 notification read saját', async () => {
-    await seed('notifications/user1/n/n1', { read: false });
+    await seed('users/user1/notifications/n1', { read: false });
 
     const db = authed('user1');
-    await assertSucceeds(getDoc(doc(db, 'notifications/user1/n/n1')));
+    await assertSucceeds(getDoc(doc(db, 'users/user1/notifications/n1')));
   });
 
   // SR‑08 — user cannot read others' notification
   it('SR-08 notification read idegen', async () => {
-    await seed('notifications/user2/n/n1', { read: false });
+    await seed('users/user2/notifications/n1', { read: false });
 
     const db = authed('user1');
-    await assertFails(getDoc(doc(db, 'notifications/user2/n/n1')));
+    await assertFails(getDoc(doc(db, 'users/user2/notifications/n1')));
   });
 
   // SR‑09 — user can mark own notification as read
   it('SR-09 notification markRead saját', async () => {
-    await seed('notifications/user1/n/n1', { read: false });
+    await seed('users/user1/notifications/n1', { read: false });
 
     const db = authed('user1');
-    await assertSucceeds(updateDoc(doc(db, 'notifications/user1/n/n1'), { read: true }));
+    await assertSucceeds(updateDoc(doc(db, 'users/user1/notifications/n1'), { read: true }));
   });
 
   // SR‑10 — user cannot mark others' notification as read
   it('SR-10 notification markRead idegen FAIL', async () => {
-    await seed('notifications/user2/n/n2', { read: false });
+    await seed('users/user2/notifications/n2', { read: false });
 
     const db = authed('user1');
-    await assertFails(updateDoc(doc(db, 'notifications/user2/n/n2'), { read: true }));
+    await assertFails(updateDoc(doc(db, 'users/user2/notifications/n2'), { read: true }));
+  });
+
+  // SR‑11 — authenticated user can read other profiles (leaderboard)
+  it('SR-11 users read toplista OK', async () => {
+    await seed('users/user1', { displayName: 'Alice' });
+    await new Promise((r) => setTimeout(r, 500));
+
+    const db = authed('user2');
+    await assertSucceeds(getDoc(doc(db, 'users/user1')));
+  });
+
+  // SR‑12 — user can write to own wallet
+  it('SR-12 wallets write saját uid OK', async () => {
+    const db = authed('user1');
+    await assertSucceeds(
+      setDoc(doc(db, 'wallets/user1'), {
+        balance: 100,
+      })
+    );
   });
 });
