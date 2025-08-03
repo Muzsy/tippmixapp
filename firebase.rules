@@ -41,6 +41,40 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    /* --- public_feed --- */
+    match /public_feed/{postId} {
+      // Bárki bejelentkezett olvashat.
+      allow read: if signedIn();
+      // Létrehozni csak saját userként lehet (FeedService ír bejegyzést).
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+
+      // Moderation reports subcollection
+      match /reports/{reportId} {
+        allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+        allow read, update, delete: if false;
+      }
+    }
+
+    /* --- moderation_reports (legacy path) --- */
+    match /moderation_reports/{reportId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+
+    /* --- users/{uid}/badges subcollection --- */
+    match /users/{userId}/badges/{badgeId} {
+      allow read: if signedIn();
+      allow create: if isOwner(userId);
+      allow update, delete: if false;
+    }
+
+    /* --- copied_bets --- */
+    match /copied_bets/{userId} {
+      allow read, write: if isOwner(userId);
+      allow delete: if false;
+    }
+
     /* ——— badges (public read) ——— */
     match /badges/{badgeId} {
       allow read: if true;
