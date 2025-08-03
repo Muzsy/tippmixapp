@@ -129,6 +129,36 @@ class CoinService {
   /// Claim today's daily bonus for the authenticated user.
   Future<void> claimDailyBonus() => creditDailyBonus();
 
+  /// Atomically deducts [stake] TippCoins **and** creates the betting
+  /// ticket in a single Firestore transaction so the balance can never
+  /// go negative and data stays consistent.
+  Future<void> debitAndCreateTicket({
+    required int stake,
+    required Map<String, dynamic> ticketData,
+  }) async {
+    final uid = _fa.currentUser!.uid;
+    final walletRef = _fs.collection('wallets').doc(uid);
+    final userRef = _fs.collection('users').doc(uid);
+    final ticketRef = _fs.collection('tickets').doc(ticketData['id'] as String);
+
+    await _fs.runTransaction((txn) async {
+      final walletSnap = await txn.get(walletRef);
+      final current = (walletSnap.data()?['coins'] as int?) ?? 0;
+
+      if (current < stake) {
+        throw FirebaseException(
+          plugin: 'coin_service',
+          code: 'insufficient_coins',
+          message: 'Not enough TippCoin balance.',
+        );
+      }
+
+      txn.set(walletRef, {'coins': current - stake}, SetOptions(merge: true));
+      txn.set(userRef, {'coins': current - stake}, SetOptions(merge: true));
+      txn.set(ticketRef, ticketData);
+    });
+  }
+
   Future<void> _callCoinTrx({
     required int amount,
     required String type,

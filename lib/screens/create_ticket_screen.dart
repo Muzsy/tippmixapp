@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../providers/bet_slip_provider.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
@@ -67,6 +68,19 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           context,
         ).showSnackBar(SnackBar(content: Text(loc.ticket_submit_success)));
         Navigator.of(context).pop();
+      }
+    } on FirebaseException catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (e.code == 'insufficient_coins') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nincs elegendő TippCoin az egyenlegeden.'),
+          ),
+        );
+      } else {
+        rethrow;
       }
     } catch (e) {
       setState(() {
