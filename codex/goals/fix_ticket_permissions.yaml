@@ -1,0 +1,53 @@
+meta:
+  canvas: fix_ticket_permissions.md
+  priority: P0
+
+steps:
+  # --- 1. firebase.rules javítása ---
+  - patch_file:
+      target: firebase.rules
+      patch: |
+        @@
+-       && request.resource.data.keys().hasOnly(['userId','ti...e','totalOdd','potentialWin','createdAt','updatedAt','status']);
++       && request.resource.data.keys().hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+     }
++
++    /*  ─── Felhasználói beállítások alkollekció ───  */
++    match /users/{userId}/settings/{settingId} {
++      allow read, write: if isOwner(userId);
++    }
+   }
+
+  # --- 2. Security rules teszt bővítése ---
+  - patch_file:
+      target: test/security_rules/security_rules.test.mjs
+      patch: |
+        @@
+         // ✅ sikeres jegy létrehozás
+-        // TODO: implement
++        it('allows authenticated user to create his own ticket', async () => {
++          const authedDb = getAuthedDb('alice');
++          const ticketDoc = authedDb.collection('tickets').doc(`alice_${Date.now()}`);
++          await firebase.assertSucceeds(ticketDoc.set({
++            id: ticketDoc.id,
++            userId: 'alice',
++            tips: [],
++            stake: 5,
++            totalOdd: 2.4,
++            potentialWin: 12,
++            createdAt: Date.now(),
++            updatedAt: Date.now(),
++            status: 'open'
++          }));
++        });
++
++        // ✅ settings read/write
++        it('allows user to read & write his own settings', async () => {
++          const authedDb = getAuthedDb('alice');
++          const themeDoc = authedDb.collection('users').doc('alice').collection('settings').doc('theme');
++          await firebase.assertSucceeds(themeDoc.set({ value: 'dark' }));
++          await firebase.assertSucceeds(themeDoc.get());
++        });
+  
+  # --- 3. Tesztek futtatása ---
+  - run: npm run test:security
