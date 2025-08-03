@@ -1,33 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "🚀  TipMixApp – univerzális setup indul..."
+# Double-run guard – legyen EZ az első “valódi” kód
+if [[ -f /tmp/codex_setup_ran ]]; then
+  echo "SETUP DUPLA – már futott egyszer."
+  exit 0  # vagy 1, ha direkt hibáztatni akarod
+fi
+touch /tmp/codex_setup_ran
+trap 'rm -f /tmp/codex_setup_ran' EXIT
 
-# ───────────────────────────────────────────────────────────────
-# 1. Flutter SDK (ha még nincs a PATH‑on – CI‑ben már lesz)
-# ───────────────────────────────────────────────────────────────
-if ! command -v flutter &> /dev/null; then
-  FLUTTER_VERSION_TAG=3.32.5
-  git clone --branch "$FLUTTER_VERSION_TAG" --depth 1 https://github.com/flutter/flutter.git
-  export PATH="$PWD/flutter/bin:$PATH"
+echo "🚀 TippmixApp – Codex setup indul..."
+
+# 0) Beállítások
+FLUTTER_VERSION_TAG="${FLUTTER_VERSION_TAG:-3.32.8}"  # egy helyen definiálva
+
+# 1) Flutter (csak ha nincs)
+if ! command -v flutter >/dev/null 2>&1; then
+  echo "→ Flutter ${FLUTTER_VERSION_TAG} letöltése..."
+  git clone --depth 1 --branch "${FLUTTER_VERSION_TAG}" https://github.com/flutter/flutter.git /opt/flutter
+  export PATH="/opt/flutter/bin:$PATH"
+else
+  # biztosítsuk, hogy a bin a PATH-on van
+  export PATH="$(dirname "$(command -v flutter)"):$PATH"
+fi
+flutter --version
+
+# 2) Firebase CLI (csak ha hiányzik) – Node 22 adott
+if ! command -v firebase >/dev/null 2>&1; then
+  echo "→ Firebase CLI telepítése..."
+  npm i -g firebase-tools@latest
+fi
+firebase --version || true
+
+# 3) Csomagok
+if [ -f "pubspec.yaml" ]; then
+  flutter pub get
+  if grep -q "build_runner" pubspec.yaml 2>/dev/null; then
+    flutter pub run build_runner build --delete-conflicting-outputs
+  fi
 fi
 
-flutter doctor -v
-
-# ───────────────────────────────────────────────────────────────
-# 2. Dart + Flutter dependenciák
-# ───────────────────────────────────────────────────────────────
-flutter pub get
-
-# Generált kódok, ha használsz build_runner‑t
-if grep -q "build_runner" pubspec.yaml 2>/dev/null; then
-  flutter pub run build_runner build --delete-conflicting-outputs
-fi
-
-# ───────────────────────────────────────────────────────────────
-# 3. Statikus elemzés és unit‑tesztek
-# ───────────────────────────────────────────────────────────────
-flutter analyze --no-fatal-infos --no-fatal-warnings lib test || true
-flutter test || true
-
-echo "✅  Setup kész – kód mehet 🎯"
+echo "✅ Codex setup kész."
