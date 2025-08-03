@@ -7,7 +7,9 @@ The models are implemented in Dart and stored in Firestore.
 
 ## 👤 UserModel
 
-Stores registered user data and TippCoin balance.
+Stores registered user data. **TippCoin balance moved to the WalletModel (see below).**
+
+> ⚠️ **Deprecated field**: `coins` – kept temporarily for backward compatibility. It will be removed after the Cloud Function‑based wallet initialisation rollout.
 
 ```dart
 UserModel {
@@ -15,7 +17,7 @@ UserModel {
   String email;
   String? displayName;
   String? avatarUrl;
-  int tippCoin;
+  // int tippCoin; // DEPRECATED – see WalletModel
   // planned: badges, leaderboardRank, country
 }
 ```
@@ -23,6 +25,22 @@ UserModel {
 - Created on registration
 - Default `tippCoin = 1000`
 - Stored under `users/{uid}`
+
+# 💰 WalletModel (NEW)
+
+Stores TippCoin balance per user.
+
+```dart
+WalletModel {
+  String userId;   // same as auth.uid
+  int coins;       // Current TippCoin balance
+  Timestamp createdAt;
+}
+```
+
+- Location: `wallets/{userId}`
+- This document is **lazy‑created** by the mobile client on the first bet.
+- Later it will be initialised automatically via an **Auth onCreate Cloud Function**.
 
 ## 🎯 TipModel
 

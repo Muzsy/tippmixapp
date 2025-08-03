@@ -7,7 +7,9 @@ A modellek Dart nyelven készülnek, Firestore-ban tárolódnak.
 
 ## 👤 UserModel
 
-A felhasználó adatait és TippCoin egyenlegét tárolja.
+A felhasználó adatait tárolja. **A TippCoin‑egyenleg átkerült a WalletModel‑be.**
+
+> ⚠️ **Elavult mező**: `tippCoin` – ideiglenesen marad a kompatibilitás kedvéért, de hamarosan törlésre kerül, miután a Cloud Function inicializálja a wallet doksit.
 
 ```dart
 UserModel {
@@ -15,7 +17,7 @@ UserModel {
   String email;
   String? displayName;
   String? avatarUrl;
-  int tippCoin;
+  // int tippCoin; // ELAVULT – lásd WalletModel
   // terv: badge-ek, ranglista helyezés, ország
 }
 ```
@@ -23,6 +25,22 @@ UserModel {
 - Regisztrációkor jön létre
 - Alapértelmezett `tippCoin = 1000`
 - Elérési út: `users/{uid}`
+
+# 💰 WalletModel (Új)
+
+TippCoin‑egyenleg tárolása felhasználónkként.
+
+```dart
+WalletModel {
+  String userId;   // ugyanaz, mint az auth.uid
+  int coins;       // aktuális TippCoin egyenleg
+  Timestamp createdAt;
+}
+```
+
+- Elérési út: `wallets/{userId}`
+- A dokumentum **lazy‑create** módon jön létre az első fogadáskor.
+  Később egy **Auth onCreate** Cloud Function fogja automatikusan létrehozni.
 
 ## 🎯 TipModel
 
