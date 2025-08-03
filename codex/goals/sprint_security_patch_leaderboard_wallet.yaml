@@ -1,0 +1,23 @@
+meta:
+  canvas: sprint_security_patch_leaderboard_wallet.md
+  priority: P0
+steps:
+  ‑ patch_file:
+      target: firebase.rules
+      patch: |
+        @@
+         match /users/{userId} {
+-          allow read:    if isOwner(userId);
++          // Ranglistához minden hitelesített user olvashatja
++          allow read:    if signedIn();
+           allow create:  if isOwner(userId);
+           allow update:  if isOwner(userId);
+         }
++
++        // TippCoin egyenleg tárolása – saját wallet kezelés
++        match /wallets/{userId} {
++          allow create: if isOwner(userId);
++          allow read:   if isOwner(userId);
++          allow update: if isOwner(userId);
++        }
+  ‑ run: npm run test:security   # security_rules.test.mjs → zöld
