@@ -1,0 +1,97 @@
+meta:
+  canvas: ticket_coin_integrity.md
+  priority: P0
+
+steps:
+  # 1️⃣ CoinService – tranzakciós levonás + ticket létrehozás
+  - patch_file:
+      target: lib/services/coin_service.dart
+      patch: |
+        @@
+         class CoinService {
+           ...
++
++          /// Atomically deducts [stake] TippCoins **and** creates the betting
++          /// ticket in a single Firestore transaction so the balance can never
++          /// go negative and data stays consistent.
++          Future<void> debitAndCreateTicket({
++            required int stake,
++            required Map<String, dynamic> ticketData,
++          }) async {
++            final uid = _fa.currentUser!.uid;
++            final walletRef = _fs.collection('wallets').doc(uid);
++            final userRef   = _fs.collection('users').doc(uid);
++            final ticketRef = _fs.collection('tickets').doc(ticketData['id'] as String);
++
++            await _fs.runTransaction((txn) async {
++              final walletSnap = await txn.get(walletRef);
++              final current = (walletSnap.data()?['coins'] as int?) ?? 0;
++
++              if (current < stake) {
++                throw FirebaseException(
++                  plugin: 'coin_service',
++                  code: 'insufficient_coins',
++                  message: 'Not enough TippCoin balance.',
++                );
++              }
++
++              txn.set(walletRef, {'coins': current - stake}, SetOptions(merge: true));
++              txn.set(userRef,   {'coins': current - stake}, SetOptions(merge: true));
++              txn.set(ticketRef, ticketData);
++            });
++          }
+        }
+
+  # 2️⃣ BetSlipService – új metódus használata
+  - patch_file:
+      target: lib/services/bet_slip_service.dart
+      patch: |
+        @@
+-      await cs.debitCoin(
+-        amount: stake,
+-        reason: 'bet_stake',
+-        transactionId: 'ticket_$ticketId',
+-      );
+-
+-      final db = firestore ?? FirebaseFirestore.instance;
+-      final ticketsRef = db.collection('tickets');
+-
+-      await ticketsRef.doc(ticketId).set(ticket.toJson());
++      await cs.debitAndCreateTicket(
++        stake: stake,
++        ticketData: ticket.toJson(),
++      );
+
+  # 3️⃣ UI – SnackBar hibakezelés
+  - patch_file:
+      target: lib/screens/betslip/submit_ticket_button.dart
+      patch: |
+        @@
+-        try {
+-          await betSlip.submitTicket(context);
+-        } on FirebaseException catch (e) {
+-          // handle other errors
+-        }
++        try {
++          await betSlip.submitTicket(context);
++        } on FirebaseException catch (e) {
++          if (e.code == 'insufficient_coins') {
++            ScaffoldMessenger.of(context).showSnackBar(
++              const SnackBar(content: Text('Nincs elegendő TippCoin az egyenlegeden.')),
++            );
++          } else {
++            rethrow;
++          }
++        }
+
+  # 4️⃣ Teszt – balance validation (váz)
+  - create_file:
+      target: test/services/coin_balance_validation_test.dart
+      content: |
+        // TODO: Implement emulator-based test to assert:
+        //  * insufficient coins throws FirebaseException(insufficient_coins)
+        //  * sufficient coins deducts balance and creates ticket
+
+  # 5️⃣ CI parancsok
+  - run: flutter analyze
+  - run: flutter test
