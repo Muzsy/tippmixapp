@@ -36,9 +36,14 @@ service cloud.firestore {
     match /tickets/{ticketId} {
       allow create: if signedIn()
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasOnly(['userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+        && request.resource.data.keys().hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
       allow read: if signedIn();
       allow update, delete: if false;
+    }
+
+    /*  ─── Felhasználói beállítások alkollekció ───  */
+    match /users/{userId}/settings/{settingId} {
+      allow read, write: if isOwner(userId);
     }
 
     /* --- public_feed --- */
