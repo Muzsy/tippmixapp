@@ -1,0 +1,104 @@
+meta:
+  canvas: scheduler-jobs-task.md
+  priority: P1
+  after:
+    - pubsub-topics-task.yaml
+
+steps:
+  - create_file:
+      target: infra/scheduler_jobs.tf
+      content: |
+        # -------------------------------------------------
+        # Cloud Scheduler Jobs for result evaluation
+        # -------------------------------------------------
+        variable "kickoff_cron" {
+          type        = string
+          default     = var.kickoff_cron
+        }
+        variable "poll_cron" {
+          type        = string
+          default     = var.poll_cron
+        }
+        variable "sweep_cron" {
+          type        = string
+          default     = var.sweep_cron
+        }
+
+        resource "google_cloud_scheduler_job" "kickoff_tracker" {
+          name             = "kickoff-tracker-job"
+          description      = "Publishes when matches about to start"
+          schedule         = var.kickoff_cron
+          time_zone        = "Europe/Budapest"
+
+          pubsub_target {
+            topic_name = google_pubsub_topic.result_check.name
+            data       = base64encode("{ \"job\": \"kickoff-tracker\" }")
+          }
+        }
+
+        resource "google_cloud_scheduler_job" "result_poller" {
+          name        = "result-poller-job"
+          description = "Publishes periodic result polling trigger"
+          schedule    = var.poll_cron
+          time_zone   = "Europe/Budapest"
+
+          pubsub_target {
+            topic_name = google_pubsub_topic.result_check.name
+            data       = base64encode("{ \"job\": \"result-poller\" }")
+          }
+        }
+
+        resource "google_cloud_scheduler_job" "final_sweep" {
+          name        = "final-sweep-job"
+          description = "Publishes catch‑all sweep trigger"
+          schedule    = var.sweep_cron
+          time_zone   = "Europe/Budapest"
+
+          pubsub_target {
+            topic_name = google_pubsub_topic.result_check.name
+            data       = base64encode("{ \"job\": \"final-sweep\" }")
+          }
+        }
+
+  - update_file:
+      target: infra/variables.tf
+      append: |
+        
+        variable "kickoff_cron" {
+          description = "Cron for kickoff tracker job"
+          type        = string
+        }
+        variable "poll_cron" {
+          description = "Cron for result poller job"
+          type        = string
+        }
+        variable "sweep_cron" {
+          description = "Cron for final sweep job"
+          type        = string
+        }
+
+  - create_file:
+      target: infra/test/scheduler_jobs.spec.ts
+      content: |
+        import fs from 'fs';
+        import path from 'path';
+
+        const tf = fs.readFileSync(path.resolve('infra/scheduler_jobs.tf'), 'utf8');
+
+        describe('Terraform Scheduler jobs', () => {
+          it('declares kickoff-tracker-job', () => {
+            expect(tf).toMatch(/kickoff-tracker-job/);
+          });
+          it('declares result-poller-job', () => {
+            expect(tf).toMatch(/result-poller-job/);
+          });
+          it('declares final-sweep-job', () => {
+            expect(tf).toMatch(/final-sweep-job/);
+          });
+          it('points to result-check topic', () => {
+            expect(tf).toMatch(/topic_name\s*=\s*google_pubsub_topic.result_check.name/);
+          });
+        });
+
+  - run: npm install --prefix infra/test --package-lock-only
+  - run: npx jest infra/test/scheduler_jobs.spec.ts
