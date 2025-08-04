@@ -1,0 +1,83 @@
+meta:
+  canvas: pubsub-topics-task.md
+  priority: P1
+
+steps:
+  - create_file:
+      target: infra/pubsub_topics.tf
+      content: |
+        terraform {
+          required_providers {
+            google = {
+              source  = "hashicorp/google"
+              version = ">= 5.0"
+            }
+          }
+        }
+
+        provider "google" {
+          project = var.project_id
+          region  = var.region
+        }
+
+        # -------------------------------------------------
+        # Pub/Sub Topics for result evaluation pipeline
+        # -------------------------------------------------
+
+        resource "google_pubsub_topic" "result_check" {
+          name                       = "result-check"
+          message_retention_duration = "604800s"  # 7 days
+          labels = {
+            env = var.environment
+          }
+        }
+
+        resource "google_pubsub_topic" "result_check_dlq" {
+          name                       = "result-check-dlq"
+          message_retention_duration = "604800s"
+          labels = {
+            env = var.environment
+          }
+        }
+
+  - create_file:
+      target: infra/variables.tf
+      content: |
+        variable "project_id" {
+          description = "GCP project ID"
+          type        = string
+        }
+
+        variable "region" {
+          description = "GCP region"
+          type        = string
+          default     = "europe-west1"
+        }
+
+        variable "environment" {
+          description = "Deployment environment (dev/prod)"
+          type        = string
+          default     = "dev"
+        }
+
+  - create_file:
+      target: infra/test/pubsub_topics.spec.ts
+      content: |
+        import fs from 'fs';
+        import path from 'path';
+
+        const tf = fs.readFileSync(path.resolve('infra/pubsub_topics.tf'), 'utf8');
+
+        describe('Terraform Pub/Sub topics', () => {
+          it('should declare result-check topic', () => {
+            expect(tf).toMatch(/name\s*=\s*"result-check"/);
+          });
+
+          it('should declare result-check-dlq topic', () => {
+            expect(tf).toMatch(/name\s*=\s*"result-check-dlq"/);
+          });
+        });
+
+  - run: npm install --prefix infra/test --package-lock-only
+    # ensures jest is present for the infra tests (creates minimal package)
+  - run: npx jest infra/test/pubsub_topics.spec.ts
