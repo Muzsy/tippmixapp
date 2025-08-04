@@ -18,6 +18,7 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 | Localization Best Practices     | `localization_best_practice_en.md` | `localization_best_practice_hu.md` |
 | Theme Rules & Branding          | `theme_rules_en.md`                | `theme_rules_hu.md`                |
 | Coin Service Logic              | `coin_service_logic_en.md`         | `coin_service_logic_hu.md`         |
+| Environment Config Loader       | `env_config_en.md`                 | `env_config_hu.md`                 |
 | Leaderboard Logic               | `leaderboard_logic_en.md`          | `leaderboard_logic_hu.md`          |
 | Badge System                    | `badge_system_en.md`               | `badge_system_hu.md`               |
 | Feed Module Plan                | `feed_module_plan_en.md`           | `feed_module_plan_hu.md`           |
