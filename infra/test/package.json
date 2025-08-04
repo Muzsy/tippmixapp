@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "jest": "^30.0.5"
+  },
+  "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "testEnvironment": "node",
+    "transform": {}
+  },
+  "name": "infra-test",
+  "private": true,
+  "type": "module"
+}
