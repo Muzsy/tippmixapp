@@ -9,3 +9,9 @@ Ez a dokumentum bemutatja, hogyan töltik be a Cloud Functions a nem érzékeny 
 ## Betöltő
 A `functions/src/config.ts` először beolvassa a `.env` fájlt (titkok, `MODE`), majd összefésüli az `env.settings.${MODE}` tartalmával.
 A feltöltött `process.env` változókat `Config` néven exportálja a modulok számára.
+
+## Cron változók
+
+- `KICKOFF_TRACKER_CRON`
+- `SCORE_POLL_CRON`
+- `SCORE_SWEEP_CRON`
