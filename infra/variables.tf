@@ -14,3 +14,17 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "kickoff_cron" {
+  description = "Cron for kickoff tracker job"
+  type        = string
+}
+variable "poll_cron" {
+  description = "Cron for result poller job"
+  type        = string
+}
+variable "sweep_cron" {
+  description = "Cron for final sweep job"
+  type        = string
+}
+
