@@ -24,6 +24,7 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 | Feed Module Plan                | `feed_module_plan_en.md`           | `feed_module_plan_hu.md`           |
 | Forum Module Plan               | `forum_module_plan_en.md`          | `forum_module_plan_hu.md`          |
 | Push Notification Strategy      | `push_notification_strategy_en.md` | `push_notification_strategy_hu.md` |
+| Pub/Sub Topics                  | `pubsub_topics_en.md`              | `pubsub_topics_hu.md`              |
 | Golden Testing & Accessibility  | `golden_workflow_en.md`            | `golden_workflow_hu.md`            |
 | Security Rules & Access Control | `security_rules_en.md`             | `security_rules_hu.md`             |
 | CI/CD Pipeline                  | `github_actions_pipeline_en.md`    | `github_actions_pipeline_hu.md`    |
