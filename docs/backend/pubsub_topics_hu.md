@@ -1,4 +1,4 @@
-version: "2025-08-04"
+version: "2025-08-05"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -10,3 +10,11 @@ Terraform által kezelt Google Pub/Sub témák a mérkőzés-kiértékelő folya
 
 - `result-check`: fő téma, 7 napos retention.
 - `result-check-dlq`: Dead-Letter Queue a hibás üzeneteknek, 7 napos retention.
+
+## Ütemezett feladatok
+
+Az alábbi Cloud Scheduler jobok a `result-check` témára publikálnak:
+
+- `kickoff-tracker-job`
+- `result-poller-job`
+- `final-sweep-job`
