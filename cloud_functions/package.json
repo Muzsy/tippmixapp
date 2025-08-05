@@ -10,6 +10,10 @@
     "@firebase/rules-unit-testing": "^5.0.0",
     "@firebase/testing": "^0.20.11",
     "@types/jest": "^29.5.14",
+    "firebase": "^12.0.0",
+    "firebase-functions-test": "^3.4.1",
+    "firebase-tools": "^14.11.2",
+    "fs": "^0.0.1-security",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.1",
@@ -29,6 +33,7 @@
     "build": "tsc",
     "lint": "tsc --noEmit",
     "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts",
-    "test": "jest"
+    "test": "jest",
+    "e2e": "MODE=dev USE_MOCK_SCORES=true jest --config jest-e2e.config.js"
   }
 }
