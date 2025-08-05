@@ -26,6 +26,7 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 | Push Notification Strategy      | `push_notification_strategy_en.md` | `push_notification_strategy_hu.md` |
 | Pub/Sub Topics                  | `pubsub_topics_en.md`              | `pubsub_topics_hu.md`              |
 | Result Provider Service         | `result_provider_en.md`            | `result_provider_hu.md`            |
+| match_finalizer Function        | `match_finalizer_en.md`           | `match_finalizer_hu.md`           |
 | Golden Testing & Accessibility  | `golden_workflow_en.md`            | `golden_workflow_hu.md`            |
 | Security Rules & Access Control | `security_rules_en.md`             | `security_rules_hu.md`             |
 | CI/CD Pipeline                  | `github_actions_pipeline_en.md`    | `github_actions_pipeline_hu.md`    |
