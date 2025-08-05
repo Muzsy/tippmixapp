@@ -1,28 +1,26 @@
-# Backend – Firestore Rules hotfix – Ticket create permission
+# Firestore szabályjavítás – Ticket kulcslista
 
 ## Kontextus
 
-A felhasználók *cloud\_firestore/permission‑denied* hibát kapnak, amikor szelvényt (ticket) próbálnak beküldeni. A futási log és a security\_rules.test `SR‑13` tesztje alapján a `/tickets/{ticketId}` szabály a `request.resource.data.keys().hasOnly([...])` listából **hiányolja** a `tips` és `stake` kulcsokat. A `Ticket` modell viszont ezeket kötelezően tartalmazza, így a Firestore szabályok elutasítják a `create` műveletet.
+A szelvény beküldés (POST `/tickets/{ticketId}`) továbbra is **cloud\_firestore/permission-denied** hibát dobott. A legutóbbi patch során a kulcslista `hasOnly([...])` javítása hibás volt: a `...` placeholder véletlenül belekerült a prod szabályba, így a megengedett kulcsok listája rosszul definiálódott (`['id','userId','...tus']`). Ez elvágta minden beküldési kísérletet, hiszen a kliens valós kulcsai (tips, stake, totalOdd, potentialWin, createdAt, updatedAt, status) **hiányoztak** a listából.
 
 ## Cél (Goal)
 
-Az authenticated felhasználó problémamentesen tudjon saját szelvényt létrehozni, miközben a többi biztonsági feltétel érintetlen marad.
+Az `/tickets/{ticketId}` szabály kulcslistáját helyes, **teljes** felsorolásra cserélni, hogy a kliens-oldali `Ticket.toJson()` által küldött mezők átmenjenek az ellenőrzésen.
 
 ## Feladatok
 
-* [ ] Frissítsük a `firebase.rules` fájlban a `/tickets/{ticketId}` alatt lévő `allow create` feltételt úgy, hogy a `hasOnly([...])` listába bekerüljön a **`'tips'`** és **`'stake'`** kulcs.
-* [ ] Ne módosítsunk egyéb szabályt (read/update/delete marad, csak a kulcslista bővül).
-* [ ] Futtassuk a `scripts/test_firebase_rules.sh` szkriptet; a `SR‑13 tickets create` tesztnek zöldre kell váltania.
-* [ ] Futtassuk a `flutter analyze` parancsot – nem lehet lint vagy warning.
+* [ ] Frissíteni a `firebase.rules` fájlt: `hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status'])`.
+* [ ] Futtatni `flutter analyze` – nincs linter hiba.
+* [ ] Lefuttatni a `scripts/test_firebase_rules.sh` CI tesztet – zöld.
 
 ## Acceptance Criteria / Done Definition
 
-* [ ] A TippmixApp‑ban a szelvény beküldése már nem dob *permission‑denied* hibát.
-* [ ] A CI‑ben a **Firebase security rules** teszt (`scripts/test_firebase_rules.sh`) teljesen zöld.
+* [ ] A szelvény beküldése már **nem** dob `permission-denied` hibát.
 * [ ] `flutter analyze` hibamentes.
-* [ ] Tesztlefedettség ≥ 80 % változatlan marad.
+* [ ] Firestore Rules teszt 100 %‐os siker.
 
 ## Hivatkozások
 
-* Canvas → `/codex/goals/fix_ticket_permission_denied.yaml`
-* Log részlet: lásd *log.txt* turn0file0 SR‑13 teszt kimenet.
+* YAML: `/codex/goals/fix_ticket_permission_denied.yaml`
+* Log hibakimenet: `log.txt` fileciteturn1file0
