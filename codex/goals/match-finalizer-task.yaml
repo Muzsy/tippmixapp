@@ -1,0 +1,157 @@
+meta:
+  canvas: match-finalizer-task.md
+  priority: P1
+  after:
+    - result-provider-task.yaml
+
+steps:
+  # ---------------------------
+  # Source files
+  # ---------------------------
+  - create_file:
+      target: functions/src/match_finalizer.ts
+      content: |
+        import { PubSub } from '@google-cloud/pubsub';
+        import * as admin from 'firebase-admin';
+        import { ResultProvider } from './services/ResultProvider';
+        import { CoinService } from './services/CoinService';
+
+        admin.initializeApp();
+        const db = admin.firestore();
+        const resultProvider = new ResultProvider();
+        const coinService = new CoinService();
+
+        interface PubSubMessage {
+          data?: string;
+          attributes?: { [key: string]: string };
+        }
+
+        type JobType = 'kickoff-tracker' | 'result-poller' | 'final-sweep';
+
+        exports.match_finalizer = async (message: PubSubMessage): Promise<void> => {
+          const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
+          const { job }: { job: JobType } = JSON.parse(payloadStr);
+
+          console.log(`[match_finalizer] received job: ${job}`);
+
+          // 1) Collect pending tickets + related eventIds
+          const ticketsSnap = await db.collection('tickets')
+            .where('status', '==', 'pending')
+            .get();
+
+          if (ticketsSnap.empty) {
+            console.log('[match_finalizer] no pending tickets – exit');
+            return;
+          }
+
+          const eventIdSet = new Set<string>();
+          ticketsSnap.docs.forEach(doc => {
+            eventIdSet.add(doc.get('eventId'));
+          });
+
+          const eventIds = Array.from(eventIdSet);
+          console.log(`[match_finalizer] found ${eventIds.length} unique eventIds`);
+
+          // 2) Fetch scores
+          let scores;
+          try {
+            scores = await resultProvider.getScores(eventIds);
+          } catch (err) {
+            console.error('[match_finalizer] ResultProvider error', err);
+            throw err; // message will be retried / DLQ
+          }
+
+          // 3) Map of completed results
+          const completedMap = new Map<string, boolean>();
+          scores.filter(s => s.completed).forEach(s => completedMap.set(s.id, (s.scores?.home || 0) > (s.scores?.away || 0)));
+
+          // 4) Iterate over tickets and update if completed
+          const batch = db.batch();
+          ticketsSnap.docs.forEach(doc => {
+            const eventId = doc.get('eventId');
+            if (completedMap.has(eventId)) {
+              const won = completedMap.get(eventId)!;
+              batch.update(doc.ref, {
+                status: won ? 'won' : 'lost'
+              });
+              if (won) {
+                coinService.credit(doc.get('uid'), doc.get('potentialProfit'));
+              }
+            }
+          });
+
+          await batch.commit();
+          console.log('[match_finalizer] batch commit done');
+        };
+
+  - create_file:
+      target: functions/src/services/CoinService.ts
+      content: |
+        import * as admin from 'firebase-admin';
+        const db = admin.firestore();
+
+        export class CoinService {
+          /**
+           * Credits a user wallet – stub implementation. Will be refined in coin-credit-task.
+           */
+          async credit(uid: string, amount: number): Promise<void> {
+            console.log(`[CoinService] credit ${amount} coins to ${uid}`);
+            // TODO: implement transactional wallet update.
+            await db.doc(`wallets/${uid}`).set({
+              balance: admin.firestore.FieldValue.increment(amount)
+            }, { merge: true });
+          }
+        }
+
+  # ---------------------------
+  # Test file
+  # ---------------------------
+  - create_file:
+      target: functions/test/match_finalizer.spec.ts
+      content: |
+        import { ResultProvider } from '../src/services/ResultProvider';
+        jest.mock('../src/services/ResultProvider');
+        jest.mock('../src/services/CoinService');
+
+        import * as admin from 'firebase-admin';
+        import { Firestore } from '@google-cloud/firestore';
+
+        import { match_finalizer } from '../src/match_finalizer';
+
+        const mockDb = new Firestore();
+        jest.spyOn(admin, 'firestore').mockReturnValue(mockDb as any);
+
+        (ResultProvider as jest.Mock).mockImplementation(() => {
+          return {
+            getScores: async () => [
+              { id: 'event123', sport_key: 'soccer_epl', completed: true, scores: { home: 3, away: 1 } }
+            ]
+          };
+        });
+
+        it('updates tickets and credits coins on win', async () => {
+          // Arrange – create fake pending ticket in emulator memory
+          const ticketRef = mockDb.collection('tickets').doc('t1');
+          await ticketRef.set({
+            status: 'pending',
+            eventId: 'event123',
+            potentialProfit: 100,
+            uid: 'user1'
+          });
+
+          // Act – trigger function
+          const msg = {
+            data: Buffer.from(JSON.stringify({ job: 'result-poller' })).toString('base64')
+          } as any;
+          await match_finalizer(msg);
+
+          // Assert – ticket status won
+          const updated = await ticketRef.get();
+          expect(updated.get('status')).toBe('won');
+        });
+
+  # ---------------------------
+  # Dependencies & test run
+  # ---------------------------
+  - run: npm install --prefix functions firebase-admin @google-cloud/pubsub @google-cloud/firestore jest ts-jest @types/jest --save-dev --package-lock-only
+  - run: npm test --prefix functions
