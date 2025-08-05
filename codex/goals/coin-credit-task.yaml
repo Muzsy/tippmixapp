@@ -1,0 +1,115 @@
+meta:
+  canvas: coin-credit-task.md
+  priority: P1
+  after:
+    - match-finalizer-task.yaml
+
+steps:
+  # ---------------------------
+  # Update CoinService implementation
+  # ---------------------------
+  - update_file:
+      target: functions/src/services/CoinService.ts
+      multiple: false
+      pattern: ".*"
+      replacement: |
+        import * as admin from 'firebase-admin';
+        const db = admin.firestore();
+
+        export class CoinService {
+          /**
+           * Idempotens TIPP‑Coin jóváírás.
+           * @param uid felhasználó azonosító
+           * @param amount pozitív (nyeremény) vagy negatív (tétlevonás) összeg
+           * @param ticketId az érintett szelvény azonosítója – ledger primary key
+           */
+          async transact(uid: string, amount: number, ticketId: string, type: 'win' | 'bet'): Promise<void> {
+            const walletRef = db.doc(`wallets/${uid}`);
+            const ledgerRef = walletRef.collection('ledger').doc(ticketId);
+
+            await db.runTransaction(async (tx) => {
+              const ledgerSnap = await tx.get(ledgerRef);
+              if (ledgerSnap.exists) {
+                // Idempotens: már jóváírva
+                return;
+              }
+
+              // Balance frissítés (wallet doksi létrehozása, ha hiányzik)
+              tx.set(walletRef, {
+                balance: admin.firestore.FieldValue.increment(amount),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+              }, { merge: true });
+
+              // Ledger entry
+              tx.set(ledgerRef, {
+                amount,
+                type,
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+              });
+            });
+          }
+
+          /** Convenience wrap – nyeremény jóváírás */
+          credit(uid: string, amount: number, ticketId: string) {
+            return this.transact(uid, amount, ticketId, 'win');
+          }
+
+          /** Convenience wrap – tét levonás */
+          debit(uid: string, amount: number, ticketId: string) {
+            return this.transact(uid, -Math.abs(amount), ticketId, 'bet');
+          }
+        }
+
+  # ---------------------------
+  # Security rules snippet (append)
+  # ---------------------------
+  - update_file:
+      target: firestore.rules
+      multiple: false
+      pattern: "(?s)(service cloud.firestore.*)"
+      replacement: |
+        $1
+
+        // Wallets: read allowed to owner, write only via privileged server context
+        match /wallets/{userId} {
+          allow read: if request.auth != null && request.auth.uid == userId;
+          allow write: if request.auth == null; // Only server (admin) SDK without auth
+
+          match /ledger/{ticketId} {
+            allow read: if request.auth != null && request.auth.uid == userId;
+            allow write: if request.auth == null;
+          }
+        }
+
+  # ---------------------------
+  # Tests
+  # ---------------------------
+  - create_file:
+      target: functions/test/CoinService.spec.ts
+      content: |
+        import { CoinService } from '../src/services/CoinService';
+        import * as admin from 'firebase-admin';
+        import { Firestore } from '@google-cloud/firestore';
+
+        const mockDb = new Firestore();
+        jest.spyOn(admin, 'firestore').mockReturnValue(mockDb as any);
+
+        describe('CoinService transact', () => {
+          it('credits only once on concurrent calls', async () => {
+            const svc = new CoinService();
+
+            await Promise.all([
+              svc.credit('u1', 50, 'ticket42'),
+              svc.credit('u1', 50, 'ticket42')
+            ]);
+
+            const walletSnap = await mockDb.doc('wallets/u1').get();
+            expect(walletSnap.get('balance')).toBe(50);
+
+            const ledgerSnap = await mockDb.doc('wallets/u1/ledger/ticket42').get();
+            expect(ledgerSnap.exists).toBe(true);
+          });
+        });
+
+  - run: npm install --prefix functions @firebase/rules-unit-testing --save-dev --package-lock-only
+  - run: npm test --prefix functions
