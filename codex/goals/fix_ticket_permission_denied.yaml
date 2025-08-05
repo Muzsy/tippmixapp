@@ -1,0 +1,14 @@
+# file: /codex/goals/fix_ticket_permission_denied.yaml
+meta:
+  canvas: fix_ticket_permission_denied.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: firebase.rules
+      patch: |
+        @@
+-        && request.resource.data.keys().hasOnly(['id','userId','...','totalOdd','potentialWin','createdAt','updatedAt','status']);
++        && request.resource.data.keys().hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+  - run: flutter analyze
+  - run: scripts/test_firebase_rules.sh
