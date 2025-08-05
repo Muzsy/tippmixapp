@@ -64,4 +64,5 @@
 | 2025‑08‑03   | @codex-bot      | TOC refreshed after security rules update                                       |
 | 2025‑08‑03   | @codex-bot      | TOC refreshed after ticket permissions fix                                      |
 | 2025‑08‑03   | @codex-bot      | TOC refreshed after coin integrity update                                       |
+| 2025‑08‑04   | @codex-bot      | TOC refreshed after result provider docs                                       |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after scheduler jobs docs                                      |
