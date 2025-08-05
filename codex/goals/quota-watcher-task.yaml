@@ -1,0 +1,91 @@
+meta:
+  canvas: quota-watcher-task.md
+  priority: P1
+  after:
+    - coin-credit-task.yaml
+
+steps:
+  # ---------------------------
+  # Terraform for log metric and alert
+  # ---------------------------
+  - create_file:
+      target: infra/notification_channel.tf
+      content: |
+        resource "google_monitoring_notification_channel" "slack_channel" {
+          display_name = "Slack – OddsAPI quota"
+          type         = "slack"
+
+          labels = {
+            token = var.slack_webhook_url
+          }
+        }
+
+  - create_file:
+      target: infra/monitoring_alert.tf
+      content: |
+        resource "google_logging_metric" "remaining_credits_metric" {
+          name   = "remaining_credits"
+          filter = "jsonPayload.message:\"[quota]\""
+          value_extractor = "REGEXP_EXTRACT(jsonPayload.message, '\\[quota\\] remaining=(\\d+)')"
+          metric_descriptor {
+            metric_kind = "GAUGE"
+            value_type  = "INT64"
+            unit        = "1"
+          }
+        }
+
+        resource "google_monitoring_alert_policy" "credit_low_alert" {
+          display_name = "OddsAPI credits below threshold"
+          combiner     = "OR"
+
+          conditions {
+            display_name = "Remaining credits low"
+            condition_threshold {
+              filter          = "metric.type=\"logging.googleapis.com/user/remaining_credits\""
+              comparison      = "COMPARISON_LT"
+              threshold_value = var.quota_warn_at
+              duration        = "300s"   # 5 minutes
+            }
+          }
+
+          notification_channels = [google_monitoring_notification_channel.slack_channel.id]
+        }
+
+  - update_file:
+      target: infra/variables.tf
+      append: |
+        
+        variable "slack_webhook_url" {
+          description = "Slack incoming WebHook URL for alerts"
+          type        = string
+        }
+
+        variable "quota_warn_at" {
+          description = "Alert threshold for remaining OddsAPI credits"
+          type        = number
+          default     = 1000
+        }
+
+  # ---------------------------
+  # Tests
+  # ---------------------------
+  - create_file:
+      target: infra/test/quota_watcher.spec.ts
+      content: |
+        import fs from 'fs';
+        import path from 'path';
+
+        const alertTf = fs.readFileSync(path.resolve('infra/monitoring_alert.tf'), 'utf8');
+
+        describe('Quota watcher alert TF', () => {
+          it('defines remaining_credits metric', () => {
+            expect(alertTf).toMatch(/remaining_credits_metric/);
+          });
+
+          it('defines credit_low_alert policy', () => {
+            expect(alertTf).toMatch(/credit_low_alert/);
+          });
+        });
+
+  - run: npm install --prefix infra/test --package-lock-only
+  - run: npx jest infra/test/quota_watcher.spec.ts
