@@ -25,10 +25,10 @@ a főbb modulokat, rétegeket és keresztfunkciókat összefoglalva.
 - Egyedi `OddsApiService` osztályon keresztül történik a kommunikáció.
 - API kulcs jelenleg beégetve – terv szerint `.env` fájlba költözik.
 
-### 4. Python szkriptek (opcionális)
+### 4. Cloud Functions (Node/TypeScript)
 
-- `match_finalizer.py`: meccsek kiértékelése.
-- Később backend ütemezett funkcióvá válhat.
+- `match_finalizer.ts`: meccsek kiértékelése.
+- Később további ütemezett feladatokkal bővülhet.
 
 ---
 
