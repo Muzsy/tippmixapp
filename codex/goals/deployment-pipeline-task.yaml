@@ -1,0 +1,134 @@
+meta:
+  canvas: deployment-pipeline-task.md
+  priority: P1
+  after:
+    - integration-e2e-task.yaml
+
+steps:
+  # ---------------------------
+  # Helper script to flatten env.settings.*
+  # ---------------------------
+  - create_file:
+      target: scripts/set-env.sh
+      content: |
+        #!/usr/bin/env bash
+        # Usage: ./scripts/set-env.sh env.settings.dev
+        paste -sd ',' "$1" | tr ',' '\n' | xargs | tr ' ' ','
+        # outputs: KEY1=val1,KEY2=val2 ...
+
+  # ---------------------------
+  # GitHub Actions workflow
+  # ---------------------------
+  - create_file:
+      target: .github/workflows/deploy.yml
+      content: |
+        name: Deploy Backend
+        on:
+          push:
+            branches: [ dev, main ]
+        jobs:
+          build-test-deploy:
+            runs-on: ubuntu-latest
+            env:
+              MODE: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+            steps:
+              - uses: actions/checkout@v4
+
+              - name: Set up Node 18
+                uses: actions/setup-node@v3
+                with:
+                  node-version: 18
+
+              - name: Install dependencies
+                run: npm ci --prefix functions
+
+              - name: Lint & Unit
+                run: npm test --prefix functions
+
+              - name: E2E tests
+                run: npm run e2e --prefix functions
+
+              - name: Setup gcloud
+                uses: google-github-actions/setup-gcloud@v2
+                with:
+                  project_id: ${{ env.MODE == 'prod' && secrets.GCLOUD_PROJECT_ID_PROD || secrets.GCLOUD_PROJECT_ID_DEV }}
+                  service_account_key: ${{ env.MODE == 'prod' && secrets.GCLOUD_SERVICE_KEY_PROD || secrets.GCLOUD_SERVICE_KEY_DEV }}
+                  export_default_credentials: true
+
+              - name: Terraform init & plan
+                run: |
+                  cd infra
+                  terraform init -input=false
+                  terraform plan -input=false -var environment=${{ env.MODE }} -var quota_warn_at=${{ env.MODE == 'prod' && 1000 || 50 }} -var slack_webhook_url=${{ secrets.SLACK_WEBHOOK_URL }}
+
+              - name: Terraform apply (dev only)
+                if: env.MODE == 'dev'
+                run: |
+                  cd infra
+                  terraform apply -input=false -auto-approve -var environment=dev -var slack_webhook_url=${{ secrets.SLACK_WEBHOOK_URL }} -var quota_warn_at=50
+
+              # Optional manual step for prod apply via GitHub Environments protection rules
+
+              - name: Deploy Cloud Function match_finalizer
+                run: |
+                  ENV_VARS=$(./scripts/set-env.sh env.settings.${{ env.MODE }})
+                  gcloud functions deploy match_finalizer \
+                    --runtime=nodejs18 \
+                    --trigger-topic=result-check \
+                    --set-env-vars=$ENV_VARS,ODDS_API_KEY=${{ secrets.ODDS_API_KEY }} \
+                    --region=europe-west1 --quiet
+
+              - name: Slack success
+                uses: 8398a7/action-slack@v3
+                with:
+                  status: custom
+                  fields: github,commit,workflow,job,took
+                  payload: '{"text":"✅ Tippmixapp backend *${{ env.MODE }}* deploy succeeded."}'
+                env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+              - name: Slack failure
+                if: failure()
+                uses: 8398a7/action-slack@v3
+                with:
+                  status: custom
+                  fields: github,commit,workflow,job,took
+                  payload: '{"text":"❌ Tippmixapp backend *${{ env.MODE }}* deploy failed."}'
+                env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ---------------------------
+  # README for CI secrets
+  # ---------------------------
+  - create_file:
+      target: README-ci.md
+      content: |
+        # CI/CD Secrets
+        Add the following secrets to the GitHub repository:
+        | Name | Description |
+        |------|-------------|
+        | **GCLOUD_SERVICE_KEY_DEV** | JSON key for dev service account with Cloud Functions & Terraform perms |
+        | **GCLOUD_PROJECT_ID_DEV** | GCP project ID for dev |
+        | **GCLOUD_SERVICE_KEY_PROD** | JSON key for prod service account (restricted apply) |
+        | **GCLOUD_PROJECT_ID_PROD** | GCP project ID for prod |
+        | **ODDS_API_KEY** | The same key stored in `.env` locally |
+        | **SLACK_WEBHOOK_URL** | Incoming webhook for alert & deploy notifications |
+
+  # ---------------------------
+  # Unit test to ensure workflow contains key commands
+  # ---------------------------
+  - create_file:
+      target: infra/test/deploy_workflow.spec.ts
+      content: |
+        import fs from 'fs';
+        const wf = fs.readFileSync('.github/workflows/deploy.yml', 'utf8');
+        describe('Deploy workflow', () => {
+          it('includes gcloud functions deploy', () => {
+            expect(wf).toMatch(/gcloud functions deploy/);
+          });
+          it('includes terraform plan', () => {
+            expect(wf).toMatch(/terraform plan/);
+          });
+        });
+
+  - run: npm install --prefix infra/test --package-lock-only
+  - run: npx jest infra/test/deploy_workflow.spec.ts
