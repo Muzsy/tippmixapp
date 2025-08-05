@@ -32,10 +32,11 @@ Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenleg
 
 ### Eredmény kiértékelésekor
 
-- Ha a szelvény `won`:
-
-  - Jóváírás: `user.tippCoin += potentialWin`
-- Ha `lost`: nincs változás
+- A `CoinService.credit(uid, potentialWin, ticketId)` Firestore tranzakciót futtat, amely:
+  - ellenőrzi a `wallets/{uid}/ledger/{ticketId}` dokumentumot és ha létezik, kilép (idempotens);
+  - növeli a `wallets/{uid}.balance` mezőt;
+  - létrehozza a ledger bejegyzést `{ amount, type: 'win', createdAt }`.
+- A `CoinService.debit(uid, stake, ticketId)` ugyanezt a folyamatot hajtja végre negatív összeggel és `type: 'bet'` értékkel.
 
 ---
 
@@ -44,7 +45,6 @@ Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenleg
 - TippCoin módosítás kizárólag szerveroldalon történhet
 - Firebase Cloud Functions használata javasolt
 - Minden tranzakció legyen naplózva (`TippCoinLogModel`)
-
 ```json
 TippCoinLog {
   type: "stake" | "reward",
@@ -54,6 +54,18 @@ TippCoinLog {
 }
 ```
 
+- Wallet struktúra:
+
+  ```
+  wallets/{uid}
+    balance: number
+    updatedAt: timestamp
+    ledger/{ticketId}
+      amount: number
+      type: 'bet' | 'win'
+      createdAt: timestamp
+  ```
+
 - Naplók: `users/{uid}/coin_logs/` kollekció alatt
 - A profil UI-on megjeleníthetők az utolsó tranzakciók
 
@@ -61,8 +73,9 @@ TippCoinLog {
 
 ## ⚠️ Jelenlegi állapot
 
-- Megvalósult a `CoinService.debitAndCreateTicket()` atomikus levonás és szelvénylétrehozás.
-- Az egyenleg azonnal tükröződik a `users/{uid}.coins` és `wallets/{uid}.coins` dokumentumokon.
+- A `CoinService.transact()` idempotens módon frissíti az egyenleget és létrehozza a ledger bejegyzést.
+- A `CoinService.debitAndCreateTicket()` továbbra is atomikusan levonja a tétet és létrehozza a szelvényt.
+- A wallet egyenleg a `wallets/{uid}.balance` mezőn azonnal frissül.
 - A `coin_logs` naplózás még hiányzik.
 
 ---

@@ -34,10 +34,11 @@ balance and a missing ticket.
 
 ### On result finalization
 
-- If ticket.status == `won`:
-
-  - Add `potentialWin` to `user.tippCoin`
-- If `lost`, do nothing
+- `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
+  - checks `wallets/{uid}/ledger/{ticketId}` and exits if already exists (idempotent);
+  - increments `wallets/{uid}.balance`;
+  - writes ledger entry `{ amount, type: 'win', createdAt }`.
+- `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
 
 ---
 
@@ -45,7 +46,7 @@ balance and a missing ticket.
 
 - TippCoin changes must be done server-side
 - Prefer Firebase Cloud Functions for mutations
-- Each transaction should be logged (TippCoinLogModel)
+ - Each transaction should be logged (TippCoinLogModel)
 
 ```json
 TippCoinLog {
@@ -56,6 +57,17 @@ TippCoinLog {
 }
 ```
 
+- Wallet structure:
+
+  ```
+  wallets/{uid}
+    balance: number
+    updatedAt: timestamp
+    ledger/{ticketId}
+      amount: number
+      type: 'bet' | 'win'
+      createdAt: timestamp
+  ```
 - Logs stored under `users/{uid}/coin_logs/`
 - UI should show recent changes in profile
 
@@ -63,10 +75,9 @@ TippCoinLog {
 
 ## ⚠️ Current Status
 
-- `CoinService.debitAndCreateTicket()` implemented for atomic stake
-  deduction and ticket creation.
-- Balance updates are visible immediately via `users/{uid}.coins` and
-  `wallets/{uid}.coins`.
+- `CoinService.transact()` ensures idempotent balance changes and ledger entries.
+- `CoinService.debitAndCreateTicket()` handles atomic stake deduction with ticket creation.
+- Wallet balance stored at `wallets/{uid}.balance` updates immediately.
 - Logging to `coin_logs` pending implementation.
 
 ---

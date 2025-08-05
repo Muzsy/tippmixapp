@@ -1,14 +1,21 @@
 import { ResultProvider } from '../src/services/ResultProvider';
 jest.mock('../src/services/ResultProvider');
-jest.mock('../src/services/CoinService');
+jest.mock('../src/services/CoinService', () => ({
+  CoinService: jest.fn().mockImplementation(() => ({ credit: jest.fn() }))
+}));
+
+jest.mock('firebase-admin', () => ({
+  initializeApp: jest.fn(),
+  firestore: jest.fn(),
+}));
 
 import * as admin from 'firebase-admin';
 import { Firestore } from '@google-cloud/firestore';
 
-import { match_finalizer } from '../src/match_finalizer';
+const mockDb = new Firestore({ projectId: 'demo' });
+(admin.firestore as any).mockReturnValue(mockDb as any);
 
-const mockDb = new Firestore();
-jest.spyOn(admin, 'firestore').mockReturnValue(mockDb as any);
+const { match_finalizer } = require('../src/match_finalizer');
 
 (ResultProvider as jest.Mock).mockImplementation(() => {
   return {

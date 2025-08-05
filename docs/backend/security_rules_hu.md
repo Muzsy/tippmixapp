@@ -10,7 +10,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 - A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
-- TippCoin egyenleg a `wallets/{uid}` kollekcióban tárolódik, amelyet csak a tulajdonos írhat
+- TippCoin egyenleg a `wallets/{uid}` kollekcióban tárolódik, amelyet csak a privilegizált szerver kód írhat
 
 ---
 
@@ -43,8 +43,13 @@ service cloud.firestore {
     }
 
     match /wallets/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow delete: if false;
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null;
+
+      match /ledger/{ticketId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow write: if request.auth == null;
+      }
     }
 
     match /tickets/{ticketId} {
