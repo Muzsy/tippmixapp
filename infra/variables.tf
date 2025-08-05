@@ -28,3 +28,15 @@ variable "sweep_cron" {
   type        = string
 }
 
+
+variable "slack_webhook_url" {
+  description = "Slack incoming WebHook URL for alerts"
+  type        = string
+}
+
+variable "quota_warn_at" {
+  description = "Alert threshold for remaining OddsAPI credits"
+  type        = number
+  default     = 1000
+}
+

@@ -15,3 +15,7 @@ It re-exports the populated `process.env` as `Config` for other modules.
 - `KICKOFF_TRACKER_CRON`
 - `SCORE_POLL_CRON`
 - `SCORE_SWEEP_CRON`
+
+## Quota watcher
+
+- `QUOTA_WARN_AT` – minimum remaining OddsAPI credits before alerting
