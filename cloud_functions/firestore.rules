@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ——— SEGÉDFÜGGVÉNYEK ——— */
+    function signedIn()      { return request.auth != null; }
+    function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+
+    /* ——— coin_logs ——— */
+    match /coin_logs/{logId} {
+      // helper: bejelentkezett?
+      function authed() { return request.auth != null; }
+
+      // Engedélyezett típusok
+      function validType() { return request.resource.data.type in ['bet','deposit','withdraw','adjust']; }
+
+      // CREATE: saját userId, fix mezők, createdAt timestamp
+      function createShapeOK() {
+        return authed()
+          && request.resource != null
+          && request.resource.data != null
+          && request.resource.data.keys().hasOnly(['userId','amount','type','createdAt'])
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.amount is int
+          && request.resource.data.amount >= 0
+          && request.resource.data.type in ['bet','deposit','withdraw','adjust']
+          && request.resource.data.createdAt == request.time;
+      }
+
+      allow create: if createShapeOK();
+      allow read:   if isOwner(resource.data.userId);
+      allow update, delete: if false;
+    }
+
+    /* ——— tickets ——— */
+    match /tickets/{ticketId} {
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+      allow read: if signedIn();
+      allow update, delete: if false;
+    }
+
+    /*  ─── Felhasználói beállítások alkollekció ───  */
+    match /users/{userId}/settings/{settingId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    /* --- public_feed --- */
+    match /public_feed/{postId} {
+      // Bárki bejelentkezett olvashat.
+      allow read: if signedIn();
+      // Létrehozni csak saját userként lehet (FeedService ír bejegyzést).
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+
+      // Moderation reports subcollection
+      match /reports/{reportId} {
+        allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+        allow read, update, delete: if false;
+      }
+    }
+
+    /* --- moderation_reports (legacy path) --- */
+    match /moderation_reports/{reportId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+
+    /* --- users/{uid}/badges subcollection --- */
+    match /users/{userId}/badges/{badgeId} {
+      allow read: if signedIn();
+      allow create: if isOwner(userId);
+      allow update, delete: if false;
+    }
+
+    /* --- copied_bets --- */
+    match /copied_bets/{userId} {
+      allow read, write: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    /* ——— badges (public read) ——— */
+    match /badges/{badgeId} {
+      allow read: if true;
+    }
+
+    /* ——— leaderboards ——— */
+    match /leaderboards/{periodId} {
+      allow read: if true;
+      allow write, delete: if false;
+    }
+
+    /* ——— users collection ——— */
+    match /users/{userId} {
+      allow create: if signedIn() && request.auth.uid == userId;
+      // Ranglistához minden hitelesített user olvashatja
+      allow read:   if signedIn();
+      allow update: if isOwner(userId);
+      allow delete: if false;
+
+      /* ——— subcollection: notifications ——— */
+      match /notifications/{notifId} {
+        allow create: if false;
+        allow read:   if isOwner(userId);
+        allow update: if isOwner(userId) && request.resource.data.read == true;
+        allow delete: if false;
+      }
+
+      /* ——— subcollection: friendRequests ——— */
+      match /friendRequests/{requestId} {
+        allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid;
+        allow read:   if signedIn() && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
+        allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
+        allow delete: if false;
+      }
+    }
+
+    // Wallets: read allowed to owner, write only via privileged server context
+    match /wallets/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null; // Only server (admin) SDK without auth
+
+      match /ledger/{ticketId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow write: if request.auth == null;
+      }
+    }
+
+    /* ——— relations (followers & friends) ——— */
+    match /relations/{uid} {
+      match /followers/{followerUid} {
+        allow create, delete: if signedIn() && request.auth.uid == followerUid;
+        allow read: if true;
+        allow update: if false;
+      }
+
+      match /following/{targetUid} {
+        allow create, delete: if signedIn() && request.auth.uid == uid;
+        allow read: if true;
+        allow update: if false;
+      }
+    }
+
+    /* ——— badgesProgress ——— */
+    match /badgesProgress/{uid} {
+      allow read: if isOwner(uid);
+      allow write, delete: if false;
+    }
+
+    /* ——— misc public collections ——— */
+    match /appConfig/{docId} {
+      allow read: if true;
+      allow write, delete: if false;
+    }
+  }
+}
