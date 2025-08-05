@@ -112,3 +112,9 @@ service cloud.firestore {
 - Firebase Emulatorral szabály-tesztek írása
 - Szabályok külön fájlokba szedése (CI kompatibilitás)
 - Moderator / admin jogosultsági szintek bevezetése (később)
+
+---
+
+## 📘 Változásnapló
+
+- 2025-08-06: Javítva a `/tickets/{ticketId}` mezőlista, hogy a kliens összes kulcsa engedélyezett legyen.
