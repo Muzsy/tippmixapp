@@ -25,10 +25,10 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 - HTTP calls made via custom `OddsApiService` class.
 - API key handling currently static; planned migration to `.env` file.
 
-### 4. Python Scripts (Optional Tools)
+### 4. Cloud Functions (Node/TypeScript)
 
-- Used for match finalization (e.g., `match_finalizer.py`).
-- May evolve into backend scheduler functions.
+- Used for match finalization (`match_finalizer.ts`).
+- May evolve into additional scheduler-driven jobs.
 
 ---
 
