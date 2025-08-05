@@ -62,7 +62,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
         status: won ? 'won' : 'lost'
       });
       if (won) {
-        coinService.credit(doc.get('uid'), doc.get('potentialProfit'));
+        coinService.credit(doc.get('uid'), doc.get('potentialProfit'), doc.id);
       }
     }
   });
