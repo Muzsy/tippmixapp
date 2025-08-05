@@ -67,3 +67,4 @@
 | 2025‑08‑04   | @codex-bot      | TOC refreshed after result provider docs                                       |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after scheduler jobs docs                                      |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after coin credit wallet update                                 |
+| 2025‑08‑05   | @codex-bot      | TOC refreshed after quota watcher docs                                        |
