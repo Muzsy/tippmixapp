@@ -1,3 +1,7 @@
+version: "2025-08-05"
+last_updated_by: codex-bot
+depends_on: []
+
 # 🚀 GitHub Actions CI/CD Pipeline (EN)
 
 This document describes the CI/CD pipeline setup for TippmixApp using GitHub Actions.
@@ -8,16 +12,17 @@ This document describes the CI/CD pipeline setup for TippmixApp using GitHub Act
 
 - Run tests automatically on push/PR
 - Ensure documentation quality
-- Prepare for future deployment steps
+- Deploy backend infrastructure and Cloud Functions
 
 ---
 
 ## 🧩 Structure
 
-Main config file:
+Main config files:
 
 ```
-.github/workflows/main.yaml
+.github/workflows/main.yaml      # CI for Flutter app
+.github/workflows/deploy.yml     # Backend infra + functions
 ```
 
 Basic steps:
@@ -45,6 +50,21 @@ Basic steps:
 - [`actions/setup-flutter`](https://github.com/marketplace/actions/setup-flutter)
 - \[`peaceiris/actions-mdbook`]\(for future doc builds)
 - `markdownlint`, `markdown-link-check`
+
+---
+
+## 🚀 Backend deploy workflow
+
+`.github/workflows/deploy.yml` runs on pushes to the `dev` and `main` branches:
+
+1. Set up Node 18 and install `functions/` dependencies.
+2. Run lint, unit and e2e tests for Cloud Functions.
+3. Initialize and plan Terraform with environment-specific variables.
+4. Apply Terraform automatically on `dev` (manual approval for `main`).
+5. Deploy the `match_finalizer` Cloud Function with flattened env vars from `env.settings.*`.
+6. Send success or failure notifications to Slack.
+
+See [README-ci.md](../../README-ci.md) for required GitHub Secrets.
 
 ---
 
