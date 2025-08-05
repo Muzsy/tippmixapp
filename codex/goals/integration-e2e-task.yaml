@@ -1,0 +1,124 @@
+meta:
+  canvas: integration-e2e-task.md
+  priority: P1
+  after:
+    - quota-watcher-task.yaml
+
+steps:
+  # ---------------------------
+  # Jest e2e test file
+  # ---------------------------
+  - create_file:
+      target: functions/test/e2e.test.ts
+      content: |
+        import * as admin from 'firebase-admin';
+        import { initializeTestEnvironment, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
+        import { match_finalizer } from '../src/match_finalizer';
+        import { ResultProvider } from '../src/services/ResultProvider';
+
+        jest.setTimeout(30000); // 30s
+        jest.mock('../src/services/ResultProvider');
+
+        let testEnv: RulesTestEnvironment;
+
+        beforeAll(async () => {
+          testEnv = await initializeTestEnvironment({
+            projectId: 'e2e-test',
+            firestore: { rules: fs.readFileSync('firestore.rules', 'utf8') }
+          });
+          admin.initializeApp({ projectId: 'e2e-test' } as any);
+
+          (ResultProvider as jest.Mock).mockImplementation(() => {
+            return {
+              getScores: async () => [{
+                id: 'eventMock1', completed: true, sport_key: 'soccer_epl', scores: { home: 2, away: 0 }
+              }]
+            };
+          });
+        });
+
+        afterAll(async () => {
+          await testEnv.cleanup();
+        });
+
+        it('happy path – pending ticket becomes won and wallet credited', async () => {
+          const db = admin.firestore();
+          // Arrange – create pending ticket
+          await db.collection('tickets').doc('tick1').set({
+            status: 'pending',
+            eventId: 'eventMock1',
+            potentialProfit: 200,
+            uid: 'tester'
+          });
+
+          // Act – trigger function
+          const msg = { data: Buffer.from(JSON.stringify({ job: 'result-poller' })).toString('base64') } as any;
+          await match_finalizer(msg);
+
+          // Assert ticket
+          const tSnap = await db.doc('tickets/tick1').get();
+          expect(tSnap.get('status')).toBe('won');
+
+          const wSnap = await db.doc('wallets/tester').get();
+          expect(wSnap.exists).toBe(true);
+          expect(wSnap.get('balance')).toBe(200);
+        });
+
+  # ---------------------------
+  # jest-e2e config
+  # ---------------------------
+  - create_file:
+      target: functions/jest-e2e.config.js
+      content: |
+        module.exports = {
+          preset: 'ts-jest',
+          testMatch: ['**/test/e2e.test.ts'],
+          testEnvironment: 'node',
+          globals: {
+            'ts-jest': {
+              tsconfig: 'tsconfig.json'
+            }
+          }
+        };
+
+  # ---------------------------
+  # npm script
+  # ---------------------------
+  - update_file:
+      target: functions/package.json
+      multiple: false
+      pattern: "(\"scripts\":\s*\{[\s\S]*?)(\n\s*})"
+      replacement: |
+        $1,
+          "e2e": "MODE=dev USE_MOCK_SCORES=true jest --config jest-e2e.config.js"$2
+
+  # ---------------------------
+  # GitHub Actions workflow
+  # ---------------------------
+  - create_file:
+      target: .github/workflows/e2e.yml
+      content: |
+        name: E2E Tests
+        on:
+          pull_request:
+            paths:
+              - 'functions/**'
+        jobs:
+          e2e:
+            runs-on: ubuntu-latest
+            steps:
+              - uses: actions/checkout@v4
+              - name: Set up Node
+                uses: actions/setup-node@v3
+                with:
+                  node-version: 18
+              - name: Install deps
+                run: npm ci --prefix functions
+              - name: Run E2E tests
+                run: npm run e2e --prefix functions
+
+  # ---------------------------
+  # Dependencies & test run
+  # ---------------------------
+  - run: npm install --prefix functions @firebase/rules-unit-testing firebase-functions-test fs ts-jest --save-dev --package-lock-only
+  - run: npm run e2e --prefix functions
