@@ -68,3 +68,4 @@
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after scheduler jobs docs                                      |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after coin credit wallet update                                 |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after quota watcher docs                                        |
+| 2025‑08‑05   | @codex-bot      | TOC refreshed after deployment pipeline docs update                           |
