@@ -1,0 +1,21 @@
+# file: /codex/goals/fix_home_navigation.yaml
+meta:
+  canvas: fix_home_navigation.md
+  priority: P1
+
+steps:
+  - patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-import 'package:tippmixapp/routes/app_route.dart';
++import 'package:tippmixapp/routes/app_route.dart';
++import 'package:tippmixapp/ui/auth/auth_gate.dart';
+@@
+-        child != null &&
+-        child is! SizedBox) {
++        child != null &&
++        child is! SizedBox &&
++        child is! AuthGate) {
+  - run: flutter analyze
+  - run: flutter test --tags=navigation
