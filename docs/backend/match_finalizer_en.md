@@ -9,7 +9,7 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 1. Decode job type (`kickoff-tracker`, `result-poller`, `final-sweep`).
 2. Query `tickets` collection for pending entries and collect `eventId`s.
 3. Fetch scores via `ResultProvider` and decide win/loss for completed events.
-4. Update ticket `status` and call `CoinService.credit()` for winners.
+4. Update ticket `status` and call `CoinService.credit(uid, potentialProfit, ticketId)` for winners.
 5. Future step: create `notifications/{uid}` document and send FCM push.
 
 This document covers the TypeScript skeleton; coin transfer logic will be refined in `coin-credit-task`.
