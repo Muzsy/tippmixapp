@@ -112,3 +112,9 @@ service cloud.firestore {
 - Create rule unit tests via Firebase Emulator
 - Split rules into separate files (CI-friendly)
 - Add moderator/admin roles (future)
+
+---
+
+## 📘 Changelog
+
+- 2025-08-06: Corrected `/tickets/{ticketId}` field whitelist to cover all client-sent keys.

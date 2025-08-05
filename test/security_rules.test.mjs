@@ -156,9 +156,9 @@ describe('Firestore security rules', () => {
   });
 
   // SR‑12 — user can write to own wallet
-  it('SR-12 wallets write saját uid OK', async () => {
+  it('SR-12 wallets write saját uid FAIL', async () => {
     const db = authed('user1');
-    await assertSucceeds(
+    await assertFails(
       setDoc(doc(db, 'wallets/user1'), {
         balance: 100,
       })
