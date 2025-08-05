@@ -15,3 +15,7 @@ A feltöltött `process.env` változókat `Config` néven exportálja a modulok 
 - `KICKOFF_TRACKER_CRON`
 - `SCORE_POLL_CRON`
 - `SCORE_SWEEP_CRON`
+
+## Kvótafigyelő
+
+- `QUOTA_WARN_AT` – minimális megmaradt OddsAPI kredit riasztás előtt
