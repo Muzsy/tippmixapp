@@ -3,6 +3,8 @@ resource "google_monitoring_notification_channel" "slack_channel" {
   type         = "slack"
 
   labels = {
-    token = var.slack_webhook_url
+    auth_token   = var.slack_webhook_url
+    channel_name = "general"
+    team         = "tippmixapp"
   }
 }
