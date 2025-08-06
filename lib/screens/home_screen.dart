@@ -21,6 +21,7 @@ import 'package:tippmixapp/services/challenge_service.dart';
 import 'package:tippmixapp/models/earned_badge_model.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tippmixapp/ui/auth/auth_gate.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/models/feed_model.dart';
 import 'home_guest_cta_tile.dart';
@@ -80,7 +81,8 @@ class HomeScreen extends ConsumerWidget {
     if (_isRootRoute(context) &&
         !showStats &&
         child != null &&
-        child is! SizedBox) {
+        child is! SizedBox &&
+        child is! AuthGate) {
       return child!;
     }
 
