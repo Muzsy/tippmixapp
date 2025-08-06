@@ -27,6 +27,7 @@ Ez a dokumentum bemutatja a **TippmixApp** hitelesítési rendszerét: Firebase 
 - `AuthController` – belépés, regisztráció, kijelentkezés logika
 - `auth_provider.dart` – `authStateChanges` stream expozíció
 - `GoRouter` – `redirect:` használat auth állapot alapján
+- `AuthGate` – védi a privát útvonalakat, Home-on placeholderként kezeli a gridhez
 
 ## 🎯 Codex szabályok
 
