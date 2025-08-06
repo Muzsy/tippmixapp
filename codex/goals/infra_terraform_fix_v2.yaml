@@ -1,0 +1,46 @@
+meta:
+  canvas: infra_terraform_fix_v2.md
+  priority: P0  # blokkoló infra bug
+steps:
+  # 1️⃣ Scheduler – Pub/Sub topic URI javítása mindhárom jobban
+  - patch_file:
+      target: infra/scheduler_jobs.tf
+      patch: |
+        @@
+-    topic_name = google_pubsub_topic.result_check.name
++    topic_name = google_pubsub_topic.result_check.id
+        @@
+-    topic_name = google_pubsub_topic.result_check.name
++    topic_name = google_pubsub_topic.result_check.id
+        @@
+-    topic_name = google_pubsub_topic.result_check.name
++    topic_name = google_pubsub_topic.result_check.id
+
+  # 2️⃣ Monitoring – value_extractor törlése GAUGE metrikánál
+  - patch_file:
+      target: infra/monitoring_alert.tf
+      patch: |
+        @@
+-  value_extractor = "REGEXP_EXTRACT(jsonPayload.message, '[\\[quota\\] remaining=(\\d+)]')"
++
+
+  # 3️⃣ Slack notification – labels kulcs javítása
+  - patch_file:
+      target: infra/notification_channel.tf
+      patch: |
+        @@
+-  labels = {
+-    token = var.slack_webhook_url
+-  }
++  labels = {
++    auth_token   = var.slack_webhook_url
++    channel_name = "general"
++    team         = "tippmixapp"
++  }
+
+  # 4️⃣ Format & Validate
+  - run: terraform fmt -recursive
+  - run: terraform validate
+
+  # 5️⃣ (CI) Dry‑run plan példa
+  - run: terraform plan -input=false -var environment=${{ env.ENV }} -var project_id=${{ env.GCLOUD_PROJECT_ID }}
