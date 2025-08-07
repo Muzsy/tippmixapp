@@ -125,4 +125,12 @@ Default: `assets/avatar/default_avatar.png` if provided.
 
 ---
 
+## ☁️ Infrastructure
+
+Terraform configuration expects a valid Slack webhook. When running `terraform apply`,
+pass a non-empty `-var slack_webhook_url=...` value or adjust
+`google_monitoring_notification_channel.slack_channel` to `count = 0` to skip creation.
+
+---
+
 For Codex configuration, see: [`AGENTS.md`](./AGENTS.md)

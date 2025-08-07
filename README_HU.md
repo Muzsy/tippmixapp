@@ -125,4 +125,13 @@ Alapértelmezett avatar: `assets/avatar/default_avatar.png`
 
 ---
 
+## ☁️ Infrastruktúra
+
+A Terraform konfiguráció érvényes Slack webhookot igényel. `terraform apply`
+futtatásakor adj meg nem üres `-var slack_webhook_url=...` értéket,
+vagy állítsd a `google_monitoring_notification_channel.slack_channel`
+erőforrást `count = 0`-ra a kihagyáshoz.
+
+---
+
 A Codex konfigurációját lásd: [`AGENTS.md`](./AGENTS.md)
