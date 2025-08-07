@@ -7,6 +7,7 @@ resource "google_cloud_scheduler_job" "kickoff_tracker" {
   description = "Publishes when matches about to start"
   schedule    = var.kickoff_cron
   time_zone   = "Europe/Budapest"
+  region      = var.region
 
   pubsub_target {
     topic_name = google_pubsub_topic.result_check.id
@@ -19,6 +20,7 @@ resource "google_cloud_scheduler_job" "result_poller" {
   description = "Publishes periodic result polling trigger"
   schedule    = var.poll_cron
   time_zone   = "Europe/Budapest"
+  region      = var.region
 
   pubsub_target {
     topic_name = google_pubsub_topic.result_check.id
@@ -31,6 +33,7 @@ resource "google_cloud_scheduler_job" "final_sweep" {
   description = "Publishes catch‑all sweep trigger"
   schedule    = var.sweep_cron
   time_zone   = "Europe/Budapest"
+  region      = var.region
 
   pubsub_target {
     topic_name = google_pubsub_topic.result_check.id

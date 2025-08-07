@@ -2,7 +2,7 @@ resource "google_logging_metric" "remaining_credits_metric" {
   name   = "remaining_credits"
   filter = "jsonPayload.message:\"[quota]\""
   metric_descriptor {
-    metric_kind = "GAUGE"
+    metric_kind = "DELTA"
     value_type  = "INT64"
     unit        = "1"
   }
