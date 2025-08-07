@@ -21,6 +21,5 @@ resource "google_monitoring_alert_policy" "credit_low_alert" {
       duration        = "300s" # 5 minutes
     }
   }
-
-  notification_channels = [google_monitoring_notification_channel.slack_channel.id]
+  notification_channels = var.slack_webhook_url == "" ? [] : [google_monitoring_notification_channel.slack_channel[0].id]
 }

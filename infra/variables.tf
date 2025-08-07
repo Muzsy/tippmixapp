@@ -30,8 +30,10 @@ variable "sweep_cron" {
 
 
 variable "slack_webhook_url" {
-  description = "Slack incoming WebHook URL for alerts"
   type        = string
+  description = "Slack Bot User OAuth token (xoxb-…)"
+  default     = ""
+  # Leave empty in dev to disable Slack notification channel
 }
 
 variable "quota_warn_at" {
