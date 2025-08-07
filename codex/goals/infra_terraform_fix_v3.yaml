@@ -1,0 +1,35 @@
+meta:
+  canvas: infra_terraform_fix_v3.md
+  priority: P0  # terraform apply blokkoló
+steps:
+  # 1️⃣ Scheduler – kötelező régió megadása mindhárom job resource-ban
+  - patch_file:
+      target: infra/scheduler_jobs.tf
+      patch: |
+        @@
+-  time_zone   = "Europe/Budapest"
++  time_zone   = "Europe/Budapest"
++  region      = var.region
+        @@
+-  time_zone   = "Europe/Budapest"
++  time_zone   = "Europe/Budapest"
++  region      = var.region
+        @@
+-  time_zone   = "Europe/Budapest"
++  time_zone   = "Europe/Budapest"
++  region      = var.region
+
+  # 2️⃣ Monitoring – GAUGE → DELTA a logs-based metrikanál
+  - patch_file:
+      target: infra/monitoring_alert.tf
+      patch: |
+        @@
+-    metric_kind = "GAUGE"
++    metric_kind = "DELTA"
+
+  # 3️⃣ Format & Validate
+  - run: terraform fmt -recursive
+  - run: terraform validate
+
+  # 4️⃣ Példa plan futtatás (CI‑re)
+  - run: terraform plan -input=false -var environment=${{ env.ENV }} -var project_id=${{ env.GCLOUD_PROJECT_ID }} -var region=${{ env.REGION }}
