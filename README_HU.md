@@ -127,10 +127,7 @@ Alapértelmezett avatar: `assets/avatar/default_avatar.png`
 
 ## ☁️ Infrastruktúra
 
-A Terraform konfiguráció érvényes Slack webhookot igényel. `terraform apply`
-futtatásakor adj meg nem üres `-var slack_webhook_url=...` értéket,
-vagy állítsd a `google_monitoring_notification_channel.slack_channel`
-erőforrást `count = 0`-ra a kihagyáshoz.
+A Terraform opcionális Slack webhookot használ riasztásokhoz. A `slack_webhook_url` alapértelmezésben üres, így a fejlesztői/staging környezetben nem jön létre értesítési csatorna. Ha szükség van Slack-riasztásokra, adj meg nem üres tokent: `terraform apply -var slack_webhook_url=...`.
 
 ---
 
