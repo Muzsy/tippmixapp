@@ -9,5 +9,6 @@
     "noEmit": false,             // <- garantálja az emitet
     "noEmitOnError": false
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "test"]
 }

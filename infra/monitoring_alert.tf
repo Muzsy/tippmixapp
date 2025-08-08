@@ -15,7 +15,7 @@ resource "google_monitoring_alert_policy" "credit_low_alert" {
   conditions {
     display_name = "Remaining credits low"
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/remaining_credits\""
+      filter          = "resource.type=\"global\" AND metric.type=\"logging.googleapis.com/user/remaining_credits\""
       comparison      = "COMPARISON_LT"
       threshold_value = var.quota_warn_at
       duration        = "300s" # 5 minutes
