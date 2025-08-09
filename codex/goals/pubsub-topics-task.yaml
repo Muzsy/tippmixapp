@@ -51,7 +51,7 @@ steps:
         variable "region" {
           description = "GCP region"
           type        = string
-          default     = "europe-west1"
+          default     = "europe-central2"
         }
 
         variable "environment" {

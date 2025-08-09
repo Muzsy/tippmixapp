@@ -76,7 +76,7 @@ steps:
                     --runtime=nodejs18 \
                     --trigger-topic=result-check \
                     --set-env-vars=$ENV_VARS,ODDS_API_KEY=${{ secrets.ODDS_API_KEY }} \
-                    --region=europe-west1 --quiet
+                    --rregion=europe-central2 --quiet
 
               - name: Slack success
                 uses: 8398a7/action-slack@v3
