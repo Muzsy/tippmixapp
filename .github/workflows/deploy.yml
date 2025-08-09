@@ -25,9 +25,7 @@ jobs:
     # csak saját branch push esetén fusson (nem PR)
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     env:
-      # Manuális indításnál mindig DEV az alapértelmezett.
-      # Push esetén csak a main ágon legyen PROD.
-      MODE: ${{ inputs.target && inputs.target || (github.event_name == 'push' && github.ref_name == 'main' && 'prod' || 'dev') }}
+      MODE: dev
     steps:
       - uses: actions/checkout@v4
 
