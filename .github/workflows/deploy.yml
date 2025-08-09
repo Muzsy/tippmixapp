@@ -41,10 +41,15 @@ jobs:
 
       - name: Install Firebase CLI
         run: npm i -g firebase-tools
-
+        
+      - name: Write Service Account to file
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $RUNNER_TEMP/sa.json
+          test -s $RUNNER_TEMP/sa.json
+      
       - name: Firebase deploy (dev/main)
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
         run: |
           if [ "$MODE" = "prod" ]; then
             firebase deploy --only functions --project tippmix-prod
