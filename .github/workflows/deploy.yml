@@ -41,18 +41,27 @@ jobs:
 
       - name: Install Firebase CLI
         run: npm i -g firebase-tools
+      # 1) ADC (Application Default Credentials) beállítása a SA JSON-ból
+      - name: Google Auth (ADC)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      - name: Write Service Account to file
+      # 2) (Opció) gcloud felrakása és projekt beállítása – a Firebase CLI is ezt fogja látni
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 470.0.0'
+      - name: Set gcloud project
         run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $RUNNER_TEMP/sa.json
-          test -s $RUNNER_TEMP/sa.json
+          if [ "$MODE" = "prod" ]; then
+            gcloud config set core/project tippmix-prod
+          else
+            gcloud config set core/project tippmix-dev
+          fi
+          gcloud auth list
 
       - name: Firebase deploy (dev/main)
-        env:
-          # ADC – a SA JSON elérési útja
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
-          # Ne kérjen interaktív login-t
-          FIREBASE_CLI_LOGIN: ci
         run: |
           # Biztosítsuk, hogy mindig explicit projektet adunk meg
           if [ "$MODE" = "prod" ]; then
@@ -60,5 +69,5 @@ jobs:
           else
             PROJECT_ID="tippmix-dev"
           fi
-          # Non-interactive mód kötelező CI-ben
+          # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
