@@ -41,18 +41,24 @@ jobs:
 
       - name: Install Firebase CLI
         run: npm i -g firebase-tools
-        
+
       - name: Write Service Account to file
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $RUNNER_TEMP/sa.json
           test -s $RUNNER_TEMP/sa.json
-      
+
       - name: Firebase deploy (dev/main)
         env:
+          # ADC – a SA JSON elérési útja
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+          # Ne kérjen interaktív login-t
+          FIREBASE_CLI_LOGIN: ci
         run: |
+          # Biztosítsuk, hogy mindig explicit projektet adunk meg
           if [ "$MODE" = "prod" ]; then
-            firebase deploy --only functions --project tippmix-prod
+            PROJECT_ID="tippmix-prod"
           else
-            firebase deploy --only functions --project tippmix-dev
+            PROJECT_ID="tippmix-dev"
           fi
+          # Non-interactive mód kötelező CI-ben
+          firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
