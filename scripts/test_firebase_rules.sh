@@ -1,6 +1,7 @@
-#!/bin/bash
-# test_firebase_rules.sh – CI-compatible wrapper for Firestore rules testing
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
+
+command -v firebase >/dev/null 2>&1 || npm i -g firebase-tools
 
 echo "📦 Installing dependencies..."
 npm ci --prefer-offline

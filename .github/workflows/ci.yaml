@@ -1,81 +1,114 @@
-name: build
+name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
   pull_request:
-    branches: ['**']
+    branches: ["**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  docs_lint:
+    name: Docs & config lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install markdown linters
+        run: npm i -g markdownlint-cli markdownlint-cli2
+      - name: Run docs lint script
+        run: |
+          chmod +x scripts/lint_docs.sh
+          STRICT_MARKDOWNLINT=true ./scripts/lint_docs.sh | tee docs_lint.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-lint-log
+          path: docs_lint.log
 
-      # ►► Flutter 3.22.x
-      - name: Install Flutter SDK (GitHub Action)
+  flutter:
+    name: Flutter analyze & tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.x'
-
-      # ►► Univerzális projekt‑setup (ugyanaz, mint Codexnél)
-      - name: Project setup
-        run: bash .codex/setup.sh
-
-      - name: Generate localization
-        run: flutter gen-l10n
-
-      - name: Run linter
-        run: flutter analyze lib test --fatal-infos --fatal-warnings
-
-      # (innen lefelé: CI‑only részek)
-      - name: Run tests with coverage
+          flutter-version: '3.32.8' # a .codex/setup.sh-hoz igazítva
+          cache: true
+      - name: Flutter pub get
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Unit & widget tests (coverage)
         run: flutter test --coverage
-      - name: Run coverage + badge
-        uses: whynotmake-it/dart-coverage-assistant@v1
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          generate_badges: push
-
-      # ---- Firebase security rules tesztek ----
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache Node modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Compile Cloud Functions
+          name: flutter-coverage
+          path: coverage
+      - name: Integration tests
         run: |
-          npm ci --prefix cloud_functions
-          npm run --prefix cloud_functions build
+          if [ -d "integration_test" ]; then
+            flutter test integration_test
+          else
+            echo "no integration_test folder – skipping"
+          fi
 
-      - name: Cache Firebase emulator
-        uses: actions/cache@v4
+  functions:
+    name: Cloud Functions – unit & e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          path: ~/.cache/firebase/emulators
-          key: ${{ runner.os }}-firebase-${{ hashFiles('firebase.json') }}
-          restore-keys: |
-            ${{ runner.os }}-firebase-
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: cloud_functions/package-lock.json
+      - name: Install deps
+        run: npm ci --prefix cloud_functions
+      - name: Unit tests
+        run: npm test --prefix cloud_functions
+      - name: E2E tests (dev mode)
+        run: npm run e2e --prefix cloud_functions
 
+  firestore_rules:
+    name: Firestore rules tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
       - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Test Firestore security rules
+        run: npm i -g firebase-tools
+      - name: Run rules tests
         run: |
           chmod +x scripts/test_firebase_rules.sh
           ./scripts/test_firebase_rules.sh | tee security_rules_test.log
-
-      - name: Upload security rules log
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: security-rules-log
           path: security_rules_test.log
+
+  terraform:
+    name: Terraform fmt & validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+      - name: Init (no backend)
+        run: terraform init -backend=false
+      - name: Fmt check
+        run: terraform fmt -check
+      - name: Validate
+        run: terraform validate -no-color

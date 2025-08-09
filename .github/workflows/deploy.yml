@@ -1,73 +1,53 @@
 name: Deploy Backend
+
 on:
   push:
-    branches: [ dev, main ]
+    branches: [dev, main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-test-deploy:
+  deploy-functions:
+    name: Firebase Functions deploy
     runs-on: ubuntu-latest
+    # csak saját branch push esetén fusson (nem PR)
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     env:
       MODE: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node 18
-        uses: actions/setup-node@v3
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: cloud_functions/package-lock.json
 
       - name: Install dependencies
-        run: npm ci --prefix functions
+        run: npm ci --prefix cloud_functions
 
-      - name: Lint & Unit
-        run: npm test --prefix functions
-
-      - name: E2E tests
-        run: npm run e2e --prefix functions
-
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ env.MODE == 'prod' && secrets.GCLOUD_PROJECT_ID_PROD || secrets.GCLOUD_PROJECT_ID_DEV }}
-          service_account_key: ${{ env.MODE == 'prod' && secrets.GCLOUD_SERVICE_KEY_PROD || secrets.GCLOUD_SERVICE_KEY_DEV }}
-          export_default_credentials: true
-
-      - name: Terraform init & plan
+      # Ha TypeScript-es a projekt, buildeljünk; ha nem, ez átugorható
+      - name: Build (tsc)
         run: |
-          cd infra
-          terraform init -input=false
-          terraform plan -input=false -var environment=${{ env.MODE }} -var quota_warn_at=${{ env.MODE == 'prod' && 1000 || 50 }} -var slack_webhook_url=${{ secrets.SLACK_WEBHOOK_URL }}
+          if [ -f cloud_functions/tsconfig.json ]; then
+            npm run build --prefix cloud_functions
+          else
+            echo "No tsconfig.json; skipping build."
+          fi
 
-      - name: Terraform apply (dev only)
-        if: env.MODE == 'dev'
-        run: |
-          cd infra
-          terraform apply -input=false -auto-approve -var environment=dev -var slack_webhook_url=${{ secrets.SLACK_WEBHOOK_URL }} -var quota_warn_at=50
+      - name: Install Firebase CLI
+        run: npm i -g firebase-tools
 
-      # Optional manual step for prod apply via GitHub Environments protection rules
-
-      - name: Deploy Cloud Function match_finalizer
-        run: |
-          ENV_VARS=$(./scripts/set-env.sh env.settings.${{ env.MODE }})
-          gcloud functions deploy match_finalizer \
-            --runtime=nodejs18 \
-            --trigger-topic=result-check \
-            --set-env-vars=$ENV_VARS,ODDS_API_KEY=${{ secrets.ODDS_API_KEY }} \
-            --region=europe-west1 --quiet
-
-      - name: Slack success
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: github,commit,workflow,job,took
-          payload: '{"text":"✅ Tippmixapp backend *${{ env.MODE }}* deploy succeeded."}'
+      - name: Firebase deploy (dev/main)
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Slack failure
-        if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: github,commit,workflow,job,took
-          payload: '{"text":"❌ Tippmixapp backend *${{ env.MODE }}* deploy failed."}'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          if [ "$MODE" = "prod" ]; then
+            firebase deploy --only functions --project tippmix-prod
+          else
+            firebase deploy --only functions --project tippmix-dev
+          fi

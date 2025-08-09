@@ -1,18 +1,9 @@
-name: E2E Tests
+# Deprecated: E2E tests are part of the 'functions' job in CI.
+name: deprecated-e2e
 on:
-  pull_request:
-    paths:
-      - 'functions/**'
+  workflow_call:
 jobs:
-  e2e:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Install deps
-        run: npm ci --prefix functions
-      - name: Run E2E tests
-        run: npm run e2e --prefix functions
+      - run: echo "E2E tests moved to CI workflow."
