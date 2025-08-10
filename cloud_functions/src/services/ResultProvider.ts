@@ -9,6 +9,19 @@ export interface ScoreResult {
 }
 
 /**
+ * Read ODDS_API_KEY from env; strip quotes and reject unresolved placeholders like "$ODDS_API_KEY".
+ */
+function readOddsApiKey(): string {
+  const raw = (process.env.ODDS_API_KEY ?? '').trim();
+  const cleaned = raw.replace(/^['"]|['"]$/g, '');
+  // If value looks like an unresolved shell placeholder (e.g. "$ODDS_API_KEY"), treat as missing
+  if (!cleaned || /^\$[A-Z0-9_]+$/.test(cleaned)) {
+    throw new Error('Config error: ODDS_API_KEY is missing or is an unresolved placeholder');
+  }
+  return cleaned;
+}
+
+/**
  * OddsAPI adapter that automatically switches between live HTTP calls (prod)
  * and local JSON mocks (dev/testing).
  */
@@ -20,7 +33,7 @@ export class ResultProvider {
 
   constructor() {
     this.baseUrl = process.env.ODDS_API_BASE_URL ?? 'https://api.the-odds-api.com/v4';
-    this.apiKey = process.env.ODDS_API_KEY ?? '';
+    this.apiKey = readOddsApiKey();
     this.mode = process.env.MODE ?? 'prod';
     this.useMock = this.mode === 'dev' && process.env.USE_MOCK_SCORES === 'true';
   }
@@ -34,8 +47,6 @@ export class ResultProvider {
       const raw = fs.readFileSync(mockPath, 'utf8');
       return JSON.parse(raw) as ScoreResult[];
     }
-
-    if (!this.apiKey) throw new Error('ODDS_API_KEY missing');
 
     const chunks: string[][] = [];
     for (let i = 0; i < eventIds.length; i += 40) {
@@ -56,8 +67,8 @@ export class ResultProvider {
     const wanted = new Set(eventIds);
 
     for (const sport of sports) {
-      const url = `${this.baseUrl}/sports/${sport}/scores/?daysFrom=3&apiKey=${this.apiKey}`;
-      const resp = await fetch(url);
+      const url = `${this.baseUrl}/sports/${sport}/scores/?daysFrom=3`;
+      const resp = await fetch(url, { headers: { 'x-api-key': this.apiKey } });
       if (!resp.ok) {
         // 404 előfordulhat nem támogatott sport kulcsnál – lépjünk tovább a többire
         if (resp.status === 404) continue;
