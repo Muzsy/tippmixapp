@@ -1,0 +1,94 @@
+# /codex/goals/fix\_home\_default\_route.yaml (YAML – Codex)
+
+```yaml
+meta:
+  canvas: fix_home_default_route.md
+  priority: P1
+
+steps:
+  - name: AuthGate átirányítás eltávolítása
+    description: Töröljük a verifikált állapotban történő /feed átirányítást, hogy a '/' útvonalon a Home jelenjen meg.
+    outputs:
+      - auth_gate_patched
+    patch_file:
+      target: lib/ui/auth/auth_gate.dart
+      patch: |
+        @@
+-    // A ShellRoute már tartalmazza a Home-héjat; itt csak átirányítunk
+-    WidgetsBinding.instance.addPostFrameCallback((_) {
+-      if (context.mounted) context.go('/feed');
+-    });
+-    return const SizedBox.shrink();
++    // Bejelentkezett és verifikált felhasználó → maradunk a '/' útvonalon,
++    // a ShellRoute + HomeScreen héj megjeleníti a fő (csempés) kezdőképernyőt.
++    return const SizedBox.shrink();
+
+  - name: Új teszt – Home az alapértelmezett kezdőnézet
+    description: Hozzáadunk egy widget tesztet, ami verifikált userrel igazolja, hogy nem /feed‑re megyünk, hanem a '/' aktív és a Home UI látszik.
+    outputs:
+      - home_default_route_test_added
+    create_file:
+      target: test/navigation/home_default_route_test.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter_riverpod/flutter_riverpod.dart';
+        import 'package:go_router/go_router.dart';
+        import 'package:tippmixapp/l10n/app_localizations.dart';
+        import 'package:tippmixapp/router.dart';
+        import 'package:tippmixapp/ui/auth/auth_gate.dart';
+        import 'package:tippmixapp/providers/auth_provider.dart';
+        import 'package:tippmixapp/models/auth_state.dart';
+        import 'package:tippmixapp/models/user.dart';
+
+        class _FakeAuthService extends AuthService {
+          _FakeAuthService();
+          @override
+          Stream<AuthState> authStateChanges() async* {
+            final user = User(id: 'u1', email: 'u@x.com', displayName: 'U', emailVerified: true);
+            yield AuthState(user: user);
+          }
+          @override
+          bool get isEmailVerified => true;
+        }
+
+        void main() {
+          testWidgets('Verified user → stays on / and sees Home content', (tester) async {
+            final container = ProviderContainer(overrides: [
+              authProvider.overrideWith((ref) => _FakeAuthService()),
+            ]);
+
+            await tester.pumpWidget(
+              UncontrolledProviderScope(
+                container: container,
+                child: MaterialApp.router(
+                  routerConfig: router,
+                  localizationsDelegates: AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  locale: const Locale('en'),
+                ),
+              ),
+            );
+
+            await tester.pumpAndSettle();
+
+            // A gyökér útvonal maradjon aktív
+            expect(router.routerDelegate.currentConfiguration.fullPath, '/');
+
+            // A HomeScreen jellegzetes elemei megjelennek (pl. stats header vagy csempék)
+            expect(find.byType(Scaffold), findsOneWidget);
+            // Nem a FeedScreen a kezdő
+            expect(find.text('Feed'), findsNothing);
+          });
+        }
+
+  - name: Lint és tesztek futtatása
+    description: Elemzés és tesztek lefuttatása Codex alatt.
+    outputs:
+      - analyze_ok
+      - tests_ok
+    run: |
+      flutter pub get
+      flutter analyze
+      flutter test
+```
