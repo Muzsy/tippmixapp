@@ -1,5 +1,5 @@
-import * as admin from 'firebase-admin';
-const db = admin.firestore();
+import { db } from '../lib/firebase';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export class CoinService {
   /**
@@ -21,15 +21,15 @@ export class CoinService {
 
       // Balance frissítés (wallet doksi létrehozása, ha hiányzik)
       tx.set(walletRef, {
-        balance: admin.firestore.FieldValue.increment(amount),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        balance: FieldValue.increment(amount),
+        updatedAt: FieldValue.serverTimestamp()
       }, { merge: true });
 
       // Ledger entry
       tx.set(ledgerRef, {
         amount,
         type,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: FieldValue.serverTimestamp()
       });
     });
   }

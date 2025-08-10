@@ -1,10 +1,8 @@
 import { PubSub } from '@google-cloud/pubsub';
-import * as admin from 'firebase-admin';
 import { ResultProvider } from './services/ResultProvider';
 import { CoinService } from './services/CoinService';
 
-admin.initializeApp();
-const db = admin.firestore();
+import { db } from './lib/firebase';
 const resultProvider = new ResultProvider();
 const coinService = new CoinService();
 
