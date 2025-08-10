@@ -6,6 +6,8 @@ export interface ScoreResult {
   sport_key: string;
   completed: boolean;
   scores?: { home: number; away: number };
+  home_team?: string;
+  away_team?: string;
 }
 
 /**

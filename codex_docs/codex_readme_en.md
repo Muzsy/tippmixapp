@@ -70,3 +70,4 @@
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after quota watcher docs                                        |
 | 2025‑08‑05   | @codex-bot      | TOC refreshed after deployment pipeline docs update                           |
 | 2025‑08‑06   | @codex-bot      | TOC refreshed after ticket rules whitelist correction                         |
+| 2025‑08‑07   | @codex-bot      | TOC refreshed after match finalizer evaluation fix                            |
