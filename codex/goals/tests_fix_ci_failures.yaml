@@ -1,0 +1,15 @@
+steps:
+  - name: Setup
+    description: Run Flutter and Dart version info and fetch dependencies.
+  - name: Reproduce failures locally
+    description: Run failing tests with expanded logs and capture stack traces.
+  - name: Diagnose & fix
+    description: Inspect related services/models, update production or test code as needed.
+  - name: Re-run targeted tests
+    description: Re-run the two previously failing test files until they pass.
+  - name: Full sweep
+    description: Run the complete Flutter test suite with coverage.
+  - name: CI verification
+    description: Ensure "flutter analyze" passes with no new issues.
+  - name: Commit & PR
+    description: Commit changes using conventional commits and open a PR.

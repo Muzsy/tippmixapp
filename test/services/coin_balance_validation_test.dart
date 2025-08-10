@@ -1,3 +1,7 @@
-// TODO: Implement emulator-based test to assert:
-//  * insufficient coins throws FirebaseException(insufficient_coins)
-//  * sufficient coins deducts balance and creates ticket
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('placeholder for coin balance validation', () {
+    // TODO: Implement emulator-based coin balance validation tests.
+  }, skip: true);
+}

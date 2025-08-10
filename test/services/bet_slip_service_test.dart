@@ -23,6 +23,9 @@ class FakeFirebaseAuth extends Fake implements FirebaseAuth {
 
 // ignore: subtype_of_sealed_class
 class FakeCoinService extends Fake implements CoinService {
+  FakeCoinService([this.firestore]);
+  final FakeFirebaseFirestore? firestore;
+
   Map<String, dynamic>? last;
   @override
   Future<void> debitCoin({
@@ -31,6 +34,19 @@ class FakeCoinService extends Fake implements CoinService {
     required String transactionId,
   }) async {
     last = {'amount': amount, 'reason': reason, 'transactionId': transactionId};
+  }
+
+  @override
+  Future<void> debitAndCreateTicket({
+    required int stake,
+    required Map<String, dynamic> ticketData,
+  }) async {
+    last = {'amount': stake, 'ticket': ticketData};
+    final store =
+        firestore?.data.putIfAbsent('tickets', () => <String, Map<String, dynamic>>{});
+    if (store != null) {
+      store[ticketData['id'] as String] = ticketData;
+    }
   }
 }
 
@@ -76,7 +92,7 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
 void main() {
   test('submitTicket writes ticket and calls CoinService', () async {
     final firestore = FakeFirebaseFirestore();
-    final coinService = FakeCoinService();
+    final coinService = FakeCoinService(firestore);
     final auth = FakeFirebaseAuth(FakeUser('u1'));
 
     final tips = [
@@ -107,7 +123,7 @@ void main() {
 
   test('throws when user not authenticated', () async {
     final firestore = FakeFirebaseFirestore();
-    final coinService = FakeCoinService();
+    final coinService = FakeCoinService(firestore);
     final auth = FakeFirebaseAuth(null);
 
     final tips = [
