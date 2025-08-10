@@ -54,8 +54,11 @@ class ResultProvider {
         const sports = allowed.length ? allowed : ['soccer_epl', 'basketball_nba'];
         const wanted = new Set(eventIds);
         for (const sport of sports) {
-            const url = `${this.baseUrl}/sports/${sport}/scores/?daysFrom=3`;
-            const resp = await fetch(url, { headers: { 'x-api-key': this.apiKey } });
+            // A v4 API autentikáció néhány régión 2025-ben csak query paraméterrel sikerül (401-es válasz jöhet a csak headeres hívásra),
+            // ezért redundánsan HEADERS + QUERY módon adjuk át a kulcsot.
+            const u = new URL(`${this.baseUrl}/sports/${sport}/scores/`);
+            u.search = new URLSearchParams({ daysFrom: '3', apiKey: this.apiKey }).toString();
+            const resp = await fetch(u.toString(), { headers: { 'x-api-key': this.apiKey } });
             if (!resp.ok) {
                 // 404 előfordulhat nem támogatott sport kulcsnál – lépjünk tovább a többire
                 if (resp.status === 404)
