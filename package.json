@@ -4,6 +4,7 @@
     "firebase-functions": "^4.4.1"
   },
   "devDependencies": {
+    "@types/node": "^24.2.1",
     "firebase": "^11.0.0",
     "firebase-tools": "^14.9.0",
     "mocha": "^10.0.0",
