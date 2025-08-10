@@ -1,0 +1,160 @@
+# YAML – Codex goal (`/codex/goals/match_finalizer_firestore_and_eval_fix.yaml`)
+
+```yaml
+meta:
+  canvas: match_finalizer_firestore_and_eval_fix.md
+  priority: P1
+
+steps:
+  # 1) match_finalizer: collectionGroup + tips[] eventId‑k + helyes kiértékelés
+  - patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        @@
+- import { getFirestore } from './lib/firebase';
++ import { getFirestore } from './lib/firebase';
++ import { FieldValue } from 'firebase-admin/firestore';
+@@
+-  const ticketsSnap = await db
+-    .collection('tickets')
+-    .where('status', '==', 'pending')
+-    .limit(200)
+-    .get();
++  // A tényleges szelvények al‑kollekcióban vannak: /tickets/{uid}/tickets/{ticketId}
++  // collectionGroup → minden `tickets` nevű al‑kollekcióban keres.
++  const ticketsSnap = await db
++    .collectionGroup('tickets')
++    .where('status', '==', 'pending')
++    .limit(200)
++    .get();
+@@
+-  const eventIds = Array.from(
+-    new Set(ticketsSnap.docs.map((d) => d.get('eventId')).filter(Boolean))
+-  );
++  // Minden szelvény több tippet is tartalmazhat; az eventId‑kat a tips[]‑ből gyűjtjük.
++  const eventIdSet = new Set<string>();
++  for (const d of ticketsSnap.docs) {
++    const tips = (d.get('tips') as any[]) || [];
++    for (const t of tips) {
++      if (t && typeof t.eventId === 'string' && t.eventId.trim()) {
++        eventIdSet.add(t.eventId.trim());
++      }
++    }
++  }
++  const eventIds = Array.from(eventIdSet);
+@@
+-  const resultMap = new Map<string, boolean>();
+-  for (const r of results) {
+-    if (!r.completed || !r.scores) continue;
+-    const won = r.scores.home > r.scores.away; // egyszerűsített logika
+-    resultMap.set(r.id, won);
+-  }
++  // Eredmények: az OddsAPI válaszból megtartjuk a győztes csapat nevét is
++  const resultMap = new Map<string, { completed: boolean; winner?: string }>();
++  for (const r of results) {
++    if (!r.completed || !r.scores) {
++      resultMap.set(r.id, { completed: false });
++      continue;
++    }
++    const winner = r.scores.home > r.scores.away ? r.home_team : r.away_team;
++    resultMap.set(r.id, { completed: true, winner });
++  }
+@@
+-  for (const doc of ticketsSnap.docs) {
+-    const eventId = doc.get('eventId');
+-    const res = resultMap.get(eventId);
+-    if (!res) continue;
+-    const newStatus = res ? 'won' : 'lost';
+-    batch.update(db.collection('tickets').doc(doc.id), {
+-      status: newStatus,
+-      updatedAt: new Date(),
+-    });
+-    if (newStatus === 'won') {
+-      await coinService.credit(doc.get('uid'), doc.get('potentialProfit'), doc.id);
+-    }
+-  }
++  for (const snap of ticketsSnap.docs) {
++    const tips = (snap.get('tips') as any[]) || [];
++    if (!tips.length) continue;
++
++    let hasPending = false;
++    let hasLost = false;
++    let allResolved = true;
++
++    for (const t of tips) {
++      const rid = t?.eventId;
++      const pick = (t?.outcome ?? '').trim(); // csapatnév a tippben
++      if (!rid || !resultMap.has(rid)) { hasPending = true; allResolved = false; continue; }
++      const { completed, winner } = resultMap.get(rid)!;
++      if (!completed || !winner) { hasPending = true; allResolved = false; continue; }
++      if (winner !== pick) { hasLost = true; }
++    }
++
++    let newStatus: 'pending' | 'won' | 'lost' = 'pending';
++    if (hasLost) newStatus = 'lost';
++    else if (!hasPending) newStatus = 'won';
++
++    if (newStatus !== 'pending') {
++      // Fontos: közvetlenül a talált dokumentumra frissítünk (helyes útvonalon)
++      batch.update(snap.ref, {
++        status: newStatus,
++        updatedAt: FieldValue.serverTimestamp(),
++      });
++      if (newStatus === 'won') {
++        await coinService.credit(snap.get('uid'), snap.get('potentialProfit'), snap.id);
++      }
++    }
++  }
+@@
+   await batch.commit();
+   logger.info('[match_finalizer] batch commit done');
+
+  // done
+  return;
+```
+
+# 2) ResultProvider: egészítsük ki a ScoreResult‑ot a csapatnevekkel
+
+* patch\_file:
+  target: cloud\_functions/src/services/ResultProvider.ts
+  patch: |
+  @@
+* export interface ScoreResult {
+* id: string;
+* sport\_key: string;
+* completed: boolean;
+* scores?: { home: number; away: number };
+* }
+
+- export interface ScoreResult {
+- id: string;
+- sport\_key: string;
+- completed: boolean;
+- scores?: { home: number; away: number };
+- home\_team?: string;
+- away\_team?: string;
+- }
+  @@
+
+* ```
+   const json = (await resp.json()) as ScoreResult[];
+  ```
+
+- ```
+   const json = (await resp.json()) as ScoreResult[];
+   for (const item of json) {
+     if (wanted.has(item.id)) {
+       results.push(item);
+     }
+   }
+  ```
+
+  # 3) Build ellenőrzés (functions)
+
+  * run: |
+    cd cloud\_functions
+    npm ci
+    npm run build
+
+```
+```
