@@ -40,6 +40,13 @@ jobs:
         with:
           flutter-version: '3.32.8' # a .codex/setup.sh-hoz igazítva
           cache: true
+      # Java 17 az Android SDK/Gradle miatt
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Create dummy .env for CI
         run: printf "MODE=ci\n" > .env
       - name: Flutter pub get
@@ -53,13 +60,23 @@ jobs:
         with:
           name: flutter-coverage
           path: coverage
-      - name: Integration tests
-        run: |
-          if [ -d "integration_test" ]; then
-            flutter test integration_test
-          else
-            echo "no integration_test folder – skipping"
-          fi
+      - name: Integration tests on Android emulator
+        # Headless Android emu, stabil device ID: emulator-5554
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            if [ -d "integration_test" ]; then
+              flutter doctor -v
+              flutter devices
+              flutter test integration_test -d emulator-5554
+            else
+              echo "no integration_test folder – skipping"
+            fi
 
   functions:
     name: Cloud Functions – unit & e2e
