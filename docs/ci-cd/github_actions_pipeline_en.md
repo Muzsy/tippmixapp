@@ -1,4 +1,4 @@
-version: "2025-08-05"
+version: "2025-08-11"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -57,7 +57,7 @@ Basic steps:
 
 `.github/workflows/deploy.yml` runs on pushes to the `dev` and `main` branches:
 
-1. Set up Node 18 and install `functions/` dependencies.
+1. Set up Node 20 and install `functions/` dependencies.
 2. Run lint, unit and e2e tests for Cloud Functions.
 3. Initialize and plan Terraform with environment-specific variables.
 4. Apply Terraform automatically on `dev` (manual approval for `main`).

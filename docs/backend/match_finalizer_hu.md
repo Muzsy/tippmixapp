@@ -1,4 +1,4 @@
-version: "2025-08-07"
+version: "2025-08-11"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -13,3 +13,4 @@ Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Felad
 5. Következő lépésként `notifications/{uid}` dokumentumot hoz létre és FCM push-t küld.
 
 Ez a dokumentum a TypeScript vázat írja le; a coin tranzakció logika a `coin-credit-task` során finomodik.
+**Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
