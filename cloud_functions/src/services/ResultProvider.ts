@@ -43,15 +43,32 @@ export class ResultProvider {
     }
 
     const results: ScoreResult[] = [];
+    // A The Odds API v4 scores végpont sportonként érhető el.
+    // A ticket dokumentumok nem tartalmaznak sport kulcsot, ezért az engedélyezett
+    // sportok (ALLOWED_SPORTS) alapján lehúzzuk az elmúlt 3 nap eredményeit
+    // és helyben szűrünk az eventIds szerint.
+    const allowed = (process.env.ALLOWED_SPORTS || '')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+    const sports = allowed.length ? allowed : ['soccer_epl', 'basketball_nba'];
 
-    for (const chunk of chunks) {
-      const url = `${this.baseUrl}/sports/scores/?eventIds=${chunk.join(',')}&api_key=${this.apiKey}`;
+    const wanted = new Set(eventIds);
+
+    for (const sport of sports) {
+      const url = `${this.baseUrl}/sports/${sport}/scores/?daysFrom=3&apiKey=${this.apiKey}`;
       const resp = await fetch(url);
       if (!resp.ok) {
+        // 404 előfordulhat nem támogatott sport kulcsnál – lépjünk tovább a többire
+        if (resp.status === 404) continue;
         throw new Error(`OddsAPI error ${resp.status}`);
       }
       const json = (await resp.json()) as ScoreResult[];
-      results.push(...json);
+      for (const item of json) {
+        if (wanted.has(item.id)) {
+          results.push(item);
+        }
+      }
     }
     return results;
   }
