@@ -1,4 +1,4 @@
-version: "2025-08-07"
+version: "2025-08-11"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -13,3 +13,5 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 5. Future step: create `notifications/{uid}` document and send FCM push.
 
 This document covers the TypeScript skeleton; coin transfer logic will be refined in `coin-credit-task`.
+
+**Runtime**: Node.js 20 on 2nd gen Cloud Functions.

@@ -1,4 +1,4 @@
-version: "2025-08-05"
+version: "2025-08-11"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -57,7 +57,7 @@ Alap lépések:
 
 A `.github/workflows/deploy.yml` a `dev` és `main` branch-ekre érkező push esetén fut:
 
-1. Node 18 környezet beállítása és a `functions/` függőségek telepítése.
+1. Node 20 környezet beállítása és a `functions/` függőségek telepítése.
 2. Lint, unit és e2e tesztek futtatása a Cloud Functions kódra.
 3. Terraform inicializálás és plan környezetspecifikus változókkal.
 4. Terraform apply automatikusan `dev` környezetben (prod esetén manuális jóváhagyás).

@@ -29,10 +29,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
           cache-dependency-path: cloud_functions/package-lock.json
 
@@ -49,7 +49,7 @@ jobs:
           fi
 
       - name: Install Firebase CLI
-        run: npm i -g firebase-tools
+        run: npm i -g firebase-tools@13
       # 1) ADC (Application Default Credentials) beállítása a SA JSON-ból
       - name: Google Auth (ADC)
         uses: google-github-actions/auth@v2
