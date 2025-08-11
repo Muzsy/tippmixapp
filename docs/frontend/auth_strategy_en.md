@@ -27,7 +27,7 @@ This document outlines the authentication system in **TippmixApp**, including Fi
 - `AuthController` – handles signIn, register, signOut
 - `auth_provider.dart` – exposes `authStateChanges` stream
 - `GoRouter` redirects based on auth state (`redirect:` logic)
-- `AuthGate` – guards private routes and is ignored on Home to let the grid render
+- `AuthGate` – guards private routes and leaves verified users on `/` so the Home grid becomes default
 
 ## 🎯 Codex Rules
 
