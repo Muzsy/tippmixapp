@@ -1,0 +1,235 @@
+## Codex YAML – `/codex/goals/tippkartya_fix_add_and_filter_and_fab.yaml`
+
+```yaml
+meta:
+  canvas: canvases/tippkartya_fix_add_and_filter_and_fab.md
+  priority: P1
+
+steps:
+  - patch_file:
+      target: lib/screens/events_screen.dart
+      patch: |
+        @@
+-       import '../providers/odds_api_provider.dart';
+-       import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
++       import '../providers/odds_api_provider.dart';
++       import '../providers/bet_slip_provider.dart';
++       import '../utils/events_filter.dart';
+        @@
+-         final events = oddsState.events;
+-         final quotaWarn = oddsState.quotaWarning;
+-         if (events.isEmpty) {
++         final events = oddsState.events;
++         final quotaWarn = oddsState.quotaWarning;
++         final filtered = filterActiveEvents(events);
++         if (filtered.isEmpty) {
+            return Center(child: Text(loc.events_screen_no_events));
+          }
+          return Column(
+            children: [
+              if (quotaWarn)
+                Container(
+        @@
+-             Expanded(
+-               child: ListView.builder(
+-                 itemCount: events.length,
+-                 itemBuilder: (context, index) {
+-                   final event = events[index];
++             Expanded(
++               child: ListView.builder(
++                 itemCount: filtered.length,
++                 itemBuilder: (context, index) {
++                   final event = filtered[index];
+                    // Kiváltjuk a belső kártyát az új, újrahasznosítható EventBetCard-dal
+                    final bookmaker = event.bookmakers.isNotEmpty
+                        ? event.bookmakers.first
+                        : null;
+                    final market =
+                        (bookmaker != null && bookmaker.markets.isNotEmpty)
+                        ? bookmaker.markets.firstWhere(
+                            (m) => m.key == 'h2h',
+                            orElse: () => bookmaker.markets.first,
+                          )
+                        : null;
+                    return EventBetCard(
+                       key: ValueKey(event.id),
+                       event: event,
+                       h2hMarket: market,
+-                      onTapHome: (outcome) {
+-                        ScaffoldMessenger.of(context).showSnackBar(
+-                          SnackBar(
+-                            content: Text(
+-                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+-                            ),
+-                          ),
+-                        );
+-                      },
+-                      onTapDraw: (outcome) {
+-                        ScaffoldMessenger.of(context).showSnackBar(
+-                          SnackBar(
+-                            content: Text(
+-                              'X @ ${outcome.price.toStringAsFixed(2)}',
+-                            ),
+-                          ),
+-                        );
+-                      },
+-                      onTapAway: (outcome) {
+-                        ScaffoldMessenger.of(context).showSnackBar(
+-                          SnackBar(
+-                            content: Text(
+-                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+-                            ),
+-                          ),
+-                        );
+-                      },
++                      onTapHome: (outcome) {
++                        final tip = TipModel(
++                          eventId: event.id,
++                          eventName: '${event.homeTeam} – ${event.awayTeam}',
++                          startTime: event.commenceTime,
++                          sportKey: event.sportKey,
++                          bookmaker: bookmaker?.key ?? 'unknown',
++                          marketKey: market?.key ?? 'h2h',
++                          outcome: outcome.name,
++                          odds: outcome.price,
++                        );
++                        final added = ref.read(betSlipProvider.notifier).addTip(tip);
++                        ScaffoldMessenger.of(context).showSnackBar(
++                          SnackBar(
++                            duration: const Duration(seconds: 2),
++                            content: Text(
++                              added
++                                ? loc.events_screen_tip_added
++                                : loc.events_screen_tip_duplicate,
++                            ),
++                          ),
++                        );
++                      },
++                      onTapDraw: (outcome) {
++                        final tip = TipModel(
++                          eventId: event.id,
++                          eventName: '${event.homeTeam} – ${event.awayTeam}',
++                          startTime: event.commenceTime,
++                          sportKey: event.sportKey,
++                          bookmaker: bookmaker?.key ?? 'unknown',
++                          marketKey: market?.key ?? 'h2h',
++                          outcome: outcome.name,
++                          odds: outcome.price,
++                        );
++                        final added = ref.read(betSlipProvider.notifier).addTip(tip);
++                        ScaffoldMessenger.of(context).showSnackBar(
++                          SnackBar(
++                            duration: const Duration(seconds: 2),
++                            content: Text(
++                              added
++                                ? loc.events_screen_tip_added
++                                : loc.events_screen_tip_duplicate,
++                            ),
++                          ),
++                        );
++                      },
++                      onTapAway: (outcome) {
++                        final tip = TipModel(
++                          eventId: event.id,
++                          eventName: '${event.homeTeam} – ${event.awayTeam}',
++                          startTime: event.commenceTime,
++                          sportKey: event.sportKey,
++                          bookmaker: bookmaker?.key ?? 'unknown',
++                          marketKey: market?.key ?? 'h2h',
++                          outcome: outcome.name,
++                          odds: outcome.price,
++                        );
++                        final added = ref.read(betSlipProvider.notifier).addTip(tip);
++                        ScaffoldMessenger.of(context).showSnackBar(
++                          SnackBar(
++                            duration: const Duration(seconds: 2),
++                            content: Text(
++                              added
++                                ? loc.events_screen_tip_added
++                                : loc.events_screen_tip_duplicate,
++                            ),
++                          ),
++                        );
++                      },
+                    );
+                 },
+               ),
+             ),
+  - create_file:
+      target: lib/utils/events_filter.dart
+      content: |
+        import '../models/odds_event.dart';
+        
+        /// Csak a még fogadható (jövőbeli kezdésű) eseményeket adja vissza.
+        List<OddsEvent> filterActiveEvents(List<OddsEvent> events, {Duration grace = const Duration(minutes: 2)}) {
+          final cutoff = DateTime.now().add(grace);
+          return events.where((e) => e.commenceTime.isAfter(cutoff)).toList();
+        }
+  - create_file:
+      target: test/utils/events_filter_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/utils/events_filter.dart';
+        import 'package:tippmixapp/models/odds_event.dart';
+        import 'package:tippmixapp/models/odds_bookmaker.dart';
+        
+        OddsEvent makeEvent(String id, DateTime when) => OddsEvent(
+          id: id,
+          sportKey: 'soccer',
+          sportTitle: 'Soccer',
+          homeTeam: 'A',
+          awayTeam: 'B',
+          commenceTime: when,
+          bookmakers: const <OddsBookmaker>[],
+        );
+        
+        void main() {
+          test('filterActiveEvents keeps only future events (with 2m grace)', () {
+            final now = DateTime.now();
+            final items = [
+              makeEvent('past', now.subtract(const Duration(minutes: 1))),
+              makeEvent('soon', now.add(const Duration(minutes: 1, seconds: 30))),
+              makeEvent('future', now.add(const Duration(minutes: 5))),
+            ];
+            final res = filterActiveEvents(items);
+            expect(res.map((e) => e.id).toList(), ['future']);
+          });
+        }
+  - create_file:
+      target: test/providers/bet_slip_provider_add_tip_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter_riverpod/flutter_riverpod.dart';
+        import 'package:tippmixapp/providers/bet_slip_provider.dart';
+        import 'package:tippmixapp/models/tip_model.dart';
+        
+        TipModel tip(String eventId, String outcome) => TipModel(
+          eventId: eventId,
+          eventName: 'A – B',
+          startTime: DateTime.now().add(const Duration(hours: 1)),
+          sportKey: 'soccer',
+          bookmaker: 'bk',
+          marketKey: 'h2h',
+          outcome: outcome,
+          odds: 1.5,
+        );
+        
+        void main() {
+          test('addTip adds once and prevents duplicates', () {
+            final container = ProviderContainer();
+            addTearDown(container.dispose);
+            final notifier = container.read(betSlipProvider.notifier);
+            expect(container.read(betSlipProvider).tips, isEmpty);
+            
+            final ok1 = notifier.addTip(tip('e1', 'home'));
+            expect(ok1, isTrue);
+            expect(container.read(betSlipProvider).tips.length, 1);
+            
+            final dup = notifier.addTip(tip('e1', 'home'));
+            expect(dup, isFalse);
+            expect(container.read(betSlipProvider).tips.length, 1);
+          });
+        }
+  - run: flutter analyze
+  - run: flutter test
+```
