@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 
 import '../providers/odds_api_provider.dart';
-import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
+import '../providers/bet_slip_provider.dart';
+import '../utils/events_filter.dart';
+import '../models/tip_model.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/event_bet_card.dart';
 
@@ -52,7 +54,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
         } else if (oddsState is OddsApiData) {
           final events = oddsState.events;
           final quotaWarn = oddsState.quotaWarning;
-          if (events.isEmpty) {
+          final filtered = filterActiveEvents(events);
+          if (filtered.isEmpty) {
             return Center(child: Text(loc.events_screen_no_events));
           }
           return Column(
@@ -85,9 +88,9 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                 ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: events.length,
+                  itemCount: filtered.length,
                   itemBuilder: (context, index) {
-                    final event = events[index];
+                    final event = filtered[index];
                     // Kiváltjuk a belső kártyát az új, újrahasznosítható EventBetCard-dal
                     final bookmaker = event.bookmakers.isNotEmpty
                         ? event.bookmakers.first
@@ -104,28 +107,76 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                       event: event,
                       h2hMarket: market,
                       onTapHome: (outcome) {
+                        final tip = TipModel(
+                          eventId: event.id,
+                          eventName: '${event.homeTeam} – ${event.awayTeam}',
+                          startTime: event.commenceTime,
+                          sportKey: event.sportKey,
+                          bookmaker: bookmaker?.key ?? 'unknown',
+                          marketKey: market?.key ?? 'h2h',
+                          outcome: outcome.name,
+                          odds: outcome.price,
+                        );
+                        final added = ref
+                            .read(betSlipProvider.notifier)
+                            .addTip(tip);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            duration: const Duration(seconds: 2),
                             content: Text(
-                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+                              added
+                                  ? loc.events_screen_tip_added
+                                  : loc.events_screen_tip_duplicate,
                             ),
                           ),
                         );
                       },
                       onTapDraw: (outcome) {
+                        final tip = TipModel(
+                          eventId: event.id,
+                          eventName: '${event.homeTeam} – ${event.awayTeam}',
+                          startTime: event.commenceTime,
+                          sportKey: event.sportKey,
+                          bookmaker: bookmaker?.key ?? 'unknown',
+                          marketKey: market?.key ?? 'h2h',
+                          outcome: outcome.name,
+                          odds: outcome.price,
+                        );
+                        final added = ref
+                            .read(betSlipProvider.notifier)
+                            .addTip(tip);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            duration: const Duration(seconds: 2),
                             content: Text(
-                              'X @ ${outcome.price.toStringAsFixed(2)}',
+                              added
+                                  ? loc.events_screen_tip_added
+                                  : loc.events_screen_tip_duplicate,
                             ),
                           ),
                         );
                       },
                       onTapAway: (outcome) {
+                        final tip = TipModel(
+                          eventId: event.id,
+                          eventName: '${event.homeTeam} – ${event.awayTeam}',
+                          startTime: event.commenceTime,
+                          sportKey: event.sportKey,
+                          bookmaker: bookmaker?.key ?? 'unknown',
+                          marketKey: market?.key ?? 'h2h',
+                          outcome: outcome.name,
+                          odds: outcome.price,
+                        );
+                        final added = ref
+                            .read(betSlipProvider.notifier)
+                            .addTip(tip);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            duration: const Duration(seconds: 2),
                             content: Text(
-                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+                              added
+                                  ? loc.events_screen_tip_added
+                                  : loc.events_screen_tip_duplicate,
                             ),
                           ),
                         );

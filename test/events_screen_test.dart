@@ -43,7 +43,7 @@ void main() {
       sportTitle: 'Soccer',
       homeTeam: 'Team A',
       awayTeam: 'Team B',
-      commenceTime: DateTime.parse('2024-01-01T12:00:00Z'),
+      commenceTime: DateTime.now().add(const Duration(hours: 1)),
       bookmakers: [
         OddsBookmaker(
           key: 'b',
