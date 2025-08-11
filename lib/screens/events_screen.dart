@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 
-import '../models/odds_event.dart';
-import '../models/tip_model.dart';
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart'; // feltételezzük, hogy van ilyen
 import 'package:go_router/go_router.dart';
+import '../widgets/event_bet_card.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
@@ -89,10 +88,63 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                   itemCount: events.length,
                   itemBuilder: (context, index) {
                     final event = events[index];
-                    return _EventCard(
+                    // Kiváltjuk a belső kártyát az új, újrahasznosítható EventBetCard-dal
+                    final bookmaker = event.bookmakers.isNotEmpty
+                        ? event.bookmakers.first
+                        : null;
+                    final market =
+                        (bookmaker != null && bookmaker.markets.isNotEmpty)
+                        ? bookmaker.markets.firstWhere(
+                            (m) => m.key == 'h2h',
+                            orElse: () => bookmaker.markets.first,
+                          )
+                        : null;
+                    return EventBetCard(
                       key: ValueKey(event.id),
                       event: event,
-                      loc: loc,
+                      h2hMarket: market,
+                      onTapHome: (outcome) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+                            ),
+                          ),
+                        );
+                      },
+                      onTapDraw: (outcome) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'X @ ${outcome.price.toStringAsFixed(2)}',
+                            ),
+                          ),
+                        );
+                      },
+                      onTapAway: (outcome) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${outcome.name} @ ${outcome.price.toStringAsFixed(2)}',
+                            ),
+                          ),
+                        );
+                      },
+                      onMoreBets: () {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(loc.more_bets)));
+                      },
+                      onStats: () {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(loc.statistics)));
+                      },
+                      onAi: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(loc.ai_recommendation)),
+                        );
+                      },
                     );
                   },
                 ),
@@ -157,98 +209,4 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
   }
 }
 
-class _EventCard extends ConsumerWidget {
-  const _EventCard({super.key, required this.event, required this.loc});
-
-  final OddsEvent event;
-  final AppLocalizations loc;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Use the first bookmaker and try to find a head‑to‑head market
-    if (event.bookmakers.isEmpty) {
-      return Card(
-        child: ListTile(
-          title: Text('${event.homeTeam} – ${event.awayTeam}'),
-          subtitle: Text(loc.events_screen_no_market),
-        ),
-      );
-    }
-
-    final bookmaker = event.bookmakers.first;
-    if (bookmaker.markets.isEmpty) {
-      return Card(
-        child: ListTile(
-          title: Text('${event.homeTeam} – ${event.awayTeam}'),
-          subtitle: Text(loc.events_screen_no_market),
-        ),
-      );
-    }
-
-    final market = bookmaker.markets.firstWhere(
-      (m) => m.key == 'h2h',
-      orElse: () => bookmaker.markets.first,
-    );
-
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Text('${event.homeTeam} – ${event.awayTeam}'),
-            subtitle: Text(
-              loc.events_screen_start_time(event.commenceTime.toString()),
-            ),
-          ),
-          Row(
-            children: market.outcomes.map((outcome) {
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final tip = TipModel(
-                        eventId: event.id,
-                        eventName: '${event.homeTeam} – ${event.awayTeam}',
-                        startTime: event.commenceTime,
-                        sportKey: event.sportKey,
-                        bookmaker: bookmaker.key,
-                        marketKey: market.key,
-                        outcome: outcome.name,
-                        odds: outcome.price,
-                      );
-
-                      final added = ref
-                          .read(betSlipProvider.notifier)
-                          .addTip(tip);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 2),
-                          content: Text(
-                            added
-                                ? loc.events_screen_tip_added
-                                : loc.events_screen_tip_duplicate,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          outcome.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(outcome.price.toStringAsFixed(2)),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// A régi, belső _EventCard eltávolítva – helyette EventBetCard használata

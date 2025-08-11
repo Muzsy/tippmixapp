@@ -77,7 +77,8 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Team A – Team B'), findsOneWidget);
+    expect(find.text('Team A'), findsOneWidget);
+    expect(find.text('Team B'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('refresh_button')));
     await tester.pumpAndSettle();
