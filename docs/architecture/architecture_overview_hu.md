@@ -21,8 +21,8 @@ a főbb modulokat, rétegeket és keresztfunkciókat összefoglalva.
 
 ### 3. Külső API
 
-- **OddsAPI** integráció: valós idejű odds lekérés.
-- Egyedi `OddsApiService` osztályon keresztül történik a kommunikáció.
+- **API-Football** integráció: valós idejű odds lekérés.
+- Egyedi `ApiFootballService` osztályon keresztül történik a kommunikáció.
 - API kulcs jelenleg beégetve – terv szerint `.env` fájlba költözik.
 
 ### 4. Cloud Functions (Node/TypeScript)
@@ -48,7 +48,7 @@ a főbb modulokat, rétegeket és keresztfunkciókat összefoglalva.
 └────────────┬────────────┘
              ↓
 ┌────────────┴────────────┐
-│   Adatkezelési réteg    │ ← Firestore, OddsAPI, beállítások
+│   Adatkezelési réteg    │ ← Firestore, API-Football, beállítások
 └─────────────────────────┘
 ```
 

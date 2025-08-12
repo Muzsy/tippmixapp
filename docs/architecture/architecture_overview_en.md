@@ -21,8 +21,8 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 
 ### 3. External API
 
-- Integrates with **OddsAPI** to fetch real-time match odds.
-- HTTP calls made via custom `OddsApiService` class.
+- Integrates with **API-Football** to fetch real-time match odds.
+- HTTP calls made via custom `ApiFootballService` class.
 - API key handling currently static; planned migration to `.env` file.
 
 ### 4. Cloud Functions (Node/TypeScript)
@@ -48,7 +48,7 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 └────────────┬────────────┘
              ↓
 ┌────────────┴────────────┐
-│   Data Layer            │ ← Firestore, OddsAPI, SharedPrefs
+│   Data Layer            │ ← Firestore, API-Football, SharedPrefs
 └─────────────────────────┘
 ```
 

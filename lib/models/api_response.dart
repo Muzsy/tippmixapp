@@ -1,13 +1,12 @@
-/// API-válasz objektum: adat és opcionális hiba.
 enum ApiErrorType { none, unauthorized, rateLimit, network, empty, unknown }
 
-class OddsApiResponse<T> {
+class ApiResponse<T> {
   final T? data;
   final ApiErrorType errorType;
   final String? errorMessage;
   final bool rateLimitWarning;
 
-  OddsApiResponse({
+  const ApiResponse({
     this.data,
     this.errorType = ApiErrorType.none,
     this.errorMessage,

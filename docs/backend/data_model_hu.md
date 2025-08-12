@@ -57,7 +57,7 @@ TipModel {
 ```
 
 - Csak szelvényhez csatolva jelenik meg
-- Odds érték a beküldés pillanatában frissül az OddsAPI-ból
+- Odds érték a beküldés pillanatában frissül az API-Football-ból
 
 ## 🎟️ TicketModel
 

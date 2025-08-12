@@ -10,14 +10,14 @@ import 'package:tippmixapp/providers/odds_api_provider.dart';
 import 'package:tippmixapp/providers/bet_slip_provider.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/services/odds_api_service.dart';
+import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:go_router/go_router.dart';
 
 class TestOddsApiProvider extends OddsApiProvider {
   bool fetchCalled = false;
   TestOddsApiProvider(OddsApiProviderState initialState)
-    : super(OddsCacheWrapper(OddsApiService())) {
+    : super(OddsCacheWrapper(ApiFootballService())) {
     state = initialState;
   }
 

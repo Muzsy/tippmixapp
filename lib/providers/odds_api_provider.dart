@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/odds_event.dart';
-import '../models/odds_api_response.dart';
-import '../services/odds_api_service.dart';
+import '../models/api_response.dart';
+import '../services/api_football_service.dart';
 import '../services/odds_cache_wrapper.dart';
 
 /// OddsApiProviderState – minden lehetséges állapot külön.
@@ -65,5 +65,5 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
 /// Globális Riverpod provider.
 final oddsApiProvider =
     StateNotifierProvider<OddsApiProvider, OddsApiProviderState>(
-      (ref) => OddsApiProvider(OddsCacheWrapper(OddsApiService())),
+      (ref) => OddsApiProvider(OddsCacheWrapper(ApiFootballService())),
     );

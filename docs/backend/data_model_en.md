@@ -57,7 +57,7 @@ TipModel {
 ```
 
 - Attached to a ticket (not stored standalone)
-- Odds refreshed on submit via OddsAPI
+- Odds refreshed on submit via API-Football
 
 ## 🎟️ TicketModel
 
