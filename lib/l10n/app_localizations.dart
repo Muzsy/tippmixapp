@@ -63,8 +63,7 @@ import 'app_localizations_hu.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,19 +83,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('hu'),
+    Locale('hu')
   ];
 
   /// No description provided for @accept.
@@ -123,6 +120,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only admin may modify this field.'**
   String get admin_only_field;
+
+  /// No description provided for @ai_recommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI recommendation'**
+  String get ai_recommendation;
 
   /// No description provided for @amount_must_be_integer.
   ///
@@ -346,6 +349,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get btnContinue;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @confirm_password_hint.
   ///
   /// In en, this message translates to:
@@ -381,6 +390,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ticket copied!'**
   String get copy_success;
+
+  /// No description provided for @countdown_to_kickoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Kickoff in {time}'**
+  String countdown_to_kickoff(Object time);
 
   /// No description provided for @createTicketTitle.
   ///
@@ -615,42 +630,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Events'**
   String get events_title;
-
-  /// No description provided for @more_bets.
-  ///
-  /// In en, this message translates to:
-  /// **'More bets'**
-  String get more_bets;
-
-  /// No description provided for @statistics.
-  ///
-  /// In en, this message translates to:
-  /// **'Statistics'**
-  String get statistics;
-
-  /// No description provided for @ai_recommendation.
-  ///
-  /// In en, this message translates to:
-  /// **'AI recommendation'**
-  String get ai_recommendation;
-
-  /// No description provided for @updated_time_ago.
-  ///
-  /// In en, this message translates to:
-  /// **'Updated {time}'**
-  String updated_time_ago(Object time);
-
-  /// No description provided for @starts_at.
-  ///
-  /// In en, this message translates to:
-  /// **'Starts at {time}'**
-  String starts_at(Object time);
-
-  /// No description provided for @countdown_to_kickoff.
-  ///
-  /// In en, this message translates to:
-  /// **'Kickoff in {time}'**
-  String countdown_to_kickoff(Object time);
 
   /// No description provided for @facebook_login.
   ///
@@ -1144,6 +1123,12 @@ abstract class AppLocalizations {
   /// **'Transaction ID is required.'**
   String get missing_transaction_id;
 
+  /// No description provided for @more_bets.
+  ///
+  /// In en, this message translates to:
+  /// **'More bets'**
+  String get more_bets;
+
   /// No description provided for @myTickets.
   ///
   /// In en, this message translates to:
@@ -1287,6 +1272,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get notificationUndo;
+
+  /// No description provided for @oddsChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Odds changed'**
+  String get oddsChangedTitle;
+
+  /// No description provided for @oddsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get oddsNew;
+
+  /// No description provided for @oddsOld.
+  ///
+  /// In en, this message translates to:
+  /// **'Old'**
+  String get oddsOld;
 
   /// No description provided for @odds_label.
   ///
@@ -1816,6 +1819,18 @@ abstract class AppLocalizations {
   /// **'Stake'**
   String get stakeHint;
 
+  /// No description provided for @starts_at.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts at {time}'**
+  String starts_at(Object time);
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
   /// No description provided for @team_hint.
   ///
   /// In en, this message translates to:
@@ -1900,6 +1915,12 @@ abstract class AppLocalizations {
   /// **'Network error occurred'**
   String get unknown_network_error;
 
+  /// No description provided for @updated_time_ago.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {time}'**
+  String updated_time_ago(Object time);
+
   /// No description provided for @verification_email_sent.
   ///
   /// In en, this message translates to:
@@ -1913,8 +1934,7 @@ abstract class AppLocalizations {
   String get verified_badge_label;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1923,28 +1943,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'hu'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['de', 'en', 'hu'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de':
-      return AppLocalizationsDe();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'hu':
-      return AppLocalizationsHu();
+    case 'de': return AppLocalizationsDe();
+    case 'en': return AppLocalizationsEn();
+    case 'hu': return AppLocalizationsHu();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

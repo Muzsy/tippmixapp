@@ -18,8 +18,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get add_tip => 'Hinzufügen';
 
   @override
-  String get admin_only_field =>
-      'Dieses Feld darf nur von Admins geändert werden.';
+  String get admin_only_field => 'Dieses Feld darf nur von Admins geändert werden.';
+
+  @override
+  String get ai_recommendation => 'KI-Empfehlung';
 
   @override
   String get amount_must_be_integer => 'Betrag muss Ganzzahl sein.';
@@ -31,8 +33,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get api_error_limit => 'Odds API Anfrage-Limit überschritten';
 
   @override
-  String get api_error_network =>
-      'Netzwerkfehler beim Kontaktieren der Odds API';
+  String get api_error_network => 'Netzwerkfehler beim Kontaktieren der Odds API';
 
   @override
   String get api_error_unknown => 'Unbekannter Fehler von der Odds API';
@@ -41,8 +42,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get apple_login => 'Weiter mit Apple';
 
   @override
-  String get auth_error_email_already_in_use =>
-      'E-Mail-Adresse bereits verwendet';
+  String get auth_error_email_already_in_use => 'E-Mail-Adresse bereits verwendet';
 
   @override
   String get auth_error_invalid_date => 'Ungültiges Datum';
@@ -51,8 +51,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get auth_error_invalid_email => 'Ungültige E-Mail-Adresse';
 
   @override
-  String get auth_error_invalid_nickname =>
-      'Der Spitzname muss 3-20 Zeichen lang sein';
+  String get auth_error_invalid_nickname => 'Der Spitzname muss 3-20 Zeichen lang sein';
 
   @override
   String get auth_error_nickname_taken => 'Der Spitzname ist bereits vergeben';
@@ -88,8 +87,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get badgeScreenTitle => 'Verfügbare Abzeichen';
 
   @override
-  String get badge_comeback_kid_description =>
-      'Nach drei Niederlagen gewonnen.';
+  String get badge_comeback_kid_description => 'Nach drei Niederlagen gewonnen.';
 
   @override
   String get badge_comeback_kid_title => 'Comeback-Kid';
@@ -107,8 +105,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get badge_night_owl_title => 'Nachteule';
 
   @override
-  String get badge_parlay_pro_description =>
-      'Kombi mit 5+ Ereignissen gewonnen.';
+  String get badge_parlay_pro_description => 'Kombi mit 5+ Ereignissen gewonnen.';
 
   @override
   String get badge_parlay_pro_title => 'Parlay-Profi';
@@ -138,6 +135,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get btnContinue => 'Weiter';
 
   @override
+  String get cancel => 'Abbrechen';
+
+  @override
   String get confirm_password_hint => 'Confirm Password';
 
   @override
@@ -147,14 +147,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get copy_edit_title => 'Kopierten Schein bearbeiten';
 
   @override
-  String get copy_invalid_state =>
-      'Schein wurde nicht geändert, daher kann er nicht abgegeben werden.';
+  String get copy_invalid_state => 'Schein wurde nicht geändert, daher kann er nicht abgegeben werden.';
 
   @override
   String get copy_submit_button => 'Schein abgeben';
 
   @override
   String get copy_success => 'Schein kopiert!';
+
+  @override
+  String countdown_to_kickoff(Object time) {
+    return 'Anstoß in $time';
+  }
 
   @override
   String get createTicketTitle => 'Schein erstellen';
@@ -196,8 +200,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get edit_title => 'Profil bearbeiten';
 
   @override
-  String get emailVerify_description =>
-      'Klicke auf den Link in der erhaltenen E-Mail und kehre dann zur App zurück.';
+  String get emailVerify_description => 'Klicke auf den Link in der erhaltenen E-Mail und kehre dann zur App zurück.';
 
   @override
   String get emailVerify_exit => 'Beenden';
@@ -239,8 +242,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorNotLoggedIn => 'Du bist nicht angemeldet.';
 
   @override
-  String get errorUserNotFound =>
-      'Benutzer nicht gefunden. Bitte melde dich erneut an.';
+  String get errorUserNotFound => 'Benutzer nicht gefunden. Bitte melde dich erneut an.';
 
   @override
   String get errorWeakPassword => 'Schwaches Passwort';
@@ -258,8 +260,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get events_screen_no_odds => 'Keine Quoten verfügbar';
 
   @override
-  String get events_screen_quota_warning =>
-      'Warnung: API Kontingent fast aufgebraucht';
+  String get events_screen_quota_warning => 'Warnung: API Kontingent fast aufgebraucht';
 
   @override
   String get events_screen_refresh => 'Aktualisieren';
@@ -277,30 +278,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get events_title => 'Ereignisse';
-
-  @override
-  String get more_bets => 'Weitere Wetten';
-
-  @override
-  String get statistics => 'Statistiken';
-
-  @override
-  String get ai_recommendation => 'KI-Empfehlung';
-
-  @override
-  String updated_time_ago(Object time) {
-    return 'Aktualisiert $time';
-  }
-
-  @override
-  String starts_at(Object time) {
-    return 'Beginnt um $time';
-  }
-
-  @override
-  String countdown_to_kickoff(Object time) {
-    return 'Anstoß in $time';
-  }
 
   @override
   String get facebook_login => 'Weiter mit Facebook';
@@ -330,8 +307,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feed_report => 'Melden';
 
   @override
-  String get feed_report_success =>
-      'Der Beitrag wurde unseren Moderatoren gemeldet.';
+  String get feed_report_success => 'Der Beitrag wurde unseren Moderatoren gemeldet.';
 
   @override
   String get feed_screen_title => 'Feed';
@@ -364,16 +340,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_coin => 'TippCoin';
 
   @override
-  String get home_guest_message =>
-      'Melde dich an oder registriere dich, um dein Profil anzusehen';
+  String get home_guest_message => 'Melde dich an oder registriere dich, um dein Profil anzusehen';
 
   @override
-  String get home_highlight_coin =>
-      'TippCoin: Verdiene zusätzliche Münzen durch Aktivität!';
+  String get home_highlight_coin => 'TippCoin: Verdiene zusätzliche Münzen durch Aktivität!';
 
   @override
-  String get home_highlight_motivation =>
-      'Motivation: Probiere eine neue Strategie aus!';
+  String get home_highlight_motivation => 'Motivation: Probiere eine neue Strategie aus!';
 
   @override
   String get home_highlight_tip => 'Tipp des Tages: Bayern gewinnt';
@@ -417,8 +390,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_challenge_cta_accept => 'Annehmen';
 
   @override
-  String get home_tile_challenge_daily_description =>
-      'Tagesaufgabe: Gewinne heute 3 Wetten.';
+  String get home_tile_challenge_daily_description => 'Tagesaufgabe: Gewinne heute 3 Wetten.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -438,16 +410,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get home_tile_daily_bonus_title => 'Tagesbonus';
 
   @override
-  String get home_tile_educational_tip_1 =>
-      'Wusstest du? Mit Kombiwetten kannst du höhere Quoten erzielen.';
+  String get home_tile_educational_tip_1 => 'Wusstest du? Mit Kombiwetten kannst du höhere Quoten erzielen.';
 
   @override
-  String get home_tile_educational_tip_2 =>
-      'Einzelwetten sind risikoärmer als Kombis.';
+  String get home_tile_educational_tip_2 => 'Einzelwetten sind risikoärmer als Kombis.';
 
   @override
-  String get home_tile_educational_tip_3 =>
-      'Führe ein Wettprotokoll, um aus vergangenen Ergebnissen zu lernen.';
+  String get home_tile_educational_tip_3 => 'Führe ein Wettprotokoll, um aus vergangenen Ergebnissen zu lernen.';
 
   @override
   String get home_tile_educational_tip_cta => 'Mehr Tipps';
@@ -565,6 +534,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get missing_transaction_id => 'TransactionId fehlt.';
 
   @override
+  String get more_bets => 'Weitere Wetten';
+
+  @override
   String get myTickets => 'Meine Scheine';
 
   @override
@@ -637,6 +609,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notificationUndo => 'Rückgängig';
 
   @override
+  String get oddsChangedTitle => 'Quoten geändert';
+
+  @override
+  String get oddsNew => 'Neu';
+
+  @override
+  String get oddsOld => 'Alt';
+
+  @override
   String get odds_label => 'Quote';
 
   @override
@@ -682,8 +663,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get password_pwned_error => 'Dieses Passwort wurde bereits geleakt';
 
   @override
-  String get password_reset_email_sent =>
-      'Passwort-Zurücksetzen-E-Mail gesendet';
+  String get password_reset_email_sent => 'Passwort-Zurücksetzen-E-Mail gesendet';
 
   @override
   String get password_reset_title => 'Passwort zurücksetzen';
@@ -891,8 +871,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_title => 'Einstellungen';
 
   @override
-  String get skin_dell_genoa_description =>
-      'Standard Tippmix-Farbschema (grün)';
+  String get skin_dell_genoa_description => 'Standard Tippmix-Farbschema (grün)';
 
   @override
   String get skin_dell_genoa_name => 'Tippmix Grün';
@@ -905,6 +884,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get stakeHint => 'Einsatz';
+
+  @override
+  String starts_at(Object time) {
+    return 'Beginnt um $time';
+  }
+
+  @override
+  String get statistics => 'Statistiken';
 
   @override
   String get team_hint => 'Lieblingsteam';
@@ -943,11 +930,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get unfollow => 'Entfolgen';
 
   @override
-  String get unknown_error_try_again =>
-      'Unbekannter Fehler, bitte versuche es erneut';
+  String get unknown_error_try_again => 'Unbekannter Fehler, bitte versuche es erneut';
 
   @override
   String get unknown_network_error => 'Unbekannter Netzwerkfehler';
+
+  @override
+  String updated_time_ago(Object time) {
+    return 'Aktualisiert $time';
+  }
 
   @override
   String get verification_email_sent => 'Bestätigungs-E-Mail gesendet';

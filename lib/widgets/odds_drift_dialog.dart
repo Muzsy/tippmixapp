@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../models/odds_drift.dart';
 
 Future<bool> showOddsDriftDialog(
@@ -9,7 +10,11 @@ Future<bool> showOddsDriftDialog(
         context: context,
         builder: (ctx) {
           return AlertDialog(
-            title: const Text('Odds megváltozott'),
+            title: Semantics(
+              header: true,
+              label: AppLocalizations.of(ctx)!.oddsChangedTitle,
+              child: Text(AppLocalizations.of(ctx)!.oddsChangedTitle),
+            ),
             content: SizedBox(
               width: 360,
               child: ListView(
@@ -20,7 +25,7 @@ Future<bool> showOddsDriftDialog(
                         dense: true,
                         title: Text('${c.market} / ${c.selection}'),
                         subtitle: Text(
-                          'Régi: ${c.oldOdds.toStringAsFixed(2)}  →  Új: ${c.newOdds.toStringAsFixed(2)}',
+                          '${AppLocalizations.of(ctx)!.oddsOld}: ${c.oldOdds.toStringAsFixed(2)}  →  ${AppLocalizations.of(ctx)!.oddsNew}: ${c.newOdds.toStringAsFixed(2)}',
                         ),
                         trailing: Icon(
                           c.increased ? Icons.trending_up : Icons.trending_down,
@@ -31,13 +36,27 @@ Future<bool> showOddsDriftDialog(
               ),
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Mégse'),
+              Tooltip(
+                message: AppLocalizations.of(ctx)!.cancel,
+                child: Semantics(
+                  button: true,
+                  label: AppLocalizations.of(ctx)!.cancel,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: Text(AppLocalizations.of(ctx)!.cancel),
+                  ),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Elfogad'),
+              Tooltip(
+                message: AppLocalizations.of(ctx)!.accept,
+                child: Semantics(
+                  button: true,
+                  label: AppLocalizations.of(ctx)!.accept,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: Text(AppLocalizations.of(ctx)!.accept),
+                  ),
+                ),
               ),
             ],
           );
