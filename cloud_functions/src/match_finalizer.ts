@@ -1,9 +1,9 @@
-import { ResultProvider } from './services/ResultProvider';
+import { ApiFootballResultProvider } from './services/ApiFootballResultProvider';
 import { CoinService } from './services/CoinService';
 
 import { db } from './lib/firebase';
 import { FieldValue } from 'firebase-admin/firestore';
-const resultProvider = new ResultProvider();
+const resultProvider = new ApiFootballResultProvider();
 const coinService = new CoinService();
 
 interface PubSubMessage {
