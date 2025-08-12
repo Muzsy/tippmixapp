@@ -72,3 +72,4 @@
 | 2025‑08‑06   | @codex-bot      | TOC refreshed after ticket rules whitelist correction                         |
 | 2025‑08‑07   | @codex-bot      | TOC refreshed after match finalizer evaluation fix                            |
 | 2025-08-10   | @codex-bot      | TOC refreshed after home default route docs update                            |
+| 2025-08-12   | @codex-bot      | TOC refreshed after API football key docs                                      |
