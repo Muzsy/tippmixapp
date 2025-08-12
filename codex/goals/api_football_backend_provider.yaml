@@ -1,0 +1,135 @@
+meta:
+  canvas: api_football_backend_provider.md
+  priority: P1
+
+steps:
+  - name: "Új ApiFootballResultProvider létrehozása"
+    description: "Hozz létre egy új szolgáltatót az API-Football eredmények lekérésére. A bekötés külön vászonban történik."
+    outputs:
+      - "cloud_functions/src/services/ApiFootballResultProvider.ts"
+    create_file:
+      target: cloud_functions/src/services/ApiFootballResultProvider.ts
+      content: |
+        // Lightweight API-Football provider (prep only) – no wiring yet
+        // Node 18+ global fetch; no extra deps required
+        
+        export type ApiFootballScore = {
+          eventId: string;
+          status: string; // e.g. NS/1H/HT/2H/FT
+          homeScore: number | null;
+          awayScore: number | null;
+          winnerTeamId?: number | null;
+          raw?: unknown; // keep raw fragment for future mapping/tests
+        };
+        
+        export class ApiFootballResultProvider {
+          private readonly baseUrl = 'https://v3.football.api-sports.io';
+          private readonly apiKey: string;
+        
+          constructor(apiKey = process.env.API_FOOTBALL_KEY ?? '') {
+            if (!apiKey) {
+              throw new Error('Missing API_FOOTBALL_KEY');
+            }
+            this.apiKey = apiKey;
+          }
+        
+          /**
+           * Fetch scores for given API-Football fixture IDs.
+           * NOTE: Kept intentionally generic; match_finalizer wiring comes later.
+           */
+          async getScores(eventIds: string[]): Promise<ApiFootballScore[]> {
+            const headers = { 'x-apisports-key': this.apiKey } as const;
+            const results: ApiFootballScore[] = [];
+        
+            for (const id of eventIds) {
+              const url = `${this.baseUrl}/fixtures?id=${encodeURIComponent(id)}`;
+              const res = await fetch(url, { headers });
+              if (!res.ok) {
+                // Map non-200s to empty/pending for now; detailed handling later
+                results.push({ eventId: String(id), status: 'UNK', homeScore: null, awayScore: null });
+                continue;
+              }
+              const json: any = await res.json();
+              const item = Array.isArray(json?.response) ? json.response[0] : undefined;
+              const statusShort: string = item?.fixtures?.status?.short ?? item?.fixture?.status?.short ?? 'UNK';
+              const goalsHome: number | null = item?.goals?.home ?? null;
+              const goalsAway: number | null = item?.goals?.away ?? null;
+              const winnerId: number | null = item?.teams?.home?.winner ? item?.teams?.home?.id : (item?.teams?.away?.winner ? item?.teams?.away?.id : null);
+        
+              results.push({
+                eventId: String(id),
+                status: statusShort,
+                homeScore: goalsHome,
+                awayScore: goalsAway,
+                winnerTeamId: winnerId,
+                raw: item ? {
+                  status: item?.fixture?.status,
+                  goals: item?.goals,
+                  teams: item?.teams,
+                } : undefined,
+              });
+            }
+            return results;
+          }
+        }
+
+  - name: "Teszt stub hozzáadása a providerhez"
+    description: "Adjunk hozzá egy minimális unit tesztet, amely mockolt választ parszol és ellenőrzi a shape-et."
+    outputs:
+      - "cloud_functions/test/apiFootballResultProvider.test.ts"
+    create_file:
+      target: cloud_functions/test/apiFootballResultProvider.test.ts
+      content: |
+        import { ApiFootballResultProvider } from "../src/services/ApiFootballResultProvider";
+        
+        // Mock fetch
+        const globalAny: any = global;
+        
+        beforeEach(() => {
+          globalAny.fetch = jest.fn(async () => ({
+            ok: true,
+            json: async () => ({
+              response: [{
+                fixture: { status: { short: 'FT' } },
+                goals: { home: 2, away: 1 },
+                teams: { home: { id: 10, winner: true }, away: { id: 20, winner: false } }
+              }]
+            })
+          }));
+          process.env.API_FOOTBALL_KEY = 'test-key';
+        });
+        
+        afterEach(() => {
+          jest.resetAllMocks();
+        });
+        
+        test('parses a basic FT response', async () => {
+          const p = new ApiFootballResultProvider();
+          const res = await p.getScores(['123']);
+          expect(res).toHaveLength(1);
+          expect(res[0].status).toBe('FT');
+          expect(res[0].homeScore).toBe(2);
+          expect(res[0].awayScore).toBe(1);
+          expect(res[0].winnerTeamId).toBe(10);
+        });
+
+  - name: "Functions tesztek futtatása"
+    description: "Futtasd a Cloud Functions unit teszteket."
+    outputs:
+      - "CI log: npm test (functions) sikeres"
+    run: |
+      cd cloud_functions && npm test
+
+  - name: "Doksifrissítés: API_FOOTBALL_KEY"
+    description: "Jegyezd fel a projekt doksiba, hogy szükséges az API_FOOTBALL_KEY titok (GitHub Secrets + Firebase Functions config)."
+    outputs:
+      - "docs/backend/api_football_key_notes.md"
+    create_file:
+      target: docs/backend/api_football_key_notes.md
+      content: |
+        # API_FOOTBALL_KEY beállítása
+        
+        - GitHub Secrets: `API_FOOTBALL_KEY`
+        - Firebase Functions config: `firebase functions:config:set apifootball.key="<SECRET>"`
+        - A kulcs a Cloud Functions környezetben `process.env.API_FOOTBALL_KEY` változóba kerül (deploy pipeline tölti be).
+        - Ne logold és ne írd ki a kulcsot semmilyen naplóba.
