@@ -1,0 +1,154 @@
+meta:
+  canvas: odds_drift_i18n_and_accessibility.md
+  priority: P1
+
+steps:
+  - name: "ARB fájlok létrehozása/frissítése (EN/HU)"
+    description: "Vedd fel a szükséges kulcsokat az angol és magyar ARB fájlokba. Ha a fájlok nem léteznek, hozd létre őket a lib/l10n alatt."
+    outputs:
+      - "lib/l10n/intl_en.arb"
+      - "lib/l10n/intl_hu.arb"
+    create_file:
+      target: lib/l10n/intl_en.arb
+      content: |
+        {
+          "@@locale": "en",
+          "oddsChangedTitle": "Odds changed",
+          "oddsOld": "Old",
+          "oddsNew": "New",
+          "accept": "Accept",
+          "cancel": "Cancel"
+        }
+    
+  - name: "HU ARB"
+    description: "Magyar fordítások felvétele."
+    outputs:
+      - "lib/l10n/intl_hu.arb"
+    create_file:
+      target: lib/l10n/intl_hu.arb
+      content: |
+        {
+          "@@locale": "hu",
+          "oddsChangedTitle": "Odds megváltozott",
+          "oddsOld": "Régi",
+          "oddsNew": "Új",
+          "accept": "Elfogad",
+          "cancel": "Mégse"
+        }
+
+  - name: "l10n konfiguráció (ha hiányzik)"
+    description: "Adjunk minimális l10n.yaml‑t, ha nincs; a default AppLocalizations generálásához."
+    outputs:
+      - "l10n.yaml (optional)"
+    create_file:
+      target: l10n.yaml
+      content: |
+        arb-dir: lib/l10n
+        template-arb-file: intl_en.arb
+        output-localization-file: app_localizations.dart
+        output-class: AppLocalizations
+
+  - name: "Dialog patch – AppLocalizations + Semantics"
+    description: "Cseréld a dialog fix stringjeit lokalizált hívásokra; adj Semantics és Tooltip beállításokat a gombokra."
+    outputs:
+      - "lib/widgets/odds_drift_dialog.dart (patched)"
+    patch_file:
+      target: lib/widgets/odds_drift_dialog.dart
+      patch: |
+        @@
+- import 'package:flutter/material.dart';
++ import 'package:flutter/material.dart';
++ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+@@
+-                title: const Text('Odds megváltozott'),
++                title: Semantics(
++                  header: true,
++                  label: AppLocalizations.of(ctx)!.oddsChangedTitle,
++                  child: Text(AppLocalizations.of(ctx)!.oddsChangedTitle),
++                ),
+@@
+-                  TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Mégse')),
+-                  ElevatedButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Elfogad')),
++                  Tooltip(
++                    message: AppLocalizations.of(ctx)!.cancel,
++                    child: Semantics(
++                      button: true,
++                      label: AppLocalizations.of(ctx)!.cancel,
++                      child: TextButton(
++                        onPressed: () => Navigator.of(ctx).pop(false),
++                        child: Text(AppLocalizations.of(ctx)!.cancel),
++                      ),
++                    ),
++                  ),
++                  Tooltip(
++                    message: AppLocalizations.of(ctx)!.accept,
++                    child: Semantics(
++                      button: true,
++                      label: AppLocalizations.of(ctx)!.accept,
++                      child: ElevatedButton(
++                        onPressed: () => Navigator.of(ctx).pop(true),
++                        child: Text(AppLocalizations.of(ctx)!.accept),
++                      ),
++                    ),
++                  ),
+                 ],
+               );
+            },
+          ) ?? false;
+        }
+
+  - name: "Widget teszt – lokalizáció és a11y"
+    description: "Írj tesztet, ami EN és HU locale mellett felépíti a dialogot és ellenőrzi a feliratokat és a semantics címkéket."
+    outputs:
+      - "test/widgets/odds_drift_dialog_localization_test.dart"
+    create_file:
+      target: test/widgets/odds_drift_dialog_localization_test.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+        import 'package:tippmixapp/widgets/odds_drift_dialog.dart';
+        
+        Widget _wrap(Widget child, Locale locale) => MaterialApp(
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: Builder(builder: (ctx) => Center(child: child))),
+        );
+        
+        void main() {
+          testWidgets('HU labels and semantics present', (tester) async {
+            await tester.pumpWidget(_wrap(const SizedBox.shrink(), const Locale('hu')));
+            unawaited(showOddsDriftDialog(
+              tester.element(find.byType(SizedBox)),
+              // üres változáslista is elég a cím és gombok teszteléséhez
+              OddsDriftResult(const []),
+            ));
+            await tester.pumpAndSettle();
+            expect(find.text('Odds megváltozott'), findsOneWidget);
+            expect(find.text('Mégse'), findsOneWidget);
+            expect(find.text('Elfogad'), findsOneWidget);
+          });
+          testWidgets('EN labels present', (tester) async {
+            await tester.pumpWidget(_wrap(const SizedBox.shrink(), const Locale('en')));
+            unawaited(showOddsDriftDialog(
+              tester.element(find.byType(SizedBox)),
+              OddsDriftResult(const []),
+            ));
+            await tester.pumpAndSettle();
+            expect(find.text('Odds changed'), findsOneWidget);
+            expect(find.text('Cancel'), findsOneWidget);
+            expect(find.text('Accept'), findsOneWidget);
+          });
+        }
+
+  - name: "L10n generálás és tesztfutás"
+    description: "Futtasd a l10n generálást, az elemzőt és a teszteket."
+    outputs:
+      - "CI log: flutter gen-l10n (success)"
+      - "CI log: flutter analyze (success)"
+      - "CI log: flutter test (success)"
+    run: |
+      flutter gen-l10n
+      flutter analyze
+      flutter test
