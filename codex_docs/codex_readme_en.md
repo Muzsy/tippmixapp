@@ -77,3 +77,4 @@
 | 2025-08-12   | @codex-bot      | TOC refreshed after finalizer atomic payout docs update                       |
 | 2025-08-20   | @codex-bot      | TOC refreshed after ApiFootball frontend service docs update                  |
 | 2025-08-21   | @codex-bot      | TOC refreshed after odds drift prompt docs update                              |
+| 2025-08-22   | @codex-bot      | TOC refreshed after odds drift dialog i18n & a11y docs update                  |

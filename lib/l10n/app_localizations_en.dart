@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_only_field => 'Only admin may modify this field.';
 
   @override
+  String get ai_recommendation => 'AI recommendation';
+
+  @override
   String get amount_must_be_integer => 'Amount must be an integer.';
 
   @override
@@ -132,6 +135,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnContinue => 'Continue';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
   String get confirm_password_hint => 'Confirm Password';
 
   @override
@@ -148,6 +154,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copy_success => 'Ticket copied!';
+
+  @override
+  String countdown_to_kickoff(Object time) {
+    return 'Kickoff in $time';
+  }
 
   @override
   String get createTicketTitle => 'Create Ticket';
@@ -189,8 +200,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit_title => 'Edit Profile';
 
   @override
-  String get emailVerify_description =>
-      'Click the link in the verification email then return to the app.';
+  String get emailVerify_description => 'Click the link in the verification email then return to the app.';
 
   @override
   String get emailVerify_exit => 'Exit';
@@ -268,30 +278,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get events_title => 'Events';
-
-  @override
-  String get more_bets => 'More bets';
-
-  @override
-  String get statistics => 'Statistics';
-
-  @override
-  String get ai_recommendation => 'AI recommendation';
-
-  @override
-  String updated_time_ago(Object time) {
-    return 'Updated $time';
-  }
-
-  @override
-  String starts_at(Object time) {
-    return 'Starts at $time';
-  }
-
-  @override
-  String countdown_to_kickoff(Object time) {
-    return 'Kickoff in $time';
-  }
 
   @override
   String get facebook_login => 'Continue with Facebook';
@@ -404,8 +390,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_challenge_cta_accept => 'Accept';
 
   @override
-  String get home_tile_challenge_daily_description =>
-      'Daily challenge: win 3 bets today.';
+  String get home_tile_challenge_daily_description => 'Daily challenge: win 3 bets today.';
 
   @override
   String home_tile_challenge_friend_description(Object username) {
@@ -425,16 +410,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_tile_daily_bonus_title => 'Daily Bonus';
 
   @override
-  String get home_tile_educational_tip_1 =>
-      'Did you know? Combining bets can increase your odds.';
+  String get home_tile_educational_tip_1 => 'Did you know? Combining bets can increase your odds.';
 
   @override
-  String get home_tile_educational_tip_2 =>
-      'Single bets carry less risk than accumulators.';
+  String get home_tile_educational_tip_2 => 'Single bets carry less risk than accumulators.';
 
   @override
-  String get home_tile_educational_tip_3 =>
-      'Track your betting history to learn from past results.';
+  String get home_tile_educational_tip_3 => 'Track your betting history to learn from past results.';
 
   @override
   String get home_tile_educational_tip_cta => 'More tips';
@@ -552,6 +534,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get missing_transaction_id => 'Transaction ID is required.';
 
   @override
+  String get more_bets => 'More bets';
+
+  @override
   String get myTickets => 'My Tickets';
 
   @override
@@ -624,6 +609,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationUndo => 'Undo';
 
   @override
+  String get oddsChangedTitle => 'Odds changed';
+
+  @override
+  String get oddsNew => 'New';
+
+  @override
+  String get oddsOld => 'Old';
+
+  @override
   String get odds_label => 'Odds';
 
   @override
@@ -666,8 +660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password_hint => 'Password';
 
   @override
-  String get password_pwned_error =>
-      'This password has appeared in a data breach';
+  String get password_pwned_error => 'This password has appeared in a data breach';
 
   @override
   String get password_reset_email_sent => 'Password reset email sent';
@@ -893,6 +886,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stakeHint => 'Stake';
 
   @override
+  String starts_at(Object time) {
+    return 'Starts at $time';
+  }
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
   String get team_hint => 'Favourite team';
 
   @override
@@ -933,6 +934,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknown_network_error => 'Network error occurred';
+
+  @override
+  String updated_time_ago(Object time) {
+    return 'Updated $time';
+  }
 
   @override
   String get verification_email_sent => 'Verification email sent';
