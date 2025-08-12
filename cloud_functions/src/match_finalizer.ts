@@ -1,10 +1,39 @@
 import { ApiFootballResultProvider } from './services/ApiFootballResultProvider';
-import { CoinService } from './services/CoinService';
+import { calcTicketPayout } from './tickets/payout';
+import { getFirestore } from 'firebase-admin/firestore';
 
 import { db } from './lib/firebase';
-import { FieldValue } from 'firebase-admin/firestore';
 const resultProvider = new ApiFootballResultProvider();
-const coinService = new CoinService();
+
+// After computing tip results for a ticket
+async function finalizeTicketAtomic(
+  ticketRef: FirebaseFirestore.DocumentReference,
+  userRef: FirebaseFirestore.DocumentReference,
+  ticketData: any,
+) {
+  const db = getFirestore();
+  await db.runTransaction(async (tx) => {
+    const [tSnap, uSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
+    const t = tSnap.data();
+    if (!t) throw new Error('Ticket not found');
+    if (t.processedAt) {
+      return; // idempotent exit
+    }
+    const tips = (ticketData.tips || []).map((x: any) => ({
+      market: x.market,
+      selection: x.selection,
+      result: x.result,
+      oddsSnapshot: x.oddsSnapshot,
+    }));
+    // If any pending remain, do nothing
+    if (tips.some((x: any) => x.result === 'pending')) return;
+    const payout = calcTicketPayout(ticketData.stake, tips);
+    const status = tips.some((x: any) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
+    const balance = (uSnap.data()?.balance ?? 0) + payout;
+    tx.update(userRef, { balance });
+    tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
+  });
+}
 
 interface PubSubMessage {
   data?: string;
@@ -66,52 +95,29 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     resultMap.set(r.id, { completed: true, winner });
   });
 
-  // 4) Evaluate each ticket based on its tips
-  const batch = db.batch();
+  // 4) Evaluate each ticket based on its tips and finalize atomically
   for (const snap of ticketsSnap.docs) {
-    const tips = (snap.get('tips') as any[]) || [];
-    if (!tips.length) continue;
+    const tipsRaw = (snap.get('tips') as any[]) || [];
+    if (!tipsRaw.length) continue;
 
-    let hasPending = false;
-    let hasLost = false;
-
-    for (const t of tips) {
+    const tipResults = tipsRaw.map((t: any) => {
       const rid = t?.eventId;
       const pick = (t?.outcome ?? '').trim();
-      if (!rid || !resultMap.has(rid)) {
-        hasPending = true;
-        continue;
+      const res = rid ? resultMap.get(rid) : undefined;
+      if (!res || !res.completed || !res.winner) {
+        return { ...t, market: t.market, selection: pick, result: 'pending', oddsSnapshot: t.oddsSnapshot };
       }
-      const { completed, winner } = resultMap.get(rid)!;
-      if (!completed || !winner) {
-        hasPending = true;
-        continue;
-      }
-      if (winner !== pick) {
-        hasLost = true;
-      }
-    }
+      const result = res.winner === pick ? 'won' : 'lost';
+      return { ...t, market: t.market, selection: pick, result, oddsSnapshot: t.oddsSnapshot };
+    });
 
-    let newStatus: 'pending' | 'won' | 'lost' = 'pending';
-    if (hasLost) newStatus = 'lost';
-    else if (!hasPending) newStatus = 'won';
-
-    if (newStatus !== 'pending') {
-      batch.update(snap.ref, {
-        status: newStatus,
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-      if (newStatus === 'won') {
-        await coinService.credit(
-          snap.get('uid'),
-          snap.get('potentialProfit'),
-          snap.id,
-        );
-      }
-    }
+    await finalizeTicketAtomic(
+      snap.ref,
+      db.collection('users').doc(snap.get('uid')),
+      { stake: snap.get('stake'), tips: tipResults },
+    );
   }
 
-  await batch.commit();
-  console.log('[match_finalizer] batch commit done');
+  console.log('[match_finalizer] ticket finalization loop done');
 };
 
