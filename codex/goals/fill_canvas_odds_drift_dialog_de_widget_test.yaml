@@ -1,0 +1,45 @@
+meta:
+  canvas: odds_drift_dialog_de_widget_test.md
+  priority: P2
+
+steps:
+  - name: "DE widget teszt hozzáadása"
+    description: "Hozz létre külön widget tesztet a német locale ellenőrzésére."
+    outputs:
+      - "test/widgets/odds_drift_dialog_de_test.dart"
+    create_file:
+      target: test/widgets/odds_drift_dialog_de_test.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+        import 'package:tippmixapp/widgets/odds_drift_dialog.dart';
+        
+        Widget _wrap(Widget child) => MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: Builder(builder: (ctx) => Center(child: child))),
+        );
+        
+        void main() {
+          testWidgets('DE labels present', (tester) async {
+            await tester.pumpWidget(_wrap(const SizedBox.shrink()));
+            unawaited(showOddsDriftDialog(
+              tester.element(find.byType(SizedBox)),
+              // üres változáslista elég a statikus feliratokhoz
+              OddsDriftResult(const []),
+            ));
+            await tester.pumpAndSettle();
+            expect(find.text('Quote geändert'), findsOneWidget);
+            expect(find.text('Abbrechen'), findsOneWidget);
+            expect(find.text('Akzeptieren'), findsOneWidget);
+          });
+        }
+
+  - name: "Tesztfuttatás"
+    description: "Futtasd a widget teszteket."
+    outputs:
+      - "CI log: flutter test (success)"
+    run: |
+      flutter test test/widgets/odds_drift_dialog_de_test.dart

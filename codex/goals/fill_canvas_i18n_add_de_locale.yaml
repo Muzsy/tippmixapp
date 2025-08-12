@@ -1,0 +1,31 @@
+meta:
+  canvas: i18n_add_de_locale.md
+  priority: P2
+
+steps:
+  - name: "DE ARB létrehozása"
+    description: "Add hozzá a német fordításokat az odds drift dialog kulcsaihoz."
+    outputs:
+      - "lib/l10n/intl_de.arb"
+    create_file:
+      target: lib/l10n/intl_de.arb
+      content: |
+        {
+          "@@locale": "de",
+          "oddsChangedTitle": "Quote geändert",
+          "oddsOld": "Alt",
+          "oddsNew": "Neu",
+          "accept": "Akzeptieren",
+          "cancel": "Abbrechen"
+        }
+
+  - name: "L10n generálás és ellenőrzés"
+    description: "Futtasd a lokalizáció generálást és a szokásos ellenőrzéseket."
+    outputs:
+      - "CI log: flutter gen-l10n (success)"
+      - "CI log: flutter analyze (success)"
+      - "CI log: flutter test (success)"
+    run: |
+      flutter gen-l10n
+      flutter analyze
+      flutter test
