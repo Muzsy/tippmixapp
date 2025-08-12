@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.match_finalizer = void 0;
-const ResultProvider_1 = require("./services/ResultProvider");
+const ApiFootballResultProvider_1 = require("./services/ApiFootballResultProvider");
 const CoinService_1 = require("./services/CoinService");
 const firebase_1 = require("./lib/firebase");
 const firestore_1 = require("firebase-admin/firestore");
-const resultProvider = new ResultProvider_1.ResultProvider();
+const resultProvider = new ApiFootballResultProvider_1.ApiFootballResultProvider();
 const coinService = new CoinService_1.CoinService();
 const match_finalizer = async (message) => {
     const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');

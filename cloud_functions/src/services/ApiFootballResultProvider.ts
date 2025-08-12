@@ -1,14 +1,14 @@
-// Lightweight API-Football provider (prep only) – no wiring yet
+// Lightweight API-Football provider that mimics the old OddsAPI adapter
 // Node 18+ global fetch; no extra deps required
 
-export type ApiFootballScore = {
-  eventId: string;
-  status: string; // e.g. NS/1H/HT/2H/FT
-  homeScore: number | null;
-  awayScore: number | null;
-  winnerTeamId?: number | null;
-  raw?: unknown; // keep raw fragment for future mapping/tests
-};
+export interface ScoreResult {
+  id: string;
+  sport_key: string;
+  completed: boolean;
+  scores?: { home: number; away: number };
+  home_team?: string;
+  away_team?: string;
+}
 
 export class ApiFootballResultProvider {
   private readonly baseUrl = 'https://v3.football.api-sports.io';
@@ -22,39 +22,36 @@ export class ApiFootballResultProvider {
   }
 
   /**
-   * Fetch scores for given API-Football fixture IDs.
-   * NOTE: Kept intentionally generic; match_finalizer wiring comes later.
+   * Fetch scores for given API-Football fixture IDs and map them
+   * to the legacy ScoreResult structure used by match_finalizer.
    */
-  async getScores(eventIds: string[]): Promise<ApiFootballScore[]> {
+  async getScores(eventIds: string[]): Promise<ScoreResult[]> {
     const headers = { 'x-apisports-key': this.apiKey } as const;
-    const results: ApiFootballScore[] = [];
+    const results: ScoreResult[] = [];
 
     for (const id of eventIds) {
       const url = `${this.baseUrl}/fixtures?id=${encodeURIComponent(id)}`;
       const res = await fetch(url, { headers });
       if (!res.ok) {
-        // Map non-200s to empty/pending for now; detailed handling later
-        results.push({ eventId: String(id), status: 'UNK', homeScore: null, awayScore: null });
+        // Non-200 → treat as pending
+        results.push({ id: String(id), sport_key: 'soccer', completed: false });
         continue;
       }
       const json: any = await res.json();
       const item = Array.isArray(json?.response) ? json.response[0] : undefined;
-      const statusShort: string = item?.fixtures?.status?.short ?? item?.fixture?.status?.short ?? 'UNK';
+      const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
       const goalsHome: number | null = item?.goals?.home ?? null;
       const goalsAway: number | null = item?.goals?.away ?? null;
-      const winnerId: number | null = item?.teams?.home?.winner ? item?.teams?.home?.id : (item?.teams?.away?.winner ? item?.teams?.away?.id : null);
-
       results.push({
-        eventId: String(id),
-        status: statusShort,
-        homeScore: goalsHome,
-        awayScore: goalsAway,
-        winnerTeamId: winnerId,
-        raw: item ? {
-          status: item?.fixture?.status,
-          goals: item?.goals,
-          teams: item?.teams,
-        } : undefined,
+        id: String(id),
+        sport_key: 'soccer',
+        completed: statusShort === 'FT',
+        scores:
+          goalsHome !== null && goalsAway !== null
+            ? { home: goalsHome, away: goalsAway }
+            : undefined,
+        home_team: item?.teams?.home?.name,
+        away_team: item?.teams?.away?.name,
       });
     }
     return results;
