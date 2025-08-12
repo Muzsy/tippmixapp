@@ -111,4 +111,9 @@ class ApiFootballService {
       bookmakers: const [],
     );
   }
+
+  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+    // TODO: implement API call for a single fixture odds lookup
+    return {};
+  }
 }
