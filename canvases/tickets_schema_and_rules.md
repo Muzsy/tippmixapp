@@ -10,18 +10,18 @@ Definiáljuk a `tickets` kollekció sémáját és indexeit, hozzunk létre **kl
 
 ## Feladatok
 
-* [ ] **Séma doksi**: `docs/backend/firestore_tickets_schema.md` – mezők, típusok, példák, státuszgraf
-* [ ] **Biztonsági szabály‑overlay**: `security/tickets.rules` – csak saját ticket **olvasható**, **írás tiltott** (kivéve opcionális `tickets_drafts` kliens‑draftok)
-* [ ] **Indexek**: `firestore.indexes.json` – `tickets` by `(userId, createdAt desc)` és `(status, createdAt desc)`
-* [ ] **Smoke ellenőrzés**: `flutter analyze` + Functions build/test érintetlenül zöld (nem nyúlunk aktív rule‑fájlhoz)
+* [x] **Séma doksi**: `docs/backend/firestore_tickets_schema.md` – mezők, típusok, példák, státuszgraf
+* [x] **Biztonsági szabály‑overlay**: `security/tickets.rules` – csak saját ticket **olvasható**, **írás tiltott** (kivéve opcionális `tickets_drafts` kliens‑draftok)
+* [x] **Indexek**: `firestore.indexes.json` – `tickets` by `(userId, createdAt desc)` és `(status, createdAt desc)`
+* [x] **Smoke ellenőrzés**: `flutter analyze` + Functions build/test érintetlenül zöld (nem nyúlunk aktív rule‑fájlhoz)
 
 ## Acceptance Criteria / Done Definition
 
-* [ ] A repo tartalmazza a `docs/backend/firestore_tickets_schema.md` fájlt részletes meződefiníciókkal és mintákkal
-* [ ] Létezik egy **izolált** szabályfájl: `security/tickets.rules` a `tickets`/**`tickets_drafts`** kollekciókra
-* [ ] `firestore.indexes.json` tartalmazza a fenti két kompozit indexet
-* [ ] A meglévő `firestore.rules` **nem** módosul ebben a lépésben; működő funkciók nem sérülnek
-* [ ] `flutter analyze` és a Cloud Functions build/test zöld
+* [x] A repo tartalmazza a `docs/backend/firestore_tickets_schema.md` fájlt részletes meződefiníciókkal és mintákkal
+* [x] Létezik egy **izolált** szabályfájl: `security/tickets.rules` a `tickets`/**`tickets_drafts`** kollekciókra
+* [x] `firestore.indexes.json` tartalmazza a fenti két kompozit indexet
+* [x] A meglévő `firestore.rules` **nem** módosul ebben a lépésben; működő funkciók nem sérülnek
+* [x] `flutter analyze` és a Cloud Functions build/test zöld
 
 ## Hivatkozások
 
