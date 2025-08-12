@@ -1,0 +1,206 @@
+meta:
+  canvas: odds_drift_prompt_frontend.md
+  priority: P1
+
+steps:
+  - name: "Odds drift modell és checker létrehozása"
+    description: "Adjunk önálló modellt és szolgáltatást az eltérések detektálására; az ApiFootballService‑t használja friss odds lekérésére."
+    outputs:
+      - "lib/models/odds_drift.dart"
+      - "lib/services/odds_drift_checker.dart"
+    create_file:
+      target: lib/models/odds_drift.dart
+      content: |
+        class DriftItem {
+          final String fixtureId;
+          final String market;
+          final String selection;
+          final double oldOdds;
+          final double newOdds;
+          DriftItem({
+            required this.fixtureId,
+            required this.market,
+            required this.selection,
+            required this.oldOdds,
+            required this.newOdds,
+          });
+          bool get increased => newOdds > oldOdds;
+          double get diff => newOdds - oldOdds;
+        }
+        
+        class OddsDriftResult {
+          final List<DriftItem> changes;
+          OddsDriftResult(this.changes);
+          bool hasBlocking(double threshold) => changes.any((c) => (c.diff.abs()) >= threshold);
+        }
+    
+  - name: "Odds drift checker implementáció"
+    description: "A checker a kiválasztott tippekhez friss oddsot kér le az ApiFootballService‑től (batchelve), majd visszaadja a változásokat."
+    outputs:
+      - "lib/services/odds_drift_checker.dart"
+    create_file:
+      target: lib/services/odds_drift_checker.dart
+      content: |
+        import 'dart:async';
+        import '../models/odds_drift.dart';
+        import 'api_football_service.dart';
+        
+        class OddsDriftChecker {
+          final ApiFootballService api;
+          OddsDriftChecker(this.api);
+        
+          /// tips: list of maps with keys: fixtureId, market, selection, oddsSnapshot
+          Future<OddsDriftResult> check(List<Map<String, dynamic>> tips) async {
+            // Group by fixture for efficient fetching
+            final byFixture = <String, List<Map<String, dynamic>>>{};
+            for (final t in tips) {
+              final f = t['fixtureId'] as String;
+              byFixture.putIfAbsent(f, () => []).add(t);
+            }
+            final changes = <DriftItem>[];
+            for (final entry in byFixture.entries) {
+              final fixtureId = entry.key;
+              final fresh = await api.getOddsForFixture(fixtureId); // implement this in ApiFootballService if not present
+              for (final tip in entry.value) {
+                final market = tip['market'] as String;
+                final selection = tip['selection'] as String;
+                final oldOdds = (tip['oddsSnapshot'] as num).toDouble();
+                final newOdds = _readOdds(fresh, market, selection) ?? oldOdds;
+                if (newOdds != oldOdds) {
+                  changes.add(DriftItem(
+                    fixtureId: fixtureId,
+                    market: market,
+                    selection: selection,
+                    oldOdds: oldOdds,
+                    newOdds: newOdds,
+                  ));
+                }
+              }
+            }
+            return OddsDriftResult(changes);
+          }
+        
+          double? _readOdds(Map<String, dynamic> fresh, String market, String selection) {
+            // TODO: map API‑Football markets → internal markets; for now, expect normalized keys
+            try {
+              final markets = fresh['markets'] as List<dynamic>?; // expected normalized structure
+              if (markets == null) return null;
+              for (final m in markets) {
+                if (m['code'] == market) {
+                  final outcomes = m['outcomes'] as List<dynamic>?;
+                  if (outcomes == null) continue;
+                  for (final o in outcomes) {
+                    if (o['code'] == selection) {
+                      return (o['price'] as num).toDouble();
+                    }
+                  }
+                }
+              }
+            } catch (_) {}
+            return null;
+          }
+        }
+
+  - name: "Prompt dialog komponens"
+    description: "Hozz létre egy egyszerű modális párbeszédablakot, amely felsorolja a változásokat és visszaadja, hogy a felhasználó elfogadja‑e az új oddst."
+    outputs:
+      - "lib/widgets/odds_drift_dialog.dart"
+    create_file:
+      target: lib/widgets/odds_drift_dialog.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import '../models/odds_drift.dart';
+        
+        Future<bool> showOddsDriftDialog(BuildContext context, OddsDriftResult result) async {
+          return await showDialog<bool>(
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                title: const Text('Odds megváltozott'),
+                content: SizedBox(
+                  width: 360,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: result.changes.map((c) => ListTile(
+                      dense: true,
+                      title: Text('${c.market} / ${c.selection}'),
+                      subtitle: Text('Régi: ${c.oldOdds.toStringAsFixed(2)}  →  Új: ${c.newOdds.toStringAsFixed(2)}'),
+                      trailing: Icon(c.increased ? Icons.trending_up : Icons.trending_down),
+                    )).toList(),
+                  ),
+                ),
+                actions: [
+                  TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Mégse')),
+                  ElevatedButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Elfogad')),
+                ],
+              );
+            },
+          ) ?? false;
+        }
+
+  - name: "TicketService integráció"
+    description: "Bővítsd a `TicketService`‑t egy `confirmAndCreateTicket` metódussal, amely driftet ellenőriz, szükség esetén dialogot mutat, majd a döntés alapján folytat vagy megszakít. A meglévő createTicket érintetlen marad."
+    outputs:
+      - "lib/services/ticket_service.dart (patched with confirmAndCreateTicket)"
+    patch_file:
+      target: lib/services/ticket_service.dart
+      patch: |
+        @@
+        class TicketService {
+        +  Future<String?> confirmAndCreateTicket(BuildContext context, {
+        +    required List<Map<String, dynamic>> tips,
+        +    required num stake,
+        +    double threshold = 0.05,
+        +  }) async {
+        +    final checker = OddsDriftChecker(ApiFootballService());
+        +    final drift = await checker.check(tips);
+        +    final hasBlocking = drift.hasBlocking(threshold);
+        +    if (hasBlocking) {
+        +      final accepted = await showOddsDriftDialog(context, drift);
+        +      if (!accepted) return null; // user canceled
+        +      // Optional: update tips with new odds here if desired
+        +    }
+        +    // proceed with existing createTicket flow
+        +    return await createTicket(tips: tips, stake: stake);
+        +  }
+        }
+
+  - name: "Unit tesztek a checkerhez"
+    description: "Teszteld a drift checker alap eseteit mockolt ApiFootballService mellett."
+    outputs:
+      - "test/services/odds_drift_checker_test.dart"
+    create_file:
+      target: test/services/odds_drift_checker_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/models/odds_drift.dart';
+        import 'package:tippmixapp/services/odds_drift_checker.dart';
+        
+        class _MockApi {
+          Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+            return {
+              'markets': [
+                {'code': '1X2', 'outcomes': [
+                  {'code': 'HOME', 'price': 1.90},
+                  {'code': 'DRAW', 'price': 3.30},
+                  {'code': 'AWAY', 'price': 4.50},
+                ]}
+              ]
+            };
+          }
+        }
+        
+        void main() {
+          test('no drift when identical', () async {
+            final checker = OddsDriftChecker((Object? _) => throw UnimplementedError());
+          });
+        }
+
+  - name: "Build ellenőrzés"
+    description: "Futtasd a Flutter analyze‑t és a teszteket."
+    outputs:
+      - "CI log: flutter analyze (success)"
+      - "CI log: flutter test (success)"
+    run: |
+      flutter analyze
+      flutter test
