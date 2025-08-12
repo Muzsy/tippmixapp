@@ -1,0 +1,118 @@
+meta:
+  canvas: finalizer_payout_atomicity.md
+  priority: P0
+
+steps:
+  - name: "Payout kalkulátor modul"
+    description: "Hozd létre a payout számítást végző segédet: single/multi, void=1.0, lost→0. DTO mentes, tiszta függvények."
+    outputs:
+      - "cloud_functions/src/tickets/payout.ts"
+    create_file:
+      target: cloud_functions/src/tickets/payout.ts
+      content: |
+        export type Tip = {
+          market: string;           // e.g. '1X2' | 'OU' | 'BTTS' | 'AH'
+          selection: string;        // e.g. 'HOME' | 'DRAW' | 'AWAY' | 'OVER_2_5' | ...
+          result: 'won' | 'lost' | 'void' | 'pending';
+          oddsSnapshot: number;     // required for won/void; ignored when lost=0
+        };
+        
+        export function calcTicketPayout(stake: number, tips: Tip[]): number {
+          if (stake <= 0) return 0;
+          // If any tip is lost, full ticket lost
+          if (tips.some(t => t.result === 'lost')) return 0;
+          // If any tip is pending, no payout yet
+          if (tips.some(t => t.result === 'pending')) return 0;
+          let multiplier = 1.0;
+          for (const t of tips) {
+            if (t.result === 'void') {
+              multiplier *= 1.0; // void refunds stake for that leg
+            } else if (t.result === 'won') {
+              const odds = typeof t.oddsSnapshot === 'number' && t.oddsSnapshot > 0 ? t.oddsSnapshot : 1.0;
+              multiplier *= odds;
+            }
+          }
+          const payout = stake * multiplier;
+          // Round to 2 decimals for coin representation (adjust if integer coins)
+          return Math.round(payout * 100) / 100;
+        }
+
+  - name: "match_finalizer tranzakciós jóváírás"
+    description: "Patcheld a `match_finalizer.ts`‑t: eredménydöntés után, ha nincs pending tip, futtass Firestore tranzakciót a ticket status/payout és a users.balance frissítésére. Idempotencia: processedAt + tickets_meta lock."
+    outputs:
+      - "cloud_functions/src/match_finalizer.ts (patched)"
+    patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        @@
+- // TODO: finalize without atomic payout
++ import { calcTicketPayout } from './tickets/payout';
++ import { getFirestore } from 'firebase-admin/firestore';
++ 
++ // After computing tip results for a ticket
++ async function finalizeTicketAtomic(ticketRef: FirebaseFirestore.DocumentReference, userRef: FirebaseFirestore.DocumentReference, ticketData: any) {
++   const db = getFirestore();
++   await db.runTransaction(async (tx) => {
++     const [tSnap, uSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
++     const t = tSnap.data();
++     if (!t) throw new Error('Ticket not found');
++     if (t.processedAt) {
++       return; // idempotent exit
++     }
++     const tips = (t.tips || []).map((x: any) => ({
++       market: x.market,
++       selection: x.selection,
++       result: x.result,
++       oddsSnapshot: x.oddsSnapshot,
++     }));
++     // If any pending remain, do nothing
++     if (tips.some((x: any) => x.result === 'pending')) return;
++     const payout = calcTicketPayout(t.stake, tips);
++     const status = tips.some((x: any) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
++     const balance = (uSnap.data()?.balance ?? 0) + payout;
++     tx.update(userRef, { balance });
++     tx.update(ticketRef, { status, payout, processedAt: new Date() });
++   });
++ }
+
+  - name: "Emulator tesztek – finalizer idempotencia"
+    description: "Írj jest tesztet: (1) all‑won → egyszeri jóváírás, (2) void/kevert → helyes összeg, (3) dupla futtatás → második hívás no‑op."
+    outputs:
+      - "cloud_functions/test/finalizer_atomic.test.ts"
+    create_file:
+      target: cloud_functions/test/finalizer_atomic.test.ts
+      content: |
+        import { calcTicketPayout } from '../src/tickets/payout';
+        
+        describe('payout calculator', () => {
+          test('all won multiplies odds', () => {
+            const p = calcTicketPayout(100, [
+              { market: '1X2', selection: 'HOME', result: 'won', oddsSnapshot: 1.8 },
+              { market: 'OU', selection: 'OVER_2_5', result: 'won', oddsSnapshot: 1.9 },
+            ]);
+            expect(p).toBeCloseTo(342, 2); // 100 * 1.8 * 1.9
+          });
+          test('void treated as 1.0', () => {
+            const p = calcTicketPayout(100, [
+              { market: '1X2', selection: 'HOME', result: 'won', oddsSnapshot: 1.8 },
+              { market: 'OU', selection: 'OVER_2_5', result: 'void', oddsSnapshot: 1.9 },
+            ]);
+            expect(p).toBeCloseTo(180, 2);
+          });
+          test('lost makes payout 0', () => {
+            const p = calcTicketPayout(100, [
+              { market: '1X2', selection: 'HOME', result: 'lost', oddsSnapshot: 2.0 },
+            ]);
+            expect(p).toBe(0);
+          });
+        });
+
+  - name: "Build & test"
+    description: "Futtasd a Cloud Functions buildet és a teszteket. (A végleges emulator‑integrációs teszt külön vászonban bővíthető.)"
+    outputs:
+      - "CI log: npm ci && npm run build && npm test – success"
+    run: |
+      cd cloud_functions
+      npm ci
+      npm run build
+      npm test
