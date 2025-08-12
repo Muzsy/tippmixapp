@@ -1,0 +1,37 @@
+meta:
+  canvas: api_football_frontend_service_and_oddsapi_removal.md
+  priority: P0
+
+steps:
+  - name: "ApiFootballService létrehozása a régi API kompat ívásával"
+    description: "Hozd létre az új szolgáltatót `lib/services/api_football_service.dart` néven. A publikus metódusok és visszatérések maradjanak kompatibilisek az eddigi hívókkal (OddsEvent lista). Implementálj fixtures lekérést és alap mappinget."
+    outputs:
+      - "lib/services/api_football_service.dart"
+
+  - name: "Market mapping bevezetése"
+    description: "Készíts `lib/services/market_mapping.dart` fájlt a tipikus piacok (1X2, O/U, BTTS, opcionálisan AH) kód‑egységesítéséhez; biztosíts publikus konstansokat/segédfüggvényeket."
+    outputs:
+      - "lib/services/market_mapping.dart"
+
+  - name: "Állapotkezelés rákapcsolása az új service-re"
+    description: "Az odds provider (pl. `lib/providers/odds_api_provider.dart`) a továbbiakban az `ApiFootballService`-t használja. Tartsd meg a meglévő state osztályokat és átjárásokat."
+    outputs:
+      - "lib/providers/odds_api_provider.dart (updated to use ApiFootballService)"
+
+  - name: "OddsAPI-specifikus kód kivezetése (frontend)"
+    description: "Távolítsd el az OddsAPI‑hoz kötődő fájlokat és importokat a frontendből (pl. `lib/services/odds_api_service.dart`, OddsAPI DTO-k/utility-k, érintett tesztek). Csak azokat töröld, amelyek valóban a repo-ban vannak."
+    outputs:
+      - "lib/services/odds_api_service.dart (removed)"
+      - "lib/models/odds_api_response.dart (removed, ha létezik)"
+      - "test/services/odds_api_service_test.dart (removed, ha létezik)"
+
+  - name: "Tesztelés – új unit/flow tesztek"
+    description: "Hozz létre teszteket az új service-hez (mintaválasz parse, lista betöltés, market mapping)."
+    outputs:
+      - "test/services/api_football_service_test.dart"
+
+  - name: "Elemzés és tesztfutás"
+    description: "Futtasd a Flutter elemzőt és a teszteket; a build legyen zöld."
+    outputs:
+      - "CI log: flutter analyze (success)"
+      - "CI log: flutter test (success)"
