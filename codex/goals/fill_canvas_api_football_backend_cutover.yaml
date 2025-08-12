@@ -1,0 +1,65 @@
+meta:
+  canvas: api_football_backend_cutover_and_oddsapi_removal.md
+  priority: P0
+
+steps:
+  - name: "match_finalizer átállítása ApiFootballResultProvider-re"
+    description: "Cseréld le a ResultProvider importot és példányosítást az ApiFootballResultProvider-re, más kód érintése nélkül."
+    outputs:
+      - "cloud_functions/src/match_finalizer.ts (patched)"
+    patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        @@
+- import { ResultProvider } from './services/ResultProvider';
++ import { ApiFootballResultProvider } from './services/ApiFootballResultProvider';
+ @@
+- const resultProvider = new ResultProvider();
++ const resultProvider = new ApiFootballResultProvider();
+
+  - name: "OddsAPI adapter törlése a src-ből"
+    description: "Távolítsd el a régi OddsAPI adaptert a forrásból, hogy ne legyen többé rá hivatkozás."
+    outputs:
+      - "cloud_functions/src/services/ResultProvider.ts (removed)"
+    run: |
+      git rm -f cloud_functions/src/services/ResultProvider.ts || true
+
+  - name: "Mock odds minta törlése"
+    description: "Távolítsd el az OddsAPI-hoz kötődő mock válaszfájlt."
+    outputs:
+      - "cloud_functions/mock_scores/oddsApiSample.json (removed)"
+    run: |
+      git rm -f cloud_functions/mock_scores/oddsApiSample.json || true
+
+  - name: "Cloud Functions build & test"
+    description: "Fordítás és unit tesztek futtatása a cloud_functions mappában."
+    outputs:
+      - "CI log: npm run build (sikeres)"
+      - "CI log: npm test (zöld)"
+    run: |
+      cd cloud_functions
+      npm ci
+      npm run build
+      npm test
+
+  - name: "Doksifrissítés – OddsAPI kivezetés"
+    description: "Adj rövid migrációs jegyzetet a backend OddsAPI kivezetéséről."
+    outputs:
+      - "docs/backend/migration_oddsapi_to_apifootball_backend.md"
+    create_file:
+      target: docs/backend/migration_oddsapi_to_apifootball_backend.md
+      content: |
+        # Backend: OddsAPI → API-Football cutover (Cloud Functions)
+        
+        **Dátum:** <töltsd ki>
+        
+        **Változás lényege:**
+        - `match_finalizer` mostantól az `ApiFootballResultProvider`-t használja.
+        - A régi `ResultProvider.ts` és az OddsAPI mock ( `mock_scores/oddsApiSample.json` ) törölve.
+        
+        **Követelmények:**
+        - `API_FOOTBALL_KEY` beállítva Functions környezetben.
+        
+        **Ellenőrzés:**
+        - `npm run build` + `npm test` zöld a `cloud_functions` alatt.
+        - Logokban nincs `ODDS_API_KEY`/`the-odds-api` hivatkozás a src-ből.
