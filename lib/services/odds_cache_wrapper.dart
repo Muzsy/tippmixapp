@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/odds_event.dart';
-import '../models/odds_api_response.dart';
-import 'odds_api_service.dart';
+import '../models/api_response.dart';
+import 'api_football_service.dart';
 
 class OddsCacheWrapper {
   static const _ttl = Duration(minutes: 15);
-  final OddsApiService _service;
+  final ApiFootballService _service;
   SharedPreferences? _prefs;
 
   OddsCacheWrapper(this._service, [SharedPreferences? prefs]) {
@@ -19,7 +19,7 @@ class OddsCacheWrapper {
     _prefs ??= await SharedPreferences.getInstance();
   }
 
-  Future<OddsApiResponse<List<OddsEvent>>> getOdds({
+  Future<ApiResponse<List<OddsEvent>>> getOdds({
     required String sport,
     String? league,
     DateTime? from,
@@ -35,7 +35,7 @@ class OddsCacheWrapper {
         final events = (data['events'] as List)
             .map((e) => OddsEvent.fromJson(Map<String, dynamic>.from(e)))
             .toList();
-        return OddsApiResponse(data: events);
+        return ApiResponse(data: events);
       } else {
         await _prefs!.remove(key);
       }

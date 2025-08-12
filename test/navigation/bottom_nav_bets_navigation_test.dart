@@ -19,7 +19,7 @@ import 'package:tippmixapp/providers/auth_provider.dart'
     show authProvider, authServiceProvider, AuthNotifier;
 import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/providers/odds_api_provider.dart';
-import 'package:tippmixapp/services/odds_api_service.dart';
+import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/models/auth_state.dart';
@@ -85,7 +85,7 @@ class FakeAuthNotifier extends AuthNotifier {
 
 class TestOddsApiProvider extends OddsApiProvider {
   TestOddsApiProvider(OddsApiProviderState state)
-    : super(OddsCacheWrapper(OddsApiService())) {
+    : super(OddsCacheWrapper(ApiFootballService())) {
     this.state = state;
   }
 

@@ -10,21 +10,21 @@ Bevezetni az **ApiFootballService**-t a frontendben, amely az API‑Football `fi
 
 ## Feladatok
 
-* [ ] Új szolgáltató: `lib/services/api_football_service.dart` – publikus API kompatibilis az eddigi hívókkal (ugyanaz a metódus-szignatúra / visszatérés: `OddsEvent` lista)
-* [ ] Market mapping: `lib/services/market_mapping.dart` – 1X2, O/U, BTTS, (opcionálisan AH) kódok egységesítése
-* [ ] Állapotkezelés bekötése: az eddigi provider a `ApiFootballService`-t használja (azonos interface)
-* [ ] Cache réteg változatlan; kulcsképzés igazítása, ha mezőnév eltérés van
-* [ ] OddsAPI fájlok kivezetése: `lib/services/odds_api_service.dart`, OddsAPI‑specifikus DTO-k/utility-k és a hozzájuk tartozó tesztek eltávolítása
-* [ ] Új unit/flow tesztek: `test/services/api_football_service_test.dart` (DTO parse, alap flow)
-* [ ] `flutter analyze` és `flutter test` zöld
+* [x] Új szolgáltató: `lib/services/api_football_service.dart` – publikus API kompatibilis az eddigi hívókkal (ugyanaz a metódus-szignatúra / visszatérés: `OddsEvent` lista)
+* [x] Market mapping: `lib/services/market_mapping.dart` – 1X2, O/U, BTTS, (opcionálisan AH) kódok egységesítése
+* [x] Állapotkezelés bekötése: az eddigi provider a `ApiFootballService`-t használja (azonos interface)
+* [x] Cache réteg változatlan; kulcsképzés igazítása, ha mezőnév eltérés van
+* [x] OddsAPI fájlok kivezetése: `lib/services/odds_api_service.dart`, OddsAPI‑specifikus DTO-k/utility-k és a hozzájuk tartozó tesztek eltávolítása
+* [x] Új unit/flow tesztek: `test/services/api_football_service_test.dart` (DTO parse, alap flow)
+* [x] `flutter analyze` és `flutter test` zöld
 
 ## Acceptance Criteria / Done Definition
 
-* [ ] A UI (events lista és tippkártya) **változtatás nélkül** fut az `ApiFootballService`-re építve
-* [ ] A kódbázisban nincs `oddsapi` / `the-odds-api` hivatkozás a frontendben
-* [ ] Új market mapping tesztelt (legalább 10 minta)
-* [ ] Cache működik (TTL, üres lista/hiba fallback változatlan)
-* [ ] `flutter analyze` hibamentes; `flutter test` zöld
+* [x] A UI (events lista és tippkártya) **változtatás nélkül** fut az `ApiFootballService`-re építve
+* [x] A kódbázisban nincs `oddsapi` / `the-odds-api` hivatkozás a frontendben
+* [x] Új market mapping tesztelt (legalább 10 minta)
+* [x] Cache működik (TTL, üres lista/hiba fallback változatlan)
+* [x] `flutter analyze` hibamentes; `flutter test` zöld
 
 ## Hivatkozások
 

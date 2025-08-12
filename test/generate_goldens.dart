@@ -42,7 +42,7 @@ import 'package:tippmixapp/services/reward_service.dart'
 import 'package:tippmixapp/providers/odds_api_provider.dart'
     show oddsApiProvider, OddsApiProvider;
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
-import 'package:tippmixapp/services/odds_api_service.dart';
+import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/routes/app_route.dart';
 
@@ -212,7 +212,7 @@ void main() {
     ticketsProvider.overrideWith((ref) => Stream.value(const [])),
     betSlipProvider.overrideWith((ref) => _FakeBetSlipProvider()),
     oddsApiProvider.overrideWith(
-      (ref) => OddsApiProvider(OddsCacheWrapper(OddsApiService())),
+      (ref) => OddsApiProvider(OddsCacheWrapper(ApiFootballService())),
     ),
   ];
 
