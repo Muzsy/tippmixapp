@@ -167,21 +167,21 @@ class EventBetCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onMoreBets,
-                    child: Text(loc.more_bets),
+                    child: Text(loc.appActionsMoreBets),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onStats,
-                    child: Text(loc.statistics),
+                    child: Text(loc.appActionsStatistics),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onAi,
-                    child: Text(loc.ai_recommendation),
+                    child: Text(loc.appActionsAiRecommend),
                   ),
                 ),
               ],

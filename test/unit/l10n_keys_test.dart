@@ -10,6 +10,7 @@ void main() {
       expect(loc.passwordStrengthVeryWeak, isNotEmpty);
       expect(loc.passwordStrengthStrong, isNotEmpty);
       expect(loc.btnContinue, isNotEmpty);
+      expect(loc.appActionsMoreBets, isNotEmpty);
     }
   });
 }

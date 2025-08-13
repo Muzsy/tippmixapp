@@ -130,6 +130,24 @@ abstract class AppLocalizations {
   /// **'AI recommendation'**
   String get ai_recommendation;
 
+  /// No description provided for @appActionsMoreBets.
+  ///
+  /// In en, this message translates to:
+  /// **'More bets'**
+  String get appActionsMoreBets;
+
+  /// No description provided for @appActionsStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get appActionsStatistics;
+
+  /// No description provided for @appActionsAiRecommend.
+  ///
+  /// In en, this message translates to:
+  /// **'AI picks'**
+  String get appActionsAiRecommend;
+
   /// No description provided for @amount_must_be_integer.
   ///
   /// In en, this message translates to:

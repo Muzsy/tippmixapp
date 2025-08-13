@@ -80,3 +80,4 @@
 | 2025-08-22   | @codex-bot      | TOC refreshed after odds drift dialog i18n & a11y docs update                  |
 | 2025-08-13   | @codex-bot      | TOC refreshed after l10n synthetic package removal                             |
 | 2025-08-23   | @codex-bot      | TOC refreshed after event bet card logos & header docs update                  |
+| 2025-08-13   | @codex-bot      | TOC refreshed after event bet card action pills i18n docs                      |

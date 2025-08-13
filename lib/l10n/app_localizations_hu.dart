@@ -24,6 +24,15 @@ class AppLocalizationsHu extends AppLocalizations {
   String get ai_recommendation => 'AI ajánló';
 
   @override
+  String get appActionsMoreBets => 'További fogadások';
+
+  @override
+  String get appActionsStatistics => 'Statisztika';
+
+  @override
+  String get appActionsAiRecommend => 'AI ajánló';
+
+  @override
   String get amount_must_be_integer =>
       'Az összegnek egész számnak kell lennie.';
 
