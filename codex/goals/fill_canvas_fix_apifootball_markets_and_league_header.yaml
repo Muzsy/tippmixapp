@@ -1,0 +1,36 @@
+meta:
+  canvas: fix_apifootball_markets_and_league_header.md
+  priority: P0
+
+steps:
+  - name: OddsEvent modell bővítése (country/league)
+    description: Add hozzá az OddsEvent‑hez a countryName és leagueName mezőket; frissítsd a fromJson/toJson metódusokat. A default érték legyen üres string.
+    outputs:
+      - path: lib/models/odds_event.dart
+        description: Új mezők + (de)serialize.
+
+  - name: API‑Football → belső mapping implementálása
+    description: A getOdds() a fixtures helyett az odds végpontot hívja (date=YYYY‑MM‑DD). Írj transzformert, ami csak a "Match Winner" betet alakítja `h2h` piaccá, és a values Home/Away/Draw címkéket a csapatnevekre mapeli.
+    outputs:
+      - path: lib/services/api_football_service.dart
+        description: getOdds refaktor + privát map függvények (betNameToMarketKey, mapOddsBookmakers, mapH2HOutcomes).
+
+  - name: Kártya fejléc – ország • liga megjelenítése
+    description: Az EventBetCard felső sávjában a sport helyett/ mellett jelenjen meg `countryName • leagueName` ha elérhető; különben marad a sport neve. Ne vágd el a szöveget túl röviden, TextOverflow.ellipsis maradjon.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        description: Fejléc szövegcsere + fallback logika.
+
+  - name: Gyors widget/logic teszt
+    description: Készíts minimális unit/widget teszteket a transzformerre és a fejléc megjelenítésre.
+    outputs:
+      - path: test/services/api_football_mapping_test.dart
+        description: H2H mapping teszt mintaválasszal.
+      - path: test/widgets/event_bet_card_header_test.dart
+        description: Fejléc fallback teszt.
+
+  - name: Futtatás
+    description: Elemezd és futtasd a projektet; a változtatások nem törhetnek meglévő funkciót.
+    outputs:
+      - path: tmp/reports/fix_apifootball_markets_ci.log
+        description: `flutter analyze && flutter test` kimenet mentve.
