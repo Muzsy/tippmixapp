@@ -8,7 +8,8 @@ This document summarizes the localization setup and best practices in TippmixApp
 
 - Uses `flutter_localizations` and `intl` packages
 - ARB files: `lib/l10n/app_hu.arb`, `app_en.arb`, `app_de.arb`
-- Generated class: `AppLocalizations`
+- Generated sources live in `lib/l10n` (`output-dir` in `l10n.yaml`, `synthetic-package: false`)
+- Import via `package:tippmixapp/l10n/app_localizations.dart`
 
 ---
 

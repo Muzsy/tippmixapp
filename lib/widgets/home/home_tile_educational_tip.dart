@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import '../../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 
 /// Tile showing a random educational betting tip.
 class HomeTileEducationalTip extends StatefulWidget {

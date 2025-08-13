@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../providers/bet_slip_provider.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {

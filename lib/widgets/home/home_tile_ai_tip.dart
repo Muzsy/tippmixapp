@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../../services/ai_tip_provider.dart';
 
 /// Tile displaying the daily AI betting recommendation.

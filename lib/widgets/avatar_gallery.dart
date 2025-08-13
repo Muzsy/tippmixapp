@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 
 /// Displays selectable avatar images from assets/avatar/.
 class AvatarGallery extends StatefulWidget {

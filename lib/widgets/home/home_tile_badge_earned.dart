@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import "../../models/earned_badge_model.dart";
 import '../../utils/badge_icon_utils.dart';
 

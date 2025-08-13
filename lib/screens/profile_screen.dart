@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../providers/auth_provider.dart';
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
