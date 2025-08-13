@@ -1,0 +1,202 @@
+meta:
+  canvas: fix_oddsapi_leftovers_and_h2h_markets.md
+  priority: P0
+
+steps:
+  - name: L10n – OddsAPI említések eltávolítása (HU)
+    patch_file: |
+      *** Begin Patch
+      *** Update File: lib/l10n/app_hu.arb
+      @@
+      -  "api_error_key": "Érvénytelen OddsAPI kulcs",
+      -  "api_error_limit": "Túl sok kérés az OddsAPI felé",
+      -  "api_error_network": "Hálózati hiba az OddsAPI elérésekor",
+      -  "api_error_unknown": "Ismeretlen hiba az OddsAPI-tól",
+      +  "api_error_key": "Érvénytelen API kulcs",
+      +  "api_error_limit": "Túl sok kérés az adatszolgáltató felé",
+      +  "api_error_network": "Hálózati hiba az adatszolgáltató elérésekor",
+      +  "api_error_unknown": "Ismeretlen hiba az adatszolgáltatótól",
+      *** End Patch
+
+  - name: L10n – OddsAPI említések eltávolítása (EN)
+    patch_file: |
+      *** Begin Patch
+      *** Update File: lib/l10n/app_en.arb
+      @@
+      -  "api_error_key": "Invalid Odds API key",
+      -  "api_error_limit": "Odds API rate limit exceeded",
+      -  "api_error_network": "Network error while contacting Odds API",
+      -  "api_error_unknown": "Unknown error from Odds API",
+      +  "api_error_key": "Invalid API key",
+      +  "api_error_limit": "Data provider rate limit exceeded",
+      +  "api_error_network": "Network error while contacting data provider",
+      +  "api_error_unknown": "Unknown error from data provider",
+      *** End Patch
+
+  - name: L10n – OddsAPI említések eltávolítása (DE)
+    patch_file: |
+      *** Begin Patch
+      *** Update File: lib/l10n/app_de.arb
+      @@
+      -  "api_error_key": "Ungültiger Odds API Schlüssel",
+      -  "api_error_limit": "Odds API Anfrage-Limit überschritten",
+      -  "api_error_network": "Netzwerkfehler beim Kontaktieren der Odds API",
+      -  "api_error_unknown": "Unbekannter Fehler von der Odds API",
+      +  "api_error_key": "Ungültiger API‑Schlüssel",
+      +  "api_error_limit": "Rate‑Limit des Datenanbieters überschritten",
+      +  "api_error_network": "Netzwerkfehler beim Kontaktieren des Datenanbieters",
+      +  "api_error_unknown": "Unbekannter Fehler vom Datenanbieter",
+      *** End Patch
+
+  - name: Localizations generálása
+    run: |
+      flutter gen-l10n
+
+  - name: API‑Football – minimál H2H piac bekötés
+    patch_file: |
+      *** Begin Patch
+      *** Update File: lib/services/api_football_service.dart
+      @@
+      -import '../models/api_response.dart';
+      -import '../models/odds_event.dart';
+      +import '../models/api_response.dart';
+      +import '../models/odds_event.dart';
+      +import '../models/odds_bookmaker.dart';
+      +import '../models/odds_market.dart';
+      +import '../models/odds_outcome.dart';
+      @@
+      -      final events = fixtures
+      -          .map((f) => _mapFixtureToOddsEvent(Map<String, dynamic>.from(f)))
+      -          .toList();
+      -
+      -      return ApiResponse(data: events);
+      +      final baseEvents = fixtures
+      +          .map((f) => _mapFixtureToOddsEvent(Map<String, dynamic>.from(f)))
+      +          .toList();
+      +
+      +      // Enrich fixtures with minimal H2H (1X2) market so that the bet card shows Home/Draw/Away.
+      +      final events = <OddsEvent>[];
+      +      for (final e in baseEvents) {
+      +        try {
+      +          final oddsJson = await getOddsForFixture(e.id);
+      +          final bms = _parseH2HBookmakers(
+      +            oddsJson,
+      +            homeTeam: e.homeTeam,
+      +            awayTeam: e.awayTeam,
+      +          );
+      +          events.add(OddsEvent(
+      +            id: e.id,
+      +            sportKey: e.sportKey,
+      +            sportTitle: e.sportTitle,
+      +            homeTeam: e.homeTeam,
+      +            awayTeam: e.awayTeam,
+      +            commenceTime: e.commenceTime,
+      +            bookmakers: bms,
+      +          ));
+      +        } catch (_) {
+      +          // Fallback: keep the event but without markets if odds call fails.
+      +          events.add(e);
+      +        }
+      +      }
+      +
+      +      return ApiResponse(data: events);
+      @@
+      -  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+      -    // TODO: implement API call for a single fixture odds lookup
+      -    return {};
+      -  }
+      +  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+      +    final apiKey = dotenv.env['API_FOOTBALL_KEY'];
+      +    if (apiKey == null || apiKey.isEmpty) {
+      +      throw Exception('Missing API_FOOTBALL_KEY');
+      +    }
+      +    final url = '$_baseUrl/odds?fixture=$fixtureId';
+      +    final res = await _client
+      +        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+      +        .timeout(const Duration(seconds: 10));
+      +    if (res.statusCode >= 200 && res.statusCode < 300) {
+      +      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      +      return body;
+      +    }
+      +    // On any error return empty structure; caller will fallback.
+      +    return {};
+      +  }
+      +
+      +  /// Extracts a minimal 'h2h' (match winner) market from API-Football odds JSON.
+      +  /// Produces exactly one market with three outcomes (Home/Draw/Away) for the first bookmaker that provides it.
+      +  List<OddsBookmaker> _parseH2HBookmakers(
+      +    Map<String, dynamic> oddsJson, {
+      +    required String homeTeam,
+      +    required String awayTeam,
+      +  }) {
+      +    final List<OddsBookmaker> result = [];
+      +    if (oddsJson.isEmpty) return result;
+      +    final resp = oddsJson['response'];
+      +    if (resp is! List || resp.isEmpty) return result;
+      +    // API-Football shape: response[0].bookmakers[].bets[].values[] { value: 'Home|Draw|Away', odd: '2.10' }
+      +    final first = resp.first as Map<String, dynamic>;
+      +    final bookmakers = (first['bookmakers'] as List?) ?? const [];
+      +    for (final b in bookmakers) {
+      +      final bm = b as Map<String, dynamic>;
+      +      final name = (bm['name'] ?? 'Bookmaker').toString();
+      +      final bets = (bm['bets'] as List?) ?? const [];
+      +      Map<String, dynamic>? matchWinner;
+      +      for (final bet in bets) {
+      +        final m = bet as Map<String, dynamic>;
+      +        final betName = (m['name'] ?? '').toString().toLowerCase();
+      +        if (betName.contains('match winner') || betName.contains('1x2')) {
+      +          matchWinner = m;
+      +          break;
+      +        }
+      +      }
+      +      if (matchWinner == null) {
+      +        continue;
+      +      }
+      +      final values = (matchWinner['values'] as List?) ?? const [];
+      +      OddsOutcome? home;
+      +      OddsOutcome? draw;
+      +      OddsOutcome? away;
+      +      for (final v in values) {
+      +        final mv = v as Map<String, dynamic>;
+      +        final val = (mv['value'] ?? '').toString().toLowerCase();
+      +        final oddStr = (mv['odd'] ?? '').toString();
+      +        final price = double.tryParse(oddStr.replaceAll(',', '.'));
+      +        if (price == null) continue;
+      +        if (val.contains('home')) {
+      +          home = OddsOutcome(name: homeTeam, price: price);
+      +        } else if (val.contains('draw') || val == 'x') {
+      +          draw = OddsOutcome(name: 'Draw', price: price);
+      +        } else if (val.contains('away')) {
+      +          away = OddsOutcome(name: awayTeam, price: price);
+      +        }
+      +      }
+      +      final outcomes = [
+      +        if (home != null) home,
+      +        if (draw != null) draw,
+      +        if (away != null) away,
+      +      ];
+      +      if (outcomes.isEmpty) continue;
+      +      result.add(
+      +        OddsBookmaker(
+      +          key: _slug(name),
+      +          title: name,
+      +          markets: [OddsMarket(key: 'h2h', outcomes: outcomes)],
+      +        ),
+      +      );
+      +      // Only need the first bookmaker for minimal UI; break here.
+      +      break;
+      +    }
+      +    return result;
+      +  }
+      +
+      +  String _slug(String input) =>
+      +      input.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_').replaceAll(RegExp(r'_+'), '_').trim().replaceAll(RegExp(r'^_|_$'), '');
+      *** End Patch
+
+  - name: Build & lint
+    run: |
+      flutter analyze
+
+  - name: Tesztek
+    run: |
+      flutter test -r compact
