@@ -1,0 +1,67 @@
+meta:
+  canvas: L10n migráció – synthetic package → explicit forrás (flutter_gen kivezetés)
+  priority: P1
+
+steps:
+  - name: L10n konfiguráció átállítása synthetic→explicit
+    description: |
+      Átírjuk a projekt gyökerében lévő l10n.yaml fájlt úgy, hogy a generálás a forrásba menjen,
+      és ne készüljön synthetic package. Beállítjuk az output-dir értéket is a meglévő struktúrának megfelelően.
+    outputs:
+      - type: patch
+        target: l10n.yaml
+        content: |
+          @@
+          -arb-dir: lib/l10n
+          -template-arb-file: app_en.arb
+          -output-localization-file: app_localizations.dart
+          -output-class: AppLocalizations
+          -synthetic-package: true
+          +arb-dir: lib/l10n
+          +template-arb-file: app_en.arb
+          +output-localization-file: app_localizations.dart
+          +output-class: AppLocalizations
+          +output-dir: lib/l10n
+          +synthetic-package: false
+
+  - name: Importok standardizálása package: útvonalra
+    description: |
+      Minden relatív `../..../l10n/app_localizations.dart` importot egységesen
+      `package:tippmixapp/l10n/app_localizations.dart`-ra cserélünk.
+      A projektben ~60 érintett fájl van (tippmixapp.zip alapján). A már jó package: importokat nem bántjuk.
+    outputs:
+      - type: codemod
+        tool: bash
+        content: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          # Cseréljük a relatív importokat package importokra
+          grep -rl "import '..\(/..\)*/l10n/app_localizations.dart';" lib \
+            | xargs -r sed -i "s|import '\.\./\(.\./\)*l10n/app_localizations.dart';|import 'package:tippmixapp/l10n/app_localizations.dart';|g"
+
+  - name: Gen‑l10n futtatás és elemzés
+    description: Futtatjuk a generálást és a statikus analízist. Build cache ürítés után frissítjük a csomagokat.
+    outputs:
+      - type: run
+        content: |
+          flutter clean
+          flutter pub get
+          flutter gen-l10n
+          flutter analyze
+
+  - name: Indítási smoke‑test (fejlesztői gépen)
+    description: Ellenőrizzük, hogy az app elindul és nem hiányzik semmilyen lokalizációs erőforrás.
+    inputs:
+      device: "emulator-5554" # állítsd a nálad elérhetőre
+    outputs:
+      - type: run
+        content: |
+          flutter run -d ${device} -t lib/main.dart
+
+  - name: Rövid státusz‑jelentés
+    description: A Codex összefoglalót ír a módosításokról és a következő teendőkről, ha volt eltérés.
+    outputs:
+      - type: note
+        content: |
+          L10n migráció kész. Ha bármelyik fájlban maradt relatív import, a codemod‑ot futtasd újra a logban listázott útvonalakra.
+          Ellenőrizd manuálisan 1‑2 képernyőn a lokalizált stringek megjelenését HU/EN/DE nyelveken.
