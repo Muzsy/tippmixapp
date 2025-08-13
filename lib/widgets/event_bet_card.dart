@@ -4,6 +4,7 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/models/odds_market.dart';
 import 'package:tippmixapp/models/odds_outcome.dart';
+import 'package:tippmixapp/widgets/action_pill.dart';
 import 'package:tippmixapp/widgets/league_pill.dart';
 import 'package:tippmixapp/widgets/team_badge.dart';
 
@@ -161,31 +162,7 @@ class EventBetCard extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // Akciógombok sor
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onMoreBets,
-                    child: Text(loc.appActionsMoreBets),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onStats,
-                    child: Text(loc.appActionsStatistics),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onAi,
-                    child: Text(loc.appActionsAiRecommend),
-                  ),
-                ),
-              ],
-            ),
+            _buildActions(context, loc),
 
             const SizedBox(height: 6),
             Align(
@@ -199,6 +176,44 @@ class EventBetCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildActions(BuildContext context, AppLocalizations loc) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 8),
+        const Divider(height: 1),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: ActionPill(
+                icon: Icons.more_horiz,
+                label: loc.appActionsMoreBets,
+                onTap: onMoreBets,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ActionPill(
+                icon: Icons.bar_chart,
+                label: loc.appActionsStatistics,
+                onTap: onStats,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ActionPill(
+                icon: Icons.auto_awesome,
+                label: loc.appActionsAiRecommend,
+                onTap: onAi,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
