@@ -6,7 +6,7 @@
 [![CI](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml/badge.svg)](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml)
 
 A TippmixApp egy moduláris Flutter alkalmazás, amely közösségi alapú sportfogadás szimulációjára épül.
-TippCoin virtuális gazdaságot, valós idejű OddsAPI-integrációt, Firebase backendet és Codex-alapú fejlesztési munkafolyamatot tartalmaz.
+TippCoin virtuális gazdaságot, valós idejű API-Football-integrációt, Firebase backendet és Codex-alapú fejlesztési munkafolyamatot tartalmaz.
 
 ![Bejelentkezés képernyő](docs/images/login_revamp_screenshot_v1.png)
 
@@ -17,7 +17,7 @@ TippCoin virtuális gazdaságot, valós idejű OddsAPI-integrációt, Firebase b
 - **Firebase autentikáció** – email/jelszavas bejelentkezés és regisztráció
 - **TippCoin gazdaság** – tétek, nyeremények, tranzakciónapló (CoinService tervben)
 - **Firestore backend** – felhasználók, szelvények, badge-ek, ranglista kezelése
-- **OddsAPI integráció** – sportesemények és szorzók valós időben
+- **API-Football integráció** – sportesemények és szorzók valós időben
 - **Szelvény munkafolyamat** – tippek hozzáadása, szelvény beküldése
 - **Gamifikáció** – badge-ek, ranglista, közösségi feed (terv)
 - **Fórum modul** – felhasználói beszélgetések, szálak és válaszok (terv)
@@ -35,7 +35,7 @@ TippCoin virtuális gazdaságot, valós idejű OddsAPI-integrációt, Firebase b
 3. Hozd létre a `.env` fájlt a projekt gyökérkönyvtárában:
 
    ```bash
-   ODDS_API_KEY=ide_írd_a_saját_kulcsod
+   API_FOOTBALL_KEY=ide_írd_a_saját_kulcsod
    ```
 
 4. Állítsd be a Firebase-t (`google-services.json`, `GoogleService-Info.plist`)

@@ -11,4 +11,4 @@
 
 **Ellenőrzés:**
 - `npm run build` + `npm test` zöld a `cloud_functions` alatt.
-- Logokban nincs `ODDS_API_KEY`/`the-odds-api` hivatkozás a src-ből.
+- Logokban nincs örökölt OddsAPI hivatkozás a src-ből.

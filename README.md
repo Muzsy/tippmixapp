@@ -6,7 +6,7 @@
 [![CI](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml/badge.svg)](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml)
 
 TippmixApp is a modular Flutter application simulating community-based sports betting.
-It features a virtual coin economy, real-time odds from [OddsAPI](https://the-odds-api.com/), Firebase backend, and a Codex-based development workflow.
+It features a virtual coin economy, real-time odds from [API-Football](https://www.api-football.com/), Firebase backend, and a Codex-based development workflow.
 
 ![Login Screen](docs/images/login_revamp_screenshot_v1.png)
 
@@ -17,7 +17,7 @@ It features a virtual coin economy, real-time odds from [OddsAPI](https://the-od
 - **Firebase Authentication** – email/password login and registration
 - **TippCoin economy** – stake, reward, and coin logs (CoinService planned)
 - **Firestore backend** – stores user, tickets, badge, and leaderboard data
-- **OddsAPI integration** – fetch real-time sports events and odds
+- **API-Football integration** – fetch real-time sports events and odds
 - **Bet slip workflow** – add tips and submit tickets
 - **Gamification** – badges, leaderboard, community feed (planned)
 - **Forum module** – user discussions with threads and replies (planned)
@@ -35,7 +35,7 @@ It features a virtual coin economy, real-time odds from [OddsAPI](https://the-od
 3. Create a `.env` file in project root:
 
    ```bash
-   ODDS_API_KEY=your_api_key_here
+   API_FOOTBALL_KEY=your_api_key_here
    ```
 
 4. Configure Firebase (via `google-services.json`, `GoogleService-Info.plist`)

@@ -11,4 +11,4 @@
 
 **Verification:**
 - `npm run build` + `npm test` green under `cloud_functions`.
-- No `ODDS_API_KEY`/`the-odds-api` references in source logs.
+- No legacy OddsAPI references in source logs.
