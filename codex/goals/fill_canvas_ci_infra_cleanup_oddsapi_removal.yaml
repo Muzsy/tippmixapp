@@ -1,0 +1,76 @@
+meta:
+  canvas: ci_infra_cleanup_oddsapi_removal.md
+  priority: P0
+
+steps:
+  - name: Repo átvizsgálása – OddsAPI nyomok
+    description: Keresd meg a teljes kódbázisban az OddsAPI‑ra utaló maradékokat (kód, config, CI, doksi). A találati listából készíts gépileg feldolgozható jelentést.
+    inputs:
+      patterns: ["OddsAPI", "ODDS_API_KEY", "ODDSAPI", "oddsapi", "ODDS_", "odds_api"]
+    outputs:
+      - path: tmp/reports/oddsapi_grep_report.txt
+        description: Nyers találati lista fájlútvonal + sorszámok.
+
+  - name: CI/Secrets tisztítás
+    description: Törd ki a GitHub Actions workflow(k)‑ból és a lokális env fájlokból az OddsAPI titkokat; helyettük `APIFOOTBALL_KEY` használandó. Figyelj a branch‑feltételekre.
+    outputs:
+      - path: .github/workflows/**.yml
+        description: Módosított workflow fájlok; eltávolított ODDS_API_KEY, hozzáadott APIFOOTBALL_KEY env/secret referenciák.
+      - path: tmp/env.yaml
+        description: Ha létezik, a kulcsok szinkronizálva (ODDS_API_KEY törölve).
+
+  - name: Functions környezet változói
+    description: Távolítsd el az OddsAPI‑ra utaló env‑ket a Functions konfigurációból, és biztosítsd az API‑Football kulcsot. Állítsd egységes régióra (europe‑central2), ha még nem az.
+    outputs:
+      - path: cloud_functions/.runtimeconfig.json
+        description: Frissített runtimeconfig; nincs ODDS_API_KEY. (Ha CLI kezeli, jegyzetet írj a deploy lépéshez.)
+      - path: cloud_functions/package.json
+        description: Scripts kiegészítve `ci:test` és `ci:lint` parancsokkal (ha hiányoznak).
+
+  - name: Függőségek takarítása (Functions + Flutter)
+    description: Távolítsd el az OddsAPI‑specifikus csomagokat és mockokat. Ahol szükséges, cseréld API‑Football kompatibilis providerre vagy a már bevezetett ResultProvider interfészre.
+    outputs:
+      - path: cloud_functions/package.json
+        description: Törölt OddsAPI kliens/SDK; lockfile frissítés szükséges.
+      - path: pubspec.yaml
+        description: Ha volt OddsAPI‑specifikus Flutter csomag, eltávolítva.
+
+  - name: Kódreferenciák megszüntetése
+    description: A kódban lévő importok, utilok, URL‑ek, konstansok cseréje/eltávolítása. Ha valós funkciót lát el, állítsd át API‑Football szolgáltatóra; különben töröld. A törlésekhez készíts rövid commit üzeneteket.
+    outputs:
+      - path: tmp/reports/refactor_oddsapi_changes.diff
+        description: Összefoglaló diff a kód‑változásokról.
+
+  - name: Tesztek és mockok rendezése
+    description: A jest/flutter tesztekből vedd ki az OddsAPI‑t. Biztosítsd, hogy a jest alatt az ApiFootballResultProvider mock verziója aktiválódik, és nincs hálózati hívás.
+    outputs:
+      - path: cloud_functions/src/services/__mocks__/ApiFootballResultProvider.ts
+        description: Mock provider elérhető és a jest config betölti.
+      - path: cloud_functions/jest.config.{js,ts}
+        description: `moduleNameMapper`/`setupFiles` beállítva a mockhoz.
+
+  - name: CI futtatás – gyors ellenőrzés
+    description: Futtasd a minimális ellenőrzéseket. A cél a gyors visszajelzés és zöld pipeline.
+    outputs:
+      - path: tmp/reports/ci_quick_run.log
+        description: `npm ci && npm test` (cloud_functions) + `flutter analyze` + `flutter test` log mentve.
+
+  - name: Doksik frissítése
+    description: Távolítsd el a README/Docs állományokból az OddsAPI‑ra vonatkozó leírásokat; írd át API‑Football‑ra. Tedd egyértelművé a lokális futtatási és CI‑titok‑beállítási lépéseket.
+    outputs:
+      - path: README.md
+        description: Frissített beállítási és futtatási szakaszok.
+      - path: docs/migration_oddsapi_to_apifootball.md
+        description: Rövid kivezetési jegyzet, változáslista.
+
+  - name: Végső ellenőrzés – nincs OddsAPI találat
+    description: Újra futtasd a keresést a repo gyökerén; kivételként csak changelog/archív fájlok engedélyezettek (ha vannak jelölve). A riportot csatold a PR‑hoz.
+    outputs:
+      - path: tmp/reports/oddsapi_grep_report_final.txt
+        description: Záró keresési riport, üres vagy csak engedélyezett találatokkal.
+
+  - name: PR előkészítés
+    description: Állíts össze egy áttekinthető PR‑t tasklistával és ellenőrzési jegyzettel.
+    outputs:
+      - path: ./.changeset/ci_infra_cleanup_oddsapi_removal.md
+        description: PR leírás; feladatlista, kockázatok, rollback terv.
