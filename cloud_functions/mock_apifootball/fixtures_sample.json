@@ -1,0 +1,48 @@
+{
+  "fixtures": [
+    {
+      "fixture": {
+        "id": 123456,
+        "status": {
+          "short": "FT"
+        }
+      },
+      "goals": {
+        "away": 1,
+        "home": 2
+      },
+      "teams": {
+        "away": {
+          "id": 1002,
+          "name": "Away"
+        },
+        "home": {
+          "id": 1001,
+          "name": "Home"
+        }
+      }
+    },
+    {
+      "fixture": {
+        "id": 223344,
+        "status": {
+          "short": "FT"
+        }
+      },
+      "goals": {
+        "away": 0,
+        "home": 0
+      },
+      "teams": {
+        "away": {
+          "id": 2002,
+          "name": "Beta"
+        },
+        "home": {
+          "id": 2001,
+          "name": "Alpha"
+        }
+      }
+    }
+  ]
+}
