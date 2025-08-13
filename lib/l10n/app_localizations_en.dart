@@ -27,16 +27,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get amount_must_be_integer => 'Amount must be an integer.';
 
   @override
-  String get api_error_key => 'Invalid Odds API key';
+  String get api_error_key => 'Invalid API key';
 
   @override
-  String get api_error_limit => 'Odds API rate limit exceeded';
+  String get api_error_limit => 'Data provider rate limit exceeded';
 
   @override
-  String get api_error_network => 'Network error while contacting Odds API';
+  String get api_error_network =>
+      'Network error while contacting data provider';
 
   @override
-  String get api_error_unknown => 'Unknown error from Odds API';
+  String get api_error_unknown => 'Unknown error from data provider';
 
   @override
   String get apple_login => 'Continue with Apple';
