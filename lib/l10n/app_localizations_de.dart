@@ -28,17 +28,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get amount_must_be_integer => 'Betrag muss Ganzzahl sein.';
 
   @override
-  String get api_error_key => 'Ungültiger Odds API Schlüssel';
+  String get api_error_key => 'Ungültiger API‑Schlüssel';
 
   @override
-  String get api_error_limit => 'Odds API Anfrage-Limit überschritten';
+  String get api_error_limit => 'Rate‑Limit des Datenanbieters überschritten';
 
   @override
   String get api_error_network =>
-      'Netzwerkfehler beim Kontaktieren der Odds API';
+      'Netzwerkfehler beim Kontaktieren des Datenanbieters';
 
   @override
-  String get api_error_unknown => 'Unbekannter Fehler von der Odds API';
+  String get api_error_unknown => 'Unbekannter Fehler vom Datenanbieter';
 
   @override
   String get apple_login => 'Weiter mit Apple';

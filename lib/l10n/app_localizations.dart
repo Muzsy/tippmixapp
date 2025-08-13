@@ -139,25 +139,25 @@ abstract class AppLocalizations {
   /// No description provided for @api_error_key.
   ///
   /// In en, this message translates to:
-  /// **'Invalid Odds API key'**
+  /// **'Invalid API key'**
   String get api_error_key;
 
   /// No description provided for @api_error_limit.
   ///
   /// In en, this message translates to:
-  /// **'Odds API rate limit exceeded'**
+  /// **'Data provider rate limit exceeded'**
   String get api_error_limit;
 
   /// No description provided for @api_error_network.
   ///
   /// In en, this message translates to:
-  /// **'Network error while contacting Odds API'**
+  /// **'Network error while contacting data provider'**
   String get api_error_network;
 
   /// No description provided for @api_error_unknown.
   ///
   /// In en, this message translates to:
-  /// **'Unknown error from Odds API'**
+  /// **'Unknown error from data provider'**
   String get api_error_unknown;
 
   /// No description provided for @apple_login.

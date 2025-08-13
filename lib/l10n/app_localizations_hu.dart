@@ -28,16 +28,16 @@ class AppLocalizationsHu extends AppLocalizations {
       'Az összegnek egész számnak kell lennie.';
 
   @override
-  String get api_error_key => 'Érvénytelen OddsAPI kulcs';
+  String get api_error_key => 'Érvénytelen API kulcs';
 
   @override
-  String get api_error_limit => 'Túl sok kérés az OddsAPI felé';
+  String get api_error_limit => 'Túl sok kérés az adatszolgáltató felé';
 
   @override
-  String get api_error_network => 'Hálózati hiba az OddsAPI elérésekor';
+  String get api_error_network => 'Hálózati hiba az adatszolgáltató elérésekor';
 
   @override
-  String get api_error_unknown => 'Ismeretlen hiba az OddsAPI-tól';
+  String get api_error_unknown => 'Ismeretlen hiba az adatszolgáltatótól';
 
   @override
   String get apple_login => 'Folytatás Apple-lel';

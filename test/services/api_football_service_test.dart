@@ -10,29 +10,61 @@ import 'package:tippmixapp/services/market_mapping.dart';
 
 void main() {
   group('ApiFootballService', () {
-    test('parses fixtures into OddsEvent list', () async {
+    test('parses fixtures into OddsEvent list with h2h market', () async {
       dotenv.testLoad(fileInput: 'API_FOOTBALL_KEY=test');
       final service = ApiFootballService(
-        MockClient((_) async {
-          final sample = {
-            'response': [
-              {
-                'fixture': {'id': 1, 'date': '2024-01-01T12:00:00+00:00'},
-                'teams': {
-                  'home': {'name': 'Arsenal'},
-                  'away': {'name': 'Chelsea'}
+        MockClient((request) async {
+          if (request.url.path.contains('/fixtures')) {
+            final fixtures = {
+              'response': [
+                {
+                  'fixture': {'id': 1, 'date': '2024-01-01T12:00:00+00:00'},
+                  'league': {'country': 'England', 'name': 'EPL'},
+                  'teams': {
+                    'home': {'name': 'Arsenal'},
+                    'away': {'name': 'Chelsea'}
+                  }
                 }
-              }
-            ]
-          };
-          return http.Response(jsonEncode(sample), 200);
+              ]
+            };
+            return http.Response(jsonEncode(fixtures), 200);
+          }
+          if (request.url.path.contains('/odds')) {
+            final odds = {
+              'response': [
+                {
+                  'bookmakers': [
+                    {
+                      'name': 'DemoBook',
+                      'bets': [
+                        {
+                          'name': 'Match Winner',
+                          'values': [
+                            {'value': 'Home', 'odd': '1.50'},
+                            {'value': 'Draw', 'odd': '3.20'},
+                            {'value': 'Away', 'odd': '5.00'}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            };
+            return http.Response(jsonEncode(odds), 200);
+          }
+          return http.Response('Not Found', 404);
         }),
       );
 
       final res = await service.getOdds(sport: 'soccer');
       expect(res.errorType, ApiErrorType.none);
-      expect(res.data, isNotNull);
-      expect(res.data!.first.homeTeam, 'Arsenal');
+      final event = res.data!.first;
+      expect(event.homeTeam, 'Arsenal');
+      expect(event.bookmakers, isNotEmpty);
+      final market = event.bookmakers.first.markets.first;
+      expect(market.key, 'h2h');
+      expect(market.outcomes.length, 3);
     });
 
     test('missing api key returns unauthorized', () async {

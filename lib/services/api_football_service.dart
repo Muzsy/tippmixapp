@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +31,8 @@ class ApiFootballService {
     }
 
     try {
-      var url = '$_baseUrl/odds?date='
+      var url =
+          '$_baseUrl/fixtures?date='
           '${DateTime.now().toIso8601String().split('T').first}';
       if (league != null) {
         url += '&league=$league';
@@ -66,8 +68,8 @@ class ApiFootballService {
       }
 
       final body = jsonDecode(response.body);
-      final odds = (body['response'] as List?) ?? [];
-      if (odds.isEmpty) {
+      final fixtures = (body['response'] as List?) ?? [];
+      if (fixtures.isEmpty) {
         return const ApiResponse(
           data: null,
           errorType: ApiErrorType.empty,
@@ -75,9 +77,38 @@ class ApiFootballService {
         );
       }
 
-      final events = odds
-          .map((o) => _mapOddsToEvent(Map<String, dynamic>.from(o)))
+      final baseEvents = fixtures
+          .map((f) => _mapFixtureToOddsEvent(Map<String, dynamic>.from(f)))
           .toList();
+
+      // Enrich fixtures with minimal H2H (1X2) market so that the bet card shows Home/Draw/Away.
+      final events = <OddsEvent>[];
+      for (final e in baseEvents) {
+        try {
+          final oddsJson = await getOddsForFixture(e.id);
+          final bms = _parseH2HBookmakers(
+            oddsJson,
+            homeTeam: e.homeTeam,
+            awayTeam: e.awayTeam,
+          );
+          events.add(
+            OddsEvent(
+              id: e.id,
+              sportKey: e.sportKey,
+              sportTitle: e.sportTitle,
+              homeTeam: e.homeTeam,
+              awayTeam: e.awayTeam,
+              commenceTime: e.commenceTime,
+              countryName: e.countryName,
+              leagueName: e.leagueName,
+              bookmakers: bms,
+            ),
+          );
+        } catch (_) {
+          // Fallback: keep the event but without markets if odds call fails.
+          events.add(e);
+        }
+      }
 
       return ApiResponse(data: events);
     } on http.ClientException {
@@ -95,17 +126,12 @@ class ApiFootballService {
     }
   }
 
-  OddsEvent _mapOddsToEvent(Map<String, dynamic> json) {
+  OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> json) {
     final fixture = Map<String, dynamic>.from(json['fixture'] as Map);
     final league = Map<String, dynamic>.from(json['league'] as Map);
     final teams = Map<String, dynamic>.from(json['teams'] as Map);
     final homeTeam = (teams['home'] as Map)['name'] as String;
     final awayTeam = (teams['away'] as Map)['name'] as String;
-    final bookmakers = _mapOddsBookmakers(
-      (json['bookmakers'] as List?) ?? [],
-      homeTeam,
-      awayTeam,
-    );
     return OddsEvent(
       id: fixture['id'].toString(),
       sportKey: 'soccer',
@@ -115,59 +141,98 @@ class ApiFootballService {
       countryName: league['country'] as String? ?? '',
       leagueName: league['name'] as String? ?? '',
       commenceTime: DateTime.parse(fixture['date'] as String),
-      bookmakers: bookmakers,
+      bookmakers: const [],
     );
   }
 
-  String? _betNameToMarketKey(String name) {
-    if (name == 'Match Winner') return 'h2h';
-    return null;
-  }
-
-  List<OddsBookmaker> _mapOddsBookmakers(
-    List<dynamic> json,
-    String homeTeam,
-    String awayTeam,
-  ) {
-    return json.map<OddsBookmaker>((b) {
-      final bets = (b['bets'] as List?) ?? [];
-      final markets = bets
-          .map<OddsMarket?>((bet) {
-            final key = _betNameToMarketKey(bet['name'] as String);
-            if (key == null) return null;
-            final values = (bet['values'] as List?) ?? [];
-            final outcomes = _mapH2HOutcomes(values, homeTeam, awayTeam);
-            return OddsMarket(key: key, outcomes: outcomes);
-          })
-          .whereType<OddsMarket>()
-          .toList();
-      return OddsBookmaker(
-        key: b['id'].toString(),
-        title: b['name'] as String,
-        markets: markets,
-      );
-    }).where((bm) => bm.markets.isNotEmpty).toList();
-  }
-
-  List<OddsOutcome> _mapH2HOutcomes(
-    List<dynamic> values,
-    String homeTeam,
-    String awayTeam,
-  ) {
-    return values.map((v) {
-      final label = v['value'] as String;
-      final name = label == 'Home'
-          ? homeTeam
-          : label == 'Away'
-              ? awayTeam
-              : 'Draw';
-      final price = double.tryParse(v['odd'].toString()) ?? 0.0;
-      return OddsOutcome(name: name, price: price);
-    }).toList();
-  }
-
   Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
-    // TODO: implement API call for a single fixture odds lookup
+    final apiKey = dotenv.env['API_FOOTBALL_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception('Missing API_FOOTBALL_KEY');
+    }
+    final url = '$_baseUrl/odds?fixture=$fixtureId';
+    final res = await _client
+        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+        .timeout(const Duration(seconds: 10));
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      return body;
+    }
+    // On any error return empty structure; caller will fallback.
     return {};
   }
+
+  /// Extracts a minimal 'h2h' (match winner) market from API-Football odds JSON.
+  /// Produces exactly one market with three outcomes (Home/Draw/Away) for the first bookmaker that provides it.
+  List<OddsBookmaker> _parseH2HBookmakers(
+    Map<String, dynamic> oddsJson, {
+    required String homeTeam,
+    required String awayTeam,
+  }) {
+    final List<OddsBookmaker> result = [];
+    if (oddsJson.isEmpty) return result;
+    final resp = oddsJson['response'];
+    if (resp is! List || resp.isEmpty) return result;
+    // API-Football shape: response[0].bookmakers[].bets[].values[] { value: 'Home|Draw|Away', odd: '2.10' }
+    final first = resp.first as Map<String, dynamic>;
+    final bookmakers = (first['bookmakers'] as List?) ?? const [];
+    for (final b in bookmakers) {
+      final bm = b as Map<String, dynamic>;
+      final name = (bm['name'] ?? 'Bookmaker').toString();
+      final bets = (bm['bets'] as List?) ?? const [];
+      Map<String, dynamic>? matchWinner;
+      for (final bet in bets) {
+        final m = bet as Map<String, dynamic>;
+        final betName = (m['name'] ?? '').toString().toLowerCase();
+        if (betName.contains('match winner') || betName.contains('1x2')) {
+          matchWinner = m;
+          break;
+        }
+      }
+      if (matchWinner == null) {
+        continue;
+      }
+      final values = (matchWinner['values'] as List?) ?? const [];
+      OddsOutcome? home;
+      OddsOutcome? draw;
+      OddsOutcome? away;
+      for (final v in values) {
+        final mv = v as Map<String, dynamic>;
+        final val = (mv['value'] ?? '').toString().toLowerCase();
+        final oddStr = (mv['odd'] ?? '').toString();
+        final price = double.tryParse(oddStr.replaceAll(',', '.'));
+        if (price == null) continue;
+        if (val.contains('home')) {
+          home = OddsOutcome(name: homeTeam, price: price);
+        } else if (val.contains('draw') || val == 'x') {
+          draw = OddsOutcome(name: 'Draw', price: price);
+        } else if (val.contains('away')) {
+          away = OddsOutcome(name: awayTeam, price: price);
+        }
+      }
+      final outcomes = [
+        if (home != null) home,
+        if (draw != null) draw,
+        if (away != null) away,
+      ];
+      if (outcomes.isEmpty) continue;
+      result.add(
+        OddsBookmaker(
+          key: _slug(name),
+          title: name,
+          markets: [OddsMarket(key: 'h2h', outcomes: outcomes)],
+        ),
+      );
+      // Only need the first bookmaker for minimal UI; break here.
+      break;
+    }
+    return result;
+  }
+
+  String _slug(String input) => input
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+      .replaceAll(RegExp(r'_+'), '_')
+      .trim()
+      .replaceAll(RegExp(r'^_|_$'), '');
 }
