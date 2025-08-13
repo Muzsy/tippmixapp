@@ -6,12 +6,12 @@ This file is **loaded automatically** every time the Codex AI agents start. All 
 
 ## 📦 Project summary
 
-- **TippmixApp** – community‑driven sports‑betting simulator (Flutter + Firebase)
-- Virtual **TippCoin** currency (`CoinService` + Cloud Functions)
-- Security pop‑up flow (`GuardPopupService`)
-- Live odds via **OddsAPI** integration
-- Enum‑based **AppLocalizations** system with runtime language switching
-- **Codex‑driven** development: *canvas (.md) + steps (.yaml)* is the only accepted workflow
+* **TippmixApp** – community‑driven sports‑betting simulator (Flutter + Firebase)
+* Virtual **TippCoin** currency (`CoinService` + Cloud Functions)
+* Security pop‑up flow (`GuardPopupService`)
+* Live odds via **OddsAPI** integration
+* Enum‑based **AppLocalizations** system with runtime language switching
+* **Codex‑driven** development: *canvas (.md) + steps (.yaml)* is the only accepted workflow
 
 ---
 
@@ -64,11 +64,11 @@ The files below live under **`codex_docs/`** and are **auto‑loaded** on every 
 
 Codex **MUST NOT** create, modify or commit the following files:
 
-- `pubspec.yaml`
-- `firebase.json`
-- `l10n.yaml`
-- `.env`
-- **Binary assets** (PNG, JPG, PDF, ZIP, etc.) – these require a manual developer commit
+* `pubspec.yaml`
+* `firebase.json`
+* `l10n.yaml`
+* `.env`
+* **Binary assets** (PNG, JPG, PDF, ZIP, etc.) – these require a manual developer commit
 
 **Further forbidden actions:**
 
@@ -82,11 +82,42 @@ Codex **MUST NOT** create, modify or commit the following files:
 
 ## ✅ Definition of Done (DoD)
 
-- **New screen** → at least *1 widget test* in `test/widgets/`
-- **New service** → *unit test* in `test/services/`
-- **Localization** → update `hu`, `en`, `de` ARB files and extend `AppLocalizationsKey` enum
-- **Theme** → zero hard‑coded colours; linter rule `avoid-hard-coded-colors` passes
-- **CI pipeline** → `flutter analyze` + `flutter test --coverage` **all** steps green
+* **New screen** → at least *1 widget test* in `test/widgets/`
+* **New service** → *unit test* in `test/services/`
+* **Localization** → update `hu`, `en`, `de` ARB files and extend `AppLocalizationsKey` enum
+* **Theme** → zero hard‑coded colours; linter rule `avoid-hard-coded-colors` passes
+* **CI pipeline** → `flutter analyze` + `flutter test --coverage` **all** steps green
+
+---
+
+## 🔍 Analyzer / Lint policy
+
+To avoid scanning non‑project code and SDKs, Codex **must** follow these rules when running static analysis:
+
+1. **Run scope**
+   Always run:
+
+   ```bash
+   flutter analyze lib test integration_test bin tool
+   ```
+
+   Do **not** run `flutter analyze .` from repo root.
+
+2. **Options file**
+   Respect the root `analysis_options.yaml` and its `analyzer.exclude` globs.
+
+3. **SDK location**
+   Flutter SDK **must not live inside the repository** (e.g. `./flutter/`).
+   Use an external path (e.g. `$HOME/flutter_sdk` or runner cache) and export it to `PATH`.
+
+4. **CI defaults**
+
+   * Fail on errors, not on infos:
+
+     ```bash
+     flutter analyze --no-fatal-infos lib test integration_test bin tool
+     ```
+   * If the repository has multiple packages, analyze each package’s `lib/` and `test/` explicitly.
 
 ---
 
