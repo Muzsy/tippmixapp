@@ -60,7 +60,12 @@ class EventBetCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    event.sportTitle,
+                    event.countryName.isNotEmpty || event.leagueName.isNotEmpty
+                        ? [
+                              event.countryName,
+                              event.leagueName
+                            ].where((e) => e.isNotEmpty).join(' • ')
+                        : event.sportTitle,
                     style: Theme.of(context).textTheme.labelMedium,
                     overflow: TextOverflow.ellipsis,
                   ),

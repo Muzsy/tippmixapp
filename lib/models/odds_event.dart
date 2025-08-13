@@ -7,6 +7,8 @@ class OddsEvent {
   final String sportTitle; // Sportág neve
   final String homeTeam;
   final String awayTeam;
+  final String countryName;
+  final String leagueName;
   final DateTime commenceTime;
   final List<OddsBookmaker> bookmakers;
 
@@ -16,6 +18,8 @@ class OddsEvent {
     required this.sportTitle,
     required this.homeTeam,
     required this.awayTeam,
+    this.countryName = '',
+    this.leagueName = '',
     required this.commenceTime,
     required this.bookmakers,
   });
@@ -27,6 +31,8 @@ class OddsEvent {
       sportTitle: json['sport_title'] as String,
       homeTeam: json['home_team'] as String,
       awayTeam: json['away_team'] as String,
+      countryName: json['country_name'] as String? ?? '',
+      leagueName: json['league_name'] as String? ?? '',
       commenceTime: DateTime.parse(json['commence_time']),
       bookmakers: (json['bookmakers'] as List)
           .map((b) => OddsBookmaker.fromJson(b))
@@ -40,6 +46,8 @@ class OddsEvent {
     'sport_title': sportTitle,
     'home_team': homeTeam,
     'away_team': awayTeam,
+    'country_name': countryName,
+    'league_name': leagueName,
     'commence_time': commenceTime.toIso8601String(),
     'bookmakers': bookmakers.map((b) => b.toJson()).toList(),
   };
