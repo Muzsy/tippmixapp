@@ -1,5 +1,5 @@
 "use strict";
-// Lightweight API-Football provider that mimics the old OddsAPI adapter
+// Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiFootballResultProvider = void 0;

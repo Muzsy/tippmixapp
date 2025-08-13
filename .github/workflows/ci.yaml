@@ -89,6 +89,8 @@ jobs:
   functions:
     name: Cloud Functions – unit & e2e
     runs-on: ubuntu-latest
+    env:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

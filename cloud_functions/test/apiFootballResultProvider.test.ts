@@ -1,4 +1,6 @@
-import { ApiFootballResultProvider } from "../src/services/ApiFootballResultProvider";
+jest.unmock("../src/services/ApiFootballResultProvider");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { ApiFootballResultProvider } = require("../src/services/ApiFootballResultProvider");
 
 // Mock fetch
 const globalAny: any = global;

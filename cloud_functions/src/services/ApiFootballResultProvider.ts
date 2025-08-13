@@ -1,4 +1,4 @@
-// Lightweight API-Football provider that mimics the old OddsAPI adapter
+// Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
 
 export interface ScoreResult {
