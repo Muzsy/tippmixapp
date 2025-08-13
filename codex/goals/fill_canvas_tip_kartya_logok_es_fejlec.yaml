@@ -1,0 +1,257 @@
+meta:
+  canvas: canvases/tip_kartya_logok_es_fejlec.md
+  priority: P1
+
+steps:
+  - name: OddsEvent modell bővítése opcionális logó/fejléc mezőkkel
+    description: Új mezők felvétele; semmi más kód ne törjön meg. A konstruktor/ fromJson kezelje őket opcionálisan.
+    outputs:
+      - patch_file: lib/models/odds_event.dart
+        patch: |
+          @@
+- class OddsEvent {
+-   final String homeTeamName;
+-   final String awayTeamName;
++ class OddsEvent {
++   final String homeTeamName;
++   final String awayTeamName;
++   final String? countryName;
++   final String? leagueName;
++   final String? leagueLogoUrl;
++   final String? homeLogoUrl;
++   final String? awayLogoUrl;
+@@
+-   OddsEvent({
+-     required this.homeTeamName,
+-     required this.awayTeamName,
+-     // ...
+-   });
++   OddsEvent({
++     required this.homeTeamName,
++     required this.awayTeamName,
++     this.countryName,
++     this.leagueName,
++     this.leagueLogoUrl,
++     this.homeLogoUrl,
++     this.awayLogoUrl,
++     // ...
++   });
+@@
+-   factory OddsEvent.fromJson(Map<String, dynamic> json) {
++   factory OddsEvent.fromJson(Map<String, dynamic> json) {
+      return OddsEvent(
+         homeTeamName: json['homeTeamName'] as String,
+         awayTeamName: json['awayTeamName'] as String,
++        countryName: json['countryName'] as String?,
++        leagueName: json['leagueName'] as String?,
++        leagueLogoUrl: json['leagueLogoUrl'] as String?,
++        homeLogoUrl: json['homeLogoUrl'] as String?,
++        awayLogoUrl: json['awayLogoUrl'] as String?,
+         // ...
+      );
+    }
+@@
+-   Map<String, dynamic> toJson() => {
+-     'homeTeamName': homeTeamName,
+-     'awayTeamName': awayTeamName,
+-     // ...
+-   };
++   Map<String, dynamic> toJson() => {
++     'homeTeamName': homeTeamName,
++     'awayTeamName': awayTeamName,
++     if (countryName != null) 'countryName': countryName,
++     if (leagueName != null) 'leagueName': leagueName,
++     if (leagueLogoUrl != null) 'leagueLogoUrl': leagueLogoUrl,
++     if (homeLogoUrl != null) 'homeLogoUrl': homeLogoUrl,
++     if (awayLogoUrl != null) 'awayLogoUrl': awayLogoUrl,
++     // ...
++   };
+
+  - name: ApiFootballService mapping kiegészítése (logo/fejléc mezők)
+    description: A fixtures válaszból töltsük ki az új mezőket (null‑safe fallbackekkel).
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-   OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> fx) {
++   OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> fx) {
+      final league = fx['league'] as Map<String, dynamic>?;
+      final teams = fx['teams'] as Map<String, dynamic>?;
+      final home = teams?['home'] as Map<String, dynamic>?;
+      final away = teams?['away'] as Map<String, dynamic>?;
+      return OddsEvent(
+         homeTeamName: home?['name'] ?? 'Home',
+         awayTeamName: away?['name'] ?? 'Away',
++        countryName: league?['country'] as String?,
++        leagueName: league?['name'] as String?,
++        leagueLogoUrl: league?['logo'] as String?,
++        homeLogoUrl: home?['logo'] as String?,
++        awayLogoUrl: away?['logo'] as String?,
+         // ... meglévő mezők map‑je itt marad változatlanul
+      );
+    }
+
+  - name: TeamBadge widget létrehozása
+    description: Kör avatar hálózati képpel; hiba esetén monogram (a névből képzett 2–3 betű, pl. "TOT").
+    outputs:
+      - create_file: lib/widgets/team_badge.dart
+        content: |
+          import 'package:flutter/material.dart';
+
+          class TeamBadge extends StatelessWidget {
+            final String? imageUrl;
+            final String initials;
+            final double size;
+            const TeamBadge({super.key, required this.initials, this.imageUrl, this.size = 32});
+
+            @override
+            Widget build(BuildContext context) {
+              final radius = size / 2;
+              return ClipOval(
+                child: SizedBox(
+                  width: size,
+                  height: size,
+                  child: imageUrl != null && imageUrl!.isNotEmpty
+                      ? Image.network(
+                          imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _fallback(context, radius),
+                          loadingBuilder: (ctx, child, progress) => progress == null
+                              ? child
+                              : Center(child: SizedBox(width: size/2, height: size/2, child: CircularProgressIndicator(strokeWidth: 2))),
+                        )
+                      : _fallback(context, radius),
+                ),
+              );
+            }
+
+            Widget _fallback(BuildContext context, double radius) {
+              final bg = Theme.of(context).colorScheme.secondaryContainer;
+              final fg = Theme.of(context).colorScheme.onSecondaryContainer;
+              return Container(
+                decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+                child: Center(
+                  child: Text(
+                    initials,
+                    style: TextStyle(fontWeight: FontWeight.bold, color: fg),
+                  ),
+                ),
+              );
+            }
+          }
+
+  - name: LeaguePill widget létrehozása
+    description: Ország • Liga jelvény megjelenítése kisméretű sorban; ha van liga‑logo, 16px‑en jelenítse meg.
+    outputs:
+      - create_file: lib/widgets/league_pill.dart
+        content: |
+          import 'package:flutter/material.dart';
+
+          class LeaguePill extends StatelessWidget {
+            final String? country;
+            final String? league;
+            final String? logoUrl;
+            const LeaguePill({super.key, this.country, this.league, this.logoUrl});
+
+            @override
+            Widget build(BuildContext context) {
+              final text = [if (country != null && country!.isNotEmpty) country, if (league != null && league!.isNotEmpty) league].join(' • ');
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (logoUrl != null && logoUrl!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: Image.network(logoUrl!, width: 16, height: 16, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                    ),
+                  Flexible(
+                    child: Text(
+                      text,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
+
+  - name: Tippkártya fejléc és csapatsor bővítése
+    description: `event_bet_card.dart` fejléce (jobb oldali igazítás) és csapatnevek előtti `TeamBadge` bekötése.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   // Fejléc: jelenleg csak sport/placeholder
++   // Fejléc: Ország • Liga (jobb oldalra zárva)
++   import 'package:your_app/widgets/league_pill.dart';
++   import 'package:your_app/widgets/team_badge.dart';
+@@
+-   Widget _buildHeader(BuildContext context, OddsEvent e) {
+-     return Row(
+-       children: [
+-         // régi tartalom
+-       ],
+-     );
+-   }
++   Widget _buildHeader(BuildContext context, OddsEvent e) {
++     return Row(
++       children: [
++         Expanded(child: Container()),
++         LeaguePill(country: e.countryName, league: e.leagueName, logoUrl: e.leagueLogoUrl),
++       ],
++     );
++   }
+@@
+-   // Csapatsor
+-   Text(e.homeTeamName)
++   Row(children: [
++     TeamBadge(imageUrl: e.homeLogoUrl, initials: _initials(e.homeTeamName)),
++     const SizedBox(width: 8),
++     Expanded(child: Text(e.homeTeamName, overflow: TextOverflow.ellipsis)),
++   ])
+@@
+-   Text(e.awayTeamName)
++   Row(children: [
++     TeamBadge(imageUrl: e.awayLogoUrl, initials: _initials(e.awayTeamName)),
++     const SizedBox(width: 8),
++     Expanded(child: Text(e.awayTeamName, overflow: TextOverflow.ellipsis)),
++   ])
++
++   String _initials(String name) {
++     final parts = name.split(' ');
++     final letters = parts.take(2).map((p) => p.isNotEmpty ? p[0] : '').join();
++     return letters.toUpperCase();
++   }
+
+  - name: Widget tesztek hozzáadása (alap)
+    description: Ellenőrizzük, hogy a fejléc és a monogram fallback megjelenik, ha nincs logo.
+    outputs:
+      - create_file: test/widgets/event_bet_card_header_test.dart
+        content: |
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:flutter/material.dart';
+          import 'package:your_app/widgets/event_bet_card.dart';
+          import 'package:your_app/models/odds_event.dart';
+
+          void main() {
+            testWidgets('Megjelenik az Ország • Liga fejléc', (tester) async {
+              final e = OddsEvent(homeTeamName: 'Tottenham', awayTeamName: 'Arsenal', countryName: 'England', leagueName: 'Premier League');
+              await tester.pumpWidget(MaterialApp(home: Scaffold(body: EventBetCard(event: e))));
+              expect(find.textContaining('England'), findsOneWidget);
+              expect(find.textContaining('Premier League'), findsOneWidget);
+            });
+
+            testWidgets('TeamBadge monogram fallback működik', (tester) async {
+              final e = OddsEvent(homeTeamName: 'Real Soacha', awayTeamName: 'Deportes Tolima');
+              await tester.pumpWidget(MaterialApp(home: Scaffold(body: EventBetCard(event: e))));
+              expect(find.text('RS'), findsOneWidget);
+              expect(find.text('DT'), findsOneWidget);
+            });
+          }
+
+  - name: Build ellenőrzések
+    description: Futtassuk a szokásos ellenőrzéseket.
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
