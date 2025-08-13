@@ -7,6 +7,7 @@
     "firebase-functions": "^5.1.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@firebase/testing": "^0.20.11",
     "@types/google-cloud__pubsub": "^0.18.1",
     "@types/jest": "^29.5.14",
