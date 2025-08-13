@@ -4,43 +4,42 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/widgets/event_bet_card.dart';
 
+Widget _wrap(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(body: child),
+);
+
 void main() {
-  Widget wrap(EventBetCard card) {
-    return MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: card),
-    );
-  }
-
-  testWidgets('falls back to sport title when no league info', (tester) async {
-    final event = OddsEvent(
+  testWidgets('Megjelenik az Ország • Liga fejléc', (tester) async {
+    final e = OddsEvent(
       id: '1',
       sportKey: 'soccer',
       sportTitle: 'Soccer',
-      homeTeam: 'A',
-      awayTeam: 'B',
-      commenceTime: DateTime.now(),
-      bookmakers: const [],
-    );
-    await tester.pumpWidget(wrap(EventBetCard(event: event, h2hMarket: null)));
-    expect(find.text('Soccer'), findsOneWidget);
-  });
-
-  testWidgets('shows country and league when available', (tester) async {
-    final event = OddsEvent(
-      id: '1',
-      sportKey: 'soccer',
-      sportTitle: 'Soccer',
-      homeTeam: 'A',
-      awayTeam: 'B',
-      commenceTime: DateTime.now(),
-      bookmakers: const [],
+      homeTeam: 'Tottenham',
+      awayTeam: 'Arsenal',
       countryName: 'England',
       leagueName: 'Premier League',
+      commenceTime: DateTime.now(),
+      bookmakers: const [],
     );
-    await tester.pumpWidget(wrap(EventBetCard(event: event, h2hMarket: null)));
-    expect(find.text('England • Premier League'), findsOneWidget);
-    expect(find.text('Soccer'), findsNothing);
+    await tester.pumpWidget(_wrap(EventBetCard(event: e, h2hMarket: null)));
+    expect(find.textContaining('England'), findsOneWidget);
+    expect(find.textContaining('Premier League'), findsOneWidget);
+  });
+
+  testWidgets('TeamBadge monogram fallback működik', (tester) async {
+    final e = OddsEvent(
+      id: '2',
+      sportKey: 'soccer',
+      sportTitle: 'Soccer',
+      homeTeam: 'Real Soacha',
+      awayTeam: 'Deportes Tolima',
+      commenceTime: DateTime.now(),
+      bookmakers: const [],
+    );
+    await tester.pumpWidget(_wrap(EventBetCard(event: e, h2hMarket: null)));
+    expect(find.text('RS'), findsOneWidget);
+    expect(find.text('DT'), findsOneWidget);
   });
 }

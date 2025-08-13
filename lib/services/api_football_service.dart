@@ -101,6 +101,9 @@ class ApiFootballService {
               commenceTime: e.commenceTime,
               countryName: e.countryName,
               leagueName: e.leagueName,
+              leagueLogoUrl: e.leagueLogoUrl,
+              homeLogoUrl: e.homeLogoUrl,
+              awayLogoUrl: e.awayLogoUrl,
               bookmakers: bms,
             ),
           );
@@ -130,16 +133,19 @@ class ApiFootballService {
     final fixture = Map<String, dynamic>.from(json['fixture'] as Map);
     final league = Map<String, dynamic>.from(json['league'] as Map);
     final teams = Map<String, dynamic>.from(json['teams'] as Map);
-    final homeTeam = (teams['home'] as Map)['name'] as String;
-    final awayTeam = (teams['away'] as Map)['name'] as String;
+    final home = Map<String, dynamic>.from(teams['home'] as Map);
+    final away = Map<String, dynamic>.from(teams['away'] as Map);
     return OddsEvent(
       id: fixture['id'].toString(),
       sportKey: 'soccer',
       sportTitle: 'Soccer',
-      homeTeam: homeTeam,
-      awayTeam: awayTeam,
-      countryName: league['country'] as String? ?? '',
-      leagueName: league['name'] as String? ?? '',
+      homeTeam: home['name'] as String,
+      awayTeam: away['name'] as String,
+      countryName: league['country'] as String?,
+      leagueName: league['name'] as String?,
+      leagueLogoUrl: league['logo'] as String?,
+      homeLogoUrl: home['logo'] as String?,
+      awayLogoUrl: away['logo'] as String?,
       commenceTime: DateTime.parse(fixture['date'] as String),
       bookmakers: const [],
     );
