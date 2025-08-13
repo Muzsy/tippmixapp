@@ -1,0 +1,132 @@
+meta:
+  canvas: canvases/event_bet_card_action_pills_i18n.md
+  priority: P1
+
+steps:
+  - name: ARB kulcsok felvétele (HU/EN/DE)
+    description: Új feliratok a három akciógombhoz.
+    outputs:
+      - patch_file: lib/l10n/intl_en.arb
+        patch: |
+          @@
+          {
++           "app.actions.moreBets": "More bets",
++           "app.actions.statistics": "Statistics",
++           "app.actions.aiRecommend": "AI picks"
+          }
+      - patch_file: lib/l10n/intl_hu.arb
+        patch: |
+          @@
+          {
++           "app.actions.moreBets": "További fogadások",
++           "app.actions.statistics": "Statisztika",
++           "app.actions.aiRecommend": "AI ajánló"
+          }
+      - patch_file: lib/l10n/intl_de.arb
+        patch: |
+          @@
+          {
++           "app.actions.moreBets": "Weitere Wetten",
++           "app.actions.statistics": "Statistik",
++           "app.actions.aiRecommend": "KI‑Vorschlag"
+          }
+
+  - name: Tippkártya gombsor feliratainak lokalizálása
+    description: `event_bet_card.dart` ActionPill labeljeit AppLocalizations‑ra cseréljük.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-         Expanded(
+-           child: ActionPill(
+-             icon: Icons.more_horiz,
+-             label: 'További fogadások',
+-             onTap: onShowMoreBets,
+-           ),
+-         ),
++         Expanded(
++           child: ActionPill(
++             icon: Icons.more_horiz,
++             label: AppLocalizations.of(context)!.appActionsMoreBets,
++             onTap: onShowMoreBets,
++           ),
++         ),
+          @@
+-         Expanded(
+-           child: ActionPill(
+-             icon: Icons.bar_chart,
+-             label: 'Statisztika',
+-             onTap: onShowStats,
+-           ),
+-         ),
++         Expanded(
++           child: ActionPill(
++             icon: Icons.bar_chart,
++             label: AppLocalizations.of(context)!.appActionsStatistics,
++             onTap: onShowStats,
++           ),
++         ),
+          @@
+-         Expanded(
+-           child: ActionPill(
+-             icon: Icons.auto_awesome,
+-             label: 'AI ajánló',
+-             onTap: onShowAIRecommendation,
+-           ),
+-         ),
++         Expanded(
++           child: ActionPill(
++             icon: Icons.auto_awesome,
++             label: AppLocalizations.of(context)!.appActionsAiRecommend,
++             onTap: onShowAIRecommendation,
++           ),
++         ),
+
+  - name: Import hozzáadása (localizations)
+    description: Biztosítjuk, hogy a fájl elérje az AppLocalizations‑t.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+          - import 'package:flutter/material.dart';
+          + import 'package:flutter/material.dart';
+          + import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+  - name: DE widget teszt – felirat megjelenik németül
+    description: Minimális widget teszt, hogy DE locale alatt a feliratok közül legalább egy német szöveg látszik.
+    outputs:
+      - create_file: test/widgets/event_bet_card_actions_i18n_de_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+          import 'package:flutter_localizations/flutter_localizations.dart';
+          import 'package:your_app/widgets/event_bet_card.dart';
+          import 'package:your_app/models/odds_event.dart';
+
+          Widget _wrap(Widget child) => MaterialApp(
+                locale: const Locale('de'),
+                supportedLocales: const [Locale('en'), Locale('hu'), Locale('de')],
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                home: Scaffold(body: child),
+              );
+
+          void main() {
+            testWidgets('ActionPill címkék németül jelennek meg', (tester) async {
+              final e = OddsEvent(homeTeamName: 'Real Soacha', awayTeamName: 'Deportes Tolima');
+              await tester.pumpWidget(_wrap(EventBetCard(event: e)));
+              expect(find.text('Weitere Wetten'), findsOneWidget);
+            });
+          }
+
+  - name: L10n generálás és ellenőrzések
+    description: Lokalizációs generálás és a szokásos ellenőrzések.
+    outputs:
+      - run: flutter gen-l10n
+      - run: flutter analyze
+      - run: flutter test
