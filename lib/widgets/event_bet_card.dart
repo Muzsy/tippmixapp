@@ -4,6 +4,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/models/odds_market.dart';
 import 'package:tippmixapp/models/odds_outcome.dart';
+import 'package:tippmixapp/widgets/league_pill.dart';
+import 'package:tippmixapp/widgets/team_badge.dart';
 
 class EventBetCard extends StatelessWidget {
   final OddsEvent event;
@@ -53,35 +55,52 @@ class EventBetCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Felső sáv: sport címke balra, „liga” jobbra (ha lenne)
-            Row(
-              children: [
-                const Icon(Icons.flag, size: 18),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    event.countryName.isNotEmpty || event.leagueName.isNotEmpty
-                        ? [
-                              event.countryName,
-                              event.leagueName
-                            ].where((e) => e.isNotEmpty).join(' • ')
-                        : event.sportTitle,
-                    style: Theme.of(context).textTheme.labelMedium,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                // Jobbra igazított liga – jelenleg nincs megbízható adat → kihagyjuk
-              ],
-            ),
+            _buildHeader(context, event),
             const SizedBox(height: 8),
 
             // Csapat sor
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _TeamTile(name: event.homeTeam),
+                Expanded(
+                  child: Row(
+                    children: [
+                      TeamBadge(
+                        imageUrl: event.homeLogoUrl,
+                        initials: _initials(event.homeTeam),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          event.homeTeam,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(width: 12),
-                _TeamTile(name: event.awayTeam, alignEnd: true),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          event.awayTeam,
+                          textAlign: TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TeamBadge(
+                        imageUrl: event.awayLogoUrl,
+                        initials: _initials(event.awayTeam),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -182,33 +201,24 @@ class EventBetCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class _TeamTile extends StatelessWidget {
-  final String name;
-  final bool alignEnd;
-  const _TeamTile({required this.name, this.alignEnd = false});
-  @override
-  Widget build(BuildContext context) {
-    final avatar = CircleAvatar(child: Text(name.isNotEmpty ? name[0] : '?'));
-    final title = Expanded(
-      child: Text(
-        name,
-        textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-        style: Theme.of(context).textTheme.titleMedium,
-        overflow: TextOverflow.ellipsis,
-      ),
+  Widget _buildHeader(BuildContext context, OddsEvent e) {
+    return Row(
+      children: [
+        const Spacer(),
+        LeaguePill(
+          country: e.countryName,
+          league: e.leagueName,
+          logoUrl: e.leagueLogoUrl,
+        ),
+      ],
     );
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: alignEnd
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        children: alignEnd
-            ? [title, const SizedBox(width: 8), avatar]
-            : [avatar, const SizedBox(width: 8), title],
-      ),
-    );
+  }
+
+  String _initials(String name) {
+    final parts = name.split(' ');
+    final letters = parts.take(2).map((p) => p.isNotEmpty ? p[0] : '').join();
+    return letters.toUpperCase();
   }
 }
 
