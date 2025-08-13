@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../../services/analytics_service.dart';
 import 'login_form.dart';
 import '../../providers/auth_state_provider.dart';

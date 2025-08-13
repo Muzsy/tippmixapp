@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 
 class CategoryTabs extends StatelessWidget implements PreferredSizeWidget {
   const CategoryTabs({super.key, required this.controller});

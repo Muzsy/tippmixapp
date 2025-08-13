@@ -1,5 +1,5 @@
-version: "2025-07-29"
-last\_updated\_by: docs-bot
+version: "2025-08-13"
+last\_updated\_by: codex-bot
 depends\_on: \[codex\_context.yaml]
 
 # 🌍 Localization Logic Guidelines
@@ -35,6 +35,8 @@ l10n.yaml                            # Flutter gen config
 ```
 
 *Every* new key is added to the 3 `.arb` files in the same commit.
+Configured in the root `l10n.yaml` with `output-dir: lib/l10n` and `synthetic-package: false`, so generated sources live in the
+repository and are imported via `package:tippmixapp/l10n/app_localizations.dart`.
 
 ---
 

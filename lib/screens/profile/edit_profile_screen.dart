@@ -3,7 +3,7 @@ import '../../models/user_model.dart';
 import '../../services/user_service.dart';
 import '../../validators/display_name_validator.dart';
 import '../../widgets/avatar_picker.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../models/badge.dart';
 import '../utils/badge_icon_utils.dart';
 import 'badge_detail_dialog.dart';

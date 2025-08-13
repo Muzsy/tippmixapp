@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/ticket_model.dart';
 import '../models/tip_model.dart';
-import '../l10n/app_localizations.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
 
 class TicketDetailsDialog extends StatelessWidget {
   final Ticket ticket;

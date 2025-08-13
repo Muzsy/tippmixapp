@@ -1,5 +1,5 @@
-version: "2025-07-29"
-last\_updated\_by: docs-bot
+version: "2025-08-13"
+last\_updated\_by: codex-bot
 depends\_on: \[codex\_context.yaml, localization\_logic\_en.md]
 
 # 🌍 Lokalizációs logika irányelvei
@@ -35,6 +35,8 @@ l10n.yaml                            # Flutter gen konfiguráció
 ```
 
 *Bármilyen* új kulcsot a 3 `.arb` fájlba **ugyanabban a commitban** kell felvenni.
+Az `l10n.yaml` gyökérfájlban `output-dir: lib/l10n` és `synthetic-package: false` beállításokkal a generált források a repóban
+élnek, és `package:tippmixapp/l10n/app_localizations.dart` útvonalon importálhatók.
 
 ---
 

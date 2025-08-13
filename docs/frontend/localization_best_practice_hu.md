@@ -8,7 +8,8 @@ Ez a dokumentum bemutatja a TippmixApp lokalizációs beállításait és ajánl
 
 - `flutter_localizations` + `intl` csomag használat
 - ARB fájlok: `lib/l10n/app_hu.arb`, `app_en.arb`, `app_de.arb`
-- Generált osztály: `AppLocalizations`
+- Generált források a `lib/l10n` mappába kerülnek (`output-dir` az `l10n.yaml`-ban, `synthetic-package: false`)
+- Import: `package:tippmixapp/l10n/app_localizations.dart`
 
 ---
 
