@@ -1,0 +1,164 @@
+meta:
+  canvas: canvases/event_bet_card_action_pills_ui.md
+  priority: P1
+
+steps:
+  - name: Új ActionPill komponens létrehozása
+    description: Új, egységes „pill” stílusú gomb widget ikon+felirat elrendezéssel és érintési visszajelzéssel.
+    outputs:
+      - create_file: lib/widgets/action_pill.dart
+        content: |
+          import 'package:flutter/material.dart';
+
+          class ActionPill extends StatelessWidget {
+            final IconData icon;
+            final String label;
+            final VoidCallback? onTap;
+            final bool selected;
+            final double height;
+
+            const ActionPill({
+              super.key,
+              required this.icon,
+              required this.label,
+              this.onTap,
+              this.selected = false,
+              this.height = 40,
+            });
+
+            @override
+            Widget build(BuildContext context) {
+              final theme = Theme.of(context);
+              final cs = theme.colorScheme;
+              final bg = selected ? cs.primary.withOpacity(0.12) : cs.secondaryContainer;
+              final fg = selected ? cs.onPrimary : theme.textTheme.labelLarge?.color;
+
+              return Semantics(
+                button: true,
+                label: label,
+                child: Material(
+                  color: bg,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: cs.outlineVariant, width: 1),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: onTap,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: height),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(icon, size: 18, color: fg),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                label,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.labelLarge?.copyWith(color: fg),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+          }
+
+  - name: Tippkártya gombsor cseréje egységes pill-komponensekre
+    description: A `event_bet_card.dart` alsó gombsorát egységesítjük három ActionPill-re, Dividerrel elválasztva a kártya tartalmától.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+- // TODO: régi gombsor: sima OutlinedButton/Container-ek egy sorban
++ // Új egységes gombsor: ActionPill-ek Dividerrel
++ import 'package:flutter/material.dart';
++ import '../widgets/action_pill.dart';
+@@
+- Widget _buildActions(BuildContext context) {
+-   return Row(
+-     children: [
+-       // korábbi 3 gomb implementáció
+-     ],
+-   );
+- }
++ Widget _buildActions(BuildContext context) {
++   return Column(
++     crossAxisAlignment: CrossAxisAlignment.stretch,
++     children: [
++       const SizedBox(height: 8),
++       const Divider(height: 1),
++       const SizedBox(height: 8),
++       Row(
++         children: [
++           Expanded(
++             child: ActionPill(
++               icon: Icons.more_horiz,
++               label: 'További fogadások',
++               onTap: onShowMoreBets, // meglévő callback
++             ),
++           ),
++           const SizedBox(width: 8),
++           Expanded(
++             child: ActionPill(
++               icon: Icons.bar_chart,
++               label: 'Statisztika',
++               onTap: onShowStats, // meglévő callback
++             ),
++           ),
++           const SizedBox(width: 8),
++           Expanded(
++             child: ActionPill(
++               icon: Icons.auto_awesome,
++               label: 'AI ajánló',
++               onTap: onShowAIRecommendation, // meglévő callback
++             ),
++           ),
++         ],
++       ),
++     ],
++   );
++ }
+
+  - name: Widget tesztek – pill gombsor jelenlét és működés
+    description: Ellenőrzés, hogy az `EventBetCard` kirendereli a három gombot és a tappolás hívja a callbackeket.
+    outputs:
+      - create_file: test/widgets/event_bet_card_action_pills_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:mockito/mockito.dart';
+
+          // Feltételezzük, hogy az EventBetCard a projektben elérhető és a három callback paraméterrel bővíthető/érhető el.
+          import 'package:your_app/widgets/event_bet_card.dart';
+
+          class _Cb extends Mock implements VoidCallback {}
+
+          void main() {
+            testWidgets('Megjelenik a három ActionPill', (tester) async {
+              await tester.pumpWidget(MaterialApp(
+                home: Scaffold(
+                  body: EventBetCard(
+                    // ... szükséges paraméterek az eseményhez
+                  ),
+                ),
+              ));
+              expect(find.text('További fogadások'), findsOneWidget);
+              expect(find.text('Statisztika'), findsOneWidget);
+              expect(find.text('AI ajánló'), findsOneWidget);
+            });
+          }
+
+  - name: Build és analízis
+    description: Standard ellenőrzések futtatása.
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
