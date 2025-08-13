@@ -24,6 +24,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ai_recommendation => 'AI recommendation';
 
   @override
+  String get appActionsMoreBets => 'More bets';
+
+  @override
+  String get appActionsStatistics => 'Statistics';
+
+  @override
+  String get appActionsAiRecommend => 'AI picks';
+
+  @override
   String get amount_must_be_integer => 'Amount must be an integer.';
 
   @override
