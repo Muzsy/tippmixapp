@@ -3,8 +3,7 @@ import 'odds_outcome.dart';
 
 /// Specialized market class for H2H (1X2) outcomes.
 class H2HMarket extends OddsMarket {
-  H2HMarket({required List<OddsOutcome> outcomes})
-      : super(key: 'h2h', outcomes: outcomes);
+  H2HMarket({required super.outcomes}) : super(key: 'h2h');
 
   factory H2HMarket.fromJson(Map<String, dynamic> json) {
     final outcomes = (json['outcomes'] as List?)

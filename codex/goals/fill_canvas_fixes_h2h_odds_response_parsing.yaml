@@ -1,0 +1,140 @@
+meta:
+  canvas: canvases/fixes/h2h_odds_response_parsing.md
+  priority: P0
+
+steps:
+  - name: H2H parser cseréje – API-Football odds válasz bejárása
+    description: A jelenlegi `json['markets']` útvonal helyett a `response -> bookmakers -> bets -> values` struktúrából olvassuk ki a H2H (1X2) piacot.
+    outputs:
+      - patch_file: lib/services/market_mapping.dart
+        patch: |
+          @@
+          class MarketMapping {
+-           static const h2hAliases = {
+-             'H2H', '1X2', '1x2', 'Match Winner', 'Winner', 'Full Time Result'
+-           };
+-
+-           static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
+-             final markets = json['markets'] as List<dynamic>?;
+-             if (markets == null) return null;
+-             for (final m in markets) {
+-               final name = (m['key'] ?? m['name'] ?? '').toString();
+-               if (h2hAliases.contains(name)) {
+-                 return H2HMarket.fromJson(m);
+-               }
+-             }
+-             return null;
+-           }
++           static const _h2hAliases = <String>{
++             'match winner', '1x2', 'full time result', 'match result', 'winner'
++           };
++
++           /// API-Football /odds válasz → H2HMarket
++           static H2HMarket? h2hFromApi(Map<String, dynamic> json, {
++             String? homeLabel,
++             String? awayLabel,
++           }) {
++             final resp = json['response'];
++             if (resp is! List || resp.isEmpty) return null;
++
++             for (final item in resp) {
++               final bms = item is Map<String, dynamic> ? item['bookmakers'] : null;
++               if (bms is! List) continue;
++               for (final b in bms) {
++                 final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
++                 if (bets is! List) continue;
++                 for (final bet in bets) {
++                   final betName = (bet is Map<String, dynamic>) ? (bet['name'] ?? '').toString().toLowerCase() : '';
++                   if (!_h2hAliases.contains(betName)) continue;
++                   final values = (bet['values'] as List?) ?? const [];
++                   OddsOutcome? home;
++                   OddsOutcome? draw;
++                   OddsOutcome? away;
++                   for (final v in values) {
++                     if (v is! Map) continue;
++                     final val = (v['value'] ?? '').toString().toLowerCase();
++                     final oddStr = (v['odd'] ?? '').toString();
++                     final price = double.tryParse(oddStr.replaceAll(',', '.'));
++                     if (price == null) continue;
++                     if (val == 'home' || val == '1') {
++                       home = OddsOutcome(name: homeLabel ?? 'Home', price: price);
++                     } else if (val == 'draw' || val == 'x') {
++                       draw = OddsOutcome(name: 'Draw', price: price);
++                     } else if (val == 'away' || val == '2') {
++                       away = OddsOutcome(name: awayLabel ?? 'Away', price: price);
++                     }
++                   }
++                   final outs = [if (home != null) home!, if (draw != null) draw!, if (away != null) away!];
++                   if (outs.isEmpty) continue;
++                   return H2HMarket(bookmakerKey: (b['id'] ?? b['name'] ?? '').toString(), outcomes: outs);
++                 }
++               }
++             }
++             return null;
++           }
+          }
+
+  - name: Service-hívás módosítása – home/away címkék átadása
+    description: A parsernek átadjuk a csapatok nevét, hogy az 1/2 helyett emberi címkék legyenek az `OddsOutcome`‑okban.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-         final json = await _apiGetOddsForFixture(fixtureId);
+-         return MarketMapping.h2hFromApi(json);
++         final json = await _apiGetOddsForFixture(fixtureId);
++         return MarketMapping.h2hFromApi(
++           json,
++           homeLabel: homeTeamNameFor(fixtureId),
++           awayLabel: awayTeamNameFor(fixtureId),
++         );
+          }
++
++         // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek
++         String? homeTeamNameFor(int fixtureId) { /* TODO: implement */ return null; }
++         String? awayTeamNameFor(int fixtureId) { /* TODO: implement */ return null; }
+
+  - name: Parser unit teszt – minimális odds minta
+    description: Bizonyítjuk, hogy a parser a valós szerkezetű válaszból képes kinyerni a H2H-t.
+    outputs:
+      - create_file: test/services/market_mapping_h2h_parsing_test.dart
+        content: |
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:your_app/services/market_mapping.dart';
+          import 'package:your_app/models/odds_models.dart';
+
+          void main() {
+            test('H2H parser kinyeri az 1/X/2 oddsokat', () {
+              final json = {
+                'response': [
+                  {
+                    'bookmakers': [
+                      {
+                        'id': 99,
+                        'name': 'DemoBook',
+                        'bets': [
+                          {
+                            'name': '1X2',
+                            'values': [
+                              {'value': '1', 'odd': '2.10'},
+                              {'value': 'X', 'odd': '3.30'},
+                              {'value': '2', 'odd': '3.40'},
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              };
+              final m = MarketMapping.h2hFromApi(json, homeLabel: 'Home', awayLabel: 'Away');
+              expect(m, isNotNull);
+              expect(m!.outcomes.length, 3);
+            });
+          }
+
+  - name: Analyze & Test
+    description: Statikus elemzés és tesztek futtatása.
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
