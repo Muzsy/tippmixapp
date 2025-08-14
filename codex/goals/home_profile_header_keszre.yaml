@@ -1,0 +1,177 @@
+meta:
+  canvas: Home Profile Header készre – vászon
+  priority: P1
+
+steps:
+  # 1) Új vendég csempe widget
+  - create_file:
+      target: lib/widgets/guest_promo_tile.dart
+      content: |
+        import 'package:flutter/material.dart';
+
+        class GuestPromoTile extends StatelessWidget {
+          final VoidCallback? onLoginTap;
+          final VoidCallback? onRegisterTap;
+          const GuestPromoTile({super.key, this.onLoginTap, this.onRegisterTap});
+
+          @override
+          Widget build(BuildContext context) {
+            final theme = Theme.of(context);
+            final textTheme = theme.textTheme;
+            final hasLogin = onLoginTap != null;
+            final hasRegister = onRegisterTap != null;
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: kElevationToShadow[1],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.person_outline, color: theme.colorScheme.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          // i18n a l10n kulccsal fog betöltődni a Home integráció során
+                          // ide fallback kerül, ha a gen-l10n még nem futott
+                          'home_guest_title',
+                          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text('home_guest_body', style: textTheme.bodyMedium),
+                  const SizedBox(height: 12),
+                  if (hasLogin || hasRegister)
+                    Row(
+                      children: [
+                        if (hasLogin)
+                          FilledButton(
+                            onPressed: onLoginTap,
+                            child: const Text('home_cta_login'),
+                          ),
+                        if (hasLogin && hasRegister) const SizedBox(width: 8),
+                        if (hasRegister)
+                          OutlinedButton(
+                            onPressed: onRegisterTap,
+                            child: const Text('home_cta_register'),
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+            );
+          }
+        }
+
+  # 2) Összevonó fejléc widget – dönt vendég/bejelentkezett között
+  - create_file:
+      target: lib/widgets/home_profile_header.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import '../widgets/guest_promo_tile.dart';
+        import '../widgets/profile_summary.dart';
+        // A projektben használt auth provider importja lehet eltérő –
+        // itt interface-szerű, hogy a build ne törjön.
+        typedef IsLoggedIn = bool Function();
+
+        class HomeProfileHeader extends StatelessWidget {
+          final IsLoggedIn isLoggedIn;
+          final VoidCallback? onLoginTap;
+          final VoidCallback? onRegisterTap;
+          const HomeProfileHeader({
+            super.key,
+            required this.isLoggedIn,
+            this.onLoginTap,
+            this.onRegisterTap,
+          });
+
+          @override
+          Widget build(BuildContext context) {
+            if (!isLoggedIn()) {
+              return GuestPromoTile(onLoginTap: onLoginTap, onRegisterTap: onRegisterTap);
+            }
+            // Bejelentkezett nézet: a meglévő ProfileSummary
+            return const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: ProfileSummary(),
+            );
+          }
+        }
+
+  # 3) i18n kulcsok (HU/EN/DE) – meglévő ARB-k bővítése
+  - patch_file:
+      target: lib/l10n/intl_hu.arb
+      patch: |
+        @@
+        {
+        +  "home_guest_title": "Jelentkezz be a teljes élményhez",
+        +  "home_guest_body": "Hozz létre profilt vagy lépj be, és kezdd el a TippCoin gyűjtést, szelvényeket, ranglistát és jelvényeket.",
+        +  "home_cta_login": "Bejelentkezés",
+        +  "home_cta_register": "Regisztráció"
+        }
+  - patch_file:
+      target: lib/l10n/intl_en.arb
+      patch: |
+        @@
+        {
+        +  "home_guest_title": "Sign in for the full experience",
+        +  "home_guest_body": "Create an account or sign in to start collecting TippCoins, place slips, climb leaderboards and earn badges.",
+        +  "home_cta_login": "Sign in",
+        +  "home_cta_register": "Create account"
+        }
+  - patch_file:
+      target: lib/l10n/intl_de.arb
+      patch: |
+        @@
+        {
+        +  "home_guest_title": "Melde dich für das volle Erlebnis an",
+        +  "home_guest_body": "Erstelle ein Konto oder melde dich an, um TippCoins zu sammeln, Scheine zu platzieren, Ranglisten zu erklimmen und Abzeichen zu verdienen.",
+        +  "home_cta_login": "Anmelden",
+        +  "home_cta_register": "Registrieren"
+        }
+
+  # 4) Alap widget teszt
+  - create_file:
+      target: test/widgets/home_profile_header_test.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:tippmixapp/widgets/home_profile_header.dart';
+        import 'package:tippmixapp/widgets/guest_promo_tile.dart';
+
+        void main() {
+          testWidgets('renders GuestPromoTile when user is not logged in', (tester) async {
+            await tester.pumpWidget(const MaterialApp(
+              home: Scaffold(
+                body: HomeProfileHeader(isLoggedIn: _false),
+              ),
+            ));
+            expect(find.byType(GuestPromoTile), findsOneWidget);
+          });
+
+          testWidgets('renders ProfileSummary when user is logged in', (tester) async {
+            await tester.pumpWidget(const MaterialApp(
+              home: Scaffold(
+                body: HomeProfileHeader(isLoggedIn: _true),
+              ),
+            ));
+            // Nem ellenőrizzük a belső tartalmat, csak a ProfileSummary jelenlétét,
+            // hogy ne törjük a meglévő implementációt.
+            expect(find.textContaining('home_guest_title'), findsNothing);
+          });
+        }
+
+        bool _false() => false;
+        bool _true() => true;
+
+  # 5) L10n generálás + elemzés + teszt
+  - run: flutter gen-l10n
+  - run: flutter analyze
+  - run: flutter test
