@@ -9,13 +9,23 @@ class _TestApiFootballService extends ApiFootballService {
     int? season,
   }) async {
     return {
-      'markets': [
+      'response': [
         {
-          'key': 'H2H',
-          'outcomes': [
-            {'name': 'Home', 'price': 1.0},
-            {'name': 'Draw', 'price': 2.0},
-            {'name': 'Away', 'price': 3.0},
+          'bookmakers': [
+            {
+              'id': 1,
+              'name': 'Demo',
+              'bets': [
+                {
+                  'name': '1X2',
+                  'values': [
+                    {'value': '1', 'odd': '1.0'},
+                    {'value': 'X', 'odd': '2.0'},
+                    {'value': '2', 'odd': '3.0'},
+                  ],
+                },
+              ],
+            },
           ],
         },
       ],

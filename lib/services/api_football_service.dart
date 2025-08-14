@@ -168,7 +168,7 @@ class ApiFootballService {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
     final seasonPart = season != null ? '&season=$season' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart + '&bet=1X2';
+    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart&bet=1X2';
     final res = await _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
@@ -206,7 +206,22 @@ class ApiFootballService {
 
   Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
     final json = await getOddsForFixture(fixtureId.toString());
-    return MarketMapping.h2hFromApi(json);
+    return MarketMapping.h2hFromApi(
+      json,
+      homeLabel: homeTeamNameFor(fixtureId),
+      awayLabel: awayTeamNameFor(fixtureId),
+    );
+  }
+
+  // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek
+  String? homeTeamNameFor(int fixtureId) {
+    /* TODO: implement */
+    return null;
+  }
+
+  String? awayTeamNameFor(int fixtureId) {
+    /* TODO: implement */
+    return null;
   }
 
   /// Extracts a minimal 'h2h' (match winner) market from API-Football odds JSON.
