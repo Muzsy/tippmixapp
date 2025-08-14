@@ -1,0 +1,154 @@
+meta:
+  canvas: Home Profile Header készre – vászon
+  priority: P1
+
+steps:
+  # 1) Új vendég csempe komponens
+  - create_file:
+      target: lib/features/home/widgets/guest_cta_tile.dart
+      content: |
+        import 'package:flutter/material.dart';
+        import 'package:go_router/go_router.dart';
+        import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+        class GuestCtaTile extends StatelessWidget {
+          const GuestCtaTile({super.key});
+
+          @override
+          Widget build(BuildContext context) {
+            final t = AppLocalizations.of(context)!;
+            return Card(
+              margin: const EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(t.home_guest_title, style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 8),
+                    Text(t.home_guest_subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => context.go('/login'),
+                          child: Text(t.home_guest_login_button),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: () => context.go('/register'),
+                          child: Text(t.home_guest_register_button),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+
+  # 2) Home integráció – feltételes fejléc
+  - patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+        -  // TODO: header TBD
+        +  // Home header: logged-in ProfileSummary, guest CTA otherwise
+        +  import 'package:flutter_riverpod/flutter_riverpod.dart';
+        +  import 'package:tippmixapp/features/home/widgets/guest_cta_tile.dart';
+        +  import 'package:tippmixapp/widgets/profile_summary.dart';
+        +  import 'package:tippmixapp/providers/auth_provider.dart';
+        +
+        +  class HomeScreen extends ConsumerWidget {
+        +    const HomeScreen({super.key});
+        +    @override
+        +    Widget build(BuildContext context, WidgetRef ref) {
+        +      final authState = ref.watch(authProvider); // bool/logged user per projekt
+        +      final header = authState.isLoggedIn
+        +          ? const ProfileSummary()
+        +          : const GuestCtaTile();
+        +      return Scaffold(
+        +        appBar: _buildAppBar(context),
+        +        bottomNavigationBar: _buildBottomBar(context),
+        +        body: CustomScrollView(
+        +          slivers: [
+        +            SliverToBoxAdapter(child: header),
+        +            // ... a meglévő csempés feed/widgetek
+        +          ],
+        +        ),
+        +      );
+        +    }
+        +  }
+
+  # 3) i18n – HU/EN/DE új kulcsok
+  - patch_file:
+      target: lib/l10n/app_hu.arb
+      patch: |
+        @@
+        +  "home_guest_title": "Kezdj el játszani!",
+        +  "home_guest_subtitle": "Jelentkezz be vagy regisztrálj, hogy TippCoinnal fogadhass és lásd a profilodat.",
+        +  "home_guest_login_button": "Bejelentkezés",
+        +  "home_guest_register_button": "Regisztráció",
+
+  - patch_file:
+      target: lib/l10n/app_en.arb
+      patch: |
+        @@
+        +  "home_guest_title": "Let’s get started!",
+        +  "home_guest_subtitle": "Sign in or create an account to place virtual bets with TippCoin and view your profile.",
+        +  "home_guest_login_button": "Sign in",
+        +  "home_guest_register_button": "Create account",
+
+  - patch_file:
+      target: lib/l10n/app_de.arb
+      patch: |
+        @@
+        +  "home_guest_title": "Legen wir los!",
+        +  "home_guest_subtitle": "Melde dich an oder registriere dich, um mit TippCoin zu tippen und dein Profil zu sehen.",
+        +  "home_guest_login_button": "Anmelden",
+        +  "home_guest_register_button": "Registrieren",
+
+  # 4) Widget teszt – header váltás
+  - create_file:
+      target: test/widgets/home_profile_header_test.dart
+      content: |
+        import 'package:flutter_test/flutter_test.dart';
+        import 'package:flutter/material.dart';
+        import 'package:flutter_riverpod/flutter_riverpod.dart';
+        import 'package:tippmixapp/screens/home_screen.dart';
+        import 'package:tippmixapp/features/home/widgets/guest_cta_tile.dart';
+        import 'package:tippmixapp/widgets/profile_summary.dart';
+        import 'package:tippmixapp/providers/auth_provider.dart';
+
+        class _FakeAuthState { final bool isLoggedIn; _FakeAuthState(this.isLoggedIn); }
+
+        void main() {
+          testWidgets('Guest shows GuestCtaTile', (tester) async {
+            final container = ProviderContainer(overrides: [
+              authProvider.overrideWithValue(_FakeAuthState(false) as dynamic),
+            ]);
+            await tester.pumpWidget(ProviderScope(
+              parent: container,
+              child: const MaterialApp(home: HomeScreen()),
+            ));
+            expect(find.byType(GuestCtaTile), findsOneWidget);
+          });
+
+          testWidgets('Logged-in shows ProfileSummary', (tester) async {
+            final container = ProviderContainer(overrides: [
+              authProvider.overrideWithValue(_FakeAuthState(true) as dynamic),
+            ]);
+            await tester.pumpWidget(ProviderScope(
+              parent: container,
+              child: const MaterialApp(home: HomeScreen()),
+            ));
+            expect(find.byType(ProfileSummary), findsOneWidget);
+          });
+        }
+
+  # 5) L10n generálás és ellenőrzések
+  - run: flutter gen-l10n
+  - run: flutter analyze
+  - run: flutter test
