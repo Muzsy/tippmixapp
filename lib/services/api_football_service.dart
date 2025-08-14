@@ -90,7 +90,7 @@ class ApiFootballService {
       final events = <OddsEvent>[];
       for (final e in baseEvents) {
         try {
-          final oddsJson = await getOddsForFixture(e.id);
+          final oddsJson = await getOddsForFixture(e.id, season: e.season);
           final bms = _parseH2HBookmakers(
             oddsJson,
             homeTeam: e.homeTeam,
@@ -147,6 +147,7 @@ class ApiFootballService {
       sportTitle: 'Soccer',
       homeTeam: home['name'] as String,
       awayTeam: away['name'] as String,
+      season: (league['season'] as int?),
       countryName: league['country'] as String?,
       leagueName: league['name'] as String?,
       leagueLogoUrl: league['logo'] as String?,
@@ -158,12 +159,16 @@ class ApiFootballService {
     );
   }
 
-  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+  Future<Map<String, dynamic>> getOddsForFixture(
+    String fixtureId, {
+    int? season,
+  }) async {
     final apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
-    final url = '$_baseUrl/odds?fixture=$fixtureId';
+    final seasonPart = season != null ? '&season=$season' : '';
+    final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart + '&bet=1X2';
     final res = await _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
@@ -184,15 +189,17 @@ class ApiFootballService {
         return cached;
       }
     }
-    final future = _fetchH2HForFixture(fixtureId).then((v) {
-      _h2hStamp[fixtureId] = DateTime.now();
-      return v;
-    }).catchError((e) async {
-      await Future.delayed(const Duration(milliseconds: 400));
-      final v = await _fetchH2HForFixture(fixtureId);
-      _h2hStamp[fixtureId] = DateTime.now();
-      return v;
-    });
+    final future = _fetchH2HForFixture(fixtureId)
+        .then((v) {
+          _h2hStamp[fixtureId] = DateTime.now();
+          return v;
+        })
+        .catchError((e) async {
+          await Future.delayed(const Duration(milliseconds: 400));
+          final v = await _fetchH2HForFixture(fixtureId);
+          _h2hStamp[fixtureId] = DateTime.now();
+          return v;
+        });
     _h2hCache[fixtureId] = future;
     return future;
   }
@@ -224,7 +231,11 @@ class ApiFootballService {
       for (final bet in bets) {
         final m = bet as Map<String, dynamic>;
         final betName = (m['name'] ?? '').toString().toLowerCase();
-        if (betName.contains('match winner') || betName.contains('1x2')) {
+        if (betName.contains('match winner') ||
+            betName.contains('1x2') ||
+            betName.contains('full time result') ||
+            betName.contains('match result') ||
+            betName == 'winner') {
           matchWinner = m;
           break;
         }
@@ -242,11 +253,11 @@ class ApiFootballService {
         final oddStr = (mv['odd'] ?? '').toString();
         final price = double.tryParse(oddStr.replaceAll(',', '.'));
         if (price == null) continue;
-        if (val.contains('home')) {
+        if (val.contains('home') || val == '1') {
           home = OddsOutcome(name: homeTeam, price: price);
         } else if (val.contains('draw') || val == 'x') {
           draw = OddsOutcome(name: 'Draw', price: price);
-        } else if (val.contains('away')) {
+        } else if (val.contains('away') || val == '2') {
           away = OddsOutcome(name: awayTeam, price: price);
         }
       }
