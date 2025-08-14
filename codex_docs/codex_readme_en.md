@@ -85,3 +85,4 @@
 | 2025-08-14   | @codex-bot      | TOC refreshed after event bet card layout refactor docs                        |
 | 2025-08-14   | @codex-bot      | TOC refreshed after odds season param docs update                              |
 | 2025-08-14   | @codex-bot      | TOC refreshed after home profile header docs update                            |
+| 2025-08-14   | @codex-bot      | TOC refreshed after home header stats independent fix docs update              |

@@ -6,6 +6,8 @@ Leírja a feltételes profilfejlécet a főképernyőn.
 
 - Új `GuestCtaTile` csempe vendégeknek bejelentkezés/regisztráció gombokkal.
 - A `HomeScreen` bejelentkezett felhasználónál `ProfileSummary`-t, vendégnél a csempét jelenít meg.
+- A fejléc és a csempék statoktól függetlenül renderelődnek; a rács mindig látható.
+- A vendég CTA csak a fejlécben jelenik meg, a rácsban nincs duplikáció.
 - Lokalizációs kulcsok: `home_guest_title`, `home_guest_subtitle`, `home_guest_login_button`, `home_guest_register_button`.
 - Widget tesztek biztosítják a fejlécek váltását.
 

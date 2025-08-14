@@ -95,6 +95,10 @@ class HomeScreen extends ConsumerWidget {
     // --- build tile list (a vendég‑CTA a fejlécben jelenik meg) ------------
     final tiles = <Widget>[const HomeTileEducationalTip()];
 
+    // ignore: unused_local_variable
+    final uid = ref.watch(authProvider).user?.id;
+    // Guest CTA a fejlécben jelenik meg; a rácsba nem szúrjuk be.
+
     final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
     final topTipster = ref.watch(topTipsterProvider).asData?.value;
     final feedActivity = ref.watch(latestFeedActivityProvider).asData?.value;
@@ -138,7 +142,7 @@ class HomeScreen extends ConsumerWidget {
     final stats = ref.watch(userStatsProvider).asData?.value;
     return Column(
       children: [
-        // Fejléc: bejelentkezett → stat header, vendég → CTA csempe
+        // Fejléc a képernyő tetején: vendég → CTA, bejelentkezett → profil header
         if (!showStats && _isRootRoute(context))
           (user == null
               ? const HomeGuestCtaTile()
