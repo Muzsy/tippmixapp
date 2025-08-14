@@ -12,12 +12,18 @@ import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/screens/events_screen.dart';
 import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/services/odds_cache_wrapper.dart';
+import 'package:tippmixapp/models/h2h_market.dart';
 import 'package:go_router/go_router.dart';
+
+class _StubApiFootballService extends ApiFootballService {
+  @override
+  Future<H2HMarket?> getH2HForFixture(int fixtureId) async => null;
+}
 
 class TestOddsApiProvider extends OddsApiProvider {
   bool fetchCalled = false;
   TestOddsApiProvider(OddsApiProviderState initialState)
-    : super(OddsCacheWrapper(ApiFootballService())) {
+    : super(OddsCacheWrapper(_StubApiFootballService())) {
     state = initialState;
   }
 
@@ -75,13 +81,13 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.text('Team A'), findsOneWidget);
     expect(find.text('Team B'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('refresh_button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(provider.fetchCalled, isTrue);
   });
