@@ -2,15 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/models/odds_market.dart';
 import 'package:tippmixapp/models/odds_outcome.dart';
+import 'package:tippmixapp/models/h2h_market.dart';
+import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/widgets/action_pill.dart';
 import 'package:tippmixapp/widgets/league_pill.dart';
 import 'package:tippmixapp/widgets/team_badge.dart';
 
 class EventBetCard extends StatelessWidget {
   final OddsEvent event;
-  final OddsMarket? h2hMarket;
+  final ApiFootballService apiService;
   final void Function(OddsOutcome)? onTapHome;
   final void Function(OddsOutcome)? onTapDraw;
   final void Function(OddsOutcome)? onTapAway;
@@ -19,38 +20,23 @@ class EventBetCard extends StatelessWidget {
   final VoidCallback? onAi;
   final DateTime? refreshedAt;
 
-  const EventBetCard({
-    super.key,
-    required this.event,
-    required this.h2hMarket,
-    this.onTapHome,
-    this.onTapDraw,
-    this.onTapAway,
-    this.onMoreBets,
-    this.onStats,
-    this.onAi,
-    this.refreshedAt,
-  });
+    EventBetCard({
+      super.key,
+      required this.event,
+      ApiFootballService? apiService,
+      this.onTapHome,
+      this.onTapDraw,
+      this.onTapAway,
+      this.onMoreBets,
+      this.onStats,
+      this.onAi,
+      this.refreshedAt,
+    }) : apiService = apiService ?? ApiFootballService();
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final ra = event.fetchedAt ?? refreshedAt ?? DateTime.now();
-
-    final OddsOutcome? home = h2hMarket?.outcomes.firstWhere(
-      (o) => o.name.toLowerCase() == event.homeTeam.toLowerCase(),
-      orElse: () => h2hMarket!.outcomes.first,
-    );
-    final OddsOutcome? away = h2hMarket?.outcomes.firstWhere(
-      (o) => o.name.toLowerCase() == event.awayTeam.toLowerCase(),
-      orElse: () => h2hMarket!.outcomes.last,
-    );
-    final OddsOutcome? draw = h2hMarket?.outcomes.firstWhere(
-      (o) => o.name.toLowerCase() == 'draw' || o.name.toLowerCase() == 'x',
-      orElse: () => h2hMarket!.outcomes.length == 3
-          ? h2hMarket!.outcomes[1]
-          : h2hMarket!.outcomes.first,
-    );
 
     return Card(
       key: ValueKey('bet-card-${event.id}'),
@@ -116,14 +102,21 @@ class EventBetCard extends StatelessWidget {
             _buildKickoffRow(context, event),
             const SizedBox(height: 12),
 
-            // H2H odds gombok
-            if (h2hMarket != null)
-              _buildH2HButtons(home, draw, away)
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text(loc.events_screen_no_market),
-              ),
+            FutureBuilder<H2HMarket?>(
+              key: ValueKey('markets-${event.id}'),
+              future: apiService.getH2HForFixture(int.tryParse(event.id) ?? 0),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _loadingMarkets();
+                }
+                if (snapshot.hasError) {
+                  return _loadingMarkets();
+                }
+                final h2h = snapshot.data;
+                if (h2h == null) return _noMarkets(loc.events_screen_no_market);
+                return _buildH2HButtonsFrom(h2h);
+              },
+            ),
 
             const SizedBox(height: 12),
 
@@ -211,6 +204,41 @@ class EventBetCard extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildH2HButtonsFrom(H2HMarket h2h) {
+    OddsOutcome? home;
+    OddsOutcome? draw;
+    OddsOutcome? away;
+    for (final o in h2h.outcomes) {
+      final name = o.name.toLowerCase();
+      if (name == event.homeTeam.toLowerCase()) {
+        home = o;
+      } else if (name == event.awayTeam.toLowerCase()) {
+        away = o;
+      } else if (name == 'draw' || name == 'x') {
+        draw = o;
+      }
+    }
+    home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
+    away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
+    draw ??=
+        h2h.outcomes.length == 3 ? h2h.outcomes[1] : null;
+    return _buildH2HButtons(home, draw, away);
+  }
+
+  Widget _noMarkets(String text) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(text),
+      );
+
+  Widget _loadingMarkets() => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: SizedBox(
+          height: 18,
+          width: 18,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
 
   Widget _buildKickoffRow(BuildContext context, OddsEvent e) {
     final l = AppLocalizations.of(context)!;
