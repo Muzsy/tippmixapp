@@ -1,0 +1,89 @@
+meta:
+  canvas: Home Header – Router guard + biztos render (P0)
+  priority: P0
+
+steps:
+  - name: Router guard – engedélyezett publikus útvonalak
+    description: Átírjuk a GoRouter redirect logikát, hogy vendégként a "/" maradhasson publikus (Guest CTA megjelenhet), és csak a védett útvonalakról tereljünk /login‑re.
+    outputs:
+      - lib/router.dart
+    patch_file:
+      target: lib/router.dart
+      patch: |
+        @@
+-    String? _redirect(BuildContext context, GoRouterState state) {
+-      final loggedIn = auth.isLoggedIn; // meglévő logika
+-      if (!loggedIn) {
+-        return '/login';
+-      }
+-      return null;
+-    }
++    String? _redirect(BuildContext context, GoRouterState state) {
++      final loggedIn = auth.isLoggedIn; // meglévő logika
++      final loc = state.matchedLocation;
++      const publicPaths = {'/', '/login', '/register', '/onboarding'};
++      if (!loggedIn && !publicPaths.contains(loc)) {
++        return '/login';
++      }
++      return null;
++    }
+
+  - name: Home – stats‑független render (header + grid mindig kirajzol)
+    description: A korábbi when(...) alapú, kiürülést okozó logikát stabil felépítésre cseréljük. Fejléc auth‑alapon (UserStatsHeader vagy HomeGuestCtaTile), a rács minden állapotban megjelenik.
+    outputs:
+      - lib/screens/home_screen.dart
+    patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-    return statsAsync.when(
+-      data: (stats) => Column(
+-        children: [
+-          if (!showStats && _isRootRoute(context))
+-            UserStatsHeader(stats: stats),
+-          Expanded(
+-            child: GridView.count(
+-              padding: const EdgeInsets.all(16),
+-              crossAxisCount: 2,
+-              childAspectRatio: 1.4,
+-              children: tiles,
+-            ),
+-          ),
+-        ],
+-      ),
+-      loading: () => const SizedBox.shrink(),
+-      error: (_, __) => const SizedBox.shrink(),
+-    );
++    final authState = ref.watch(authProvider);
++    final user = authState.user; // lehet null vendégnél
++    final stats = ref.watch(userStatsProvider).asData?.value;
++    return Column(
++      children: [
++        if (!showStats && _isRootRoute(context))
++          (user == null
++              ? const HomeGuestCtaTile()
++              : UserStatsHeader(stats: stats)),
++        Expanded(
++          child: GridView.count(
++            padding: const EdgeInsets.all(16),
++            crossAxisCount: 2,
++            childAspectRatio: 1.4,
++            children: tiles,
++          ),
++        ),
++      ],
++    );
+
+  - name: Importok rendezése (ha szükséges)
+    description: Biztosítjuk, hogy a Home képernyő látja a használt widgeteket és providereket.
+    outputs:
+      - lib/screens/home_screen.dart
+    patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
++    import 'package:flutter_riverpod/flutter_riverpod.dart';
++    import 'package:tippmixapp/widgets/home/user_stats_header.dart';
++    import 'package:tippmixapp/screens/home_guest_cta_tile.dart';
++    import 'package:tippmixapp/providers/auth_provider.dart';
++    import 'package:tippmixapp/providers/user_stats_provider.dart';
