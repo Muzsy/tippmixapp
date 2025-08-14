@@ -22,8 +22,9 @@ import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/ui/auth/auth_gate.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/models/feed_model.dart';
-import 'package:tippmixapp/features/home/widgets/guest_cta_tile.dart';
-import 'package:tippmixapp/widgets/profile_summary.dart';
+import 'home_guest_cta_tile.dart';
+import 'package:tippmixapp/widgets/home/user_stats_header.dart';
+import 'package:tippmixapp/providers/stats_provider.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -91,9 +92,8 @@ class HomeScreen extends ConsumerWidget {
 
     if (!showGrid) return child ?? const SizedBox.shrink();
 
-    // --- build tile list ---------------------------------------------------
+    // --- build tile list (a vendég‑CTA a fejlécben jelenik meg) ------------
     final tiles = <Widget>[const HomeTileEducationalTip()];
-    final uid = ref.watch(authProvider).user?.id;
 
     final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
     final topTipster = ref.watch(topTipsterProvider).asData?.value;
@@ -133,15 +133,19 @@ class HomeScreen extends ConsumerWidget {
       );
     }
 
-    final header = uid != null ? const ProfileSummary() : const GuestCtaTile();
-
     // --- assemble layout ---------------------------------------------------
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(child: header),
-        SliverPadding(
-          padding: const EdgeInsets.all(16),
-          sliver: SliverGrid.count(
+    final user = ref.watch(authProvider).user;
+    final stats = ref.watch(userStatsProvider).asData?.value;
+    return Column(
+      children: [
+        // Fejléc: bejelentkezett → stat header, vendég → CTA csempe
+        if (!showStats && _isRootRoute(context))
+          (user == null
+              ? const HomeGuestCtaTile()
+              : UserStatsHeader(stats: stats)),
+        Expanded(
+          child: GridView.count(
+            padding: const EdgeInsets.all(16),
             crossAxisCount: 2,
             childAspectRatio: 1.4,
             children: tiles,
