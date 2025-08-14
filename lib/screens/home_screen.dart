@@ -138,7 +138,8 @@ class HomeScreen extends ConsumerWidget {
     }
 
     // --- assemble layout ---------------------------------------------------
-    final user = ref.watch(authProvider).user;
+    final authState = ref.watch(authProvider);
+    final user = authState.user; // lehet null vendégnél
     final stats = ref.watch(userStatsProvider).asData?.value;
     return Column(
       children: [

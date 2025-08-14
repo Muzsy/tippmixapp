@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:tippmixapp/screens/home_screen.dart';
 // import 'package:tippmixapp/screens/home_body_screen.dart';
 import 'package:tippmixapp/screens/profile_screen.dart';
@@ -31,9 +33,24 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 // import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
 
+String? _redirect(BuildContext context, GoRouterState state) {
+  User? user;
+  if (Firebase.apps.isNotEmpty) {
+    user = FirebaseAuth.instance.currentUser;
+  }
+  final loggedIn = user != null; // meglévő logika
+  final loc = state.matchedLocation;
+  const publicPaths = {'/', '/login', '/register', '/onboarding'};
+  if (!loggedIn && !publicPaths.contains(loc)) {
+    return '/login';
+  }
+  return null;
+}
+
 final GoRouter router = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/splash',
+  redirect: _redirect,
   routes: [
     GoRoute(
       path: '/splash',
