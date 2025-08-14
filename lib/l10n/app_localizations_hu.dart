@@ -359,6 +359,19 @@ class AppLocalizationsHu extends AppLocalizations {
   String get home_coin => 'TippCoin';
 
   @override
+  String get home_cta_login => 'Bejelentkezés';
+
+  @override
+  String get home_cta_register => 'Regisztráció';
+
+  @override
+  String get home_guest_body =>
+      'Hozz létre profilt vagy lépj be, és kezdd el a TippCoin gyűjtést, szelvényeket, ranglistát és jelvényeket.';
+
+  @override
+  String get home_guest_title => 'Jelentkezz be a teljes élményhez';
+
+  @override
   String get home_guest_message =>
       'Jelentkezz be vagy regisztrálj a profilod megtekintéséhez';
 

@@ -351,6 +351,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_coin => 'TippCoin';
 
   @override
+  String get home_cta_login => 'Sign in';
+
+  @override
+  String get home_cta_register => 'Create account';
+
+  @override
+  String get home_guest_body =>
+      'Create an account or sign in to start collecting TippCoins, place slips, climb leaderboards and earn badges.';
+
+  @override
+  String get home_guest_title => 'Sign in for the full experience';
+
+  @override
   String get home_guest_message => 'Log in or register to view your profile';
 
   @override
