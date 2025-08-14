@@ -370,11 +370,21 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erstelle ein Konto oder melde dich an, um TippCoins zu sammeln, Scheine zu platzieren, Ranglisten zu erklimmen und Abzeichen zu verdienen.';
 
   @override
-  String get home_guest_title => 'Melde dich für das volle Erlebnis an';
-
-  @override
   String get home_guest_message =>
       'Melde dich an oder registriere dich, um dein Profil anzusehen';
+
+  @override
+  String get home_guest_title => 'Legen wir los!';
+
+  @override
+  String get home_guest_subtitle =>
+      'Melde dich an oder registriere dich, um mit TippCoin zu tippen und dein Profil zu sehen.';
+
+  @override
+  String get home_guest_login_button => 'Anmelden';
+
+  @override
+  String get home_guest_register_button => 'Registrieren';
 
   @override
   String get home_highlight_coin =>

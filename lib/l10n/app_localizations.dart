@@ -790,17 +790,35 @@ abstract class AppLocalizations {
   /// **'Create an account or sign in to start collecting TippCoins, place slips, climb leaderboards and earn badges.'**
   String get home_guest_body;
 
-  /// No description provided for @home_guest_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in for the full experience'**
-  String get home_guest_title;
-
   /// No description provided for @home_guest_message.
   ///
   /// In en, this message translates to:
   /// **'Log in or register to view your profile'**
   String get home_guest_message;
+
+  /// No description provided for @home_guest_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Let’s get started!'**
+  String get home_guest_title;
+
+  /// No description provided for @home_guest_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or create an account to place virtual bets with TippCoin and view your profile.'**
+  String get home_guest_subtitle;
+
+  /// No description provided for @home_guest_login_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get home_guest_login_button;
+
+  /// No description provided for @home_guest_register_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get home_guest_register_button;
 
   /// No description provided for @home_highlight_coin.
   ///

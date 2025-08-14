@@ -5,7 +5,6 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
 import 'package:tippmixapp/widgets/app_drawer.dart';
 import 'package:tippmixapp/widgets/notification_bell_widget.dart';
-import 'package:tippmixapp/widgets/home/user_stats_header.dart';
 import 'package:tippmixapp/widgets/home/home_tile_daily_bonus.dart';
 import 'package:tippmixapp/widgets/home/home_tile_educational_tip.dart';
 import 'package:tippmixapp/widgets/home/home_tile_ai_tip.dart';
@@ -14,7 +13,6 @@ import 'package:tippmixapp/widgets/home/home_tile_badge_earned.dart';
 import 'package:tippmixapp/widgets/home/home_tile_challenge_prompt.dart';
 import 'package:tippmixapp/widgets/home/home_tile_feed_activity.dart';
 import 'package:tippmixapp/providers/leaderboard_provider.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
 import 'package:tippmixapp/services/ai_tip_provider.dart';
 import 'package:tippmixapp/services/badge_service.dart';
 import 'package:tippmixapp/services/challenge_service.dart';
@@ -24,7 +22,8 @@ import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/ui/auth/auth_gate.dart';
 import 'package:tippmixapp/providers/feed_provider.dart';
 import 'package:tippmixapp/models/feed_model.dart';
-import 'home_guest_cta_tile.dart';
+import 'package:tippmixapp/features/home/widgets/guest_cta_tile.dart';
+import 'package:tippmixapp/widgets/profile_summary.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -69,8 +68,12 @@ class HomeScreen extends ConsumerWidget {
   // --- private helpers -----------------------------------------------------
 
   bool _isRootRoute(BuildContext context) {
-    final currentPath = state?.uri.path ?? GoRouterState.of(context).uri.path;
-    return currentPath == '/';
+    try {
+      final currentPath = state?.uri.path ?? GoRouterState.of(context).uri.path;
+      return currentPath == '/';
+    } catch (_) {
+      return true;
+    }
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref) {
@@ -78,8 +81,8 @@ class HomeScreen extends ConsumerWidget {
     // header + tiles render without depending on routing.
     final showGrid = showStats || _isRootRoute(context);
 
-    if (_isRootRoute(context) &&
-        !showStats &&
+    if (!showStats &&
+        _isRootRoute(context) &&
         child != null &&
         child is! SizedBox &&
         child is! AuthGate) {
@@ -88,14 +91,9 @@ class HomeScreen extends ConsumerWidget {
 
     if (!showGrid) return child ?? const SizedBox.shrink();
 
-    final statsAsync = ref.watch(userStatsProvider);
-
     // --- build tile list ---------------------------------------------------
     final tiles = <Widget>[const HomeTileEducationalTip()];
     final uid = ref.watch(authProvider).user?.id;
-    if (uid == null) {
-      tiles.add(const HomeGuestCtaTile());
-    }
 
     final aiTip = ref.watch(aiTipFutureProvider).asData?.value;
     final topTipster = ref.watch(topTipsterProvider).asData?.value;
@@ -135,25 +133,21 @@ class HomeScreen extends ConsumerWidget {
       );
     }
 
+    final header = uid != null ? const ProfileSummary() : const GuestCtaTile();
+
     // --- assemble layout ---------------------------------------------------
-    return statsAsync.when(
-      data: (stats) => Column(
-        children: [
-          // Header *only* here when [showStats] is *false* and we are on root.
-          if (!showStats && _isRootRoute(context))
-            UserStatsHeader(stats: stats),
-          Expanded(
-            child: GridView.count(
-              padding: const EdgeInsets.all(16),
-              crossAxisCount: 2,
-              childAspectRatio: 1.4,
-              children: tiles,
-            ),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: header),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverGrid.count(
+            crossAxisCount: 2,
+            childAspectRatio: 1.4,
+            children: tiles,
           ),
-        ],
-      ),
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 
@@ -179,15 +173,9 @@ class HomeScreen extends ConsumerWidget {
     };
     final titleText = titles[currentPath] ?? loc.home_title;
 
-    // When tests set [showStats] we render a bare column without AppBar etc.
+    // When tests set [showStats] we render just the body without app scaffolding.
     if (showStats) {
-      final stats = ref.watch(userStatsProvider).asData?.value;
-      return Column(
-        children: [
-          if (stats != null) UserStatsHeader(stats: stats),
-          Expanded(child: body),
-        ],
-      );
+      return body;
     }
 
     return Scaffold(
