@@ -13,6 +13,7 @@ class OddsEvent {
   final String? homeLogoUrl;
   final String? awayLogoUrl;
   final DateTime commenceTime;
+  final DateTime? fetchedAt;
   final List<OddsBookmaker> bookmakers;
 
   OddsEvent({
@@ -27,6 +28,7 @@ class OddsEvent {
     this.homeLogoUrl,
     this.awayLogoUrl,
     required this.commenceTime,
+    this.fetchedAt,
     required this.bookmakers,
   });
 
@@ -43,6 +45,9 @@ class OddsEvent {
       homeLogoUrl: json['home_logo_url'] as String?,
       awayLogoUrl: json['away_logo_url'] as String?,
       commenceTime: DateTime.parse(json['commence_time']),
+      fetchedAt: json['fetchedAt'] != null
+          ? DateTime.parse(json['fetchedAt'])
+          : null,
       bookmakers: (json['bookmakers'] as List)
           .map((b) => OddsBookmaker.fromJson(b))
           .toList(),
@@ -61,6 +66,7 @@ class OddsEvent {
     if (homeLogoUrl != null) 'home_logo_url': homeLogoUrl,
     if (awayLogoUrl != null) 'away_logo_url': awayLogoUrl,
     'commence_time': commenceTime.toIso8601String(),
+    if (fetchedAt != null) 'fetchedAt': fetchedAt!.toIso8601String(),
     'bookmakers': bookmakers.map((b) => b.toJson()).toList(),
   };
 }

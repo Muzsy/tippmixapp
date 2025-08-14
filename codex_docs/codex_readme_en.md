@@ -82,3 +82,4 @@
 | 2025-08-23   | @codex-bot      | TOC refreshed after event bet card logos & header docs update                  |
 | 2025-08-13   | @codex-bot      | TOC refreshed after event bet card action pills i18n docs                      |
 | 2025-08-24   | @codex-bot      | TOC refreshed after event bet card action pills UI docs                        |
+| 2025-08-14   | @codex-bot      | TOC refreshed after event bet card layout refactor docs                        |

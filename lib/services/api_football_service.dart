@@ -104,6 +104,7 @@ class ApiFootballService {
               leagueLogoUrl: e.leagueLogoUrl,
               homeLogoUrl: e.homeLogoUrl,
               awayLogoUrl: e.awayLogoUrl,
+              fetchedAt: e.fetchedAt,
               bookmakers: bms,
             ),
           );
@@ -147,6 +148,7 @@ class ApiFootballService {
       homeLogoUrl: home['logo'] as String?,
       awayLogoUrl: away['logo'] as String?,
       commenceTime: DateTime.parse(fixture['date'] as String),
+      fetchedAt: DateTime.now().toUtc(),
       bookmakers: const [],
     );
   }

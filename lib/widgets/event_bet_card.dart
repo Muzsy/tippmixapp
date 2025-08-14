@@ -17,6 +17,7 @@ class EventBetCard extends StatelessWidget {
   final VoidCallback? onMoreBets;
   final VoidCallback? onStats;
   final VoidCallback? onAi;
+  final DateTime? refreshedAt;
 
   const EventBetCard({
     super.key,
@@ -28,11 +29,13 @@ class EventBetCard extends StatelessWidget {
     this.onMoreBets,
     this.onStats,
     this.onAi,
+    this.refreshedAt,
   });
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final ra = event.fetchedAt ?? refreshedAt ?? DateTime.now();
 
     final OddsOutcome? home = h2hMarket?.outcomes.firstWhere(
       (o) => o.name.toLowerCase() == event.homeTeam.toLowerCase(),
@@ -50,6 +53,7 @@ class EventBetCard extends StatelessWidget {
     );
 
     return Card(
+      key: ValueKey('bet-card-${event.id}'),
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -71,10 +75,11 @@ class EventBetCard extends StatelessWidget {
                         initials: _initials(event.homeTeam),
                       ),
                       const SizedBox(width: 8),
-                      Expanded(
+                      Flexible(
                         child: Text(
                           event.homeTeam,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          softWrap: true,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
@@ -86,11 +91,12 @@ class EventBetCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(
+                      Flexible(
                         child: Text(
                           event.awayTeam,
                           textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          softWrap: true,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
@@ -107,53 +113,12 @@ class EventBetCard extends StatelessWidget {
             const SizedBox(height: 8),
 
             // Kezdési idő + visszaszámláló
-            Row(
-              children: [
-                Text(
-                  loc.starts_at(event.commenceTime.toLocal().toString()),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const Spacer(),
-                _Countdown(to: event.commenceTime),
-              ],
-            ),
+            _buildKickoffRow(context, event),
             const SizedBox(height: 12),
 
             // H2H odds gombok
             if (h2hMarket != null)
-              Row(
-                children: [
-                  Expanded(
-                    child: _OddButton(
-                      label: '1',
-                      odd: home?.price,
-                      onPressed: home != null
-                          ? () => onTapHome?.call(home)
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _OddButton(
-                      label: 'X',
-                      odd: draw?.price,
-                      onPressed: draw != null
-                          ? () => onTapDraw?.call(draw)
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _OddButton(
-                      label: '2',
-                      odd: away?.price,
-                      onPressed: away != null
-                          ? () => onTapAway?.call(away)
-                          : null,
-                    ),
-                  ),
-                ],
-              )
+              _buildH2HButtons(home, draw, away)
             else
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -166,10 +131,9 @@ class EventBetCard extends StatelessWidget {
 
             const SizedBox(height: 6),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: Text(
-                // egyszerű megjelenítés (pl. „Frissítve: most”)
-                loc.updated_time_ago(''),
+                loc.updated_time_ago(_formatYMDHM(ra)),
                 style: Theme.of(context).textTheme.labelSmall,
               ),
             ),
@@ -217,12 +181,67 @@ class EventBetCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, OddsEvent e) {
+  Widget _buildH2HButtons(
+    OddsOutcome? home,
+    OddsOutcome? draw,
+    OddsOutcome? away,
+  ) {
     return Row(
       children: [
-        const Spacer(),
+        Expanded(
+          child: ActionPill(
+            label: '1',
+            onTap: home != null ? () => onTapHome?.call(home) : null,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ActionPill(
+            label: 'X',
+            onTap: draw != null ? () => onTapDraw?.call(draw) : null,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ActionPill(
+            label: '2',
+            onTap: away != null ? () => onTapAway?.call(away) : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKickoffRow(BuildContext context, OddsEvent e) {
+    final l = AppLocalizations.of(context)!;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _Countdown(to: e.commenceTime),
+        Text(
+          l.starts_at(_formatYMDHM(e.commenceTime)),
+          textAlign: TextAlign.right,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ],
+    );
+  }
+
+  String _formatYMDHM(DateTime dt) {
+    final d = dt.toLocal();
+    String two(int n) => n < 10 ? '0$n' : '$n';
+    return '${d.year}/${two(d.month)}/${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
+  }
+
+  Widget _buildHeader(BuildContext context, OddsEvent e) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(e.countryName ?? '', overflow: TextOverflow.ellipsis),
+        ),
         LeaguePill(
-          country: e.countryName,
+          country: null,
           league: e.leagueName,
           logoUrl: e.leagueLogoUrl,
         ),
@@ -234,29 +253,6 @@ class EventBetCard extends StatelessWidget {
     final parts = name.split(' ');
     final letters = parts.take(2).map((p) => p.isNotEmpty ? p[0] : '').join();
     return letters.toUpperCase();
-  }
-}
-
-class _OddButton extends StatelessWidget {
-  final String label;
-  final double? odd;
-  final VoidCallback? onPressed;
-  const _OddButton({required this.label, required this.odd, this.onPressed});
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: odd != null ? onPressed : null,
-      child: Column(
-        children: [
-          Text(label, overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 4),
-          Text(
-            odd?.toStringAsFixed(2) ?? '--',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ],
-      ),
-    );
   }
 }
 

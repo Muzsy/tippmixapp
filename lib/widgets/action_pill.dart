@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ActionPill extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String label;
   final VoidCallback? onTap;
   final bool selected;
@@ -9,7 +9,7 @@ class ActionPill extends StatelessWidget {
 
   const ActionPill({
     super.key,
-    required this.icon,
+    this.icon,
     required this.label,
     this.onTap,
     this.selected = false,
@@ -45,8 +45,10 @@ class ActionPill extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 18, color: fg),
-                  const SizedBox(width: 8),
+                  if (icon != null) ...[
+                    Icon(icon, size: 18, color: fg),
+                    const SizedBox(width: 8),
+                  ],
                   Flexible(
                     child: Text(
                       label,
