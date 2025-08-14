@@ -4,13 +4,18 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/api_response.dart';
+import '../models/h2h_market.dart';
 import '../models/odds_bookmaker.dart';
 import '../models/odds_event.dart';
 import '../models/odds_market.dart';
 import '../models/odds_outcome.dart';
+import 'market_mapping.dart';
 
 class ApiFootballService {
   static const String _baseUrl = 'https://v3.football.api-sports.io';
+  static const _h2hTtl = Duration(seconds: 60);
+  final Map<int, Future<H2HMarket?>> _h2hCache = {};
+  final Map<int, DateTime> _h2hStamp = {};
   final http.Client _client;
 
   ApiFootballService([http.Client? client]) : _client = client ?? http.Client();
@@ -168,6 +173,33 @@ class ApiFootballService {
     }
     // On any error return empty structure; caller will fallback.
     return {};
+  }
+
+  Future<H2HMarket?> getH2HForFixture(int fixtureId) {
+    final now = DateTime.now();
+    final stamp = _h2hStamp[fixtureId];
+    final cached = _h2hCache[fixtureId];
+    if (cached != null) {
+      if (stamp == null || now.difference(stamp) < _h2hTtl) {
+        return cached;
+      }
+    }
+    final future = _fetchH2HForFixture(fixtureId).then((v) {
+      _h2hStamp[fixtureId] = DateTime.now();
+      return v;
+    }).catchError((e) async {
+      await Future.delayed(const Duration(milliseconds: 400));
+      final v = await _fetchH2HForFixture(fixtureId);
+      _h2hStamp[fixtureId] = DateTime.now();
+      return v;
+    });
+    _h2hCache[fixtureId] = future;
+    return future;
+  }
+
+  Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
+    final json = await getOddsForFixture(fixtureId.toString());
+    return MarketMapping.h2hFromApi(json);
   }
 
   /// Extracts a minimal 'h2h' (match winner) market from API-Football odds JSON.

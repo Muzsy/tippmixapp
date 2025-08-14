@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/widgets/event_bet_card.dart';
+import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tippmixapp/models/h2h_market.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -32,7 +34,7 @@ void main() {
       _wrap(
         EventBetCard(
           event: event,
-          h2hMarket: null,
+          apiService: _NullApi(),
           onMoreBets: () => moreBetsTapped = true,
           onStats: () => statsTapped = true,
           onAi: () => aiTapped = true,
@@ -52,4 +54,9 @@ void main() {
     expect(statsTapped, isTrue);
     expect(aiTapped, isTrue);
   });
+}
+
+class _NullApi extends ApiFootballService {
+  @override
+  Future<H2HMarket?> getH2HForFixture(int fixtureId) async => null;
 }

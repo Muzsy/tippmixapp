@@ -105,7 +105,6 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                     return EventBetCard(
                       key: ValueKey(event.id),
                       event: event,
-                      h2hMarket: market,
                       onTapHome: (outcome) {
                         final tip = TipModel(
                           eventId: event.id,
