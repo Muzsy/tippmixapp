@@ -7,7 +7,10 @@ class _MockApiFootballService extends ApiFootballService {
   _MockApiFootballService(this.fixtures) : super();
 
   @override
-  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+  Future<Map<String, dynamic>> getOddsForFixture(
+    String fixtureId, {
+    int? season,
+  }) async {
     return fixtures[fixtureId] ?? {};
   }
 }

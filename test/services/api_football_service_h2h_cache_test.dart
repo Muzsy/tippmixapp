@@ -4,7 +4,10 @@ import 'package:tippmixapp/models/h2h_market.dart';
 
 class _TestApiFootballService extends ApiFootballService {
   @override
-  Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
+  Future<Map<String, dynamic>> getOddsForFixture(
+    String fixtureId, {
+    int? season,
+  }) async {
     return {
       'markets': [
         {
@@ -14,8 +17,8 @@ class _TestApiFootballService extends ApiFootballService {
             {'name': 'Draw', 'price': 2.0},
             {'name': 'Away', 'price': 3.0},
           ],
-        }
-      ]
+        },
+      ],
     };
   }
 }

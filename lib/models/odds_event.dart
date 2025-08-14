@@ -7,6 +7,7 @@ class OddsEvent {
   final String sportTitle; // Sportág neve
   final String homeTeam;
   final String awayTeam;
+  final int? season; // API-Football league.season
   final String? countryName;
   final String? leagueName;
   final String? leagueLogoUrl;
@@ -22,6 +23,7 @@ class OddsEvent {
     required this.sportTitle,
     required this.homeTeam,
     required this.awayTeam,
+    this.season,
     this.countryName,
     this.leagueName,
     this.leagueLogoUrl,
@@ -39,6 +41,7 @@ class OddsEvent {
       sportTitle: json['sport_title'] as String,
       homeTeam: json['home_team'] as String,
       awayTeam: json['away_team'] as String,
+      season: json['season'] as int?,
       countryName: json['country_name'] as String?,
       leagueName: json['league_name'] as String?,
       leagueLogoUrl: json['league_logo_url'] as String?,
@@ -60,6 +63,7 @@ class OddsEvent {
     'sport_title': sportTitle,
     'home_team': homeTeam,
     'away_team': awayTeam,
+    if (season != null) 'season': season,
     if (countryName != null) 'country_name': countryName,
     if (leagueName != null) 'league_name': leagueName,
     if (leagueLogoUrl != null) 'league_logo_url': leagueLogoUrl,
