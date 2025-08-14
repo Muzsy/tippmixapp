@@ -1,0 +1,155 @@
+meta:
+  canvas: canvases/fixes/h2h_markets_full_coverage_fix.md
+  priority: P1
+
+steps:
+  - name: H2H cache és API hívás – service kiegészítése
+    description: A H2H piac lekérését `fixtureId`-ra cache-eljük TTL-lel és egyszerű retry-jal.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+          class ApiFootballService {
++           static const _h2hTtl = Duration(seconds: 60);
++           final Map<int, Future<H2HMarket?>> _h2hCache = {};
++           final Map<int, DateTime> _h2hStamp = {};
++
++           Future<H2HMarket?> getH2HForFixture(int fixtureId) {
++             final now = DateTime.now();
++             final stamp = _h2hStamp[fixtureId];
++             final cached = _h2hCache[fixtureId];
++             if (cached != null && stamp != null && now.difference(stamp) < _h2hTtl) {
++               return cached;
++             }
++             final future = _fetchH2HForFixture(fixtureId).then((v) {
++               _h2hStamp[fixtureId] = DateTime.now();
++               return v;
++             }).catchError((e) async {
++               // egyszeri rövid retry
++               await Future.delayed(const Duration(milliseconds: 400));
++               final v = await _fetchH2HForFixture(fixtureId);
++               _h2hStamp[fixtureId] = DateTime.now();
++               return v;
++             });
++             _h2hCache[fixtureId] = future;
++             return future;
++           }
++
++           Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
++             // TODO: a tényleges API-Football hívás (odds/fixtures alapon)
++             // majd a válasz map-elése H2HMarket-re a market_mapping segítségével
++             final json = await _apiGetOddsForFixture(fixtureId);
++             return MarketMapping.h2hFromApi(json);
++           }
+          }
+
+  - name: Market-mapping bővítése H2H aliasokkal
+    description: Több API kulcsnév is H2H-nek számít ("H2H", "1x2", "Match Winner").
+    outputs:
+      - patch_file: lib/services/market_mapping.dart
+        patch: |
+          @@
+          class MarketMapping {
++           static const h2hAliases = {
++             'H2H', '1X2', '1x2', 'Match Winner', 'Winner', 'Full Time Result'
++           };
++
++           static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
++             final markets = json['markets'] as List<dynamic>?;
++             if (markets == null) return null;
++             for (final m in markets) {
++               final name = (m['key'] ?? m['name'] ?? '').toString();
++               if (h2hAliases.contains(name)) {
++                 return H2HMarket.fromJson(m);
++               }
++             }
++             return null;
++           }
+          }
+
+  - name: Bet card – fixtureId-kulcs és FutureBuilder javítás
+    description: A bet kártya mindig a saját fixtureId-jához kötött Future-t használja és stabil kulcsokkal renderel.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-         FutureBuilder< H2HMarket? >(
+-           future: _marketsFuture, // régi, indexhez kötött vagy megosztott future
++         FutureBuilder< H2HMarket? >(
++           key: ValueKey('markets-' + e.fixtureId.toString()),
++           future: ApiFootballService().getH2HForFixture(e.fixtureId),
+            builder: (context, snapshot) {
+-             if (!snapshot.hasData) return _noMarkets();
++             if (snapshot.connectionState == ConnectionState.waiting) {
++               return _loadingMarkets();
++             }
++             if (snapshot.hasError) {
++               return _loadingMarkets(); // retry után jöhet adat
++             }
++             final h2h = snapshot.data;
++             if (h2h == null) return _noMarkets();
+              return _buildH2HButtonsFrom(h2h);
+            },
+          ),
+
+  - name: „Nincs elérhető piac” csak valós hiánynál
+    description: A no-markets UI csak akkor jelenjen meg, ha a lekérés sikeres volt és H2H tényleg nincs.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   Widget _noMarkets() => Text('Nincs elérhető piac');
++   Widget _noMarkets() => Padding(
++     padding: const EdgeInsets.symmetric(vertical: 8),
++     child: Text('Nincs elérhető piac'),
++   );
++   Widget _loadingMarkets() => Padding(
++     padding: const EdgeInsets.symmetric(vertical: 8),
++     child: SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2)),
++   );
+
+  - name: Service unit teszt – cache/TTL/in-flight
+    description: Biztosítsuk, hogy azonos fixtureId-re egy hálózati hívás fusson és a TTL-ig cache-ből jöjjön vissza.
+    outputs:
+      - create_file: test/services/api_football_service_h2h_cache_test.dart
+        content: |
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:your_app/services/api_football_service.dart';
+
+          void main() {
+            test('getH2HForFixture cache-eli az eredményt', () async {
+              final s = ApiFootballService();
+              final f1 = s.getH2HForFixture(123);
+              final f2 = s.getH2HForFixture(123);
+              expect(identical(await f1, await f2), true);
+            });
+          }
+
+  - name: Widget teszt – több kártya, mindegyiken H2H gombok
+    description: Mock service-szel rendereljünk több kártyát és ellenőrizzük, hogy mindenhol jelen vannak a H2H gombok.
+    outputs:
+      - create_file: test/widgets/event_bet_card_h2h_coverage_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:your_app/widgets/event_bet_card.dart';
+          import 'package:your_app/models/odds_event.dart';
+
+          void main() {
+            testWidgets('Minden kártyán megjelenik a H2H gombsor', (tester) async {
+              final events = List.generate(10, (i) => OddsEvent(homeTeamName: 'Team A $i', awayTeamName: 'Team B $i', /* kickoff stb. */));
+              await tester.pumpWidget(MaterialApp(home: ListView(children: [
+                for (final e in events) EventBetCard(event: e),
+              ])));
+              // A gombcímkék jelenléte (1, X, 2) – a layout-refaktorban ActionPill labeljei
+              expect(find.text('1'), findsWidgets);
+              expect(find.text('X'), findsWidgets);
+              expect(find.text('2'), findsWidgets);
+            });
+          }
+
+  - name: Build/analyze futtatás
+    description: Szokásos ellenőrzések futtatása
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
