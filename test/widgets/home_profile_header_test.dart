@@ -11,7 +11,7 @@ import 'package:tippmixapp/models/user.dart';
 import 'package:tippmixapp/models/user_stats_model.dart';
 
 class _FakeAuthNotifier extends StateNotifier<AuthState> {
-  _FakeAuthNotifier(AuthState state) : super(state);
+  _FakeAuthNotifier(super.state);
 }
 
 void main() {

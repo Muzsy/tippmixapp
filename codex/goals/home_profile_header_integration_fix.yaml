@@ -1,0 +1,68 @@
+meta:
+  canvas: Home Profile Header – integrációs fix (P0)
+  priority: P0
+
+steps:
+  # 1) Vendég-CTA eltávolítása a rácsból, a fejléc fogja kezelni
+  - patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-    // --- build tile list ---------------------------------------------------
+-    final tiles = <Widget>[const HomeTileEducationalTip()];
+-    final uid = ref.watch(authProvider).user?.id;
+-    if (uid == null) {
+-      tiles.add(const HomeGuestCtaTile());
+-    }
++    // --- build tile list (a vendég‑CTA a fejlécben jelenik meg) ------------
++    final tiles = <Widget>[const HomeTileEducationalTip()];
+
+  # 2) A stat async állapot ne üresítsen ki mindent – mindig épüljön fel a layout
+  - patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-    // --- assemble layout ---------------------------------------------------
+-    return statsAsync.when(
+-      data: (stats) => Column(
+-        children: [
+-          // Header *only* here when [showStats] is *false* and we are on root.
+-          if (!showStats && _isRootRoute(context))
+-            UserStatsHeader(stats: stats),
+-          Expanded(
+-            child: GridView.count(
+-              padding: const EdgeInsets.all(16),
+-              crossAxisCount: 2,
+-              childAspectRatio: 1.4,
+-              children: tiles,
+-            ),
+-          ),
+-        ],
+-      ),
+-      loading: () => const SizedBox.shrink(),
+-      error: (_, _) => const SizedBox.shrink(),
+-    );
++    // --- assemble layout ---------------------------------------------------
++    final user = ref.watch(authProvider).user;
++    final stats = ref.watch(userStatsProvider).asData?.value;
++    return Column(
++      children: [
++        // Fejléc: bejelentkezett → stat header, vendég → CTA csempe
++        if (!showStats && _isRootRoute(context))
++          (user == null
++              ? const HomeGuestCtaTile()
++              : UserStatsHeader(stats: stats)),
++        Expanded(
++          child: GridView.count(
++            padding: const EdgeInsets.all(16),
++            crossAxisCount: 2,
++            childAspectRatio: 1.4,
++            children: tiles,
++          ),
++        ),
++      ],
++    );
+
+  # 3) Lint/teszt
+  - run: flutter analyze
+  - run: flutter test
