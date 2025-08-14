@@ -1,0 +1,68 @@
+meta:
+  canvas: Home Header – stats-független render fix (P0)
+  priority: P0
+
+steps:
+  - name: Vendég CTA eltávolítása a csempék közül
+    description: A vendég felhasználó CTA-ja a fejlécben jelenjen meg, ne a rácsban – így nincs duplikáció és a felső rész mindig kap tartalmat.
+    outputs:
+      - lib/screens/home_screen.dart
+    patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-    final uid = ref.watch(authProvider).user?.id;
+-    if (uid == null) {
+-      tiles.add(const HomeGuestCtaTile());
+-    }
++    final uid = ref.watch(authProvider).user?.id;
++    // Guest CTA a fejlécben jelenik meg; a rácsba nem szúrjuk be.
+
+  - name: Fejléc és rács stats-független renderelése
+    description: A statsAsync.when(...) logikát kiváltjuk; a fejléc auth alapján renderel (UserStatsHeader vagy HomeGuestCtaTile), a rács mindig látható.
+    outputs:
+      - lib/screens/home_screen.dart
+    patch_file:
+      target: lib/screens/home_screen.dart
+      patch: |
+        @@
+-    // --- assemble layout ---------------------------------------------------
+-    return statsAsync.when(
+-      data: (stats) => Column(
+-        children: [
+-          // Header *only* here when [showStats] is *false* and we are on root.
+-          if (!showStats && _isRootRoute(context))
+-            UserStatsHeader(stats: stats),
+-          Expanded(
+-            child: GridView.count(
+-              padding: const EdgeInsets.all(16),
+-              crossAxisCount: 2,
+-              childAspectRatio: 1.4,
+-              children: tiles,
+-            ),
+-          ),
+-        ],
+-      ),
+-      loading: () => const SizedBox.shrink(),
+-      error: (_, _) => const SizedBox.shrink(),
+-    );
++    // --- assemble layout ---------------------------------------------------
++    final user = ref.watch(authProvider).user;
++    final stats = ref.watch(userStatsProvider).asData?.value;
++    return Column(
++      children: [
++        // Fejléc a képernyő tetején: vendég → CTA, bejelentkezett → profil header
++        if (!showStats && _isRootRoute(context))
++          (user == null
++              ? const HomeGuestCtaTile()
++              : UserStatsHeader(stats: stats)),
++        Expanded(
++          child: GridView.count(
++            padding: const EdgeInsets.all(16),
++            crossAxisCount: 2,
++            childAspectRatio: 1.4,
++            children: tiles,
++          ),
++        ),
++      ],
++    );
