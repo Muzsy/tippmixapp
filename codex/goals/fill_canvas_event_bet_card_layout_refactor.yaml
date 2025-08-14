@@ -1,0 +1,281 @@
+meta:
+  canvas: event_bet_card_layout_refactor.md
+  priority: P1
+
+steps:
+  - name: OddsEvent bővítése lekérési időbélyeggel (nem breaking)
+    description: Adjunk opcionális `fetchedAt` mezőt az OddsEvent modellhez, hogy a kártyán megjeleníthető legyen a „Frissítve:” időpont.
+    outputs:
+      - patch_file: lib/models/odds_event.dart
+        patch: |
+          @@
+- class OddsEvent {
++ class OddsEvent {
+      final String homeTeamName;
+      final String awayTeamName;
++     final DateTime? fetchedAt;
+          @@
+-   OddsEvent({
+-     required this.homeTeamName,
+-     required this.awayTeamName,
+-     // ...
+-   });
++   OddsEvent({
++     required this.homeTeamName,
++     required this.awayTeamName,
++     this.fetchedAt,
++     // ...
++   });
+          @@
+-   factory OddsEvent.fromJson(Map<String, dynamic> json) {
++   factory OddsEvent.fromJson(Map<String, dynamic> json) {
+      return OddsEvent(
+        homeTeamName: json['homeTeamName'] as String,
+        awayTeamName: json['awayTeamName'] as String,
++       fetchedAt: json['fetchedAt'] != null ? DateTime.parse(json['fetchedAt'] as String) : null,
+        // ...
+      );
+    }
+          @@
+-   Map<String, dynamic> toJson() => {
++   Map<String, dynamic> toJson() => {
+        'homeTeamName': homeTeamName,
+        'awayTeamName': awayTeamName,
++       if (fetchedAt != null) 'fetchedAt': fetchedAt!.toIso8601String(),
+        // ...
+      };
+
+  - name: ApiFootballService – fetchedAt kitöltése a mapping során
+    description: A fixtures → OddsEvent mapping közben állítsuk be a `fetchedAt` mezőt az aktuális időpontra.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-   OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> fx) {
++   OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> fx) {
+      final league = fx['league'] as Map<String, dynamic>?;
+      final teams = fx['teams'] as Map<String, dynamic>?;
+      final home = teams?['home'] as Map<String, dynamic>?;
+      final away = teams?['away'] as Map<String, dynamic>?;
+      return OddsEvent(
+        homeTeamName: home?['name'] ?? 'Home',
+        awayTeamName: away?['name'] ?? 'Away',
++       fetchedAt: DateTime.now().toUtc(),
+        // ... egyéb mezők változatlanok
+      );
+    }
+
+  - name: ActionPill komponens bővítése (ikon opcionális)
+    description: A H2H gombokhoz is az ActionPill stílust használjuk; legyen opcionális az ikon, hogy rövid címkék ("1", "X", "2") is szépen jelenjenek meg.
+    outputs:
+      - patch_file: lib/widgets/action_pill.dart
+        patch: |
+          @@
+- class ActionPill extends StatelessWidget {
+-   final IconData icon;
++ class ActionPill extends StatelessWidget {
++   final IconData? icon;
+    final String label;
+    final VoidCallback? onTap;
+    final bool selected;
+    final double height;
+          @@
+-   const ActionPill({
++   const ActionPill({
+      super.key,
+-     required this.icon,
++     this.icon,
+      required this.label,
+      this.onTap,
+      this.selected = false,
+      this.height = 40,
+    });
+          @@
+-             children: [
+-               Icon(icon, size: 18, color: fg),
+-               const SizedBox(width: 8),
+-               Flexible(
++             children: [
++               if (icon != null) ...[
++                 Icon(icon, size: 18, color: fg),
++                 const SizedBox(width: 8),
++               ],
++               Flexible(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelLarge?.copyWith(color: fg),
+                  ),
+                ),
+              ],
+
+  - name: Bet Card – felső sor átrendezése (ország balra, liga jobbra logóval)
+    description: A fejléc két végére kerülnek az elemek; jobb oldalon a liga logó + név. A korábban létrehozott LeaguePill újrahasznosítható csak liga‑adattal.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   Widget _buildHeader(BuildContext context, OddsEvent e) {
+-     return Row(
+-       children: [
+-         Expanded(child: Container()),
+-         LeaguePill(country: e.countryName, league: e.leagueName, logoUrl: e.leagueLogoUrl),
+-       ],
+-     );
+-   }
++   Widget _buildHeader(BuildContext context, OddsEvent e) {
++     return Row(
++       mainAxisAlignment: MainAxisAlignment.spaceBetween,
++       children: [
++         Expanded(
++           child: Align(
++             alignment: Alignment.centerLeft,
++             child: Text(
++               e.countryName ?? '',
++               style: Theme.of(context).textTheme.labelMedium,
++               overflow: TextOverflow.ellipsis,
++             ),
++           ),
++         ),
++         const SizedBox(width: 8),
++         LeaguePill(country: null, league: e.leagueName, logoUrl: e.leagueLogoUrl),
++       ],
++     );
++   }
+
+  - name: Csapatnevek – két soros törés ellipszis nélkül
+    description: A home/away sorban a név `maxLines: 2`, `softWrap: true`, és `Flexible`-ben van, hogy ne vágjuk le három ponttal a hosszú neveket.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   Row(children: [
+-     TeamBadge(imageUrl: e.homeLogoUrl, initials: _initials(e.homeTeamName)),
+-     const SizedBox(width: 8),
+-     Expanded(child: Text(e.homeTeamName, overflow: TextOverflow.ellipsis)),
+-   ])
++   Row(children: [
++     TeamBadge(imageUrl: e.homeLogoUrl, initials: _initials(e.homeTeamName)),
++     const SizedBox(width: 8),
++     Flexible(child: Text(e.homeTeamName, maxLines: 2, softWrap: true)),
++   ])
+          @@
+-   Row(children: [
+-     TeamBadge(imageUrl: e.awayLogoUrl, initials: _initials(e.awayTeamName)),
+-     const SizedBox(width: 8),
+-     Expanded(child: Text(e.awayTeamName, overflow: TextOverflow.ellipsis)),
+-   ])
++   Row(children: [
++     TeamBadge(imageUrl: e.awayLogoUrl, initials: _initials(e.awayTeamName)),
++     const SizedBox(width: 8),
++     Flexible(child: Text(e.awayTeamName, maxLines: 2, softWrap: true)),
++   ])
+
+  - name: Kezdés blokk – formázott dátum jobbra, visszaszámláló balra
+    description: A „Kezdés: YYYY/MM/DD HH:MM” formátumra alakítjuk, saját formázóval (intl nélkül), a visszaszámláló változatlanul bal oldalon marad.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   Widget _buildKickoffRow(BuildContext context, OddsEvent e) {
+-     // korábbi implementáció
+-   }
++   Widget _buildKickoffRow(BuildContext context, OddsEvent e) {
++     return Row(
++       mainAxisAlignment: MainAxisAlignment.spaceBetween,
++       children: [
++         _buildCountdown(context, e),
++         Text('Kezdés: ' + _formatYMDHM(e.kickoff), textAlign: TextAlign.right),
++       ],
++     );
++   }
++
++   String _formatYMDHM(DateTime dt) {
++     final d = dt.toLocal();
++     String two(int n) => n < 10 ? '0$n' : '$n';
++     return '${d.year}/${two(d.month)}/${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
++   }
+
+  - name: H2H gombok egységesítése ActionPill stílusra
+    description: A három H2H (1, X, 2) gomb ugyanazt a „pill” megjelenést kapja, mint az alsó akciógombok.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   Widget _buildH2HButtons(BuildContext context, OddsEvent e) {
+-     return Row(
+-       children: [
+-         // korábbi három Outlined/Elevated gomb
+-       ],
+-     );
+-   }
++   Widget _buildH2HButtons(BuildContext context, OddsEvent e) {
++     return Row(
++       children: [
++         Expanded(child: ActionPill(label: '1', onTap: () => onSelectH2H(e, 'HOME'))),
++         const SizedBox(width: 8),
++         Expanded(child: ActionPill(label: 'X', onTap: () => onSelectH2H(e, 'DRAW'))),
++         const SizedBox(width: 8),
++         Expanded(child: ActionPill(label: '2', onTap: () => onSelectH2H(e, 'AWAY'))),
++       ],
++     );
++   }
+
+  - name: „Frissítve:” időbélyeg megjelenítése
+    description: A kártya alján jobb oldalon jelenjen meg a lekérés időpontja. Ha `event.fetchedAt` nincs, használjuk a komponens opcionális `refreshedAt` paraméterét; végső fallback a build ideje.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+- class EventBetCard extends StatelessWidget {
++ class EventBetCard extends StatelessWidget {
+      final OddsEvent event;
++     final DateTime? refreshedAt;
+          @@
+-   const EventBetCard({super.key, required this.event});
++   const EventBetCard({super.key, required this.event, this.refreshedAt});
+          @@
+-   Widget build(BuildContext context) {
++   Widget build(BuildContext context) {
+      final e = event;
++     final ra = e.fetchedAt ?? refreshedAt ?? DateTime.now();
+          @@
+-     return Card(
++     return Card(
+        // ...
+-       child: Column(
++       child: Column(
+          children: [
+            // ... kártyatartalom
++           const SizedBox(height: 8),
++           Align(
++             alignment: Alignment.centerRight,
++             child: Text('Frissítve: ' + _formatYMDHM(ra), style: Theme.of(context).textTheme.bodySmall),
++           ),
+          ],
+        ),
+      );
+
+  - name: Kártya és markets FutureBuilder stabilizálása kulcsokkal
+    description: Adjunk az egyes kártyákhoz/markets widgethez stabil kulcsot, hogy ne keveredjenek az állapotok scroll/paging közben.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-   return Card(
++   return Card(
++     key: ValueKey('bet-card-' + e.fixtureId.toString()),
+      // ...
+    );
+          @@
+-   FutureBuilder(
++   FutureBuilder(
++     key: ValueKey('markets-' + e.fixtureId.toString()),
+      // ...
+    )
+
+  - name: Build és tesztek
+    description: Ellenőrzések futtatása
+    outputs:
+      - run: flutter analyze
+      - run: flutter test

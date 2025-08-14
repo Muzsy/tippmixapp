@@ -24,15 +24,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ai_recommendation => 'AI recommendation';
 
   @override
-  String get appActionsMoreBets => 'More bets';
-
-  @override
-  String get appActionsStatistics => 'Statistics';
-
-  @override
-  String get appActionsAiRecommend => 'AI picks';
-
-  @override
   String get amount_must_be_integer => 'Amount must be an integer.';
 
   @override
@@ -47,6 +38,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get api_error_unknown => 'Unknown error from data provider';
+
+  @override
+  String get appActionsAiRecommend => 'AI picks';
+
+  @override
+  String get appActionsMoreBets => 'More bets';
+
+  @override
+  String get appActionsStatistics => 'Statistics';
 
   @override
   String get apple_login => 'Continue with Apple';

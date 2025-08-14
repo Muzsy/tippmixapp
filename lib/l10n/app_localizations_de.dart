@@ -25,15 +25,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ai_recommendation => 'KI-Empfehlung';
 
   @override
-  String get appActionsMoreBets => 'Weitere Wetten';
-
-  @override
-  String get appActionsStatistics => 'Statistik';
-
-  @override
-  String get appActionsAiRecommend => 'KI‑Vorschlag';
-
-  @override
   String get amount_must_be_integer => 'Betrag muss Ganzzahl sein.';
 
   @override
@@ -48,6 +39,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get api_error_unknown => 'Unbekannter Fehler vom Datenanbieter';
+
+  @override
+  String get appActionsAiRecommend => 'KI‑Vorschlag';
+
+  @override
+  String get appActionsMoreBets => 'Weitere Wetten';
+
+  @override
+  String get appActionsStatistics => 'Statistik';
 
   @override
   String get apple_login => 'Weiter mit Apple';
