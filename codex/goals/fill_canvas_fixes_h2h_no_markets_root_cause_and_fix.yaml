@@ -1,0 +1,231 @@
+meta:
+  canvas: canvases/fixes/h2h_no_markets_root_cause_and_fix.md
+  priority: P0
+
+steps:
+  - name: OddsEvent – season mező hozzáadása (opcionális)
+    description: A fixtures válaszból kapott league.season értéket tároljuk az eseményben.
+    outputs:
+      - patch_file: lib/models/odds_event.dart
+        patch: |
+          @@
+           class OddsEvent {
+             final String id; // OddsAPI esemény ID
+             final String sportKey; // Sportág azonosítója
+             final String sportTitle; // Sportág neve
+             final String homeTeam;
+             final String awayTeam;
++            final int? season; // API-Football league.season
+             final String? countryName;
+             final String? leagueName;
+             final String? leagueLogoUrl;
+             final String? homeLogoUrl;
+             final String? awayLogoUrl;
+             final DateTime commenceTime;
+             final List<OddsBookmaker> bookmakers;
+@@
+-          OddsEvent({
++          OddsEvent({
+             required this.id,
+             required this.sportKey,
+             required this.sportTitle,
+             required this.homeTeam,
+             required this.awayTeam,
++            this.season,
+             this.countryName,
+             this.leagueName,
+             this.leagueLogoUrl,
+             this.homeLogoUrl,
+             this.awayLogoUrl,
+             required this.commenceTime,
+             required this.bookmakers,
+           });
+@@
+-          factory OddsEvent.fromJson(Map<String, dynamic> json) {
++          factory OddsEvent.fromJson(Map<String, dynamic> json) {
+             return OddsEvent(
+               id: json['id'] as String,
+               sportKey: json['sport_key'] as String,
+               sportTitle: json['sport_title'] as String,
+               homeTeam: json['home_team'] as String,
+               awayTeam: json['away_team'] as String,
++              season: json['season'] as int?,
+               countryName: json['country_name'] as String?,
+               leagueName: json['league_name'] as String?,
+               leagueLogoUrl: json['league_logo_url'] as String?,
+               homeLogoUrl: json['home_logo_url'] as String?,
+               awayLogoUrl: json['away_logo_url'] as String?,
+               commenceTime: DateTime.parse(json['commence_time'] as String),
+               bookmakers: (json['bookmakers'] as List)
+                   .map((b) => OddsBookmaker.fromJson(b))
+                   .toList(),
+             );
+           }
+@@
+-          Map<String, dynamic> toJson() => {
++          Map<String, dynamic> toJson() => {
+             'id': id,
+             'sport_key': sportKey,
+             'sport_title': sportTitle,
+             'home_team': homeTeam,
+             'away_team': awayTeam,
++            if (season != null) 'season': season,
+             if (countryName != null) 'country_name': countryName,
+             if (leagueName != null) 'league_name': leagueName,
+             if (leagueLogoUrl != null) 'league_logo_url': leagueLogoUrl,
+             if (homeLogoUrl != null) 'home_logo_url': homeLogoUrl,
+             if (awayLogoUrl != null) 'away_logo_url': awayLogoUrl,
+             'commence_time': commenceTime.toIso8601String(),
+             'bookmakers': bookmakers.map((b) => b.toJson()).toList(),
+           };
+
+  - name: Fixtures → OddsEvent mapping – season kimentése
+    description: A league.season mezőt mentsük az OddsEvent.season‑be.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+           OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> json) {
+             final fixture = Map<String, dynamic>.from(json['fixture'] as Map);
+             final league = Map<String, dynamic>.from(json['league'] as Map);
+             final teams = Map<String, dynamic>.from(json['teams'] as Map);
+             final home = Map<String, dynamic>.from(teams['home'] as Map);
+             final away = Map<String, dynamic>.from(teams['away'] as Map);
+             return OddsEvent(
+               id: fixture['id'].toString(),
+               sportKey: 'soccer',
+               sportTitle: 'Soccer',
+               homeTeam: home['name'] as String,
+               awayTeam: away['name'] as String,
++              season: (league['season'] as int?),
+               countryName: league['country'] as String?,
+               leagueName: league['name'] as String?,
+               leagueLogoUrl: league['logo'] as String?,
+               homeLogoUrl: home['logo'] as String?,
+               awayLogoUrl: away['logo'] as String?,
+               commenceTime: DateTime.parse(fixture['date'] as String),
+               bookmakers: const [],
+             );
+           }
+
+  - name: Odds hívás – season és bet paraméterek hozzáadása
+    description: A fixture odds lekéréséhez szükséges a season; a bet=1X2 szűkíti a választ.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-          Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
++          Future<Map<String, dynamic>> getOddsForFixture(String fixtureId, {int? season}) async {
+             final apiKey = dotenv.env['API_FOOTBALL_KEY'];
+             if (apiKey == null || apiKey.isEmpty) {
+               throw Exception('Missing API_FOOTBALL_KEY');
+             }
+-            final url = '$_baseUrl/odds?fixture=$fixtureId';
++            final seasonPart = season != null ? '&season=$season' : '';
++            final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart + '&bet=1X2';
+             final res = await _client
+                 .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+                 .timeout(const Duration(seconds: 10));
+             if (res.statusCode >= 200 && res.statusCode < 300) {
+               final body = jsonDecode(res.body) as Map<String, dynamic>;
+               return body;
+             }
+             // On any error return empty structure; caller will fallback.
+             return {};
+           }
+@@
+-          final oddsJson = await getOddsForFixture(e.id);
++          final oddsJson = await getOddsForFixture(e.id, season: e.season);
+
+  - name: H2H aliasok bővítése és 1/X/2 értékek támogatása
+    description: A bet‑név és a `values[].value` értékek szélesebb körű felismerése.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-          for (final bet in bets) {
++          for (final bet in bets) {
+             final m = bet as Map<String, dynamic>;
+-            final betName = (m['name'] ?? '').toString().toLowerCase();
+-            if (betName.contains('match winner') || betName.contains('1x2')) {
++            final betName = (m['name'] ?? '').toString().toLowerCase();
++            if (betName.contains('match winner')
++                || betName.contains('1x2')
++                || betName.contains('full time result')
++                || betName.contains('match result')
++                || betName == 'winner') {
+               matchWinner = m;
+               break;
+             }
+           }
+           if (matchWinner == null) {
+             continue;
+           }
+           final values = (matchWinner['values'] as List?) ?? const [];
+           OddsOutcome? home;
+           OddsOutcome? draw;
+           OddsOutcome? away;
+-          for (final v in values) {
++          for (final v in values) {
+             final mv = v as Map<String, dynamic>;
+-            final val = (mv['value'] ?? '').toString().toLowerCase();
++            final val = (mv['value'] ?? '').toString().toLowerCase();
+             final oddStr = (mv['odd'] ?? '').toString();
+             final price = double.tryParse(oddStr.replaceAll(',', '.'));
+             if (price == null) continue;
+-            if (val.contains('home')) {
++            if (val.contains('home') || val == '1') {
+               home = OddsOutcome(name: homeTeam, price: price);
+-            } else if (val.contains('draw') || val == 'x') {
++            } else if (val.contains('draw') || val == 'x') {
+               draw = OddsOutcome(name: 'Draw', price: price);
+-            } else if (val.contains('away')) {
++            } else if (val.contains('away') || val == '2') {
+               away = OddsOutcome(name: awayTeam, price: price);
+             }
+           }
+           final outcomes = [
+             if (home != null) home,
+             if (draw != null) draw,
+             if (away != null) away,
+           ];
+           if (outcomes.isEmpty) continue;
+           result.add(
+             OddsBookmaker(
+               key: _slug(name),
+               title: name,
+               markets: [OddsMarket(key: 'h2h', outcomes: outcomes)],
+             ),
+           );
+
+  - name: URL‑építés egységteszt – season+bet paraméter
+    description: Mock klienssel ellenőrizzük, hogy a kérést a várt URL‑re küldjük.
+    outputs:
+      - create_file: test/services/api_football_service_odds_url_test.dart
+        content: |
+          import 'dart:convert';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:http/http.dart' as http;
+          import 'package:http/testing.dart';
+          import 'package:tippmixapp/services/api_football_service.dart';
+
+          void main() {
+            test('odds URL tartalmazza a season és bet=1X2 paramétert', () async {
+              late Uri captured;
+              final client = MockClient((req) async {
+                captured = req.url;
+                return http.Response(jsonEncode({'response': []}), 200);
+              });
+              final s = ApiFootballService(client);
+              await s.getOddsForFixture('12345', season: 2024);
+              expect(captured.queryParameters['fixture'], '12345');
+              expect(captured.queryParameters['season'], '2024');
+              expect(captured.queryParameters['bet'], '1X2');
+            });
+          }
+
+  - name: Analyze & Test
+    description: Statikus elemzés és tesztek futtatása
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
