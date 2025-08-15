@@ -1,0 +1,68 @@
+meta:
+  canvas: Home Header – Splash & Root Route fix (P0)
+  priority: P0
+
+steps:
+  - name: SplashController – vendég → Home
+    description: Ha nincs bejelentkezett felhasználó, a Splash ne a loginra, hanem a Home‑ra navigáljon, hogy a Guest‑CTA fejléc megjelenhessen.
+    outputs:
+      - lib/controllers/splash_controller.dart
+    patch_file:
+      target: lib/controllers/splash_controller.dart
+      patch: |
+        @@
+-    if (uid == null) {
+-      WidgetsBinding.instance.addPostFrameCallback((_) {
+-        state = const AsyncData(AppRoute.login);
+-      });
+-      return;
+-    }
++    if (uid == null) {
++      WidgetsBinding.instance.addPostFrameCallback((_) {
++        state = const AsyncData(AppRoute.home);
++      });
++      return;
++    }
+        @@
+-    } catch (_) {
+-      await FirebaseAuth.instance.signOut();
+-      WidgetsBinding.instance.addPostFrameCallback((_) {
+-        state = const AsyncData(AppRoute.login);
+-      });
+-    }
++    } catch (_) {
++      await FirebaseAuth.instance.signOut();
++      WidgetsBinding.instance.addPostFrameCallback((_) {
++        state = const AsyncData(AppRoute.home);
++      });
++    }
+
+  - name: Router „/” route – AuthGate helyett üres gyerek
+    description: A HomeShell child‑ja a gyökér útvonalon legyen üres (ne AuthGate), így a HomeScreen saját fejléc+grid elrendezése biztosan megjelenik.
+    outputs:
+      - lib/router.dart
+    patch_file:
+      target: lib/router.dart
+      patch: |
+        @@
+-        GoRoute(
+-          path: '/',
+-          name: AppRoute.home.name,
+-          pageBuilder: (context, state) =>
+-              const NoTransitionPage(child: AuthGate()),
+-        ),
++        GoRoute(
++          path: '/',
++          name: AppRoute.home.name,
++          pageBuilder: (context, state) =>
++              const NoTransitionPage(child: SizedBox.shrink()),
++        ),
+
+  - name: Ellenőrző build‑lépések
+    description: Elemzés és tesztek futtatása.
+    outputs:
+      - analyze
+      - test
+    run: |
+      flutter analyze
+      flutter test
