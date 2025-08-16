@@ -87,3 +87,4 @@
 | 2025-08-14   | @codex-bot      | TOC refreshed after home profile header docs update                            |
 | 2025-08-14   | @codex-bot      | TOC refreshed after home header stats independent fix docs update              |
 | 2025-08-14   | @codex-bot      | TOC refreshed after home header router guard docs update                       |
+| 2025-08-16   | @codex-bot      | TOC refreshed after H2H season fallback docs update                            |
