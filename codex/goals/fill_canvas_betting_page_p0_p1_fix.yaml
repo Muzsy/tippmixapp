@@ -1,0 +1,73 @@
+# Codex YAML – Fogadási oldal P0/P1 javítások (H2H + szűrés)
+# Séma: steps: name/description/outputs (+ opcionális inputs). Magyar nyelv.
+
+steps:
+  - name: Előkészítő ellenőrzések
+    description: Projekt és Flutter környezet ellenőrzése.
+    outputs:
+      - Parancs futtatva: flutter --version
+      - Parancs futtatva: flutter analyze
+
+  - name: H2H bet paraméter javítása
+    description: A H2H (Match Winner) integer azonosítója 1; cserélni kell a hibás "1X2" stringet.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Kódrészlet cserélve: '&bet=1X2' → '&bet=1'
+      - Kódrészlet cserélve: 'bet=1X2' → 'bet=1'
+
+  - name: Lista – per‑fixture odds előtöltés eltávolítása
+    description: A getOdds(...) ne hívjon getOddsForFixture(...)‑t a lista építésekor; a H2H csak a kártyán töltődjön.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Metódus módosítva: fixtures betöltés marad; per‑fixture odds hívások törölve
+      - Megjegyzés a kódban: 'H2H a kártyán töltődik – 60s cache'
+
+  - name: Guard beépítése fixtureId<=0 ellen
+    description: A getH2HForFixture(...) elején korai kilépés invalid azonosító esetén.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Kódrészlet hozzáadva: if (fixtureId <= 0) return Future.value(null)
+
+  - name: Kártya – lokális‑első H2H megjelenítés
+    description: Az event_bet_card először az átadott event.bookmakers H2H‑t használja; hiány esetén FutureBuilder hálózatra.
+    inputs:
+      - file: lib/widgets/event_bet_card.dart
+    outputs:
+      - Render sorrend módosítva; hálózati hívás csak hiány esetén
+
+  - name: Dátumszűrő bekötése a fixtures kérésbe
+    description: A kiválasztott nap menjen le a service‑be `fixtures?date=YYYY‑MM‑DD`; a cache kulcs egészül ki a dátummal.
+    inputs:
+      - file: lib/services/api_football_service.dart
+      - file: lib/services/odds_cache_wrapper.dart
+      - file: lib/screens/events_screen.dart
+    outputs:
+      - Paraméterezett fixtures kérés a választott napra
+      - Cache kulcs: sport|date|country|league
+
+  - name: Unit tesztek frissítése
+    description: Célzott tesztek a regressziók elkerülésére.
+    inputs:
+      - file: test/services/api_football_service_odds_url_test.dart
+      - file: test/services/api_football_service_odds_fallback_test.dart
+      - file: test/services/fixtures_date_filter_test.dart
+    outputs:
+      - Teszt: H2H URL `bet=1`
+      - Teszt: üres H2H → második hívás bet nélkül
+      - Teszt: kiválasztott dátum → fixtures?date=... a service URL‑ben
+
+  - name: Widget teszt – tipkártya hálózat nélkül, ha H2H adott
+    description: Bizonyítsuk, hogy lokális H2H esetén a kártya nem megy hálózatra.
+    inputs:
+      - file: test/widgets/event_bet_card_h2h_render_test.dart
+    outputs:
+      - Két ág lefedve: adat adott / adat hiányzik
+
+  - name: Build és ellenőrzések
+    description: Kötelező futtatások.
+    outputs:
+      - Parancs futtatva: flutter analyze
+      - Parancs futtatva: flutter test
