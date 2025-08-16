@@ -1,0 +1,225 @@
+meta:
+  canvas: canvases/fixes/h2h_vizsgalat_season_fallback_alignment.md
+  priority: P0
+
+steps:
+  - name: OddsEvent – opcionális season mező
+    description: A fixtures `league.season` értékének tárolása az OddsEvent-ben.
+    outputs:
+      - patch_file: lib/models/odds_event.dart
+        patch: |
+          @@
+           class OddsEvent {
+             final String id; // OddsAPI esemény ID
+             final String sportKey; // Sportág azonosítója
+             final String sportTitle; // Sportág neve
+             final String homeTeam;
+             final String awayTeam;
+             final String countryName;
+             final String leagueName;
++            final int? season; // API-Football league.season
+             final DateTime commenceTime;
+             final List<OddsBookmaker> bookmakers;
+@@
+-          OddsEvent({
++          OddsEvent({
+             required this.id,
+             required this.sportKey,
+             required this.sportTitle,
+             required this.homeTeam,
+             required this.awayTeam,
+             required this.countryName,
+             required this.leagueName,
++            this.season,
+             required this.commenceTime,
+             required this.bookmakers,
+           });
+@@
+-          factory OddsEvent.fromJson(Map<String, dynamic> json) {
++          factory OddsEvent.fromJson(Map<String, dynamic> json) {
+             return OddsEvent(
+               id: json['id'] as String,
+               sportKey: json['sport_key'] as String,
+               sportTitle: json['sport_title'] as String,
+               homeTeam: json['home_team'] as String,
+               awayTeam: json['away_team'] as String,
+               countryName: json['country_name'] as String,
+               leagueName: json['league_name'] as String,
++              season: json['season'] as int?,
+               commenceTime: DateTime.parse(json['commence_time'] as String),
+               bookmakers: (json['bookmakers'] as List)
+                   .map((b) => OddsBookmaker.fromJson(b))
+                   .toList(),
+             );
+           }
+@@
+-          Map<String, dynamic> toJson() => {
++          Map<String, dynamic> toJson() => {
+             'id': id,
+             'sport_key': sportKey,
+             'sport_title': sportTitle,
+             'home_team': homeTeam,
+             'away_team': awayTeam,
+             'country_name': countryName,
+             'league_name': leagueName,
++            if (season != null) 'season': season,
+             'commence_time': commenceTime.toIso8601String(),
+             'bookmakers': bookmakers.map((b) => b.toJson()).toList(),
+           };
+
+  - name: Fixtures → OddsEvent mapping – season átadása
+    description: A `league.season` mezőt írjuk az OddsEvent.season-be.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+           OddsEvent _mapFixtureToOddsEvent(Map<String, dynamic> json) {
+             final fixture = Map<String, dynamic>.from(json['fixture'] as Map);
+-            final league = Map<String, dynamic>.from(json['league'] as Map);
++            final league = Map<String, dynamic>.from(json['league'] as Map);
+             final teams = Map<String, dynamic>.from(json['teams'] as Map);
+             final home = Map<String, dynamic>.from(teams['home'] as Map);
+             final away = Map<String, dynamic>.from(teams['away'] as Map);
+             return OddsEvent(
+               id: fixture['id'].toString(),
+               sportKey: 'soccer',
+               sportTitle: 'Soccer',
+               homeTeam: home['name'] as String,
+               awayTeam: away['name'] as String,
+               countryName: league['country'] as String?,
+               leagueName: league['name'] as String?,
++              season: league['season'] as int?,
+               leagueLogoUrl: league['logo'] as String?,
+               homeLogoUrl: home['logo'] as String?,
+               awayLogoUrl: away['logo'] as String?,
+               commenceTime: DateTime.parse(fixture['date'] as String),
+               bookmakers: const [],
+             );
+           }
+
+  - name: getOddsForFixture – season + kétlépcsős fallback
+    description: Először `bet=1X2`-re szűrünk; üres válasz esetén ugyanaz a kérés bet nélkül.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-          Future<Map<String, dynamic>> getOddsForFixture(String fixtureId) async {
++          Future<Map<String, dynamic>> getOddsForFixture(String fixtureId, {int? season, bool includeBet1X2 = true}) async {
+             final apiKey = dotenv.env['API_FOOTBALL_KEY'];
+             if (apiKey == null || apiKey.isEmpty) {
+               throw Exception('Missing API_FOOTBALL_KEY');
+             }
+-            final url = '$_baseUrl/odds?fixture=$fixtureId';
+-            final res = await _client
+-                .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+-                .timeout(const Duration(seconds: 10));
+-            if (res.statusCode >= 200 && res.statusCode < 300) {
+-              final body = jsonDecode(res.body) as Map<String, dynamic>;
+-              return body;
+-            }
+-            // On any error return empty structure; caller will fallback.
+-            return {};
++            final seasonPart = season != null ? '&season=$season' : '';
++            // 1) Szűkített H2H
++            final url1 = '$_baseUrl/odds?fixture=$fixtureId$seasonPart&bet=1X2';
++            var res = await _client
++                .get(Uri.parse(url1), headers: {'x-apisports-key': apiKey})
++                .timeout(const Duration(seconds: 10));
++            Map<String, dynamic> body = jsonDecode(res.body) as Map<String, dynamic>;
++            final empty = (body['response'] as List?)?.isEmpty ?? true;
++            // 2) Fallback – teljes odds
++            if (empty) {
++              final url2 = '$_baseUrl/odds?fixture=$fixtureId$seasonPart';
++              res = await _client
++                  .get(Uri.parse(url2), headers: {'x-apisports-key': apiKey})
++                  .timeout(const Duration(seconds: 10));
++              body = jsonDecode(res.body) as Map<String, dynamic>;
++            }
++            return body;
+           }
+
+  - name: Odds enrichment – season átadása a hívásnál
+    description: A fixtures-ből képzett eseményekhez az odds lekéréskor adjuk át az `e.season` értéket.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-          final oddsJson = await getOddsForFixture(e.id);
++          final oddsJson = await getOddsForFixture(e.id, season: e.season);
+
+  - name: H2H aliasok bővítése
+    description: A "Match Winner" és "1X2" mellé vegyük fel a "Full Time Result"/"Match Result"/"Winner" megnevezéseket.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-            if (betName.contains('match winner') || betName.contains('1x2')) {
++            if (betName.contains('match winner')
++                || betName.contains('1x2')
++                || betName.contains('full time result')
++                || betName.contains('match result')
++                || betName == 'winner') {
+               matchWinner = m;
+               break;
+             }
+
+  - name: Unit teszt – odds fallback
+    description: Üres 1X2 válasz után teljes odds-ból épül a H2H.
+    outputs:
+      - create_file: test/services/api_football_service_odds_fallback_test.dart
+        content: |
+          import 'dart:convert';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:http/http.dart' as http;
+          import 'package:http/testing.dart';
+          import 'package:tippmixapp/services/api_football_service.dart';
+
+          void main() {
+            test('Fallback: üres 1X2 → teljes odds', () async {
+              late Uri firstUrl;
+              late Uri secondUrl;
+              int call = 0;
+              final client = MockClient((req) async {
+                call += 1;
+                if (call == 1) {
+                  firstUrl = req.url;
+                  return http.Response(jsonEncode({'response': []}), 200);
+                }
+                secondUrl = req.url;
+                return http.Response(jsonEncode({
+                  'response': [
+                    {
+                      'bookmakers': [
+                        {
+                          'name': 'DemoBook',
+                          'bets': [
+                            {
+                              'name': 'Match Winner',
+                              'values': [
+                                {'value': '1', 'odd': '2.10'},
+                                {'value': 'X', 'odd': '3.30'},
+                                {'value': '2', 'odd': '3.40'}
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }), 200);
+              });
+
+              final s = ApiFootballService(client);
+              // Fixtures-enrichmentet itt nem szimuláljuk; közvetlen a odds hívást ellenőrizzük
+              final body = await s.getOddsForFixture('12345', season: 2025);
+              expect((body['response'] as List).isNotEmpty, true);
+              expect(firstUrl.queryParameters['bet'], '1X2');
+              expect(secondUrl.queryParameters['bet'], isNull);
+            });
+          }
+
+  - name: Analyze & Test
+    description: Statikus elemzés és tesztek futtatása
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
