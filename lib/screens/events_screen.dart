@@ -33,8 +33,14 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
     super.initState();
     // Kick‑off the fetch exactly once after first frame
     Future.microtask(
-      () =>
-          ref.read(oddsApiProvider.notifier).fetchOdds(sport: widget.sportKey),
+      () => ref
+          .read(oddsApiProvider.notifier)
+          .fetchOdds(
+            sport: widget.sportKey,
+            date: _filter.date,
+            country: _filter.country,
+            league: _filter.league,
+          ),
     );
   }
 
@@ -93,7 +99,17 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               EventsFilterBar(
                 source: events,
                 value: _filter,
-                onChanged: (f) => setState(() => _filter = f),
+                onChanged: (f) {
+                  setState(() => _filter = f);
+                  ref
+                      .read(oddsApiProvider.notifier)
+                      .fetchOdds(
+                        sport: widget.sportKey,
+                        date: f.date,
+                        country: f.country,
+                        league: f.league,
+                      );
+                },
               ),
               Expanded(
                 child: ListView.builder(
@@ -243,7 +259,12 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
             onPressed: () {
               ref
                   .read(oddsApiProvider.notifier)
-                  .fetchOdds(sport: widget.sportKey);
+                  .fetchOdds(
+                    sport: widget.sportKey,
+                    date: _filter.date,
+                    country: _filter.country,
+                    league: _filter.league,
+                  );
             },
             child: const Icon(Icons.refresh),
           ),

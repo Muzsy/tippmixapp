@@ -14,9 +14,9 @@ class FakeApiFootballService extends ApiFootballService {
   @override
   Future<ApiResponse<List<OddsEvent>>> getOdds({
     required String sport,
+    String? country,
     String? league,
-    DateTime? from,
-    DateTime? to,
+    DateTime? date,
   }) async {
     callCount++;
     return response;
@@ -28,27 +28,31 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
-    final service =
-        FakeApiFootballService(const ApiResponse(data: <OddsEvent>[]));
+    final service = FakeApiFootballService(
+      const ApiResponse(data: <OddsEvent>[]),
+    );
     final wrapper = OddsCacheWrapper(service, prefs);
 
-    await wrapper.getOdds(sport: 'soccer');
+    final date = DateTime(2024, 1, 1);
+    await wrapper.getOdds(sport: 'soccer', date: date);
 
     expect(service.callCount, 1);
-    expect(prefs.getString('odds_soccer'), isNotNull);
+    expect(prefs.getString('odds_soccer|2024-01-01||'), isNotNull);
   });
 
   test('cache hit does not call service', () async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
-    final service =
-        FakeApiFootballService(const ApiResponse(data: <OddsEvent>[]));
+    final service = FakeApiFootballService(
+      const ApiResponse(data: <OddsEvent>[]),
+    );
     final wrapper = OddsCacheWrapper(service, prefs);
 
-    await wrapper.getOdds(sport: 'soccer');
+    final date = DateTime(2024, 1, 1);
+    await wrapper.getOdds(sport: 'soccer', date: date);
     final firstCalls = service.callCount;
-    await wrapper.getOdds(sport: 'soccer');
+    await wrapper.getOdds(sport: 'soccer', date: date);
 
     expect(service.callCount, firstCalls);
   });
@@ -58,16 +62,18 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
 
     final past = DateTime.now().subtract(const Duration(hours: 1));
+    final date = DateTime(2024, 1, 1);
     await prefs.setString(
-      'odds_soccer',
+      'odds_soccer|2024-01-01||',
       '{"expiry":"${past.toIso8601String()}","events":[]}',
     );
 
-    final service =
-        FakeApiFootballService(const ApiResponse(data: <OddsEvent>[]));
+    final service = FakeApiFootballService(
+      const ApiResponse(data: <OddsEvent>[]),
+    );
     final wrapper = OddsCacheWrapper(service, prefs);
 
-    await wrapper.getOdds(sport: 'soccer');
+    await wrapper.getOdds(sport: 'soccer', date: date);
 
     expect(service.callCount, 1);
   });
@@ -85,9 +91,10 @@ void main() {
     );
     final wrapper = OddsCacheWrapper(service, prefs);
 
-    await wrapper.getOdds(sport: 'soccer');
+    final date = DateTime(2024, 1, 1);
+    await wrapper.getOdds(sport: 'soccer', date: date);
 
     expect(service.callCount, 1);
-    expect(prefs.getString('odds_soccer'), isNull);
+    expect(prefs.getString('odds_soccer|2024-01-01||'), isNull);
   });
 }
