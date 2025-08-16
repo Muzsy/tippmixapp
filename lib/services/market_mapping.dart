@@ -42,42 +42,47 @@ class MarketMapping {
   }
 
   /// Parse API‑Football odds válaszból H2H (1X2) piaccá.
-  /// Elvárt forma: { response: [ { bookmakers: [ { bets: [ { name: 'Match Winner'|'1X2', values: [ {value: 'Home|1|Draw|X|Away|2', odd: '1.50'} ] } ] } ] } ] }
+  /// Vár forma: {response → bookmakers → bets → values}
   static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
     final resp = json['response'];
     if (resp is! List || resp.isEmpty) return null;
-    final first = resp.first as Map<String, dynamic>;
-    final bookmakers = (first['bookmakers'] as List?) ?? const [];
-    for (final b in bookmakers) {
-      final bm = b as Map<String, dynamic>;
-      final bets = (bm['bets'] as List?) ?? const [];
-      for (final bet in bets) {
-        final m = bet as Map<String, dynamic>;
-        final rawName = (m['name'] ?? m['key'] ?? '').toString();
-        if (!h2hAliases.contains(rawName)) continue;
-        final values = (m['values'] as List?) ?? const [];
-        final outs = <OddsOutcome>[];
-        for (final v in values) {
-          final mv = v as Map<String, dynamic>;
-          final val = (mv['value'] ?? '').toString().toLowerCase();
-          final oddStr = (mv['odd'] ?? '').toString();
-          final price = double.tryParse(oddStr.replaceAll(',', '.'));
-          if (price == null) continue;
-          if (val.contains('home') || val == '1') {
-            outs.add(OddsOutcome(name: 'Home', price: price));
-          } else if (val.contains('draw') || val == 'x') {
-            outs.add(OddsOutcome(name: 'Draw', price: price));
-          } else if (val.contains('away') || val == '2') {
-            outs.add(OddsOutcome(name: 'Away', price: price));
+    for (final item in resp) {
+      final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
+      if (bms is! List) continue;
+      for (final b in bms) {
+        final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
+        if (bets is! List) continue;
+        for (final bet in bets) {
+          final m = bet as Map<String, dynamic>;
+          final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
+          if (!({'match winner', '1x2', 'full time result', 'match result', 'winner'}
+              .contains(raw))) {
+            continue;
           }
-        }
-        if (outs.isNotEmpty) {
-          // Rögzített H‑D‑V sorrend
-          const order = {'Home': 0, 'Draw': 1, 'Away': 2};
-          outs.sort(
-            (a, b) => (order[a.name] ?? 0).compareTo(order[b.name] ?? 0),
-          );
-          return H2HMarket(outcomes: outs);
+          final values = (m['values'] as List?) ?? const [];
+          OddsOutcome? home;
+          OddsOutcome? draw;
+          OddsOutcome? away;
+          for (final v in values) {
+            final mv = v as Map<String, dynamic>;
+            final val = (mv['value'] ?? '').toString().toLowerCase();
+            final oddStr = (mv['odd'] ?? '').toString();
+            final price = double.tryParse(oddStr.replaceAll(',', '.'));
+            if (price == null) continue;
+            if (val == 'home' || val == '1') {
+              home = OddsOutcome(name: 'Home', price: price);
+            } else if (val == 'draw' || val == 'x') {
+              draw = OddsOutcome(name: 'Draw', price: price);
+            } else if (val == 'away' || val == '2') {
+              away = OddsOutcome(name: 'Away', price: price);
+            }
+          }
+          final outs = [
+            if (home != null) home!,
+            if (draw != null) draw!,
+            if (away != null) away!,
+          ];
+          if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
         }
       }
     }
