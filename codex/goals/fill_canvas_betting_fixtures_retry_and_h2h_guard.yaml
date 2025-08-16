@@ -1,0 +1,142 @@
+# Codex Canvas Yaml Guide szerinti séma
+# Megjegyzés: meglévő funkció nem sérülhet; csak kis stabilitási javítások és új tesztek.
+
+steps:
+  - name: Fixtures lekérés – 1× retry bevezetése
+    description: |
+      Az API‑Football fixtures hívás (`GET /fixtures?date=...`) 10s timeout mellett jelenleg nem retry‑ol.
+      Vezessük be a H2H hívásoknál már használt mintát: 1× ismételt próbálkozás 200 ms késleltetéssel.
+      A viselkedés így egységes lesz a `getOddsForFixture` metódussal.
+    inputs:
+      - file: tippmixapp-main/lib/services/api_football_service.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/api_football_service.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/api_football_service.dart
+          +++ b/tippmixapp-main/lib/services/api_football_service.dart
+          @@
+          -      final response = await _client
+          -          .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+          -          .timeout(const Duration(seconds: 10));
+          +      Future<http.Response> _attempt() => _client
+          +          .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+          +          .timeout(const Duration(seconds: 10));
+          +
+          +      http.Response response;
+          +      try {
+          +        response = await _attempt();
+          +      } catch (_) {
+          +        await Future.delayed(const Duration(milliseconds: 200));
+          +        response = await _attempt();
+          +      }
+
+  - name: H2H guard unit teszt hozzáadása (no network)
+    description: |
+      Új teszt, amely igazolja, hogy `getH2HForFixture` 0 vagy negatív fixtureId esetén azonnal visszatér,
+      és nem végez hálózati hívást.
+    outputs:
+      - type: create
+        file: tippmixapp-main/test/services/h2h_guard_no_network_test.dart
+        content: |
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:http/http.dart' as http;
+          import 'package:tippmixapp/services/api_football_service.dart';
+
+          class CountingClient extends http.BaseClient {
+            int calls = 0;
+            final http.Client _inner;
+            CountingClient(this._inner);
+            @override
+            Future<http.StreamedResponse> send(http.BaseRequest request) {
+              calls += 1;
+              return _inner.send(request);
+            }
+          }
+
+          void main() {
+            test('getH2HForFixture guard: fixtureId<=0 esetén nincs hálózati hívás', () async {
+              final inner = http.Client();
+              final client = CountingClient(inner);
+              final api = ApiFootballService(client);
+              final res = await api.getH2HForFixture(0);
+              expect(res, isNull);
+              expect(client.calls, 0);
+            });
+          }
+
+  - name: Fixtures retry unit teszt hozzáadása
+    description: |
+      Új teszt, amely szimulálja, hogy az első fixtures hívás kivételt dob, a második sikeres.
+      Elvárt: a metódus sikeres választ ad, és pontosan 2 klienshívás történik.
+    outputs:
+      - type: create
+        file: tippmixapp-main/test/services/fixtures_retry_test.dart
+        content: |
+          import 'dart:async';
+          import 'dart:convert';
+          import 'package:flutter_dotenv/flutter_dotenv.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:http/http.dart' as http;
+          import 'package:tippmixapp/services/api_football_service.dart';
+
+          class FailingOnceClient extends http.BaseClient {
+            int calls = 0;
+            final http.Client _inner;
+            FailingOnceClient(this._inner);
+            @override
+            Future<http.StreamedResponse> send(http.BaseRequest request) async {
+              calls += 1;
+              if (calls == 1) {
+                // első próbálkozás: szimulált timeout
+                throw TimeoutException('simulated');
+              }
+              return _inner.send(request);
+            }
+          }
+
+          void main() {
+            setUpAll(() async {
+              await dotenv.load(fileName: '.env');
+            });
+
+            test('fixtures hívás 1× retry-ol timeout után', () async {
+              // sikeres válasz a második hívásra
+              final inner = http.MockClient((req) async {
+                final body = jsonEncode({
+                  'response': [
+                    {
+                      'fixture': {'id': 123},
+                      'teams': {
+                        'home': {'name': 'A'},
+                        'away': {'name': 'B'}
+                      }
+                    }
+                  ]
+                });
+                return http.Response(body, 200);
+              });
+              final client = FailingOnceClient(inner);
+              final api = ApiFootballService(client);
+
+              final res = await api.getOdds(sport: 'soccer', date: DateTime(2025, 1, 1));
+              expect(res.data, isNotNull);
+              expect(client.calls, 2);
+            });
+          }
+
+  - name: Statikus analízis és tesztfuttatás
+    description: |
+      Ellenőrzés a projekt standardja szerint.
+    outputs:
+      - type: run
+        command: flutter analyze --no-fatal-infos lib test
+      - type: run
+        command: flutter test
+
+  - name: Dokumentáció frissítése (opcionális)
+    description: |
+      Rövid megjegyzés a fejlesztői jegyzetekben a fixtures retry bevezetéséről és az új tesztekről.
+    outputs:
+      - type: note
+        content: 'Fixtures: 1× retry 200 ms backoff, új guard és retry tesztek hozzáadva. Meglévő funkciók változatlanok.'
