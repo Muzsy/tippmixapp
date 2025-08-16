@@ -9,20 +9,22 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 
 class _FakeApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) async {
-    return H2HMarket(outcomes: [
-      OddsOutcome(name: 'Team A $fixtureId', price: 1.0),
-      OddsOutcome(name: 'Draw', price: 2.0),
-      OddsOutcome(name: 'Team B $fixtureId', price: 3.0),
-    ]);
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
+    return H2HMarket(
+      outcomes: [
+        OddsOutcome(name: 'Team A $fixtureId', price: 1.0),
+        OddsOutcome(name: 'Draw', price: 2.0),
+        OddsOutcome(name: 'Team B $fixtureId', price: 3.0),
+      ],
+    );
   }
 }
 
 Widget _wrap(Widget child) => MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: child),
-    );
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(body: child),
+);
 
 void main() {
   testWidgets('Minden kártyán megjelenik a H2H gombsor', (tester) async {
@@ -38,9 +40,16 @@ void main() {
         bookmakers: const [],
       ),
     );
-    await tester.pumpWidget(_wrap(ListView(children: [
-      for (final e in events) EventBetCard(event: e, apiService: _FakeApi()),
-    ])));
+    await tester.pumpWidget(
+      _wrap(
+        ListView(
+          children: [
+            for (final e in events)
+              EventBetCard(event: e, apiService: _FakeApi()),
+          ],
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('1'), findsWidgets);
     expect(find.text('X'), findsWidgets);

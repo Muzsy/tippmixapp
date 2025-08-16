@@ -14,8 +14,8 @@ import 'market_mapping.dart';
 class ApiFootballService {
   static const String _baseUrl = 'https://v3.football.api-sports.io';
   static const _h2hTtl = Duration(seconds: 60);
-  final Map<int, Future<H2HMarket?>> _h2hCache = {};
-  final Map<int, DateTime> _h2hStamp = {};
+  final Map<String, Future<H2HMarket?>> _h2hCache = {};
+  final Map<String, DateTime> _h2hStamp = {};
   final http.Client _client;
 
   ApiFootballService([http.Client? client]) : _client = client ?? http.Client();
@@ -162,13 +162,15 @@ class ApiFootballService {
   Future<Map<String, dynamic>> getOddsForFixture(
     String fixtureId, {
     int? season,
+    bool includeBet1X2 = true,
   }) async {
     final apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
     final seasonPart = season != null ? '&season=$season' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart&bet=1X2';
+    final betPart = includeBet1X2 ? '&bet=1X2' : '';
+    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
     final res = await _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
@@ -180,33 +182,48 @@ class ApiFootballService {
     return {};
   }
 
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) {
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) {
     final now = DateTime.now();
-    final stamp = _h2hStamp[fixtureId];
-    final cached = _h2hCache[fixtureId];
+    final cacheKey = '${fixtureId}-${season ?? 0}';
+    final stamp = _h2hStamp[cacheKey];
+    final cached = _h2hCache[cacheKey];
     if (cached != null) {
       if (stamp == null || now.difference(stamp) < _h2hTtl) {
         return cached;
       }
     }
-    final future = _fetchH2HForFixture(fixtureId)
+    final future = _fetchH2HForFixture(fixtureId, season: season)
         .then((v) {
-          _h2hStamp[fixtureId] = DateTime.now();
+          _h2hStamp[cacheKey] = DateTime.now();
           return v;
         })
         .catchError((e) async {
           await Future.delayed(const Duration(milliseconds: 400));
-          final v = await _fetchH2HForFixture(fixtureId);
-          _h2hStamp[fixtureId] = DateTime.now();
+          final v = await _fetchH2HForFixture(fixtureId, season: season);
+          _h2hStamp[cacheKey] = DateTime.now();
           return v;
         });
-    _h2hCache[fixtureId] = future;
+    _h2hCache[cacheKey] = future;
     return future;
   }
 
-  Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
-    final json = await getOddsForFixture(fixtureId.toString());
-    return MarketMapping.h2hFromApi(json);
+  Future<H2HMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
+    // 1) szűkített kérés bet=1X2‑vel
+    final json1 = await getOddsForFixture(
+      fixtureId.toString(),
+      season: season,
+      includeBet1X2: true,
+    );
+    var market = MarketMapping.h2hFromApi(json1);
+    if (market != null) return market;
+    // 2) fallback – teljes odds a szezonra
+    final json2 = await getOddsForFixture(
+      fixtureId.toString(),
+      season: season,
+      includeBet1X2: false,
+    );
+    market = MarketMapping.h2hFromApi(json2);
+    return market;
   }
 
   // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek

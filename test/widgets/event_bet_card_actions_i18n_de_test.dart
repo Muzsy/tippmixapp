@@ -21,7 +21,8 @@ Widget _wrap(Widget child) => MaterialApp(
 
 class _NullApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) async => null;
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
+      null;
 }
 
 void main() {
@@ -35,7 +36,9 @@ void main() {
       commenceTime: DateTime.now(),
       bookmakers: const [],
     );
-    await tester.pumpWidget(_wrap(EventBetCard(event: e, apiService: _NullApi())));
+    await tester.pumpWidget(
+      _wrap(EventBetCard(event: e, apiService: _NullApi())),
+    );
     expect(find.text('Weitere Wetten'), findsOneWidget);
   });
 }
