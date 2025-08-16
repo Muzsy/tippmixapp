@@ -9,12 +9,14 @@ import 'package:tippmixapp/widgets/event_bet_card.dart';
 
 class _FakeApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) async {
-    return H2HMarket(outcomes: [
-      OddsOutcome(name: 'Liverpool', price: 1.72),
-      OddsOutcome(name: 'Draw', price: 4.00),
-      OddsOutcome(name: 'Tottenham', price: 4.50),
-    ]);
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
+    return H2HMarket(
+      outcomes: [
+        OddsOutcome(name: 'Liverpool', price: 1.72),
+        OddsOutcome(name: 'Draw', price: 4.00),
+        OddsOutcome(name: 'Tottenham', price: 4.50),
+      ],
+    );
   }
 }
 

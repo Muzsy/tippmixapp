@@ -58,5 +58,6 @@ void main() {
 
 class _NullApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) async => null;
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
+      null;
 }

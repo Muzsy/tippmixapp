@@ -8,7 +8,8 @@ import 'package:tippmixapp/models/h2h_market.dart';
 
 class _NullApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId) async => null;
+  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
+      null;
 }
 
 Widget _wrap(Widget child) => MaterialApp(
@@ -30,7 +31,9 @@ void main() {
       commenceTime: DateTime.now(),
       bookmakers: const [],
     );
-    await tester.pumpWidget(_wrap(EventBetCard(event: e, apiService: _NullApi())));
+    await tester.pumpWidget(
+      _wrap(EventBetCard(event: e, apiService: _NullApi())),
+    );
     expect(find.textContaining('England'), findsOneWidget);
     expect(find.textContaining('Premier League'), findsOneWidget);
   });
@@ -45,7 +48,9 @@ void main() {
       commenceTime: DateTime.now(),
       bookmakers: const [],
     );
-    await tester.pumpWidget(_wrap(EventBetCard(event: e, apiService: _NullApi())));
+    await tester.pumpWidget(
+      _wrap(EventBetCard(event: e, apiService: _NullApi())),
+    );
     expect(find.text('RS'), findsOneWidget);
     expect(find.text('DT'), findsOneWidget);
   });

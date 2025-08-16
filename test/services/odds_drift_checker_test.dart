@@ -10,6 +10,7 @@ class _MockApiFootballService extends ApiFootballService {
   Future<Map<String, dynamic>> getOddsForFixture(
     String fixtureId, {
     int? season,
+    bool includeBet1X2 = true,
   }) async {
     return fixtures[fixtureId] ?? {};
   }

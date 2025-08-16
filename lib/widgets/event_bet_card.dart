@@ -20,18 +20,18 @@ class EventBetCard extends StatelessWidget {
   final VoidCallback? onAi;
   final DateTime? refreshedAt;
 
-    EventBetCard({
-      super.key,
-      required this.event,
-      ApiFootballService? apiService,
-      this.onTapHome,
-      this.onTapDraw,
-      this.onTapAway,
-      this.onMoreBets,
-      this.onStats,
-      this.onAi,
-      this.refreshedAt,
-    }) : apiService = apiService ?? ApiFootballService();
+  EventBetCard({
+    super.key,
+    required this.event,
+    ApiFootballService? apiService,
+    this.onTapHome,
+    this.onTapDraw,
+    this.onTapAway,
+    this.onMoreBets,
+    this.onStats,
+    this.onAi,
+    this.refreshedAt,
+  }) : apiService = apiService ?? ApiFootballService();
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,10 @@ class EventBetCard extends StatelessWidget {
 
             FutureBuilder<H2HMarket?>(
               key: ValueKey('markets-${event.id}'),
-              future: apiService.getH2HForFixture(int.tryParse(event.id) ?? 0),
+              future: apiService.getH2HForFixture(
+                int.tryParse(event.id) ?? 0,
+                season: event.season,
+              ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return _loadingMarkets();
@@ -221,24 +224,23 @@ class EventBetCard extends StatelessWidget {
     }
     home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
     away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
-    draw ??=
-        h2h.outcomes.length == 3 ? h2h.outcomes[1] : null;
+    draw ??= h2h.outcomes.length == 3 ? h2h.outcomes[1] : null;
     return _buildH2HButtons(home, draw, away);
   }
 
   Widget _noMarkets(String text) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Text(text),
-      );
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Text(text),
+  );
 
   Widget _loadingMarkets() => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: SizedBox(
-          height: 18,
-          width: 18,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
+    padding: EdgeInsets.symmetric(vertical: 8),
+    child: SizedBox(
+      height: 18,
+      width: 18,
+      child: CircularProgressIndicator(strokeWidth: 2),
+    ),
+  );
 
   Widget _buildKickoffRow(BuildContext context, OddsEvent e) {
     final l = AppLocalizations.of(context)!;
