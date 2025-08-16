@@ -1,0 +1,178 @@
+meta:
+  canvas: canvases/fixes/h2h_runtime_repo_fix.md
+  priority: P0
+
+steps:
+  - name: MarketMapping – H2H parser API‑Football sémára
+    description: Cseréljük a `h2hFromApi` függvényt, hogy a `response→bookmakers→bets→values` útvonalról építsen `H2HMarket`‑et. Kimenetek neve: Home/Draw/Away.
+    outputs:
+      - patch_file: lib/services/market_mapping.dart
+        patch: |
+          @@
+- import '../models/h2h_market.dart';
++ import '../models/h2h_market.dart';
++ import '../models/odds_outcome.dart';
+@@
+-  static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
+-    final markets = json['markets'] as List<dynamic>?;
+-    if (markets == null) return null;
+-    for (final m in markets) {
+-      final map = Map<String, dynamic>.from(m as Map);
+-      final name = (map['key'] ?? map['name'] ?? '').toString();
+-      if (h2hAliases.contains(name)) {
+-        return H2HMarket.fromJson(map);
+-      }
+-    }
+-    return null;
+-  }
++  static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
++    final resp = json['response'];
++    if (resp is! List || resp.isEmpty) return null;
++    for (final item in resp) {
++      final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
++      if (bms is! List) continue;
++      for (final b in bms) {
++        final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
++        if (bets is! List) continue;
++        for (final bet in bets) {
++          final m = bet as Map<String, dynamic>;
++          final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
++          if (!( {
++                'match winner', '1x2', 'full time result', 'match result', 'winner'
++              }.contains(raw))) continue;
++          final values = (m['values'] as List?) ?? const [];
++          OddsOutcome? home;
++          OddsOutcome? draw;
++          OddsOutcome? away;
++          for (final v in values) {
++            final mv = v as Map<String, dynamic>;
++            final val = (mv['value'] ?? '').toString().toLowerCase();
++            final oddStr = (mv['odd'] ?? '').toString();
++            final price = double.tryParse(oddStr.replaceAll(',', '.'));
++            if (price == null) continue;
++            if (val == 'home' || val == '1') {
++              home = OddsOutcome(name: 'Home', price: price);
++            } else if (val == 'draw' || val == 'x') {
++              draw = OddsOutcome(name: 'Draw', price: price);
++            } else if (val == 'away' || val == '2') {
++              away = OddsOutcome(name: 'Away', price: price);
++            }
++          }
++          final outs = [if (home != null) home!, if (draw != null) draw!, if (away != null) away!];
++          if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
++        }
++      }
++    }
++    return null;
++  }
+
+  - name: ApiFootballService – getH2HForFixture kapjon season-t és fallbacket
+    description: A cache kulcsa legyen fixture+season; a belső fetch először `bet=1X2`, ha üres, kérjen teljes oddsot (bet nélkül), majd parsolja `MarketMapping.h2hFromApi`‑val.
+    outputs:
+      - patch_file: lib/services/api_football_service.dart
+        patch: |
+          @@
+-  Future<H2HMarket?> getH2HForFixture(int fixtureId) {
++  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) {
+     final now = DateTime.now();
+-    final stamp = _h2hStamp[fixtureId];
+-    final cached = _h2hCache[fixtureId];
++    final key = '${fixtureId}-${season ?? 0}';
++    final stamp = _h2hStamp[key];
++    final cached = _h2hCache[key];
+     if (cached != null) {
+       if (stamp == null || now.difference(stamp) < _h2hTtl) {
+         return cached;
+       }
+     }
+-    final future = _fetchH2HForFixture(fixtureId)
++    final future = _fetchH2HForFixture(fixtureId, season: season)
+         .then((v) {
+-          _h2hStamp[fixtureId] = DateTime.now();
++          _h2hStamp[key] = DateTime.now();
+           return v;
+         })
+         .catchError((e) async {
+           await Future.delayed(const Duration(milliseconds: 400));
+-          final v = await _fetchH2HForFixture(fixtureId);
+-          _h2hStamp[fixtureId] = DateTime.now();
++          final v = await _fetchH2HForFixture(fixtureId, season: season);
++          _h2hStamp[key] = DateTime.now();
+           return v;
+         });
+-    _h2hCache[fixtureId] = future;
++    _h2hCache[key] = future;
+     return future;
+   }
+@@
+-  final Map<int, Future<H2HMarket?>> _h2hCache = {};
+-  final Map<int, DateTime> _h2hStamp = {};
++  final Map<String, Future<H2HMarket?>> _h2hCache = {};
++  final Map<String, DateTime> _h2hStamp = {};
+@@
+-  Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
+-    final json = await getOddsForFixture(fixtureId.toString());
+-    return MarketMapping.h2hFromApi(json);
+-  }
++  Future<H2HMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
++    final json1 = await getOddsForFixture(fixtureId.toString(), season: season);
++    var m = MarketMapping.h2hFromApi(json1);
++    if (m != null) return m;
++    // fallback: teljes odds bet nélkül
++    final json2 = await getOddsForFixtureAll(fixtureId.toString(), season: season);
++    return MarketMapping.h2hFromApi(json2);
++  }
++
++  Future<Map<String, dynamic>> getOddsForFixtureAll(
++    String fixtureId, {
++    int? season,
++  }) async {
++    final apiKey = dotenv.env['API_FOOTBALL_KEY'];
++    if (apiKey == null || apiKey.isEmpty) {
++      throw Exception('Missing API_FOOTBALL_KEY');
++    }
++    final seasonPart = season != null ? '&season=$season' : '';
++    final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart;
++    final res = await _client
++        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
++        .timeout(const Duration(seconds: 10));
++    if (res.statusCode >= 200 && res.statusCode < 300) {
++      final body = jsonDecode(res.body) as Map<String, dynamic>;
++      return body;
++    }
++    return {};
++  }
+
+  - name: EventBetCard – season továbbadása a H2H hívásnak
+    description: A FutureBuilder hívja a service‑t a `event.season` átadásával.
+    outputs:
+      - patch_file: lib/widgets/event_bet_card.dart
+        patch: |
+          @@
+-            FutureBuilder<H2HMarket?>(
+-              key: ValueKey('markets-${event.id}'),
+-              future: apiService.getH2HForFixture(int.tryParse(event.id) ?? 0),
++            FutureBuilder<H2HMarket?>(
++              key: ValueKey('markets-${event.id}'),
++              future: apiService.getH2HForFixture(
++                int.tryParse(event.id) ?? 0,
++                season: event.season,
++              ),
+               builder: (context, snapshot) {
+                 if (snapshot.connectionState == ConnectionState.waiting) {
+                   return _loadingMarkets();
+                 }
+                 if (snapshot.hasError) {
+                   return _loadingMarkets();
+                 }
+                 final h2h = snapshot.data;
+                 if (h2h == null) return _noMarkets(loc.events_screen_no_market);
+                 return _buildH2HButtonsFrom(h2h);
+               },
+             ),
+
+  - name: Analyze & Test
+    description: Statikus ellenőrzés és tesztek futtatása
+    outputs:
+      - run: flutter analyze
+      - run: flutter test
