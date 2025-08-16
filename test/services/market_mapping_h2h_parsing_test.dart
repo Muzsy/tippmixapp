@@ -25,11 +25,7 @@ void main() {
         },
       ],
     };
-    final m = MarketMapping.h2hFromApi(
-      json,
-      homeLabel: 'Home',
-      awayLabel: 'Away',
-    );
+    final m = MarketMapping.h2hFromApi(json);
     expect(m, isNotNull);
     expect(m!.outcomes.length, 3);
   });
