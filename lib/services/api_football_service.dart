@@ -18,9 +18,9 @@ class ApiFootballService {
 
   Future<ApiResponse<List<OddsEvent>>> getOdds({
     required String sport,
+    String? country,
     String? league,
-    DateTime? from,
-    DateTime? to,
+    DateTime? date,
   }) async {
     final String? apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
@@ -32,10 +32,15 @@ class ApiFootballService {
     }
 
     try {
-      var url =
-          '$_baseUrl/fixtures?date='
-          '${DateTime.now().toIso8601String().split('T').first}';
-      if (league != null) {
+      final datePart = (date ?? DateTime.now())
+          .toIso8601String()
+          .split('T')
+          .first;
+      var url = '$_baseUrl/fixtures?date=$datePart';
+      if (country != null && country.isNotEmpty) {
+        url += '&country=$country';
+      }
+      if (league != null && league.isNotEmpty) {
         url += '&league=$league';
       }
 
@@ -126,18 +131,27 @@ class ApiFootballService {
   Future<Map<String, dynamic>> getOddsForFixture(
     String fixtureId, {
     int? season,
-    bool includeBet1X2 = true,
+    bool includeBet1 = true,
   }) async {
     final apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
     final seasonPart = season != null ? '&season=$season' : '';
-    final betPart = includeBet1X2 ? '&bet=1' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart + betPart;
-    final res = await _client
+    final betPart = includeBet1 ? '&bet=1' : '';
+    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
+
+    Future<http.Response> _attempt() => _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
+
+    http.Response res;
+    try {
+      res = await _attempt();
+    } catch (_) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      res = await _attempt();
+    }
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       return body;
@@ -161,14 +175,14 @@ class ApiFootballService {
     final json1 = await getOddsForFixture(
       fixtureId.toString(),
       season: season,
-      includeBet1X2: true,
+      includeBet1: true,
     );
     var h2h = MarketMapping.h2hFromApi(json1);
     if (h2h != null) return h2h;
     final json2 = await getOddsForFixture(
       fixtureId.toString(),
       season: season,
-      includeBet1X2: false,
+      includeBet1: false,
     );
     return MarketMapping.h2hFromApi(json2);
   }

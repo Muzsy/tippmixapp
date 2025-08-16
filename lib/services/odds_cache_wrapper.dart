@@ -21,12 +21,17 @@ class OddsCacheWrapper {
 
   Future<ApiResponse<List<OddsEvent>>> getOdds({
     required String sport,
+    String? country,
     String? league,
-    DateTime? from,
-    DateTime? to,
+    DateTime? date,
   }) async {
     await _initPrefs();
-    final key = _cacheKey(sport: sport, league: league, from: from, to: to);
+    final key = _cacheKey(
+      sport: sport,
+      country: country,
+      league: league,
+      date: date,
+    );
     final cached = _prefs!.getString(key);
     if (cached != null) {
       final Map<String, dynamic> data = jsonDecode(cached);
@@ -43,9 +48,9 @@ class OddsCacheWrapper {
 
     final response = await _service.getOdds(
       sport: sport,
+      country: country,
       league: league,
-      from: from,
-      to: to,
+      date: date,
     );
 
     if (response.errorType == ApiErrorType.none && response.data != null) {
@@ -62,14 +67,13 @@ class OddsCacheWrapper {
 
   String _cacheKey({
     required String sport,
+    String? country,
     String? league,
-    DateTime? from,
-    DateTime? to,
+    DateTime? date,
   }) {
-    final sb = StringBuffer('odds_')..write(sport);
-    if (league != null) sb.write('_$league');
-    if (from != null) sb.write('_from_${from.toIso8601String()}');
-    if (to != null) sb.write('_to_${to.toIso8601String()}');
-    return sb.toString();
+    final datePart = date != null
+        ? date.toIso8601String().split('T').first
+        : '';
+    return 'odds_${sport}|$datePart|${country ?? ''}|${league ?? ''}';
   }
 }

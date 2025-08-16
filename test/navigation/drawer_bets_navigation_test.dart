@@ -91,7 +91,12 @@ class TestOddsApiProvider extends OddsApiProvider {
   }
 
   @override
-  Future<void> fetchOdds({required String sport}) async {}
+  Future<void> fetchOdds({
+    required String sport,
+    DateTime? date,
+    String? country,
+    String? league,
+  }) async {}
 }
 
 void main() {

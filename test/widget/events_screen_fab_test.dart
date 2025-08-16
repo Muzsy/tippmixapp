@@ -13,7 +13,12 @@ class _StubOddsNotifier extends OddsApiProvider {
   _StubOddsNotifier() : super(OddsCacheWrapper(ApiFootballService()));
 
   @override
-  Future<void> fetchOdds({required String sport}) async {
+  Future<void> fetchOdds({
+    required String sport,
+    DateTime? date,
+    String? country,
+    String? league,
+  }) async {
     state = OddsApiEmpty();
   }
 }

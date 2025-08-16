@@ -33,11 +33,20 @@ class OddsApiProvider extends StateNotifier<OddsApiProviderState> {
   final OddsCacheWrapper _wrapper;
   OddsApiProvider(this._wrapper) : super(OddsApiLoading());
 
-  /// Események lekérése sport (és később liga/idő) szerint.
-  Future<void> fetchOdds({required String sport}) async {
-    // Fetch odds for the selected sport
+  /// Események lekérése sport és szűrők alapján.
+  Future<void> fetchOdds({
+    required String sport,
+    DateTime? date,
+    String? country,
+    String? league,
+  }) async {
     state = OddsApiLoading();
-    final response = await _wrapper.getOdds(sport: sport);
+    final response = await _wrapper.getOdds(
+      sport: sport,
+      date: date,
+      country: country,
+      league: league,
+    );
 
     // Hibaágak
     if (response.errorType != ApiErrorType.none) {
