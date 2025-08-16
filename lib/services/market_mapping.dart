@@ -7,78 +7,76 @@ class MarketMapping {
   static const String bothTeamsToScore = 'btts';
   static const String asianHandicap = 'ah';
 
-  static const _h2hAliases = <String>{
-    'match winner',
+  static const h2hAliases = {
+    'H2H',
+    '1X2',
     '1x2',
-    'full time result',
-    'match result',
-    'winner',
+    'Match Winner',
+    'Winner',
+    'Full Time Result',
   };
 
   static String? fromApiFootball(String key) {
     switch (key.toLowerCase()) {
       case '1x2':
       case 'h2h':
+      case 'match winner':
+      case 'full time result':
+      case 'winner':
         return h2h;
       case 'over_under':
       case 'ou':
       case 'totals':
+      case 'goals over/under':
         return overUnder;
       case 'btts':
-      case 'both_teams_to_score':
+      case 'both teams to score':
         return bothTeamsToScore;
       case 'ah':
       case 'asian_handicap':
+      case 'handicap':
         return asianHandicap;
       default:
         return null;
     }
   }
 
-  /// API-Football /odds válasz → H2HMarket
-  static H2HMarket? h2hFromApi(
-    Map<String, dynamic> json, {
-    String? homeLabel,
-    String? awayLabel,
-  }) {
+  /// Parse API‑Football odds válaszból H2H (1X2) piaccá.
+  /// Elvárt forma: { response: [ { bookmakers: [ { bets: [ { name: 'Match Winner'|'1X2', values: [ {value: 'Home|1|Draw|X|Away|2', odd: '1.50'} ] } ] } ] } ] }
+  static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
     final resp = json['response'];
     if (resp is! List || resp.isEmpty) return null;
-
-    for (final item in resp) {
-      final bms = item is Map<String, dynamic> ? item['bookmakers'] : null;
-      if (bms is! List) continue;
-      for (final b in bms) {
-        final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
-        if (bets is! List) continue;
-        for (final bet in bets) {
-          final betName = (bet is Map<String, dynamic>)
-              ? (bet['name'] ?? '').toString().toLowerCase()
-              : '';
-          if (!_h2hAliases.contains(betName)) continue;
-          final values = (bet['values'] as List?) ?? const [];
-          OddsOutcome? home;
-          OddsOutcome? draw;
-          OddsOutcome? away;
-          for (final v in values) {
-            if (v is! Map) continue;
-            final val = (v['value'] ?? '').toString().toLowerCase();
-            final oddStr = (v['odd'] ?? '').toString();
-            final price = double.tryParse(oddStr.replaceAll(',', '.'));
-            if (price == null) continue;
-            if (val == 'home' || val == '1') {
-              home = OddsOutcome(name: homeLabel ?? 'Home', price: price);
-            } else if (val == 'draw' || val == 'x') {
-              draw = OddsOutcome(name: 'Draw', price: price);
-            } else if (val == 'away' || val == '2') {
-              away = OddsOutcome(name: awayLabel ?? 'Away', price: price);
-            }
+    final first = resp.first as Map<String, dynamic>;
+    final bookmakers = (first['bookmakers'] as List?) ?? const [];
+    for (final b in bookmakers) {
+      final bm = b as Map<String, dynamic>;
+      final bets = (bm['bets'] as List?) ?? const [];
+      for (final bet in bets) {
+        final m = bet as Map<String, dynamic>;
+        final rawName = (m['name'] ?? m['key'] ?? '').toString();
+        if (!h2hAliases.contains(rawName)) continue;
+        final values = (m['values'] as List?) ?? const [];
+        final outs = <OddsOutcome>[];
+        for (final v in values) {
+          final mv = v as Map<String, dynamic>;
+          final val = (mv['value'] ?? '').toString().toLowerCase();
+          final oddStr = (mv['odd'] ?? '').toString();
+          final price = double.tryParse(oddStr.replaceAll(',', '.'));
+          if (price == null) continue;
+          if (val.contains('home') || val == '1') {
+            outs.add(OddsOutcome(name: 'Home', price: price));
+          } else if (val.contains('draw') || val == 'x') {
+            outs.add(OddsOutcome(name: 'Draw', price: price));
+          } else if (val.contains('away') || val == '2') {
+            outs.add(OddsOutcome(name: 'Away', price: price));
           }
-          final outs = <OddsOutcome>[
-            if (home != null) home,
-            if (draw != null) draw,
-            if (away != null) away,
-          ];
-          if (outs.isEmpty) continue;
+        }
+        if (outs.isNotEmpty) {
+          // Rögzített H‑D‑V sorrend
+          const order = {'Home': 0, 'Draw': 1, 'Away': 2};
+          outs.sort(
+            (a, b) => (order[a.name] ?? 0).compareTo(order[b.name] ?? 0),
+          );
           return H2HMarket(outcomes: outs);
         }
       }

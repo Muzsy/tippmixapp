@@ -206,11 +206,7 @@ class ApiFootballService {
 
   Future<H2HMarket?> _fetchH2HForFixture(int fixtureId) async {
     final json = await getOddsForFixture(fixtureId.toString());
-    return MarketMapping.h2hFromApi(
-      json,
-      homeLabel: homeTeamNameFor(fixtureId),
-      awayLabel: awayTeamNameFor(fixtureId),
-    );
+    return MarketMapping.h2hFromApi(json);
   }
 
   // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek
