@@ -332,6 +332,24 @@ class AppLocalizationsHu extends AppLocalizations {
   String get feed_screen_title => 'Hírfolyam';
 
   @override
+  String get filtersAny => 'Mind';
+
+  @override
+  String get filtersCountry => 'Ország';
+
+  @override
+  String get filtersDate => 'Dátum';
+
+  @override
+  String get filtersLeague => 'Liga';
+
+  @override
+  String get filtersTitle => 'Szűrők';
+
+  @override
+  String get filtersToday => 'Ma';
+
+  @override
   String get follow => 'Követés';
 
   @override

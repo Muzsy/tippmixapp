@@ -718,6 +718,42 @@ abstract class AppLocalizations {
   /// **'Feed'**
   String get feed_screen_title;
 
+  /// No description provided for @filtersAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get filtersAny;
+
+  /// No description provided for @filtersCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get filtersCountry;
+
+  /// No description provided for @filtersDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get filtersDate;
+
+  /// No description provided for @filtersLeague.
+  ///
+  /// In en, this message translates to:
+  /// **'League'**
+  String get filtersLeague;
+
+  /// No description provided for @filtersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filtersTitle;
+
+  /// No description provided for @filtersToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get filtersToday;
+
   /// No description provided for @follow.
   ///
   /// In en, this message translates to:

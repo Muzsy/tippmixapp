@@ -324,6 +324,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feed_screen_title => 'Feed';
 
   @override
+  String get filtersAny => 'Any';
+
+  @override
+  String get filtersCountry => 'Country';
+
+  @override
+  String get filtersDate => 'Date';
+
+  @override
+  String get filtersLeague => 'League';
+
+  @override
+  String get filtersTitle => 'Filters';
+
+  @override
+  String get filtersToday => 'Today';
+
+  @override
   String get follow => 'Follow';
 
   @override
