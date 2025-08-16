@@ -11,7 +11,7 @@ void main() {
     dotenv.testLoad(fileInput: 'API_FOOTBALL_KEY=dummy');
   });
 
-  test('H2H fallback – üres 1X2 után teljes odds', () async {
+  test('Fallback: üres 1X2 → teljes odds', () async {
     late Uri firstUrl;
     late Uri secondUrl;
     int call = 0;
@@ -28,7 +28,7 @@ void main() {
             {
               'bookmakers': [
                 {
-                  'name': 'Demo',
+                  'name': 'DemoBook',
                   'bets': [
                     {
                       'name': 'Match Winner',
@@ -47,9 +47,11 @@ void main() {
         200,
       );
     });
+
     final s = ApiFootballService(client);
-    final m = await s.getH2HForFixture(42, season: 2025);
-    expect(m, isNotNull);
+    // Fixtures-enrichmentet itt nem szimuláljuk; közvetlen a odds hívást ellenőrizzük
+    final body = await s.getOddsForFixture('12345', season: 2025);
+    expect((body['response'] as List).isNotEmpty, true);
     expect(firstUrl.queryParameters['bet'], '1X2');
     expect(secondUrl.queryParameters['bet'], isNull);
   });

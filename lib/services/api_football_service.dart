@@ -169,17 +169,24 @@ class ApiFootballService {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
     final seasonPart = season != null ? '&season=$season' : '';
-    final betPart = includeBet1X2 ? '&bet=1X2' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
-    final res = await _client
-        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
-        .timeout(const Duration(seconds: 10));
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      final body = jsonDecode(res.body) as Map<String, dynamic>;
-      return body;
+    Map<String, dynamic> body = {};
+    if (includeBet1X2) {
+      final url1 = '$_baseUrl/odds?fixture=$fixtureId$seasonPart&bet=1X2';
+      final res1 = await _client
+          .get(Uri.parse(url1), headers: {'x-apisports-key': apiKey})
+          .timeout(const Duration(seconds: 10));
+      body = jsonDecode(res1.body) as Map<String, dynamic>;
+      final empty = (body['response'] as List?)?.isEmpty ?? true;
+      if (!empty) {
+        return body;
+      }
     }
-    // On any error return empty structure; caller will fallback.
-    return {};
+    final url2 = '$_baseUrl/odds?fixture=$fixtureId$seasonPart';
+    final res2 = await _client
+        .get(Uri.parse(url2), headers: {'x-apisports-key': apiKey})
+        .timeout(const Duration(seconds: 10));
+    body = jsonDecode(res2.body) as Map<String, dynamic>;
+    return body;
   }
 
   Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) {
@@ -208,22 +215,8 @@ class ApiFootballService {
   }
 
   Future<H2HMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
-    // 1) szűkített kérés bet=1X2‑vel
-    final json1 = await getOddsForFixture(
-      fixtureId.toString(),
-      season: season,
-      includeBet1X2: true,
-    );
-    var market = MarketMapping.h2hFromApi(json1);
-    if (market != null) return market;
-    // 2) fallback – teljes odds a szezonra
-    final json2 = await getOddsForFixture(
-      fixtureId.toString(),
-      season: season,
-      includeBet1X2: false,
-    );
-    market = MarketMapping.h2hFromApi(json2);
-    return market;
+    final json = await getOddsForFixture(fixtureId.toString(), season: season);
+    return MarketMapping.h2hFromApi(json);
   }
 
   // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek
