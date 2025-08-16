@@ -106,7 +106,7 @@ class EventBetCard extends StatelessWidget {
               key: ValueKey('markets-${event.id}'),
               future: apiService.getH2HForFixture(
                 int.tryParse(event.id) ?? 0,
-                season: event.season ?? DateTime.now().year,
+                season: event.season,
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
