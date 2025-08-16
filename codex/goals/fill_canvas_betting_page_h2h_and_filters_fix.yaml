@@ -1,0 +1,113 @@
+# Codex YAML – Fogadási oldal H2H és szűrés javítása
+# Kötelező séma: steps: name/description/outputs (+ opcionális inputs)
+
+steps:
+  - name: Előkészítő ellenőrzések
+    description: Projekt környezet és függőségek ellenőrzése.
+    outputs:
+      - Parancs futtatva: flutter --version
+      - Parancs futtatva: flutter analyze
+      - Parancs futtatva: dart --version
+
+  - name: H2H bet paraméter javítása (1X2 → 1)
+    description: Az API‑Football H2H (Match Winner) integer azonosítója 1; a "1X2" string hibát okoz.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Kódcserék: '&bet=1X2' → '&bet=1' és 'bet=1X2' → 'bet=1'
+
+  - name: Lista – per‑fixture odds előtöltés eltávolítása
+    description: A getOdds(...) csak fixtures‑t kérjen; a H2H oddsot ne töltse a listaépítés közben.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Metódus módosítva: getOdds(...) nem hív többé getOddsForFixture(...)‑t
+      - Megjegyzés a kódban: 'H2H a kártyán töltődik, 60s cache'
+
+  - name: getH2HForFixture guard
+    description: Érvénytelen fixtureId esetén ne induljon hálózati hívás.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Kódrészlet hozzáadva: if (fixtureId <= 0) return Future.value(null)
+
+  - name: H2H memóriacache (60s TTL)
+    description: Azonos fixtureId kérésre 60 másodpercig ugyanazt a Future‑t adjuk vissza.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Mező: Map<int, _CachedH2H> _h2hCache
+      - Osztály: _CachedH2H { Future<OddsMarket?> f; DateTime until; }
+      - Logika: now < until → cache hit; különben friss hívás és cache update
+
+  - name: Tipkártya – előbb lokális H2H, aztán hálózat
+    description: Ha az átadott event már tartalmaz H2H‑t, a kártya ne indítson hálózati kérést; különben FutureBuilder.
+    inputs:
+      - file: lib/widgets/event_bet_card.dart
+    outputs:
+      - Render sorrend módosítva; hálózat csak hiány esetén
+
+  - name: Dátumszűrő bekötése a service‑be
+    description: A kiválasztott nap kerüljön rá a fixtures hívásra (date=YYYY‑MM‑DD), a cache kulcs egészítése ezzel.
+    inputs:
+      - file: lib/services/api_football_service.dart
+      - file: lib/services/odds_cache_wrapper.dart
+      - file: lib/screens/events_screen.dart
+    outputs:
+      - Paraméterezett fixtures kérés a választott dátumra
+      - Cache kulcs: sport|date|country|league
+
+  - name: Ország/Liga dropdown – „Bármelyik” opció
+    description: Az első elem üres (i18n kulcs: filtersAny). A logika a null értéket úgy értelmezi, hogy nincs szűrés az adott dimenzióra.
+    inputs:
+      - file: lib/widgets/events_filter_bar.dart
+      - file: lib/features/filters/events_filter.dart
+    outputs:
+      - "Bármelyik" opció első elemként (HU/EN/DE felirattal)
+      - Null‑safe szűrési logika
+
+  - name: Timeout és retry egységesítés
+    description: A H2H odds kérés max. 1 retry‑t tartalmazzon rövid késleltetéssel; timeout 8–10s.
+    inputs:
+      - file: lib/services/api_football_service.dart
+    outputs:
+      - Egységesített timeout
+      - Retry: legfeljebb 1 próbálkozás
+
+  - name: Unit tesztek – service és szűrés
+    description: Célzott tesztek a regressziók ellen.
+    inputs:
+      - file: test/services/api_football_service_odds_url_test.dart
+      - file: test/services/api_football_service_odds_fallback_test.dart
+      - file: test/services/fixtures_date_filter_test.dart
+    outputs:
+      - Teszt: H2H URL `bet=1`
+      - Teszt: üres H2H → második hívás bet nélkül
+      - Teszt: kiválasztott dátum → fixtures?date=... a service URL‑ben
+
+  - name: Widget teszt – tipkártya hálózat nélkül, ha H2H adott
+    description: Ellenőrizzük, hogy lokális H2H esetén nincs hálózati hívás; hiány esetén megjelenik az 1‑X‑2.
+    inputs:
+      - file: test/widgets/event_bet_card_h2h_render_test.dart
+    outputs:
+      - Két ág lefedve (adat adott / adat hiányzik)
+
+  - name: Lokalizáció – „Bármelyik” opció
+    description: Új i18n kulcsok hozzáadása.
+    inputs:
+      - file: lib/l10n/intl_hu.arb
+      - file: lib/l10n/intl_en.arb
+      - file: lib/l10n/intl_de.arb
+    outputs:
+      - Kulcs: filtersAny (HU/EN/DE)
+
+  - name: Build és ellenőrzés
+    description: Kötelező ellenőrzések futtatása.
+    outputs:
+      - Parancs futtatva: flutter analyze
+      - Parancs futtatva: flutter test
+
+  - name: Rövid fejlesztői jegyzet
+    description: Összefoglaló dokumentum a változásokról a /docs alá.
+    outputs:
+      - Fájl: docs/betting_page_h2h_and_filters_fix.md
