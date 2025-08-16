@@ -7,15 +7,6 @@ class MarketMapping {
   static const String bothTeamsToScore = 'btts';
   static const String asianHandicap = 'ah';
 
-  static const h2hAliases = {
-    'H2H',
-    '1X2',
-    '1x2',
-    'Match Winner',
-    'Winner',
-    'Full Time Result',
-  };
-
   static String? fromApiFootball(String key) {
     switch (key.toLowerCase()) {
       case '1x2':
@@ -46,6 +37,13 @@ class MarketMapping {
   static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
     final resp = json['response'];
     if (resp is! List || resp.isEmpty) return null;
+    const aliases = {
+      'match winner',
+      '1x2',
+      'full time result',
+      'match result',
+      'winner',
+    };
     for (final item in resp) {
       final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
       if (bms is! List) continue;
@@ -55,18 +53,15 @@ class MarketMapping {
         for (final bet in bets) {
           final m = bet as Map<String, dynamic>;
           final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
-          if (!({'match winner', '1x2', 'full time result', 'match result', 'winner'}
-              .contains(raw))) {
-            continue;
-          }
+          if (!aliases.contains(raw)) continue;
           final values = (m['values'] as List?) ?? const [];
           OddsOutcome? home;
           OddsOutcome? draw;
           OddsOutcome? away;
           for (final v in values) {
-            final mv = v as Map<String, dynamic>;
-            final val = (mv['value'] ?? '').toString().toLowerCase();
-            final oddStr = (mv['odd'] ?? '').toString();
+            if (v is! Map) continue;
+            final val = (v['value'] ?? '').toString().toLowerCase();
+            final oddStr = (v['odd'] ?? '').toString();
             final price = double.tryParse(oddStr.replaceAll(',', '.'));
             if (price == null) continue;
             if (val == 'home' || val == '1') {
@@ -78,9 +73,9 @@ class MarketMapping {
             }
           }
           final outs = [
-            if (home != null) home!,
-            if (draw != null) draw!,
-            if (away != null) away!,
+            if (home != null) home,
+            if (draw != null) draw,
+            if (away != null) away,
           ];
           if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
         }

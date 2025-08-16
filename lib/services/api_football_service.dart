@@ -97,7 +97,11 @@ class ApiFootballService {
             awayTeam: e.awayTeam,
           );
           if (bms.isEmpty) {
-            oddsJson = await getOddsForFixtureAll(e.id, season: e.season);
+            oddsJson = await getOddsForFixture(
+              e.id,
+              season: e.season,
+              includeBet1X2: false,
+            );
             bms = _parseH2HBookmakers(
               oddsJson,
               homeTeam: e.homeTeam,
@@ -170,34 +174,21 @@ class ApiFootballService {
   Future<Map<String, dynamic>> getOddsForFixture(
     String fixtureId, {
     int? season,
+    bool includeBet1X2 = true,
   }) async {
     final apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
     final seasonPart = season != null ? '&season=$season' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart&bet=1X2';
-    final res = await _client
-        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
-        .timeout(const Duration(seconds: 10));
-    return jsonDecode(res.body) as Map<String, dynamic>;
-  }
-
-  Future<Map<String, dynamic>> getOddsForFixtureAll(
-    String fixtureId, {
-    int? season,
-  }) async {
-    final apiKey = dotenv.env['API_FOOTBALL_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
-      throw Exception('Missing API_FOOTBALL_KEY');
-    }
-    final seasonPart = season != null ? '&season=$season' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart';
+    final betPart = includeBet1X2 ? '&bet=1X2' : '';
+    final url = '$_baseUrl/odds?fixture=$fixtureId' + seasonPart + betPart;
     final res = await _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return jsonDecode(res.body) as Map<String, dynamic>;
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      return body;
     }
     return {};
   }
@@ -228,11 +219,18 @@ class ApiFootballService {
   }
 
   Future<H2HMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
-    final json1 = await getOddsForFixture(fixtureId.toString(), season: season);
-    var m = MarketMapping.h2hFromApi(json1);
-    if (m != null) return m;
-    // fallback: teljes odds bet nélkül
-    final json2 = await getOddsForFixtureAll(fixtureId.toString(), season: season);
+    final json1 = await getOddsForFixture(
+      fixtureId.toString(),
+      season: season,
+      includeBet1X2: true,
+    );
+    var h2h = MarketMapping.h2hFromApi(json1);
+    if (h2h != null) return h2h;
+    final json2 = await getOddsForFixture(
+      fixtureId.toString(),
+      season: season,
+      includeBet1X2: false,
+    );
     return MarketMapping.h2hFromApi(json2);
   }
 
