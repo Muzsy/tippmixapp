@@ -11,7 +11,7 @@ void main() {
     dotenv.testLoad(fileInput: 'API_FOOTBALL_KEY=dummy');
   });
 
-  test('odds URL tartalmazza a season és bet=1X2 paramétert', () async {
+  test('odds URL tartalmazza a season és bet=1 paramétert', () async {
     late Uri captured;
     final client = MockClient((req) async {
       captured = req.url;
@@ -21,6 +21,6 @@ void main() {
     await s.getOddsForFixture('12345', season: 2024);
     expect(captured.queryParameters['fixture'], '12345');
     expect(captured.queryParameters['season'], '2024');
-    expect(captured.queryParameters['bet'], '1X2');
+    expect(captured.queryParameters['bet'], '1');
   });
 }

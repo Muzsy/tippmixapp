@@ -4,6 +4,7 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/models/odds_outcome.dart';
 import 'package:tippmixapp/models/h2h_market.dart';
+import 'package:tippmixapp/models/odds_market.dart';
 import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/widgets/action_pill.dart';
 import 'package:tippmixapp/widgets/league_pill.dart';
@@ -102,24 +103,8 @@ class EventBetCard extends StatelessWidget {
             _buildKickoffRow(context, event),
             const SizedBox(height: 12),
 
-            FutureBuilder<H2HMarket?>(
-              key: ValueKey('markets-${event.id}'),
-              future: apiService.getH2HForFixture(
-                int.tryParse(event.id) ?? 0,
-                season: event.season,
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _loadingMarkets();
-                }
-                if (snapshot.hasError) {
-                  return _loadingMarkets();
-                }
-                final h2h = snapshot.data;
-                if (h2h != null) {
-                  return _buildH2HButtonsFrom(h2h);
-                }
-                // UI fallback: ha az eseményben már benne volt a H2H, használjuk azt
+            Builder(
+              builder: (context) {
                 final existing = event.bookmakers
                     .expand((b) => b.markets)
                     .where((m) => m.key == 'h2h')
@@ -129,7 +114,26 @@ class EventBetCard extends StatelessWidget {
                     H2HMarket(outcomes: existing.first.outcomes),
                   );
                 }
-                return _noMarkets(loc.events_screen_no_market);
+                return FutureBuilder<OddsMarket?>(
+                  key: ValueKey('markets-${event.id}'),
+                  future: apiService.getH2HForFixture(
+                    int.tryParse(event.id) ?? 0,
+                    season: event.season,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return _loadingMarkets();
+                    }
+                    if (snapshot.hasError) {
+                      return _loadingMarkets();
+                    }
+                    final h2h = snapshot.data;
+                    if (h2h != null) {
+                      return _buildH2HButtonsFrom(h2h);
+                    }
+                    return _noMarkets(loc.events_screen_no_market);
+                  },
+                );
               },
             ),
 
@@ -220,7 +224,7 @@ class EventBetCard extends StatelessWidget {
     );
   }
 
-  Widget _buildH2HButtonsFrom(H2HMarket h2h) {
+  Widget _buildH2HButtonsFrom(OddsMarket h2h) {
     OddsOutcome? home;
     OddsOutcome? draw;
     OddsOutcome? away;

@@ -11,7 +11,7 @@ void main() {
     dotenv.testLoad(fileInput: 'API_FOOTBALL_KEY=dummy');
   });
 
-  test('fallback: üres 1X2 → teljes odds', () async {
+  test('fallback: üres H2H → teljes odds', () async {
     late Uri firstUrl;
     late Uri secondUrl;
     int call = 0;
@@ -51,7 +51,7 @@ void main() {
     final s = ApiFootballService(client);
     final m = await s.getH2HForFixture(42, season: 2025);
     expect(m, isNotNull);
-    expect(firstUrl.queryParameters['bet'], '1X2');
+    expect(firstUrl.queryParameters['bet'], '1');
     expect(secondUrl.queryParameters['bet'], isNull);
   });
 }
