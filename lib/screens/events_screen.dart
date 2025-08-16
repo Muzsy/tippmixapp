@@ -5,6 +5,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart';
 import '../utils/events_filter.dart';
+import '../features/filters/events_filter.dart';
+import '../widgets/events_filter_bar.dart';
 import '../models/tip_model.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/event_bet_card.dart';
@@ -24,6 +26,8 @@ class EventsScreen extends ConsumerStatefulWidget {
 }
 
 class _EventsScreenState extends ConsumerState<EventsScreen> {
+  EventsFilter _filter = const EventsFilter();
+
   @override
   void initState() {
     super.initState();
@@ -52,9 +56,9 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
         } else if (oddsState is OddsApiEmpty) {
           return Center(child: Text(loc.events_screen_no_events));
         } else if (oddsState is OddsApiData) {
-          final events = oddsState.events;
+          final events = filterActiveEvents(oddsState.events);
           final quotaWarn = oddsState.quotaWarning;
-          final filtered = filterActiveEvents(events);
+          final filtered = EventsFilter.apply(events, _filter);
           if (filtered.isEmpty) {
             return Center(child: Text(loc.events_screen_no_events));
           }
@@ -86,6 +90,11 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                     ],
                   ),
                 ),
+              EventsFilterBar(
+                source: events,
+                value: _filter,
+                onChanged: (f) => setState(() => _filter = f),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: filtered.length,

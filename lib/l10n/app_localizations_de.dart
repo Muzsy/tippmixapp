@@ -333,6 +333,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feed_screen_title => 'Feed';
 
   @override
+  String get filtersAny => 'Alle';
+
+  @override
+  String get filtersCountry => 'Land';
+
+  @override
+  String get filtersDate => 'Datum';
+
+  @override
+  String get filtersLeague => 'Liga';
+
+  @override
+  String get filtersTitle => 'Filter';
+
+  @override
+  String get filtersToday => 'Heute';
+
+  @override
   String get follow => 'Folgen';
 
   @override
