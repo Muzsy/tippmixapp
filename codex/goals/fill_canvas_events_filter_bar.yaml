@@ -1,0 +1,273 @@
+meta:
+  canvas: canvases/events_filter_bar.md
+  priority: P2
+
+steps:
+  - name: i18n kulcsok felvétele (HU/EN/DE)
+    description: Új fordítási kulcsok a szűrősávhoz.
+    outputs:
+      - patch_file: lib/l10n/intl_hu.arb
+        patch: |
+          @@
+          {
++           "filters.title": "Szűrők",
++           "filters.date": "Dátum",
++           "filters.country": "Ország",
++           "filters.league": "Liga",
++           "filters.any": "Mind",
++           "filters.today": "Ma"
+          }
+      - patch_file: lib/l10n/intl_en.arb
+        patch: |
+          @@
+          {
++           "filters.title": "Filters",
++           "filters.date": "Date",
++           "filters.country": "Country",
++           "filters.league": "League",
++           "filters.any": "Any",
++           "filters.today": "Today"
+          }
+      - patch_file: lib/l10n/intl_de.arb
+        patch: |
+          @@
+          {
++           "filters.title": "Filter",
++           "filters.date": "Datum",
++           "filters.country": "Land",
++           "filters.league": "Liga",
++           "filters.any": "Alle",
++           "filters.today": "Heute"
+          }
+
+  - name: Modell és util – EventsFilter
+    description: Szűrő állapot és alkalmazó függvény.
+    outputs:
+      - create_file: lib/features/filters/events_filter.dart
+        content: |
+          import 'package:collection/collection.dart';
+          import '../models/odds_event.dart';
+
+          class EventsFilter {
+            final DateTime? date; // only YMD
+            final String? country;
+            final String? league;
+            const EventsFilter({this.date, this.country, this.league});
+
+            EventsFilter copyWith({DateTime? date, String? country, String? league}) =>
+                EventsFilter(date: date ?? this.date, country: country ?? this.country, league: league ?? this.league);
+
+            static List<OddsEvent> apply(List<OddsEvent> source, EventsFilter f) {
+              final ymd = f.date != null ? DateTime(f.date!.year, f.date!.month, f.date!.day) : null;
+              return source.where((e) {
+                final okDate = ymd == null
+                    ? true
+                    : (() {
+                        final d = e.commenceTime.toLocal();
+                        final ed = DateTime(d.year, d.month, d.day);
+                        return ed == ymd;
+                      })();
+                final okCountry = (f.country == null || f.country!.isEmpty) ? true : (e.countryName == f.country);
+                final okLeague = (f.league == null || f.league!.isEmpty) ? true : (e.leagueName == f.league);
+                return okDate && okCountry && okLeague;
+              }).toList();
+            }
+
+            static List<String> countriesOf(List<OddsEvent> source) =>
+                source.map((e) => e.countryName).whereNotNull().toSet().toList()..sort();
+            static List<String> leaguesOf(List<OddsEvent> source, {String? country}) =>
+                source.where((e) => country == null || country.isEmpty || e.countryName == country)
+                      .map((e) => e.leagueName).whereNotNull().toSet().toList()..sort();
+          }
+
+  - name: UI – EventsFilterBar widget
+    description: Dátum gomb + ország és liga legördülők.
+    outputs:
+      - create_file: lib/widgets/events_filter_bar.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+          import '../features/filters/events_filter.dart';
+          import '../models/odds_event.dart';
+
+          typedef EventsFilterChanged = void Function(EventsFilter filter);
+
+          class EventsFilterBar extends StatefulWidget {
+            final List<OddsEvent> source;
+            final EventsFilter value;
+            final EventsFilterChanged onChanged;
+            const EventsFilterBar({super.key, required this.source, required this.value, required this.onChanged});
+            @override
+            State<EventsFilterBar> createState() => _EventsFilterBarState();
+          }
+
+          class _EventsFilterBarState extends State<EventsFilterBar> {
+            late EventsFilter f = widget.value;
+
+            @override
+            Widget build(BuildContext context) {
+              final loc = AppLocalizations.of(context)!;
+              final countries = ['' , ...EventsFilter.countriesOf(widget.source)];
+              final leagues = ['' , ...EventsFilter.leaguesOf(widget.source, country: f.country)];
+
+              return Material(
+                color: Theme.of(context).colorScheme.surface,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        _DatePill(date: f.date, onChanged: (d) { setState(() => f = f.copyWith(date: d)); widget.onChanged(f); }),
+                        const SizedBox(width: 12),
+                        Expanded(child: _Drop(loc.filtersCountry, countries, f.country, (v){ setState(()=>f=f.copyWith(country: v?.isEmpty==true?null:v)); widget.onChanged(f);})),
+                        const SizedBox(width: 12),
+                        Expanded(child: _Drop(loc.filtersLeague, leagues, f.league, (v){ setState(()=>f=f.copyWith(league: v?.isEmpty==true?null:v)); widget.onChanged(f);})),
+                      ]),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+
+          class _DatePill extends StatelessWidget {
+            final DateTime? date;
+            final ValueChanged<DateTime?> onChanged;
+            const _DatePill({required this.date, required this.onChanged});
+            @override
+            Widget build(BuildContext context) {
+              final loc = AppLocalizations.of(context)!;
+              final text = date == null ? loc.filtersToday : _fmt(date!);
+              return OutlinedButton.icon(
+                icon: const Icon(Icons.event),
+                label: Text(text),
+                onPressed: () async {
+                  final now = DateTime.now();
+                  final picked = await showDatePicker(
+                    context: context,
+                    firstDate: now.subtract(const Duration(days: 90)),
+                    lastDate: now.add(const Duration(days: 180)),
+                    initialDate: date ?? now,
+                  );
+                  onChanged(picked);
+                },
+              );
+            }
+            String _fmt(DateTime d){
+              String two(int n)=>n<10?'0$n':'$n';
+              return '${d.year}/${two(d.month)}/${two(d.day)}';
+            }
+          }
+
+          class _Drop extends StatelessWidget {
+            final String label;
+            final List<String> items;
+            final String? value;
+            final ValueChanged<String?> onChanged;
+            const _Drop(this.label, this.items, this.value, this.onChanged);
+            @override
+            Widget build(BuildContext context) {
+              return DropdownButtonFormField<String>(
+                isDense: true,
+                value: value ?? (items.isNotEmpty ? items.first : null),
+                items: items.map((e)=>DropdownMenuItem(value: e, child: Text(e.isEmpty?AppLocalizations.of(context)!.filtersAny:e))).toList(),
+                onChanged: onChanged,
+                decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+              );
+            }
+          }
+
+  - name: Integráció – EventsScreen tetejére a szűrősáv
+    description: Az eseménylista előtt rendereljük, és az `onChanged`-re lokálisan szűrjük a listát.
+    outputs:
+      - patch_file: lib/screens/events_screen.dart
+        patch: |
+          @@
+          class EventsScreenState extends State<EventsScreen> {
+-           late List<OddsEvent> _events = [];
++           late List<OddsEvent> _all = [];
++           late List<OddsEvent> _events = [];
++           EventsFilter _filter = const EventsFilter();
+            @@
+-           void _load() async {
++           void _load() async {
+              final data = await repository.fetchEvents();
+-             setState(()=> _events = data);
++             setState(()=> {_all = data, _events = data});
+            }
+            @@
+            Widget build(BuildContext context) {
+              final loc = AppLocalizations.of(context)!;
+              return Scaffold(
+                appBar: AppBar(title: Text(loc.betsTitle)),
+                body: Column(
+                  children: [
++                   EventsFilterBar(
++                     source: _all,
++                     value: _filter,
++                     onChanged: (f){
++                       setState((){ _filter = f; _events = EventsFilter.apply(_all, f); });
++                     },
++                   ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _events.length,
+                        itemBuilder: (c, i)=> EventBetCard(event: _events[i]),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          }
+
+  - name: Tesztek
+    description: Szűrőlogika és widget alap tesztek.
+    outputs:
+      - create_file: test/features/events_filter_test.dart
+        content: |
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:tippmixapp/features/filters/events_filter.dart';
+          import 'package:tippmixapp/models/odds_event.dart';
+
+          void main() {
+            test('apply filters by date and country/league', (){
+              final now = DateTime.now();
+              final e1 = OddsEvent(id:'1', sportKey:'soccer', sportTitle:'Soccer', homeTeam:'A', awayTeam:'B', countryName:'Hungary', leagueName:'NB I', commenceTime: now, bookmakers: const []);
+              final e2 = OddsEvent(id:'2', sportKey:'soccer', sportTitle:'Soccer', homeTeam:'C', awayTeam:'D', countryName:'England', leagueName:'Premier League', commenceTime: now.add(const Duration(days: 1)), bookmakers: const []);
+              final src = [e1, e2];
+              final f1 = EventsFilter(date: DateTime(now.year, now.month, now.day), country: 'Hungary');
+              final r1 = EventsFilter.apply(src, f1);
+              expect(r1.length, 1);
+              expect(r1.first.id, '1');
+            });
+          }
+      - create_file: test/widgets/events_filter_bar_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:tippmixapp/widgets/events_filter_bar.dart';
+          import 'package:tippmixapp/features/filters/events_filter.dart';
+          import 'package:tippmixapp/models/odds_event.dart';
+
+          void main(){
+            testWidgets('renders and calls onChanged', (tester) async{
+              final src = [
+                OddsEvent(id:'1', sportKey:'soccer', sportTitle:'Soccer', homeTeam:'A', awayTeam:'B', countryName:'Hungary', leagueName:'NB I', commenceTime: DateTime.now(), bookmakers: const []),
+                OddsEvent(id:'2', sportKey:'soccer', sportTitle:'Soccer', homeTeam:'C', awayTeam:'D', countryName:'England', leagueName:'Premier League', commenceTime: DateTime.now(), bookmakers: const []),
+              ];
+              var called = false;
+              await tester.pumpWidget(MaterialApp(home: Scaffold(body: EventsFilterBar(source: src, value: const EventsFilter(), onChanged: (_){called=true;}))));
+              await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+              await tester.pumpAndSettle();
+              expect(called, true);
+            });
+          }
+
+  - name: L10n generálás és ellenőrzések
+    description: Lokalizáció generálása + analyze/test.
+    outputs:
+      - run: flutter gen-l10n
+      - run: flutter analyze
+      - run: flutter test
