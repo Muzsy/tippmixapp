@@ -44,9 +44,17 @@ class ApiFootballService {
         url += '&league=$league';
       }
 
-      final response = await _client
+      Future<http.Response> _attempt() => _client
           .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
           .timeout(const Duration(seconds: 10));
+
+      http.Response response;
+      try {
+        response = await _attempt();
+      } catch (_) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        response = await _attempt();
+      }
 
       if (response.statusCode == 429) {
         return const ApiResponse(
