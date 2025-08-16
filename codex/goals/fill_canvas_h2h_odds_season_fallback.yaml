@@ -1,0 +1,65 @@
+# helye: /codex/goals/canvases/fill_canvas_h2h_odds_season_fallback.yaml
+# kapcsolódó vászon: /canvases/h2h_odds_season_fallback.md
+# Prioritás: P1 – a fogadási élményt blokkoló vizuális hiba
+
+steps:
+  - name: UI – season default + H2H fallback bevezetése
+    description: A H2H megjelenítés stabilizálása az eseménykártyán. Ha az API első hívása üresen jön, a már betöltött eseményből (bookmakers → markets) képezzük a gombokat.
+    outputs:
+      - patch_file:
+          target: lib/widgets/event_bet_card.dart
+          patch: |
+            --- lib/widgets/event_bet_card.dart
+            +++ lib/widgets/event_bet_card.dart
+            @@
+                 FutureBuilder<H2HMarket?>(
+                   key: ValueKey('markets-${event.id}'),
+                   future: apiService.getH2HForFixture(
+                     int.tryParse(event.id) ?? 0,
+            -        season: event.season,
+            +        season: event.season ?? DateTime.now().year,
+                   ),
+                   builder: (context, snapshot) {
+                     if (snapshot.connectionState == ConnectionState.waiting) {
+                       return _loadingMarkets();
+                     }
+                     if (snapshot.hasError) {
+                       return _loadingMarkets();
+                     }
+                     final h2h = snapshot.data;
+            -        if (h2h == null) return _noMarkets(loc.events_screen_no_market);
+            -        return _buildH2HButtonsFrom(h2h);
+            +        if (h2h != null) {
+            +          return _buildH2HButtonsFrom(h2h);
+            +        }
+            +        // UI fallback: ha az eseményben már benne volt a H2H, használjuk azt
+            +        final existing = event.bookmakers
+            +            .expand((b) => b.markets)
+            +            .where((m) => m.key == 'h2h')
+            +            .toList();
+            +        if (existing.isNotEmpty) {
+            +          return _buildH2HButtonsFrom(
+            +            H2HMarket(outcomes: existing.first.outcomes),
+            +          );
+            +        }
+            +        return _noMarkets(loc.events_screen_no_market);
+                   },
+                 ),
+  - name: Ellenőrzés – Flutter analyze
+    description: Statikus ellenőrzés a módosításokra.
+    outputs:
+      - run: flutter pub get
+      - run: flutter analyze
+
+  - name: Ellenőrzés – Unit tesztek
+    description: A meglévő tesztek futtatása, regresszió elkerülése.
+    outputs:
+      - run: flutter test
+
+  - name: Kézi ellenőrzési jegyzet
+    description: Rövid ellenőrzési lépések a fejlesztői környezetben.
+    outputs:
+      - note: |
+          1) Nyisd meg a focimeccsek listáját.
+          2) Ellenőrizd, hogy a H2H gombok látszanak, majd görgess fel-le – nem tűnhetnek el.
+          3) Hálózati lassítás mellett is maradjon megjelenítés (fallback az eseményből).
