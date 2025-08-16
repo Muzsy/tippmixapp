@@ -106,7 +106,7 @@ class EventBetCard extends StatelessWidget {
               key: ValueKey('markets-${event.id}'),
               future: apiService.getH2HForFixture(
                 int.tryParse(event.id) ?? 0,
-                season: event.season,
+                season: event.season ?? DateTime.now().year,
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -116,8 +116,20 @@ class EventBetCard extends StatelessWidget {
                   return _loadingMarkets();
                 }
                 final h2h = snapshot.data;
-                if (h2h == null) return _noMarkets(loc.events_screen_no_market);
-                return _buildH2HButtonsFrom(h2h);
+                if (h2h != null) {
+                  return _buildH2HButtonsFrom(h2h);
+                }
+                // UI fallback: ha az eseményben már benne volt a H2H, használjuk azt
+                final existing = event.bookmakers
+                    .expand((b) => b.markets)
+                    .where((m) => m.key == 'h2h')
+                    .toList();
+                if (existing.isNotEmpty) {
+                  return _buildH2HButtonsFrom(
+                    H2HMarket(outcomes: existing.first.outcomes),
+                  );
+                }
+                return _noMarkets(loc.events_screen_no_market);
               },
             ),
 
