@@ -1,0 +1,131 @@
+# codex/goals/fill_canvas_ticket_settlement_engine.yaml
+name: "Implement modular ticket settlement engine P0 fixes"
+about: "Apply P0 fixes for robust settlement; see canvas: Ticket Settlement Engine – Canvas."
+references:
+  - "/canvases/ticket_settlement_engine.md"
+  - "Repo: tippmixapp-main/"
+steps:
+  - name: "Result provider: add winner + completed(AET,PEN)"
+    description: >
+      A Api-Football provider jelenlegi getScores csak FT-t tekint completed-nek és nem ad vissza winner-t.
+      Egészítsük ki úgy, hogy FT/AET/PEN -> completed, valamint számoljuk ki a winner-t (home/away/draw).
+      A változtatás a jelenlegi TypeScript fájlokra illeszkedik.
+    outputs:
+      - patch: |
+          *** Begin Patch
+          *** Update File: tippmixapp-main/cloud_functions/src/services/ApiFootballResultProvider.ts
+          @@
+                const json: any = await res.json();
+                const item = Array.isArray(json?.response) ? json.response[0] : undefined;
+-               const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
+-               const goalsHome: number | null = item?.goals?.home ?? null;
+-               const goalsAway: number | null = item?.goals?.away ?? null;
++               const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
++               const goalsHome: number | null = item?.goals?.home ?? null;
++               const goalsAway: number | null = item?.goals?.away ?? null;
++               // Treat FT/AET/PEN as completed for settlement
++               const completedShort = ['FT','AET','PEN'];
++               const completed = completedShort.includes(statusShort);
+                results.push({
+                  id: String(id),
+                  sport_key: 'soccer',
+-                 completed: statusShort === 'FT',
++                 completed: completed,
+                  scores:
+                    goalsHome !== null && goalsAway !== null
+                      ? { home: goalsHome, away: goalsAway }
+                      : undefined,
+                  home_team: item?.teams?.home?.name,
+                  away_team: item?.teams?.away?.name,
++                 // Compute winner if completed and scores known
++                 winner:
++                   (completed && goalsHome !== null && goalsAway !== null)
++                     ? (goalsHome > goalsAway
++                         ? item?.teams?.home?.name
++                         : (goalsAway > goalsHome
++                             ? item?.teams?.away?.name
++                             : 'Draw'))
++                     : undefined,
+                });
+          *** End Patch
+
+  - name: "Finalizer: query root tickets instead of collectionGroup"
+    description: >
+      A ticketek a gyökér 'tickets' kollekcióban vannak. A collectionGroup('tickets') nem garantáltan találja meg a gyökérkollekciót.
+      Állítsuk át a lekérdezést gyökér 'tickets' kollekcióra.
+    outputs:
+      - patch: |
+          *** Begin Patch
+          *** Update File: tippmixapp-main/cloud_functions/src/match_finalizer.ts
+          @@
+-  // 1) Collect pending tickets across all users via collectionGroup
+-  // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
+-  const ticketsSnap = await db
+-    .collectionGroup('tickets')
++  // 1) Collect pending tickets in root collection
++  const ticketsSnap = await db
++    .collection('tickets')
+      .where('status', '==', 'pending')
+      .limit(200)
+      .get();
+          *** End Patch
+
+  - name: "Finalizer: correct user reference (userId instead of uid)"
+    description: >
+      A ticket dokumentum mezője 'userId', nem 'uid'. Ezt használjuk a users/{userId} hivatkozás felépítéséhez.
+    outputs:
+      - patch: |
+          *** Begin Patch
+          *** Update File: tippmixapp-main/cloud_functions/src/match_finalizer.ts
+          @@
+-    await finalizeTicketAtomic(
+-      snap.ref,
+-      db.collection('users').doc(snap.get('uid')),
+-      { stake: snap.get('stake'), tips: tipResults },
+-    );
++    await finalizeTicketAtomic(
++      snap.ref,
++      db.collection('users').doc(snap.get('userId')),
++      { stake: snap.get('stake'), tips: tipResults },
++    );
+          *** End Patch
+
+  - name: "Finalizer: align tip mapping (marketKey/odds)"
+    description: >
+      A kliens TipModel mezői: marketKey, outcome, odds. A finalizer jelenleg market és oddsSnapshot néven várja.
+      Állítsuk át a mappinget, hogy a payout helyes szorzóval számoljon.
+    outputs:
+      - patch: |
+          *** Begin Patch
+          *** Update File: tippmixapp-main/cloud_functions/src/match_finalizer.ts
+          @@
+-    const tipResults = tipsRaw.map((t: any) => {
++    const tipResults = tipsRaw.map((t: any) => {
+       const rid = t?.eventId;
+       const pick = (t?.outcome ?? '').trim();
+       const res = rid ? resultMap.get(rid) : undefined;
+       if (!res || !res.completed || !res.winner) {
+-        return { ...t, market: t.market, selection: pick, result: 'pending', oddsSnapshot: t.oddsSnapshot };
++        return { ...t, market: t.marketKey, selection: pick, result: 'pending', oddsSnapshot: t.odds };
+       }
+       const result = res.winner === pick ? 'won' : 'lost';
+-      return { ...t, market: t.market, selection: pick, result, oddsSnapshot: t.oddsSnapshot };
++      return { ...t, market: t.marketKey, selection: pick, result, oddsSnapshot: t.odds };
+     });
+          *** End Patch
+
+  - name: "OPTIONAL (MVP): show payout in UI immediately"
+    description: >
+      Ha a kliens jelenleg a users/{userId}.coins mezőt olvassa, akkor a finalizeTicketAtomic-ban a balance helyett coins frissítése szükséges.
+      Ezt csak akkor futtasd, ha a projektben az 'coins' a látható egyenleg. Ellenkező esetben hagyd ki.
+    outputs:
+      - note: "Open tippmixapp-main/cloud_functions/src/match_finalizer.ts and switch balance->coins in finalizeTicketAtomic if the app reads users.coins."
+
+  - name: "Build & deploy Cloud Functions"
+    description: >
+      Fordítás, tesztek és deploy. A futtatás előtt legyen beállítva az API kulcs (x-apisports-key) a runtime config-ban/env-ben.
+    outputs:
+      - run: "npm --prefix tippmixapp-main/cloud_functions ci"
+      - run: "npm --prefix tippmixapp-main/cloud_functions run build"
+      - run: "npm --prefix tippmixapp-main/cloud_functions test --silent --if-present"
+      - run: "firebase deploy --only functions:match_finalizer --project \"$FIREBASE_PROJECT\" --force"
