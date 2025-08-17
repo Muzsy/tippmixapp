@@ -387,21 +387,21 @@ class AppLocalizationsHu extends AppLocalizations {
       'Hozz létre profilt vagy lépj be, és kezdd el a TippCoin gyűjtést, szelvényeket, ranglistát és jelvényeket.';
 
   @override
+  String get home_guest_login_button => 'Bejelentkezés';
+
+  @override
   String get home_guest_message =>
       'Jelentkezz be vagy regisztrálj a profilod megtekintéséhez';
 
   @override
-  String get home_guest_title => 'Kezdj el játszani!';
+  String get home_guest_register_button => 'Regisztráció';
 
   @override
   String get home_guest_subtitle =>
       'Jelentkezz be vagy regisztrálj, hogy TippCoinnal fogadhass és lásd a profilodat.';
 
   @override
-  String get home_guest_login_button => 'Bejelentkezés';
-
-  @override
-  String get home_guest_register_button => 'Regisztráció';
+  String get home_guest_title => 'Kezdj el játszani!';
 
   @override
   String get home_highlight_coin =>

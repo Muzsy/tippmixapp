@@ -379,20 +379,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create an account or sign in to start collecting TippCoins, place slips, climb leaderboards and earn badges.';
 
   @override
+  String get home_guest_login_button => 'Sign in';
+
+  @override
   String get home_guest_message => 'Log in or register to view your profile';
 
   @override
-  String get home_guest_title => 'Let’s get started!';
+  String get home_guest_register_button => 'Create account';
 
   @override
   String get home_guest_subtitle =>
       'Sign in or create an account to place virtual bets with TippCoin and view your profile.';
 
   @override
-  String get home_guest_login_button => 'Sign in';
-
-  @override
-  String get home_guest_register_button => 'Create account';
+  String get home_guest_title => 'Let’s get started!';
 
   @override
   String get home_highlight_coin => 'TippCoin: Earn extra coins with activity!';

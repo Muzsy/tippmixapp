@@ -1,0 +1,176 @@
+# Codex Canvas Yaml – H2H gombcímkék (odds kiírása) és párosítás javítása
+# Szabály: meglévő funkciók nem sérülhetnek. Csak UI‑szintű változás és teszt.
+
+steps:
+  - name: H2H gombcímkék bővítése odds értékkel
+    description: |
+      Az EventBetCard három ActionPill címkéje jelenleg fix '1'/'X'/'2'.
+      Bővítsük ki a címkéket az odds értékkel (két tizedes) – pl. "1 1.85".
+    inputs:
+      - file: tippmixapp-main/lib/widgets/event_bet_card.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/widgets/event_bet_card.dart
+        content: |
+          --- a/tippmixapp-main/lib/widgets/event_bet_card.dart
+          +++ b/tippmixapp-main/lib/widgets/event_bet_card.dart
+          @@
+           Widget _buildH2HButtons(
+             OddsOutcome? home,
+             OddsOutcome? draw,
+             OddsOutcome? away,
+           ) {
+-            return Row(
++            String _fmt(double v) => v.toStringAsFixed(2);
++            final hLabel = home != null ? '1 ' + _fmt(home.price) : '1 —';
++            final dLabel = draw != null ? 'X ' + _fmt(draw.price) : 'X —';
++            final aLabel = away != null ? '2 ' + _fmt(away.price) : '2 —';
++            return Row(
+               children: [
+                 Expanded(
+                   child: ActionPill(
+-                    label: '1',
++                    label: hLabel,
+                     onTap: home != null ? () => onTapHome?.call(home) : null,
+                   ),
+                 ),
+                 const SizedBox(width: 8),
+                 Expanded(
+                   child: ActionPill(
+-                    label: 'X',
++                    label: dLabel,
+                     onTap: draw != null ? () => onTapDraw?.call(draw) : null,
+                   ),
+                 ),
+                 const SizedBox(width: 8),
+                 Expanded(
+                   child: ActionPill(
+-                    label: '2',
++                    label: aLabel,
+                     onTap: away != null ? () => onTapAway?.call(away) : null,
+                   ),
+                 ),
+               ],
+             );
+           }
+  
+  - name: H2H kimenet‑párosítás javítása (Home/Draw/Away aliasok)
+    description: |
+      Az _buildH2HButtonsFrom jelenleg csapatnévhez illeszti a kimeneteket.
+      Igazítsuk a MarketMapping által adott nevekre: home|1, draw|x, away|2.
+    inputs:
+      - file: tippmixapp-main/lib/widgets/event_bet_card.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/widgets/event_bet_card.dart
+        content: |
+          --- a/tippmixapp-main/lib/widgets/event_bet_card.dart
+          +++ b/tippmixapp-main/lib/widgets/event_bet_card.dart
+          @@
+           Widget _buildH2HButtonsFrom(OddsMarket h2h) {
+             OddsOutcome? home;
+             OddsOutcome? draw;
+             OddsOutcome? away;
+             for (final o in h2h.outcomes) {
+               final name = o.name.toLowerCase();
+-              if (name == event.homeTeam.toLowerCase()) {
+-                home = o;
+-              } else if (name == event.awayTeam.toLowerCase()) {
+-                away = o;
+-              } else if (name == 'draw' || name == 'x') {
+-                draw = o;
+-              }
++              if (name == 'home' || name == '1') {
++                home = o;
++              } else if (name == 'draw' || name == 'x') {
++                draw = o;
++              } else if (name == 'away' || name == '2') {
++                away = o;
++              }
+             }
+             home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
+             away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
+             return _buildH2HButtons(home, draw, away);
+           }
+  
+  - name: Meglévő widget teszt frissítése (új címkék elfogadása)
+    description: |
+      A korábbi teszt a '1'/'X'/'2' fix címkéket keresi. Frissítsük, hogy az odds‑os címkéket fogadja.
+    inputs:
+      - file: tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+        content: |
+          --- a/tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+          +++ b/tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+          @@
+-    expect(find.text('1'), findsOneWidget);
+-    expect(find.text('X'), findsOneWidget);
+-    expect(find.text('2'), findsOneWidget);
++    // Az odds‑os címkék '1 ', 'X ', '2 ' prefixszel jelennek meg
++    expect(find.textContaining('1 '), findsOneWidget);
++    expect(find.textContaining('X '), findsOneWidget);
++    expect(find.textContaining('2 '), findsOneWidget);
+  
+  - name: Új widget teszt – konkrét oddscímkék megjelenítése
+    description: |
+      Mock API‑val ellenőrizzük, hogy a 3 gomb pontosan a várt feliratokat kapja: '1 6.00', 'X 4.33', '2 1.47'.
+    outputs:
+      - type: create
+        file: tippmixapp-main/test/widgets/event_bet_card_h2h_labels_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:tippmixapp/l10n/app_localizations.dart';
+          import 'package:tippmixapp/models/odds_market.dart';
+          import 'package:tippmixapp/models/odds_outcome.dart';
+          import 'package:tippmixapp/models/h2h_market.dart';
+          import 'package:tippmixapp/models/odds_event.dart';
+          import 'package:tippmixapp/services/api_football_service.dart';
+          import 'package:tippmixapp/widgets/event_bet_card.dart';
+          
+          class _FakeApi extends ApiFootballService {
+            @override
+            Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
+              return H2HMarket(outcomes: const [
+                OddsOutcome(name: 'Home', price: 6.00),
+                OddsOutcome(name: 'Draw', price: 4.33),
+                OddsOutcome(name: 'Away', price: 1.47),
+              ]);
+            }
+          }
+          
+          Widget _wrap(Widget child) => MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(body: child),
+          );
+          
+          void main() {
+            testWidgets('H2H gombcímkék kiírják az oddsokat', (tester) async {
+              final event = OddsEvent(
+                id: '123',
+                sportKey: 'soccer',
+                sportTitle: 'Soccer',
+                homeTeam: 'Team A',
+                awayTeam: 'Team B',
+                commenceTime: DateTime.now(),
+                bookmakers: const [],
+              );
+              await tester.pumpWidget(_wrap(EventBetCard(event: event, apiService: _FakeApi())));
+              await tester.pump(const Duration(milliseconds: 50));
+              expect(find.text('1 6.00'), findsOneWidget);
+              expect(find.text('X 4.33'), findsOneWidget);
+              expect(find.text('2 1.47'), findsOneWidget);
+            });
+          }
+  
+  - name: Statikus analízis és tesztfuttatás
+    description: |
+      A változtatások ellenőrzése a projekt szokásos parancsaival.
+    outputs:
+      - type: run
+        command: flutter analyze --no-fatal-infos lib test
+      - type: run
+        command: flutter test

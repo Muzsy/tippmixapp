@@ -44,16 +44,16 @@ class ApiFootballService {
         url += '&league=$league';
       }
 
-      Future<http.Response> _attempt() => _client
+      Future<http.Response> attempt() => _client
           .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
           .timeout(const Duration(seconds: 10));
 
       http.Response response;
       try {
-        response = await _attempt();
+        response = await attempt();
       } catch (_) {
         await Future.delayed(const Duration(milliseconds: 200));
-        response = await _attempt();
+        response = await attempt();
       }
 
       if (response.statusCode == 429) {
@@ -149,16 +149,16 @@ class ApiFootballService {
     final betPart = includeBet1 ? '&bet=1' : '';
     final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
 
-    Future<http.Response> _attempt() => _client
+    Future<http.Response> attempt() => _client
         .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
         .timeout(const Duration(seconds: 10));
 
     http.Response res;
     try {
-      res = await _attempt();
+      res = await attempt();
     } catch (_) {
       await Future.delayed(const Duration(milliseconds: 200));
-      res = await _attempt();
+      res = await attempt();
     }
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final body = jsonDecode(res.body) as Map<String, dynamic>;
