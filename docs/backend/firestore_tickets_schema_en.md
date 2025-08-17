@@ -18,9 +18,9 @@ Collection: `tickets/{ticketId}`
 - leagueId: string
 - teamHomeId: string
 - teamAwayId: string
-- market: string (e.g. `1X2|OU|BTTS|AH`)
-- selection: string (e.g. `HOME|DRAW|AWAY`, `OVER_2_5`)
-- oddsSnapshot: number (required)
+- marketKey: string (e.g. `1X2|OU|BTTS|AH`)
+- outcome: string (e.g. `HOME|DRAW|AWAY`, `OVER_2_5`)
+- odds: number (required)
 - kickoff: timestamp
 
 ## Sample document
@@ -37,9 +37,9 @@ Collection: `tickets/{ticketId}`
       "leagueId": "39",
       "teamHomeId": "40",
       "teamAwayId": "50",
-      "market": "1X2",
-      "selection": "HOME",
-      "oddsSnapshot": 1.85,
+      "marketKey": "1X2",
+      "outcome": "HOME",
+      "odds": 1.85,
       "kickoff": {"_seconds": 1700003600, "_nanoseconds": 0}
     }
   ]

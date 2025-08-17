@@ -27,17 +27,30 @@
        const goalsHome = f.goals?.home ?? null;
        const goalsAway = f.goals?.away ?? null;
        const statusShort = f.fixture?.status?.short || "FT";
+       const completedShort = ['FT', 'AET', 'PEN'];
+       const completed = completedShort.includes(statusShort);
+       const homeName = f?.teams?.home?.name;
+       const awayName = f?.teams?.away?.name;
+       const winner =
+         completed && goalsHome !== null && goalsAway !== null
+           ? goalsHome > goalsAway
+             ? homeName
+             : goalsAway > goalsHome
+               ? awayName
+               : 'Draw'
+           : undefined;
 
        results.push({
          id: String(id),
          sport_key: "soccer",
-         completed: statusShort === "FT",
+         completed,
          scores:
            goalsHome !== null && goalsAway !== null
              ? { home: goalsHome, away: goalsAway }
              : undefined,
-         home_team: f?.teams?.home?.name,
-         away_team: f?.teams?.away?.name,
+         home_team: homeName,
+         away_team: awayName,
+         winner,
        });
      }
      return results;

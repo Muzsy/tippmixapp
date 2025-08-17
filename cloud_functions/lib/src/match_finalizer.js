@@ -37,10 +37,9 @@ const match_finalizer = async (message) => {
     const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
     const { job } = JSON.parse(payloadStr);
     console.log(`[match_finalizer] received job: ${job}`);
-    // 1) Collect pending tickets across all users via collectionGroup
-    // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
+    // 1) Collect pending tickets in root collection
     const ticketsSnap = await firebase_1.db
-        .collectionGroup('tickets')
+        .collection('tickets')
         .where('status', '==', 'pending')
         .limit(200)
         .get();
@@ -72,12 +71,7 @@ const match_finalizer = async (message) => {
     // 3) Map of results with winner name
     const resultMap = new Map();
     scores.forEach(r => {
-        if (!r.completed || !r.scores) {
-            resultMap.set(r.id, { completed: false });
-            return;
-        }
-        const winner = r.scores.home > r.scores.away ? r.home_team : r.away_team;
-        resultMap.set(r.id, { completed: true, winner });
+        resultMap.set(r.id, { completed: r.completed, winner: r.winner });
     });
     // 4) Evaluate each ticket based on its tips and finalize atomically
     for (const snap of ticketsSnap.docs) {
@@ -89,12 +83,12 @@ const match_finalizer = async (message) => {
             const pick = (t?.outcome ?? '').trim();
             const res = rid ? resultMap.get(rid) : undefined;
             if (!res || !res.completed || !res.winner) {
-                return { ...t, market: t.market, selection: pick, result: 'pending', oddsSnapshot: t.oddsSnapshot };
+                return { ...t, market: t.marketKey, selection: pick, result: 'pending', oddsSnapshot: t.odds };
             }
             const result = res.winner === pick ? 'won' : 'lost';
-            return { ...t, market: t.market, selection: pick, result, oddsSnapshot: t.oddsSnapshot };
+            return { ...t, market: t.marketKey, selection: pick, result, oddsSnapshot: t.odds };
         });
-        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(snap.get('uid')), { stake: snap.get('stake'), tips: tipResults });
+        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(snap.get('userId')), { stake: snap.get('stake'), tips: tipResults });
     }
     console.log('[match_finalizer] ticket finalization loop done');
 };

@@ -18,9 +18,9 @@ Kollekció: `tickets/{ticketId}`
 - leagueId: string
 - teamHomeId: string
 - teamAwayId: string
-- market: string (pl. `1X2|OU|BTTS|AH`)
-- selection: string (pl. `HOME|DRAW|AWAY`, `OVER_2_5`)
-- oddsSnapshot: number (kötelező)
+- marketKey: string (pl. `1X2|OU|BTTS|AH`)
+- outcome: string (pl. `HOME|DRAW|AWAY`, `OVER_2_5`)
+- odds: number (kötelező)
 - kickoff: timestamp
 
 ## Példadokumentum
@@ -37,9 +37,9 @@ Kollekció: `tickets/{ticketId}`
       "leagueId": "39",
       "teamHomeId": "40",
       "teamAwayId": "50",
-      "market": "1X2",
-      "selection": "HOME",
-      "oddsSnapshot": 1.85,
+      "marketKey": "1X2",
+      "outcome": "HOME",
+      "odds": 1.85,
       "kickoff": {"_seconds": 1700003600, "_nanoseconds": 0}
     }
   ]
