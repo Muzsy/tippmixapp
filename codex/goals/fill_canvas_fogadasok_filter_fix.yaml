@@ -1,0 +1,176 @@
+steps:
+  - name: EventsScreen – korai return eltávolítása + fetch paraméterek rendezése
+    description: A FilterBar mindig látszódjon; a fetch csak sport+dátum szerint történjen. Ország/liga ne indítson hálózati hívást.
+    outputs:
+      - type: patch
+        file: lib/screens/events_screen.dart
+        diff: |
+          --- a/lib/screens/events_screen.dart
+          +++ b/lib/screens/events_screen.dart
+          @@
+           void initState() {
+               super.initState();
+               // Kick‑off the fetch exactly once after first frame
+               Future.microtask(
+                 () => ref
+                     .read(oddsApiProvider.notifier)
+                     .fetchOdds(
+                       sport: widget.sportKey,
+          -            date: _filter.date,
+          -            country: _filter.country,
+          -            league: _filter.league,
+          +            date: _filter.date,
+                     ),
+               );
+             }
+          @@
+           else if (oddsState is OddsApiData) {
+               final events = filterActiveEvents(oddsState.events);
+               final quotaWarn = oddsState.quotaWarning;
+               final filtered = EventsFilter.apply(events, _filter);
+          -    if (filtered.isEmpty) {
+          -      return Center(child: Text(loc.events_screen_no_events));
+          -    }
+               return Column(
+                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                 children: [
+                   if (quotaWarn) Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                     child: Text(loc.events_screen_quota_warning, style: Theme.of(context).textTheme.bodySmall),
+                   ),
+                   EventsFilterBar(
+                     source: events,
+                     value: _filter,
+                     onChanged: (f) {
+          -            setState(() => _filter = f);
+          -            ref
+          -                .read(oddsApiProvider.notifier)
+          -                .fetchOdds(
+          -                  sport: widget.sportKey,
+          -                  date: f.date,
+          -                  country: f.country,
+          -                  league: f.league,
+          -                );
+          +            final prevDate = _filter.date;
+          +            setState(() => _filter = f);
+          +            if (f.date != prevDate) {
+          +              ref
+          +                  .read(oddsApiProvider.notifier)
+          +                  .fetchOdds(
+          +                    sport: widget.sportKey,
+          +                    date: f.date,
+          +                  );
+          +            }
+                     },
+                   ),
+                   Expanded(
+          -          child: ListView.builder(
+          +          child: filtered.isEmpty
+          +              ? Center(child: Text(loc.events_screen_no_events))
+          +              : ListView.builder(
+                           itemCount: filtered.length,
+                           itemBuilder: (context, index) {
+                             final event = filtered[index];
+                             // ... (változatlan)
+                           },
+                         ),
+                   ),
+                 ],
+               );
+             }
+          @@
+           } else if (oddsState is OddsApiEmpty) {
+          -  return Center(child: Text(loc.events_screen_no_events));
+          +  return Column(
+          +    children: [
+          +      EventsFilterBar(source: const [], value: _filter, onChanged: (f){
+          +        final prevDate = _filter.date;
+          +        setState(() => _filter = f);
+          +        if (f.date != prevDate) {
+          +          ref.read(oddsApiProvider.notifier).fetchOdds(
+          +            sport: widget.sportKey,
+          +            date: f.date,
+          +          );
+          +        }
+          +      }),
+          +      const Expanded(child: Center(child: Text('Nincs esemény'))),
+          +    ],
+          +  );
+             }
+  - name: OddsCacheWrapper – cache kulcs egyszerűsítése
+    description: A hálózati cache kulcsból kikerül az ország és liga komponens.
+    outputs:
+      - type: patch
+        file: lib/services/odds_cache_wrapper.dart
+        diff: |
+          --- a/lib/services/odds_cache_wrapper.dart
+          +++ b/lib/services/odds_cache_wrapper.dart
+          @@
+            String _cacheKey({
+              required String sport,
+              String? country,
+              String? league,
+              DateTime? date,
+            }) {
+              final datePart = date != null
+                  ? date.toIso8601String().split('T').first
+                  : '';
+          -   return 'odds_${sport}|$datePart|${country ?? ''}|${league ?? ''}';
+          +   return 'odds_${sport}|$datePart';
+            }
+  - name: ApiFootballService – ország/liga queryk elhagyása a fixtures hívásból
+    description: A fixtures endpointot csak dátummal kérjük le; az ország/liga szűrés kliensoldalon történik.
+    outputs:
+      - type: patch
+        file: lib/services/api_football_service.dart
+        diff: |
+          --- a/lib/services/api_football_service.dart
+          +++ b/lib/services/api_football_service.dart
+          @@
+            final datePart = (date ?? DateTime.now())
+                .toIso8601String()
+                .split('T')
+                .first;
+            var url = '$_baseUrl/fixtures?date=$datePart';
+          - if (country != null && country.isNotEmpty) {
+          -   url += '&country=$country';
+          - }
+          - if (league != null && league.isNotEmpty) {
+          -   url += '&league=$league';
+          - }
+          + // ország/league paramétereket nem küldünk – kliensoldali szűrés
+  - name: EventsFilterBar – overflow fix (Wrap) és legördülők tágítása
+    description: A Row → Wrap váltás, a felesleges SizedBox-ok és Expanded-ek eltávolítása; a Dropdown `isExpanded: true` beállítása.
+    outputs:
+      - type: patch
+        file: lib/widgets/events_filter_bar.dart
+        diff: |
+          --- a/lib/widgets/events_filter_bar.dart
+          +++ b/lib/widgets/events_filter_bar.dart
+          @@
+-         Row(children: [
++         Wrap(spacing: 12, runSpacing: 8, children: [
+            _DatePill(date: f.date, onChanged: (d) { setState(() => f = f.copyWith(date: d)); widget.onChanged(f); }),
+-           const SizedBox(width: 12),
+-           Expanded(child: _Drop(loc.filtersCountry, countries, f.country, (v){ setState(()=>f = f.copyWith(country: v?.isEmpty==true?null:v)); widget.onChanged(f);})),
+-           const SizedBox(width: 12),
+-           Expanded(child: _Drop(loc.filtersLeague, leagues, f.league, (v){ setState(()=>f = f.copyWith(league: v?.isEmpty==true?null:v)); widget.onChanged(f);})),
++           _Drop(loc.filtersCountry, countries, f.country, (v){ setState(()=>f = f.copyWith(country: v?.isEmpty==true?null:v)); widget.onChanged(f);} ),
++           _Drop(loc.filtersLeague, leagues, f.league, (v){ setState(()=>f = f.copyWith(league: v?.isEmpty==true?null:v)); widget.onChanged(f);} ),
+          ])
+          @@
+           return DropdownButtonFormField<String>(
+             isDense: true,
++            isExpanded: true,
+             value: value ?? (items.isNotEmpty ? items.first : null),
+             items: items.map((e)=>DropdownMenuItem(value: e, child: Text(e.isEmpty?AppLocalizations.of(context)!.filtersAny:e))).toList(),
+             onChanged: onChanged,
+             decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+           );
+  - name: OddsApiProvider – aláírás változatlan, viselkedés dátum‑orientált
+    description: Nincs kódváltoztatás – a fetch paraméterezés változott a hívási helyeken. A lépés ellenőrző build futtatása.
+    outputs:
+      - type: run
+        command: flutter analyze
+      - type: run
+        command: flutter test
