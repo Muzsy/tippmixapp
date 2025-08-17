@@ -7,3 +7,4 @@ depends_on: []
 - A `getH2HForFixture` csak sikeres, nem null eredményt cache-el; üres választ vagy hibát nem tárol.
 - A `getOddsForFixture` 429 státusz esetén 200 ms várakozás után egyszer újrapróbál, és a hibát továbbadja a hívónak.
 - Debug módban `X-Client: tippmixapp-mobile` fejlécet adunk és logoljuk a kimenő `/odds` URL-eket.
+- Az odds végpont URL-je `Uri.replace` segítségével épül, így nincs query összefolyás.
