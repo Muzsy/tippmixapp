@@ -1,0 +1,181 @@
+# See the accompanying canvas for context and rationale:
+# canvases/bookmaker_strategy_id_based.md
+steps:
+  - name: MarketMapping – prefer bookmaker by integer ID (H2H)
+    description: Lásd a canvases/bookmaker_strategy_id_based.md kiegészítő leírást. First try the preferred bookmaker by numeric id; if not found, fall back to the generic scan.
+    outputs:
+      - type: patch
+        file: lib/services/market_mapping.dart
+        diff: |
+          --- a/lib/services/market_mapping.dart
+          +++ b/lib/services/market_mapping.dart
+          @@
+-  static H2HMarket? h2hFromApi(Map<String, dynamic> json, {String? preferredBookmaker}) {
++  static H2HMarket? h2hFromApi(Map<String, dynamic> json, {int? preferredBookmakerId}) {
+       final resp = json['response'];
+       if (resp is! List || resp.isEmpty) return null;
+       const aliases = {
+         'match winner',
+         '1x2',
+         'full time result',
+         'match result',
+         'winner',
+       };
+-      // 1) Ha van preferált bookmaker, először azt vizsgáljuk (név alapján).
+-      if (preferredBookmaker != null && preferredBookmaker.trim().isNotEmpty) {
+-        final target = preferredBookmaker.trim().toLowerCase();
+-        for (final item in resp) {
+-          final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
+-          if (bms is! List) continue;
+-          for (final b in bms) {
+-            final name = ((b is Map<String, dynamic>) ? (b['name'] ?? b['title'] ?? b['key']) : '')
+-                .toString()
+-                .toLowerCase();
+-            if (name != target) continue;
+-            final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
+-            if (bets is! List) continue;
+-            for (final bet in bets) {
+-              final m = bet as Map<String, dynamic>;
+-              final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
+-              if (!aliases.contains(raw)) continue;
+-              final values = (m['values'] as List?) ?? const [];
+-              OddsOutcome? home;
+-              OddsOutcome? draw;
+-              OddsOutcome? away;
+-              for (final v in values) {
+-                final mv = v as Map<String, dynamic>;
+-                final n = (mv['value'] ?? mv['name'] ?? '').toString();
+-                final p = double.tryParse((mv['odd'] ?? mv['price'] ?? '').toString());
+-                if (p == null) continue;
+-                if (n.toLowerCase().contains('home') || n == '1') {
+-                  home = OddsOutcome(name: 'Home', price: p);
+-                } else if (n.toLowerCase().contains('draw') || n == 'x') {
+-                  draw = OddsOutcome(name: 'Draw', price: p);
+-                } else if (n.toLowerCase().contains('away') || n == '2') {
+-                  away = OddsOutcome(name: 'Away', price: p);
+-                }
+-              }
+-              final outs = [if (home != null) home, if (draw != null) draw, if (away != null) away];
+-              if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
+-            }
+-          }
+-        }
+-      }
++      // 1) If a preferred bookmaker ID is provided, try it first (stable integer match)
++      if (preferredBookmakerId != null) {
++        for (final item in resp) {
++          final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
++          if (bms is! List) continue;
++          for (final b in bms) {
++            final bid = (b is Map<String, dynamic>) ? b['id'] : null;
++            if (bid is! int || bid != preferredBookmakerId) continue;
++            final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
++            if (bets is! List) continue;
++            for (final bet in bets) {
++              final m = bet as Map<String, dynamic>;
++              final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
++              if (!aliases.contains(raw)) continue;
++              final values = (m['values'] as List?) ?? const [];
++              OddsOutcome? home;
++              OddsOutcome? draw;
++              OddsOutcome? away;
++              for (final v in values) {
++                final mv = v as Map<String, dynamic>;
++                final n = (mv['value'] ?? mv['name'] ?? '').toString();
++                final p = double.tryParse((mv['odd'] ?? mv['price'] ?? '').toString());
++                if (p == null) continue;
++                if (n.toLowerCase().contains('home') || n == '1') {
++                  home = OddsOutcome(name: 'Home', price: p);
++                } else if (n.toLowerCase().contains('draw') || n == 'x') {
++                  draw = OddsOutcome(name: 'Draw', price: p);
++                } else if (n.toLowerCase().contains('away') || n == '2') {
++                  away = OddsOutcome(name: 'Away', price: p);
++                }
++              }
++              final outs = [if (home != null) home, if (draw != null) draw, if (away != null) away];
++              if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
++            }
++          }
++        }
++      }
+       for (final item in resp) {
+         final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
+         if (bms is! List) continue;
+         for (final b in bms) {
+           final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
+           if (bets is! List) continue;
+           for (final bet in bets) {
+             final m = bet as Map<String, dynamic>;
+             final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
+             if (!aliases.contains(raw)) continue;
+             final values = (m['values'] as List?) ?? const [];
+             OddsOutcome? home;
+             OddsOutcome? draw;
+             OddsOutcome? away;
+             for (final v in values) {
+               final mv = v as Map<String, dynamic>;
+               final n = (mv['value'] ?? mv['name'] ?? '').toString();
+               final p = double.tryParse((mv['odd'] ?? mv['price'] ?? '').toString());
+               if (p == null) continue;
+               if (n.toLowerCase().contains('home') || n == '1') {
+                 home = OddsOutcome(name: 'Home', price: p);
+               } else if (n.toLowerCase().contains('draw') || n == 'x') {
+                 draw = OddsOutcome(name: 'Draw', price: p);
+               } else if (n.toLowerCase().contains('away') || n == '2') {
+                 away = OddsOutcome(name: 'Away', price: p);
+               }
+             }
+             final outs = [if (home != null) home, if (draw != null) draw, if (away != null) away];
+             if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
+           }
+         }
+       }
+       return null;
+     }
+  - name: ApiFootballService – defaultBookmakerId és átadás az ID-val
+    description: Lásd a canvases/bookmaker_strategy_id_based.md kiegészítő leírást. Introduce defaultBookmakerId = 8 and pass it into mapping calls.
+    outputs:
+      - type: patch
+        file: lib/services/api_football_service.dart
+        diff: |
+          --- a/lib/services/api_football_service.dart
+          +++ b/lib/services/api_football_service.dart
+          @@
+   class ApiFootballService {
+     static const String _baseUrl = 'https://v3.football.api-sports.io';
+-    static const String defaultBookmakerKey = 'Bet365';
++    static const int defaultBookmakerId = 8; // Bet365
+          @@
+-    var h2h = MarketMapping.h2hFromApi(json1, preferredBookmaker: defaultBookmakerKey);
++    var h2h = MarketMapping.h2hFromApi(json1, preferredBookmakerId: defaultBookmakerId);
+     if (h2h != null) return h2h;
+          @@
+-    h2h = MarketMapping.h2hFromApi(json2, preferredBookmaker: defaultBookmakerKey);
++    h2h = MarketMapping.h2hFromApi(json2, preferredBookmakerId: defaultBookmakerId);
+     return h2h;
+  - name: EventBetCard – integer bookmakerId rögzítése a tiphez
+    description: Lásd a canvases/bookmaker_strategy_id_based.md kiegészítő leírást. Replace name-based key with integer bookmakerId when creating the TipModel.
+    outputs:
+      - type: patch
+        file: lib/widgets/event_bet_card.dart
+        diff: |
+          --- a/lib/widgets/event_bet_card.dart
+          +++ b/lib/widgets/event_bet_card.dart
+          @@
+-                    // Preferált bookmaker – a szolgáltatásban definiálva
+-                    final preferredBookmakerKey = apiService.defaultBookmakerKey;
++                    // Preferred bookmaker ID – defined in the service
++                    final preferredBookmakerId = apiService.defaultBookmakerId;
+           @@
+-                          bookmaker: preferredBookmakerKey,
++                          bookmakerId: preferredBookmakerId,
+           @@
+-                          bookmaker: preferredBookmakerKey,
++                          bookmakerId: preferredBookmakerId,
+  - name: Build & tests
+    description: Statikus analízis és tesztek futtatása a változtatások után (lásd a kapcsolódó canvas).
+    outputs:
+      - type: run
+        command: flutter analyze
+      - type: run
+        command: flutter test
