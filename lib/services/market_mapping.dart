@@ -37,6 +37,8 @@ class MarketMapping {
   static H2HMarket? h2hFromApi(
     Map<String, dynamic> json, {
     int? preferredBookmakerId,
+    String? homeName,
+    String? awayName,
   }) {
     final resp = json['response'];
     if (resp is! List || resp.isEmpty) return null;
@@ -46,6 +48,7 @@ class MarketMapping {
       'full time result',
       'match result',
       'winner',
+      'home/away',
     };
     // 1) If a preferred bookmaker ID is provided, try that first
     if (preferredBookmakerId != null) {
@@ -62,20 +65,31 @@ class MarketMapping {
             final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
             if (!aliases.contains(raw)) continue;
             final values = (m['values'] as List?) ?? const [];
+            final _n = (String s) => s
+                .toLowerCase()
+                .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
+                .replaceAll(' fc', '')
+                .trim();
+            final hn = homeName != null ? _n(homeName) : null;
+            final an = awayName != null ? _n(awayName) : null;
             OddsOutcome? home;
             OddsOutcome? draw;
             OddsOutcome? away;
             for (final v in values) {
               if (v is! Map) continue;
-              final val = (v['value'] ?? '').toString().toLowerCase();
+              final val0 = (v['value'] ?? '').toString();
+              final val = val0.toLowerCase();
+              final valn = _n(val0);
               final oddStr = (v['odd'] ?? '').toString();
               final price = double.tryParse(oddStr.replaceAll(',', '.'));
               if (price == null) continue;
-              if (val == 'home' || val == '1') {
+              if (val == 'home' || val == '1' || (hn != null && valn == hn)) {
                 home = OddsOutcome(name: 'Home', price: price);
               } else if (val == 'draw' || val == 'x') {
                 draw = OddsOutcome(name: 'Draw', price: price);
-              } else if (val == 'away' || val == '2') {
+              } else if (val == 'away' ||
+                  val == '2' ||
+                  (an != null && valn == an)) {
                 away = OddsOutcome(name: 'Away', price: price);
               }
             }
@@ -101,20 +115,31 @@ class MarketMapping {
           final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
           if (!aliases.contains(raw)) continue;
           final values = (m['values'] as List?) ?? const [];
+          final _n = (String s) => s
+              .toLowerCase()
+              .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
+              .replaceAll(' fc', '')
+              .trim();
+          final hn = homeName != null ? _n(homeName) : null;
+          final an = awayName != null ? _n(awayName) : null;
           OddsOutcome? home;
           OddsOutcome? draw;
           OddsOutcome? away;
           for (final v in values) {
             if (v is! Map) continue;
-            final val = (v['value'] ?? '').toString().toLowerCase();
+            final val0 = (v['value'] ?? '').toString();
+            final val = val0.toLowerCase();
+            final valn = _n(val0);
             final oddStr = (v['odd'] ?? '').toString();
             final price = double.tryParse(oddStr.replaceAll(',', '.'));
             if (price == null) continue;
-            if (val == 'home' || val == '1') {
+            if (val == 'home' || val == '1' || (hn != null && valn == hn)) {
               home = OddsOutcome(name: 'Home', price: price);
             } else if (val == 'draw' || val == 'x') {
               draw = OddsOutcome(name: 'Draw', price: price);
-            } else if (val == 'away' || val == '2') {
+            } else if (val == 'away' ||
+                val == '2' ||
+                (an != null && valn == an)) {
               away = OddsOutcome(name: 'Away', price: price);
             }
           }

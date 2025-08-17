@@ -21,8 +21,12 @@ Widget _wrap(Widget child) => MaterialApp(
 
 class _NullApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
-      null;
+  Future<H2HMarket?> getH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) async => null;
 }
 
 void main() {

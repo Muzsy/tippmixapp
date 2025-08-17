@@ -119,6 +119,8 @@ class EventBetCard extends StatelessWidget {
                   future: apiService.getH2HForFixture(
                     int.tryParse(event.id) ?? 0,
                     season: event.season,
+                    homeName: event.homeTeam,
+                    awayName: event.awayTeam,
                   ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

@@ -95,3 +95,4 @@
 | 2025-08-17   | @codex-bot      | TOC refreshed after bookmaker strategy ID-based docs update                   |
 | 2025-08-17   | @codex-bot      | TOC refreshed after betting H2H reliability fix docs update                   |
 | 2025-08-17   | @codex-bot      | TOC refreshed after odds URI and cache fix docs update                         |
+| 2025-08-17   | @codex-bot      | TOC refreshed after H2H team-name & URI fix docs update                        |
