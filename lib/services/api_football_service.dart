@@ -141,20 +141,24 @@ class ApiFootballService {
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('Missing API_FOOTBALL_KEY');
     }
-    final seasonPart = season != null ? '&season=$season' : '';
-    final betPart = includeBet1 ? '&bet=1' : '';
-    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
+    // Uri-alapú query összerakás – elkerüli a 'season=2025bet=1' összefolyást
+    final qp = <String, String>{
+      'fixture': fixtureId,
+      if (season != null) 'season': '$season',
+      if (includeBet1) 'bet': '1',
+    };
+    final uri = Uri.parse('$_baseUrl/odds').replace(queryParameters: qp);
 
-    final _headers = <String, String>{'x-apisports-key': apiKey};
+    final headers = <String, String>{'x-apisports-key': apiKey};
     assert(() {
-      _headers['X-Client'] = 'tippmixapp-mobile';
+      headers['X-Client'] = 'tippmixapp-mobile';
       // ignore: avoid_print
-      print('[odds] ' + url);
+      print('[odds] GET $uri');
       return true;
     }());
-    Future<http.Response> attempt() => _client
-        .get(Uri.parse(url), headers: _headers)
-        .timeout(const Duration(seconds: 10));
+
+    Future<http.Response> attempt() =>
+        _client.get(uri, headers: headers).timeout(const Duration(seconds: 10));
 
     http.Response res;
     try {
@@ -163,8 +167,8 @@ class ApiFootballService {
       await Future.delayed(const Duration(milliseconds: 200));
       res = await attempt();
     }
+    // 429 eset – rövid backoff és 1× retry
     if (res.statusCode == 429) {
-      // Rate limit: rövid backoff és 1× retry
       await Future.delayed(const Duration(milliseconds: 200));
       res = await attempt();
     }
@@ -182,23 +186,25 @@ class ApiFootballService {
     if (cached != null && now.isBefore(cached.until)) {
       return cached.f;
     }
-    final future = _fetchH2HForFixture(fixtureId, season: season)
-        .then((value) {
-      if (value != null) {
-        // Csak sikeres eredményt cache-eljünk
-        _h2hCache[fixtureId] = _CachedH2H(
-          Future<OddsMarket?>.value(value),
-          DateTime.now().add(_h2hTtl),
-        );
-      } else {
-        // Üres eredményt ne tartsunk 60 mp-ig
+    final future = _fetchH2HForFixture(fixtureId, season: season).then(
+      (value) {
+        if (value != null) {
+          // Csak sikeres eredményt cache-eljünk
+          _h2hCache[fixtureId] = _CachedH2H(
+            Future<OddsMarket?>.value(value),
+            DateTime.now().add(_h2hTtl),
+          );
+        } else {
+          // Üres eredményt ne tartsunk 60 mp-ig
+          _h2hCache.remove(fixtureId);
+        }
+        return value;
+      },
+      onError: (e) {
         _h2hCache.remove(fixtureId);
-      }
-      return value;
-    }, onError: (e) {
-      _h2hCache.remove(fixtureId);
-      throw e;
-    });
+        throw e;
+      },
+    );
     return future;
   }
 
