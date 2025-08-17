@@ -1,0 +1,183 @@
+# Codex cél: Fogadási oldal – apró finomítások (filter reset, gombstílus egységesítés, kezdési idő/ visszaszámláló csere, „frissítve” igazítás)
+# Kiegészítő információ tartalma (vászon): canvases/betting_page_polish.md
+# Projektgyökér: tippmixapp
+
+steps:
+  - name: Szűrők alaphelyzetbe állítása dátum- és országváltáskor
+    description: |
+      A szűrősor logikáját úgy módosítjuk, hogy
+      • dátum váltásakor az ország és a liga is "mind" (null) állapotba kerüljön,
+      • ország váltásakor a liga "mind" (null) állapotba kerüljön.
+      Ezzel elkerüljük a nem létező liga miatt megjelenő piros hibaüzenetet.
+    outputs:
+      - path: lib/widgets/events_filter_bar.dart
+        diff: |
+          --- lib/widgets/events_filter_bar.dart
+          +++ lib/widgets/events_filter_bar.dart
+          @@
+           import 'package:tippmixapp/features/filters/events_filter.dart';
+           import 'package:tippmixapp/models/odds_event.dart';
+          +import 'package:tippmixapp/widgets/action_pill.dart';
+          @@
+-                _DatePill(
+-                  date: f.date,
+-                  onChanged: (d) {
+-                    setState(() => f = f.copyWith(date: d));
+-                    widget.onChanged(f);
+-                  },
+-                ),
++                _DatePill(
++                  date: f.date,
++                  onChanged: (d) {
++                    // Dátum váltáskor mind az ország, mind a liga nullázása
++                    setState(() => f = f.copyWith(date: d, country: null, league: null));
++                    widget.onChanged(f);
++                  },
++                ),
+          @@
+-                _Drop(loc.filtersCountry, countries, f.country, (v) {
+-                  setState(
+-                    () =>
+-                        f = f.copyWith(country: v?.isEmpty == true ? null : v),
+-                  );
+-                  widget.onChanged(f);
+-                }),
++                _Drop(loc.filtersCountry, countries, f.country, (v) {
++                  // Ország váltásakor a liga nullázása
++                  setState(() => f = f.copyWith(
++                    country: v?.isEmpty == true ? null : v,
++                    league: null,
++                  ));
++                  widget.onChanged(f);
++                }),
+
+  - name: Szűrősor gomb stílus egységesítése (ActionPill használata)
+    description: |
+      A dátumválasztó OutlinedButton helyett az appban használt ActionPill komponenst alkalmazzuk,
+      hogy a szűrősáv gombja vizuálisan egyezzen a tippkártyák gombjaival.
+    outputs:
+      - path: lib/widgets/events_filter_bar.dart
+        diff: |
+          --- lib/widgets/events_filter_bar.dart
+          +++ lib/widgets/events_filter_bar.dart
+          @@
+-class _DatePill extends StatelessWidget {
+-  final DateTime? date;
+-  final ValueChanged<DateTime?> onChanged;
+-  const _DatePill({required this.date, required this.onChanged});
+-  @override
+-  Widget build(BuildContext context) {
+-    final loc = AppLocalizations.of(context)!;
+-    final text = date == null ? loc.filtersToday : _fmt(date!);
+-    return OutlinedButton.icon(
+-      icon: const Icon(Icons.event),
+-      label: Text(text),
+-      onPressed: () async {
+-        final now = DateTime.now();
+-        final picked = await showDatePicker(
+-          context: context,
+-          firstDate: now.subtract(const Duration(days: 90)),
+-          lastDate: now.add(const Duration(days: 180)),
+-          initialDate: date ?? now,
+-        );
+-        onChanged(picked);
+-      },
+-    );
+-  }
++class _DatePill extends StatelessWidget {
++  final DateTime? date;
++  final ValueChanged<DateTime?> onChanged;
++  const _DatePill({required this.date, required this.onChanged});
++  @override
++  Widget build(BuildContext context) {
++    final loc = AppLocalizations.of(context)!;
++    final text = date == null ? loc.filtersToday : _fmt(date!);
++    return ActionPill(
++      icon: Icons.event,
++      label: text,
++      onTap: () async {
++        final now = DateTime.now();
++        final picked = await showDatePicker(
++          context: context,
++          firstDate: now.subtract(const Duration(days: 90)),
++          lastDate: now.add(const Duration(days: 180)),
++          initialDate: date ?? now,
++        );
++        onChanged(picked);
++      },
++    );
++  }
+          @@
+           String _fmt(DateTime d) {
+             String two(int n) => n < 10 ? '0$n' : '$n';
+             return '${d.year}/${two(d.month)}/${two(d.day)}';
+           }
+
+  - name: Kezdési idő és visszaszámláló felcserélése a tippkártyán
+    description: |
+      A tippkártyán a kezdési idő legyen bal oldalon, a visszaszámláló jobb oldalon.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+-    return Row(
+-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+-      children: [
+-        _Countdown(to: e.commenceTime),
+-        Text(
+-          l.starts_at(_formatYMDHM(e.commenceTime)),
+-          textAlign: TextAlign.right,
+-          style: Theme.of(context).textTheme.bodySmall,
+-        ),
+-      ],
+-    );
++    return Row(
++      mainAxisAlignment: MainAxisAlignment.spaceBetween,
++      children: [
++        Text(
++          l.starts_at(_formatYMDHM(e.commenceTime)),
++          textAlign: TextAlign.left,
++          style: Theme.of(context).textTheme.bodySmall,
++        ),
++        _Countdown(to: e.commenceTime),
++      ],
++    );
+
+  - name: „Frissítve” sor balra igazítása a tippkártyán
+    description: |
+      A kártya alján lévő „frissítve” (updated_time_ago) szöveg igazítása bal oldalra.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+-            Align(
+-              alignment: Alignment.centerRight,
++            Align(
++              alignment: Alignment.centerLeft,
+               child: Text(
+                 loc.updated_time_ago(_formatYMDHM(ra)),
+                 style: Theme.of(context).textTheme.labelSmall,
+               ),
+             ),
+
+  - name: Ellenőrzés (analyze & test)
+    description: |
+      Ellenőrizzük, hogy a módosítások megfelelnek-e a Flutter analízisnek és a teszteknek.
+      (Ha szükséges, futtasd: flutter analyze; flutter test)
+    outputs:
+      - path: .codex/notes/betting_page_polish_checklist.md
+        diff: |
+          --- /dev/null
+          +++ .codex/notes/betting_page_polish_checklist.md
+          @@
+          +# Betting Page Polish – ellenőrzési jegyzet
+          +* [ ] Szűrők resetje: dátum → (ország, liga) null; ország → liga null
+          +* [ ] Dátum gomb ActionPill stílusú
+          +* [ ] Kezdési idő balra, visszaszámláló jobbra
+          +* [ ] „Frissítve” balra igazítva
+          +* [ ] flutter analyze hibamentes
+          +* [ ] flutter test zöld
