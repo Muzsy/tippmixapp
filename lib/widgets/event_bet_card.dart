@@ -198,25 +198,29 @@ class EventBetCard extends StatelessWidget {
     OddsOutcome? draw,
     OddsOutcome? away,
   ) {
+    String fmt(double v) => v.toStringAsFixed(2);
+    final hLabel = home != null ? '1 ${fmt(home.price)}' : '1 —';
+    final dLabel = draw != null ? 'X ${fmt(draw.price)}' : 'X —';
+    final aLabel = away != null ? '2 ${fmt(away.price)}' : '2 —';
     return Row(
       children: [
         Expanded(
           child: ActionPill(
-            label: '1',
+            label: hLabel,
             onTap: home != null ? () => onTapHome?.call(home) : null,
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: ActionPill(
-            label: 'X',
+            label: dLabel,
             onTap: draw != null ? () => onTapDraw?.call(draw) : null,
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: ActionPill(
-            label: '2',
+            label: aLabel,
             onTap: away != null ? () => onTapAway?.call(away) : null,
           ),
         ),
@@ -230,17 +234,16 @@ class EventBetCard extends StatelessWidget {
     OddsOutcome? away;
     for (final o in h2h.outcomes) {
       final name = o.name.toLowerCase();
-      if (name == event.homeTeam.toLowerCase()) {
+      if (name == 'home' || name == '1') {
         home = o;
-      } else if (name == event.awayTeam.toLowerCase()) {
-        away = o;
       } else if (name == 'draw' || name == 'x') {
         draw = o;
+      } else if (name == 'away' || name == '2') {
+        away = o;
       }
     }
     home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
     away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
-    draw ??= h2h.outcomes.length == 3 ? h2h.outcomes[1] : null;
     return _buildH2HButtons(home, draw, away);
   }
 
