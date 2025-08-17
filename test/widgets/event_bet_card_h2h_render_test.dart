@@ -60,9 +60,10 @@ void main() {
     await tester.pumpWidget(_wrap(EventBetCard(event: event, apiService: api)));
     await tester.pump();
     expect(api.calls, 0);
-    expect(find.text('1'), findsOneWidget);
-    expect(find.text('X'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    // Az odds‑os címkék '1 ', 'X ', '2 ' prefixszel jelennek meg
+    expect(find.textContaining('1 '), findsOneWidget);
+    expect(find.textContaining('X '), findsOneWidget);
+    expect(find.textContaining('2 '), findsOneWidget);
   });
 
   testWidgets('hiányzó H2H esetén hálózatról tölt', (tester) async {
@@ -80,8 +81,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(api.calls, 1);
-    expect(find.text('1'), findsOneWidget);
-    expect(find.text('X'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    expect(find.textContaining('1 '), findsOneWidget);
+    expect(find.textContaining('X '), findsOneWidget);
+    expect(find.textContaining('2 '), findsOneWidget);
   });
 }

@@ -91,3 +91,4 @@
 | 2025-08-25   | @codex-bot      | TOC refreshed after H2H runtime repo fix docs update                           |
 | 2025-08-26   | @codex-bot      | TOC refreshed after events filter bar docs update                             |
 | 2025-08-30   | @codex-bot      | TOC refreshed after betting fixtures retry docs update                        |
+| 2025-08-17   | @codex-bot      | TOC refreshed after betting H2H UI fix docs update                            |
