@@ -145,14 +145,26 @@ class ApiFootballService {
     final betPart = includeBet1 ? '&bet=1' : '';
     final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
 
+    final _headers = <String, String>{'x-apisports-key': apiKey};
+    assert(() {
+      _headers['X-Client'] = 'tippmixapp-mobile';
+      // ignore: avoid_print
+      print('[odds] ' + url);
+      return true;
+    }());
     Future<http.Response> attempt() => _client
-        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+        .get(Uri.parse(url), headers: _headers)
         .timeout(const Duration(seconds: 10));
 
     http.Response res;
     try {
       res = await attempt();
     } catch (_) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      res = await attempt();
+    }
+    if (res.statusCode == 429) {
+      // Rate limit: rövid backoff és 1× retry
       await Future.delayed(const Duration(milliseconds: 200));
       res = await attempt();
     }
@@ -170,8 +182,23 @@ class ApiFootballService {
     if (cached != null && now.isBefore(cached.until)) {
       return cached.f;
     }
-    final future = _fetchH2HForFixture(fixtureId, season: season);
-    _h2hCache[fixtureId] = _CachedH2H(future, now.add(_h2hTtl));
+    final future = _fetchH2HForFixture(fixtureId, season: season)
+        .then((value) {
+      if (value != null) {
+        // Csak sikeres eredményt cache-eljünk
+        _h2hCache[fixtureId] = _CachedH2H(
+          Future<OddsMarket?>.value(value),
+          DateTime.now().add(_h2hTtl),
+        );
+      } else {
+        // Üres eredményt ne tartsunk 60 mp-ig
+        _h2hCache.remove(fixtureId);
+      }
+      return value;
+    }, onError: (e) {
+      _h2hCache.remove(fixtureId);
+      throw e;
+    });
     return future;
   }
 
