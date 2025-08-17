@@ -1,0 +1,212 @@
+# Codex Canvas Yaml – H2H odds megjelenítés javítás
+# A diffek a MOST feltöltött tippmixapp.zip-ben lévő kódra vannak illesztve.
+
+steps:
+  - name: Service – /v3/odds Uri query, 429 retry, H2H cache csak sikeresre, name‑forward
+    inputs:
+      - file: tippmixapp-main/lib/services/api_football_service.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/api_football_service.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/api_football_service.dart
+          +++ b/tippmixapp-main/lib/services/api_football_service.dart
+          @@ -137,12 +137,23 @@
+               if (apiKey == null || apiKey.isEmpty) {
+                 throw Exception('Missing API_FOOTBALL_KEY');
+               }
+          -    final seasonPart = season != null ? '&season=$season' : '';
+          -    final betPart = includeBet1 ? '&bet=1' : '';
+          -    final url = '$_baseUrl/odds?fixture=$fixtureId$seasonPart$betPart';
+          +    final qp = <String, String>{
+          +      'fixture': fixtureId,
+          +      if (season != null) 'season': '$season',
+          +      if (includeBet1) 'bet': '1',
+          +    };
+          +    final uri = Uri.parse('$_baseUrl/odds').replace(queryParameters: qp);
+          +
+          +    final headers = <String, String>{'x-apisports-key': apiKey};
+          +    assert(() {
+          +      headers['X-Client'] = 'tippmixapp-mobile';
+          +      // ignore: avoid_print
+          +      print('[odds] GET ' + uri.toString());
+          +      return true;
+          +    }());
+          
+               Future<http.Response> _attempt() => _client
+          -        .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
+          +        .get(uri, headers: headers)
+                   .timeout(const Duration(seconds: 10));
+          
+               http.Response res;
+               try {
+                 res = await _attempt();
+               } catch (_) {
+                 await Future.delayed(const Duration(milliseconds: 200));
+                 res = await _attempt();
+               }
+          -    if (res.statusCode >= 200 && res.statusCode < 300) {
+          +    // 429: rövid backoff és 1× retry
+          +    if (res.statusCode == 429) {
+          +      await Future.delayed(const Duration(milliseconds: 200));
+          +      res = await _attempt();
+          +    }
+          +if (res.statusCode >= 200 && res.statusCode < 300) {
+                 final body = jsonDecode(res.body) as Map<String, dynamic>;
+                 return body;
+               }
+               return {};
+             }
+          @@ -162,18 +173,33 @@
+          -  Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) {
+          +  Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season, String? homeName, String? awayName}) {
+               if (fixtureId <= 0) return Future.value(null);
+               final now = DateTime.now();
+               final cached = _h2hCache[fixtureId];
+               if (cached != null && now.isBefore(cached.until)) {
+                 return cached.f;
+               }
+          -    final future = _fetchH2HForFixture(fixtureId, season: season);
+          -    _h2hCache[fixtureId] = _CachedH2H(future, now.add(_h2hTtl));
+          -    return future;
+          +    final future = _fetchH2HForFixture(
+          +      fixtureId,
+          +      season: season,
+          +      homeName: homeName,
+          +      awayName: awayName,
+          +    ).then((value) {
+          +      if (value != null) {
+          +        _h2hCache[fixtureId] = _CachedH2H(
+          +          Future<OddsMarket?>.value(value),
+          +          DateTime.now().add(_h2hTtl),
+          +        );
+          +      } else {
+          +        _h2hCache.remove(fixtureId);
+          +      }
+          +      return value;
+          +    }, onError: (e) {
+          +      _h2hCache.remove(fixtureId);
+          +      throw e;
+          +    });
+          +    return future;
+             }
+          
+          -  Future<OddsMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
+          +  Future<OddsMarket?> _fetchH2HForFixture(int fixtureId, {int? season, String? homeName, String? awayName}) async {
+               final json1 = await getOddsForFixture(
+                 fixtureId.toString(),
+                 season: season,
+                 includeBet1: true,
+               );
+          -    var h2h = MarketMapping.h2hFromApi(json1);
+          +    var h2h = MarketMapping.h2hFromApi(json1, homeName: homeName, awayName: awayName);
+               if (h2h != null) return h2h;
+               final json2 = await getOddsForFixture(
+                 fixtureId.toString(),
+                 season: season,
+                 includeBet1: false,
+               );
+          -    return MarketMapping.h2hFromApi(json2);
+          +    return MarketMapping.h2hFromApi(json2, homeName: homeName, awayName: awayName);
+             }
+  - name: MarketMapping – H2H felismerés csapatnévvel + alias bővítés
+    inputs:
+      - file: tippmixapp-main/lib/services/market_mapping.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/market_mapping.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/market_mapping.dart
+          +++ b/tippmixapp-main/lib/services/market_mapping.dart
+          @@ -34,7 +34,7 @@
+           
+             /// Parse API‑Football odds válaszból H2H (1X2) piaccá.
+             /// Vár forma: {response → bookmakers → bets → values}
+          -  static H2HMarket? h2hFromApi(Map<String, dynamic> json) {
+          +  static H2HMarket? h2hFromApi(Map<String, dynamic> json, {String? homeName, String? awayName}) {
+               final resp = json['response'];
+               if (resp is! List || resp.isEmpty) return null;
+               const aliases = {
+          @@ -43,6 +43,7 @@
+                 'full time result',
+                 'match result',
+                 'winner',
+          +      'home/away',
+               };
+               for (final item in resp) {
+                 final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
+                 if (bms is! List) continue;
+                 for (final b in bms) {
+                   final bets = (b is Map<String, dynamic>) ? b['bets'] : null;
+                   if (bets is! List) continue;
+                   for (final bet in bets) {
+                     final m = bet as Map<String, dynamic>;
+                     final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
+                     if (!aliases.contains(raw)) continue;
+                     final values = (m['values'] as List?) ?? const [];
+          +          final _n = (String s) => s
+          +              .toLowerCase()
+          +              .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
+          +              .replaceAll(' fc', '')
+          +              .trim();
+          +          final hn = homeName != null ? _n(homeName) : null;
+          +          final an = awayName != null ? _n(awayName) : null;
+                     OddsOutcome? home;
+                     OddsOutcome? draw;
+                     OddsOutcome? away;
+          -          for (final v in values) {
+          +          for (final v in values) {
+                       if (v is! Map) continue;
+          -            final val = (v['value'] ?? '').toString().toLowerCase();
+          +            final val0 = (v['value'] ?? '').toString();
+          +            final val = val0.toLowerCase();
+          +            final valn = _n(val0);
+                       final oddStr = (v['odd'] ?? '').toString();
+                       final price = double.tryParse(oddStr.replaceAll(',', '.'));
+                       if (price == null) continue;
+          -            if (val == 'home' || val == '1') {
+          +            if (val == 'home' || val == '1' || (hn != null && valn == hn)) {
+                         home = OddsOutcome(name: 'Home', price: price);
+                       } else if (val == 'draw' || val == 'x') {
+                         draw = OddsOutcome(name: 'Draw', price: price);
+          -            } else if (val == 'away' || val == '2') {
+          +            } else if (val == 'away' || val == '2' || (an != null && valn == an)) {
+                         away = OddsOutcome(name: 'Away', price: price);
+                       }
+                     }
+                     final outs = [
+                       if (home != null) home,
+                       if (draw != null) draw,
+                       if (away != null) away,
+                     ];
+                     if (outs.isNotEmpty) return H2HMarket(outcomes: outs);
+                   }
+                 }
+               }
+               return null;
+             }
+  - name: Widget – továbbítsuk a csapatneveket a service felé
+    inputs:
+      - file: tippmixapp-main/lib/widgets/event_bet_card.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/widgets/event_bet_card.dart
+        content: |
+          --- a/tippmixapp-main/lib/widgets/event_bet_card.dart
+          +++ b/tippmixapp-main/lib/widgets/event_bet_card.dart
+          @@ -119,6 +119,8 @@
+                         future: apiService.getH2HForFixture(
+                           int.tryParse(event.id) ?? 0,
+                           season: event.season,
+          +                homeName: event.homeTeam,
+          +                awayName: event.awayTeam,
+                         ),
+                         builder: (context, snapshot) {
+                           if (snapshot.connectionState == ConnectionState.waiting) {
+                           
+  - name: Analyze & test
+    outputs:
+      - type: run
+        command: flutter analyze --no-fatal-infos lib test
+      - type: run
+        command: flutter test
