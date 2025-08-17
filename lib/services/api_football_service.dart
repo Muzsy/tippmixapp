@@ -37,12 +37,7 @@ class ApiFootballService {
           .split('T')
           .first;
       var url = '$_baseUrl/fixtures?date=$datePart';
-      if (country != null && country.isNotEmpty) {
-        url += '&country=$country';
-      }
-      if (league != null && league.isNotEmpty) {
-        url += '&league=$league';
-      }
+      // ország/league paramétereket nem küldünk – kliensoldali szűrés
 
       Future<http.Response> attempt() => _client
           .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
