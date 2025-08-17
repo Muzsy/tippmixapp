@@ -10,6 +10,7 @@ import 'market_mapping.dart';
 
 class ApiFootballService {
   static const String _baseUrl = 'https://v3.football.api-sports.io';
+  static const int defaultBookmakerId = 8; // Bet365
   static const _h2hTtl = Duration(seconds: 60);
   final Map<int, _CachedH2H> _h2hCache = {};
   final http.Client _client;
@@ -180,14 +181,20 @@ class ApiFootballService {
       season: season,
       includeBet1: true,
     );
-    var h2h = MarketMapping.h2hFromApi(json1);
+    var h2h = MarketMapping.h2hFromApi(
+      json1,
+      preferredBookmakerId: defaultBookmakerId,
+    );
     if (h2h != null) return h2h;
     final json2 = await getOddsForFixture(
       fixtureId.toString(),
       season: season,
       includeBet1: false,
     );
-    return MarketMapping.h2hFromApi(json2);
+    return MarketMapping.h2hFromApi(
+      json2,
+      preferredBookmakerId: defaultBookmakerId,
+    );
   }
 
   // Segédfüggvények – a saját modellekből/gyűjteményből adódnak vissza a nevek

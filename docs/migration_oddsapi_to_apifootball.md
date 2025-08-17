@@ -10,6 +10,7 @@ This note summarizes the removal of the legacy OddsAPI integration and the switc
 - Frontend `ApiFootballService` enriches fixtures with a minimal "match winner" (`h2h`) market by first requesting `/odds?fixture={id}&season={yyyy}&bet=1X2`; if that response is empty it retries without the `bet` filter before falling back to no markets.
 - H2H parsing accepts additional aliases: `Full Time Result`, `Match Result` and `Winner` alongside `Match Winner` and `1X2`.
 - Runtime `getH2HForFixture(fixture, season)` caches by `<fixture>-<season>` and falls back to full odds if the initial `bet=1X2` request returns no market, parsing via `response→bookmakers→bets→values` into `Home/Draw/Away` outcomes.
+- Preferred bookmaker selection is now ID-based: the frontend tries bookmaker **id=8** (Bet365) first and stores the numeric `bookmakerId` on each tip snapshot.
 
 ## Local setup
 1. Add `API_FOOTBALL_KEY` to your `.env`.

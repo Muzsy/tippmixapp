@@ -4,7 +4,8 @@ class TipModel {
   final String eventName;
   final DateTime startTime;
   final String sportKey;
-  final String bookmaker; // pl. "Bet365"
+  final int? bookmakerId; // pl. 8 for Bet365
+  final String? bookmaker; // legacy string key
   final String marketKey; // pl. "h2h"
   final String outcome; // pl. "Arsenal"
   final double odds; // pl. 2.15
@@ -16,7 +17,8 @@ class TipModel {
     required this.eventName,
     required this.startTime,
     required this.sportKey,
-    required this.bookmaker,
+    this.bookmakerId,
+    this.bookmaker,
     required this.marketKey,
     required this.outcome,
     required this.odds,
@@ -27,7 +29,8 @@ class TipModel {
     eventName: json['eventName'] as String,
     startTime: DateTime.parse(json['startTime']),
     sportKey: json['sportKey'] as String,
-    bookmaker: json['bookmaker'] as String,
+    bookmakerId: json['bookmakerId'] as int?,
+    bookmaker: json['bookmaker'] as String?,
     marketKey: json['marketKey'] as String,
     outcome: json['outcome'] as String,
     odds: (json['odds'] as num).toDouble(),
@@ -38,7 +41,8 @@ class TipModel {
     'eventName': eventName,
     'startTime': startTime.toIso8601String(),
     'sportKey': sportKey,
-    'bookmaker': bookmaker,
+    if (bookmakerId != null) 'bookmakerId': bookmakerId,
+    if (bookmaker != null) 'bookmaker': bookmaker,
     'marketKey': marketKey,
     'outcome': outcome,
     'odds': odds,

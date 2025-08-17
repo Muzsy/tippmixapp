@@ -8,7 +8,7 @@ TipModel tip(String eventId, String outcome) => TipModel(
   eventName: 'A – B',
   startTime: DateTime.now().add(const Duration(hours: 1)),
   sportKey: 'soccer',
-  bookmaker: 'bk',
+  bookmakerId: 8,
   marketKey: 'h2h',
   outcome: outcome,
   odds: 1.5,
@@ -24,6 +24,7 @@ void main() {
     final ok1 = notifier.addTip(tip('e1', 'home'));
     expect(ok1, isTrue);
     expect(container.read(betSlipProvider).tips.length, 1);
+    expect(container.read(betSlipProvider).tips.first.bookmakerId, 8);
 
     final dup = notifier.addTip(tip('e1', 'home'));
     expect(dup, isFalse);
