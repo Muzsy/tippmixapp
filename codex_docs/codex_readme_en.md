@@ -97,3 +97,4 @@
 | 2025-08-17   | @codex-bot      | TOC refreshed after odds URI and cache fix docs update                         |
 | 2025-08-17   | @codex-bot      | TOC refreshed after H2H team-name & URI fix docs update                        |
 | 2025-08-31   | @codex-bot      | TOC refreshed after odds request hardening docs update                        |
+| 2025-08-17   | @codex-bot      | TOC refreshed after ticket settlement engine docs update                      |

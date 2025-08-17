@@ -8,6 +8,7 @@ export interface ScoreResult {
   scores?: { home: number; away: number };
   home_team?: string;
   away_team?: string;
+  winner?: string;
 }
 
 export class ApiFootballResultProvider {
@@ -42,16 +43,30 @@ export class ApiFootballResultProvider {
       const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
       const goalsHome: number | null = item?.goals?.home ?? null;
       const goalsAway: number | null = item?.goals?.away ?? null;
+      // Treat FT/AET/PEN as completed
+      const completedShort = ['FT', 'AET', 'PEN'];
+      const completed = completedShort.includes(statusShort);
+      const homeName = item?.teams?.home?.name;
+      const awayName = item?.teams?.away?.name;
+      const winner =
+        completed && goalsHome !== null && goalsAway !== null
+          ? goalsHome > goalsAway
+            ? homeName
+            : goalsAway > goalsHome
+              ? awayName
+              : 'Draw'
+          : undefined;
       results.push({
         id: String(id),
         sport_key: 'soccer',
-        completed: statusShort === 'FT',
+        completed,
         scores:
           goalsHome !== null && goalsAway !== null
             ? { home: goalsHome, away: goalsAway }
             : undefined,
-        home_team: item?.teams?.home?.name,
-        away_team: item?.teams?.away?.name,
+        home_team: homeName,
+        away_team: awayName,
+        winner,
       });
     }
     return results;
