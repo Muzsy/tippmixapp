@@ -1,0 +1,124 @@
+# Codex Canvas Yaml – H2H megbízhatósági javítások
+# Szabály: meglévő funkció nem sérülhet. Csak a service réteget érintjük; UI változatlan.
+
+steps:
+  - name: Only cache successful H2H results (no-cache-on-null)
+    description: A getH2HForFixture most 60 mp-re elcacheli a Future-t akkor is, ha az üres/null. Így 60 mp-ig nem lesz újrapróba.
+    inputs:
+      - file: tippmixapp-main/lib/services/api_football_service.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/api_football_service.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/api_football_service.dart
+          +++ b/tippmixapp-main/lib/services/api_football_service.dart
+          @@
+           Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) {
+             if (fixtureId <= 0) return Future.value(null);
+             final now = DateTime.now();
+             final cached = _h2hCache[fixtureId];
+             if (cached != null && now.isBefore(cached.until)) {
+               return cached.f;
+             }
+-            final future = _fetchH2HForFixture(fixtureId, season: season);
+-            _h2hCache[fixtureId] = _CachedH2H(future, now.add(_h2hTtl));
+-            return future;
++            final future = _fetchH2HForFixture(fixtureId, season: season)
++                .then((value) {
++              if (value != null) {
++                // Csak sikeres eredményt cache-eljünk
++                _h2hCache[fixtureId] = _CachedH2H(
++                  Future<OddsMarket?>.value(value),
++                  DateTime.now().add(_h2hTtl),
++                );
++              } else {
++                // Üres eredményt ne tartsunk 60 mp-ig
++                _h2hCache.remove(fixtureId);
++              }
++              return value;
++            }, onError: (e) {
++              _h2hCache.remove(fixtureId);
++              throw e;
++            });
++            return future;
+           }
+
+  - name: Odds hívás – 429/hibakód kezelés + 1× retry
+    description: A getOddsForFixture most bármilyen nem-2xx státuszra `{}`-et ad vissza. Kezeljük a 429-et és adjunk 1× újrapróbát 200 ms késleltetéssel.
+    inputs:
+      - file: tippmixapp-main/lib/services/api_football_service.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/api_football_service.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/api_football_service.dart
+          +++ b/tippmixapp-main/lib/services/api_football_service.dart
+          @@
+           Future<Map<String, dynamic>> getOddsForFixture(
+               String fixtureId, {
+                 int? season,
+                 bool includeBet1 = true,
+               }) async {
+          @@
+-            http.Response res;
+-            try {
+-              res = await attempt();
+-            } catch (_) {
+-              await Future.delayed(const Duration(milliseconds: 200));
+-              res = await attempt();
+-            }
++            http.Response res;
++            try {
++              res = await attempt();
++            } catch (_) {
++              await Future.delayed(const Duration(milliseconds: 200));
++              res = await attempt();
++            }
++            if (res.statusCode == 429) {
++              // Rate limit: rövid backoff és 1× retry
++              await Future.delayed(const Duration(milliseconds: 200));
++              res = await attempt();
++            }
+             if (res.statusCode >= 200 && res.statusCode < 300) {
+               final body = jsonDecode(res.body) as Map<String, dynamic>;
+               return body;
+             }
+             return {};
+           }
+
+  - name: (Opcionális) Debug kliensazonosító és URL-log az odds híváshoz
+    description: Csak debugban: tegyünk hozzá egy `X-Client: tippmixapp-mobile` fejlécet és írjuk ki a kimenő URL-t, hogy a dashboardon könnyebb legyen azonosítani.
+    inputs:
+      - file: tippmixapp-main/lib/services/api_football_service.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/services/api_football_service.dart
+        content: |
+          --- a/tippmixapp-main/lib/services/api_football_service.dart
+          +++ b/tippmixapp-main/lib/services/api_football_service.dart
+          @@
+           Future<Map<String, dynamic>> getOddsForFixture(
+               String fixtureId, {
+                 int? season,
+                 bool includeBet1 = true,
+               }) async {
+          @@
+-            Future<http.Response> attempt() => _client
+-                .get(Uri.parse(url), headers: {'x-apisports-key': apiKey})
++            final _headers = <String, String>{'x-apisports-key': apiKey};
++            assert(() {
++              _headers['X-Client'] = 'tippmixapp-mobile';
++              // ignore: avoid_print
++              print('[odds] ' + url);
++              return true;
++            }());
++            Future<http.Response> attempt() => _client
++                .get(Uri.parse(url), headers: _headers)
+                 .timeout(const Duration(seconds: 10));
+
+  - name: Statikus analízis és tesztek
+    outputs:
+      - type: run
+        command: flutter analyze --no-fatal-infos lib test
+      - type: run
+        command: flutter test
