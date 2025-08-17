@@ -233,17 +233,27 @@ class EventBetCard extends StatelessWidget {
     OddsOutcome? draw;
     OddsOutcome? away;
     for (final o in h2h.outcomes) {
-      final name = o.name.toLowerCase();
-      if (name == 'home' || name == '1') {
+      final n = o.name.toLowerCase();
+      if (n == 'home' || n == '1') {
         home = o;
-      } else if (name == 'draw' || name == 'x') {
+      } else if (n == 'draw' || n == 'x') {
         draw = o;
-      } else if (name == 'away' || name == '2') {
+      } else if (n == 'away' || n == '2') {
         away = o;
       }
     }
-    home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
-    away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
+    if (home == null || draw == null || away == null) {
+      // Ha pontosan 3 kimenet van, rendeljük őket pozíció szerint (Home, Draw, Away)
+      if (h2h.outcomes.length == 3) {
+        home ??= h2h.outcomes[0];
+        draw ??= h2h.outcomes[1];
+        away ??= h2h.outcomes[2];
+      } else {
+        // Visszaeső fallback az eredeti viselkedéshez
+        home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
+        away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
+      }
+    }
     return _buildH2HButtons(home, draw, away);
   }
 

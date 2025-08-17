@@ -11,13 +11,11 @@ import 'package:tippmixapp/widgets/event_bet_card.dart';
 class _FakeApi extends ApiFootballService {
   @override
   Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
-    return H2HMarket(
-      outcomes: [
-        OddsOutcome(name: 'Home', price: 6.00),
-        OddsOutcome(name: 'Draw', price: 4.33),
-        OddsOutcome(name: 'Away', price: 1.47),
-      ],
-    );
+    return H2HMarket(outcomes: [
+      OddsOutcome(name: 'Home', price: 6.00),
+      OddsOutcome(name: 'Draw', price: 4.33),
+      OddsOutcome(name: 'Away', price: 1.47),
+    ]);
   }
 }
 
@@ -28,7 +26,7 @@ Widget _wrap(Widget child) => MaterialApp(
 );
 
 void main() {
-  testWidgets('H2H gombcímkék kiírják az oddsokat', (tester) async {
+  testWidgets('H2H címkék oddsokkal', (tester) async {
     final event = OddsEvent(
       id: '123',
       sportKey: 'soccer',
