@@ -10,6 +10,7 @@ import '../widgets/events_filter_bar.dart';
 import '../models/tip_model.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/event_bet_card.dart';
+import '../services/api_football_service.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
@@ -148,7 +149,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                     '${event.homeTeam} – ${event.awayTeam}',
                                 startTime: event.commenceTime,
                                 sportKey: event.sportKey,
-                                bookmaker: bookmaker?.key ?? 'unknown',
+                                bookmakerId:
+                                    ApiFootballService.defaultBookmakerId,
                                 marketKey: market?.key ?? 'h2h',
                                 outcome: outcome.name,
                                 odds: outcome.price,
@@ -174,7 +176,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                     '${event.homeTeam} – ${event.awayTeam}',
                                 startTime: event.commenceTime,
                                 sportKey: event.sportKey,
-                                bookmaker: bookmaker?.key ?? 'unknown',
+                                bookmakerId:
+                                    ApiFootballService.defaultBookmakerId,
                                 marketKey: market?.key ?? 'h2h',
                                 outcome: outcome.name,
                                 odds: outcome.price,
@@ -200,7 +203,8 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                                     '${event.homeTeam} – ${event.awayTeam}',
                                 startTime: event.commenceTime,
                                 sportKey: event.sportKey,
-                                bookmaker: bookmaker?.key ?? 'unknown',
+                                bookmakerId:
+                                    ApiFootballService.defaultBookmakerId,
                                 marketKey: market?.key ?? 'h2h',
                                 outcome: outcome.name,
                                 odds: outcome.price,
