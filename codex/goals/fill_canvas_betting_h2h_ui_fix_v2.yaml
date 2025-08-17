@@ -1,0 +1,129 @@
+# Codex Canvas Yaml – H2H mapping helyesbítés (alias + draw fallback)
+# Szabály: meglévő funkciókat nem törünk el. Csak az EventBetCard UI kódja és tesztek változnak.
+
+steps:
+  - name: H2H alias‑alapú hozzárendelés és draw fallback
+    description: |
+      Az _buildH2HButtonsFrom jelenleg csapatnévhez illeszt (homeTeam/awayTeam), ami a parserrel nem konzisztens.
+      Cseréljük aliasokra (home|1, draw|x, away|2), és adjunk draw fallbacket 3 kimenet esetén.
+    inputs:
+      - file: tippmixapp-main/lib/widgets/event_bet_card.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/lib/widgets/event_bet_card.dart
+        content: |
+          --- a/tippmixapp-main/lib/widgets/event_bet_card.dart
+          +++ b/tippmixapp-main/lib/widgets/event_bet_card.dart
+          @@
+           Widget _buildH2HButtonsFrom(OddsMarket h2h) {
+             OddsOutcome? home;
+             OddsOutcome? draw;
+             OddsOutcome? away;
+             for (final o in h2h.outcomes) {
+-              final name = o.name.toLowerCase();
+-              if (name == event.homeTeam.toLowerCase()) {
+-                home = o;
+-              } else if (name == event.awayTeam.toLowerCase()) {
+-                away = o;
+-              } else if (name == 'draw' || name == 'x') {
+-                draw = o;
+-              }
++              final n = o.name.toLowerCase();
++              if (n == 'home' || n == '1') {
++                home = o;
++              } else if (n == 'draw' || n == 'x') {
++                draw = o;
++              } else if (n == 'away' || n == '2') {
++                away = o;
++              }
+             }
+-            home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
+-            away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
++            if (home == null || draw == null || away == null) {
++              // Ha pontosan 3 kimenet van, rendeljük őket pozíció szerint (Home, Draw, Away)
++              if (h2h.outcomes.length == 3) {
++                home ??= h2h.outcomes[0];
++                draw ??= h2h.outcomes[1];
++                away ??= h2h.outcomes[2];
++              } else {
++                // Visszaeső fallback az eredeti viselkedéshez
++                home ??= h2h.outcomes.isNotEmpty ? h2h.outcomes.first : null;
++                away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
++              }
++            }
+             return _buildH2HButtons(home, draw, away);
+           }
+
+  - name: Meglévő widget teszt frissítése (odds‑prefixed címkék)
+    description: |
+      A jelenlegi teszt fix '1'/'X'/'2' feliratokra számít. Igazítsuk az odds‑os címkékhez.
+    inputs:
+      - file: tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+    outputs:
+      - type: patch
+        file: tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+        content: |
+          --- a/tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+          +++ b/tippmixapp-main/test/widgets/event_bet_card_h2h_render_test.dart
+          @@
+-    expect(find.text('1'), findsOneWidget);
+-    expect(find.text('X'), findsOneWidget);
+-    expect(find.text('2'), findsOneWidget);
++    expect(find.textContaining('1 '), findsOneWidget);
++    expect(find.textContaining('X '), findsOneWidget);
++    expect(find.textContaining('2 '), findsOneWidget);
+
+  - name: Új widget teszt konkrét címkékre
+    description: Ellenőrizzük, hogy a 3 gomb pontosan a várt feliratokat kapja.
+    outputs:
+      - type: create
+        file: tippmixapp-main/test/widgets/event_bet_card_h2h_labels_test.dart
+        content: |
+          import 'package:flutter/material.dart';
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:tippmixapp/l10n/app_localizations.dart';
+          import 'package:tippmixapp/models/odds_market.dart';
+          import 'package:tippmixapp/models/odds_outcome.dart';
+          import 'package:tippmixapp/models/h2h_market.dart';
+          import 'package:tippmixapp/models/odds_event.dart';
+          import 'package:tippmixapp/services/api_football_service.dart';
+          import 'package:tippmixapp/widgets/event_bet_card.dart';
+          
+          class _FakeApi extends ApiFootballService {
+            @override
+            Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
+              return H2HMarket(outcomes: const [
+                OddsOutcome(name: 'Home', price: 6.00),
+                OddsOutcome(name: 'Draw', price: 4.33),
+                OddsOutcome(name: 'Away', price: 1.47),
+              ]);
+            }
+          }
+          
+          Widget _wrap(Widget child) => MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(body: child),
+          );
+          
+          void main() {
+            testWidgets('H2H címkék oddsokkal', (tester) async {
+              final event = OddsEvent(
+                id: '123', sportKey: 'soccer', sportTitle: 'Soccer',
+                homeTeam: 'Team A', awayTeam: 'Team B',
+                commenceTime: DateTime.now(), bookmakers: const [],
+              );
+              await tester.pumpWidget(_wrap(EventBetCard(event: event, apiService: _FakeApi())));
+              await tester.pump(const Duration(milliseconds: 50));
+              expect(find.text('1 6.00'), findsOneWidget);
+              expect(find.text('X 4.33'), findsOneWidget);
+              expect(find.text('2 1.47'), findsOneWidget);
+            });
+          }
+
+  - name: Statikus analízis és teszt
+    outputs:
+      - type: run
+        command: flutter analyze --no-fatal-infos lib test
+      - type: run
+        command: flutter test
