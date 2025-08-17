@@ -144,6 +144,7 @@ class ApiFootballService {
     // Uri-alapú query összerakás – elkerüli a 'season=2025bet=1' összefolyást
     final qp = <String, String>{
       'fixture': fixtureId,
+      'bookmaker': '$defaultBookmakerId',
       if (season != null) 'season': '$season',
       if (includeBet1) 'bet': '1',
     };
@@ -167,6 +168,12 @@ class ApiFootballService {
       await Future.delayed(const Duration(milliseconds: 200));
       res = await attempt();
     }
+    assert(() {
+      // debug: log odds HTTP status
+      // ignore: avoid_print
+      print('[odds] RES ${res.statusCode}');
+      return true;
+    }());
     // 429 eset – rövid backoff és 1× retry
     if (res.statusCode == 429) {
       await Future.delayed(const Duration(milliseconds: 200));

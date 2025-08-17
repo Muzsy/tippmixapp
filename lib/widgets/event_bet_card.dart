@@ -114,11 +114,17 @@ class EventBetCard extends StatelessWidget {
                     H2HMarket(outcomes: existing.first.outcomes),
                   );
                 }
+                final fid =
+                    int.tryParse(event.id) ??
+                    int.tryParse(
+                      RegExp(r'\d+').firstMatch(event.id)?.group(0) ?? '',
+                    ) ??
+                    0;
                 return FutureBuilder<OddsMarket?>(
                   key: ValueKey('markets-${event.id}'),
                   future: apiService.getH2HForFixture(
-                    int.tryParse(event.id) ?? 0,
-                    season: event.season,
+                    fid,
+                    season: event.season ?? event.commenceTime.year,
                     homeName: event.homeTeam,
                     awayName: event.awayTeam,
                   ),
