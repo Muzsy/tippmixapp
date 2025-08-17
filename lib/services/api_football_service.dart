@@ -179,36 +179,52 @@ class ApiFootballService {
     return {};
   }
 
-  Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) {
+  Future<OddsMarket?> getH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) {
     if (fixtureId <= 0) return Future.value(null);
     final now = DateTime.now();
     final cached = _h2hCache[fixtureId];
     if (cached != null && now.isBefore(cached.until)) {
       return cached.f;
     }
-    final future = _fetchH2HForFixture(fixtureId, season: season).then(
-      (value) {
-        if (value != null) {
-          // Csak sikeres eredményt cache-eljünk
-          _h2hCache[fixtureId] = _CachedH2H(
-            Future<OddsMarket?>.value(value),
-            DateTime.now().add(_h2hTtl),
-          );
-        } else {
-          // Üres eredményt ne tartsunk 60 mp-ig
-          _h2hCache.remove(fixtureId);
-        }
-        return value;
-      },
-      onError: (e) {
-        _h2hCache.remove(fixtureId);
-        throw e;
-      },
-    );
+    final future =
+        _fetchH2HForFixture(
+          fixtureId,
+          season: season,
+          homeName: homeName,
+          awayName: awayName,
+        ).then(
+          (value) {
+            if (value != null) {
+              // Csak sikeres eredményt cache-eljünk
+              _h2hCache[fixtureId] = _CachedH2H(
+                Future<OddsMarket?>.value(value),
+                DateTime.now().add(_h2hTtl),
+              );
+            } else {
+              // Üres eredményt ne tartsunk 60 mp-ig
+              _h2hCache.remove(fixtureId);
+            }
+            return value;
+          },
+          onError: (e) {
+            _h2hCache.remove(fixtureId);
+            throw e;
+          },
+        );
     return future;
   }
 
-  Future<OddsMarket?> _fetchH2HForFixture(int fixtureId, {int? season}) async {
+  Future<OddsMarket?> _fetchH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) async {
     final json1 = await getOddsForFixture(
       fixtureId.toString(),
       season: season,
@@ -217,6 +233,8 @@ class ApiFootballService {
     var h2h = MarketMapping.h2hFromApi(
       json1,
       preferredBookmakerId: defaultBookmakerId,
+      homeName: homeName,
+      awayName: awayName,
     );
     if (h2h != null) return h2h;
     final json2 = await getOddsForFixture(
@@ -227,6 +245,8 @@ class ApiFootballService {
     return MarketMapping.h2hFromApi(
       json2,
       preferredBookmakerId: defaultBookmakerId,
+      homeName: homeName,
+      awayName: awayName,
     );
   }
 

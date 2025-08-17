@@ -8,8 +8,12 @@ import 'package:tippmixapp/models/h2h_market.dart';
 
 class _NullApi extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
-      null;
+  Future<H2HMarket?> getH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) async => null;
 }
 
 Widget _wrap(Widget child) => MaterialApp(

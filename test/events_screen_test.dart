@@ -17,8 +17,12 @@ import 'package:go_router/go_router.dart';
 
 class _StubApiFootballService extends ApiFootballService {
   @override
-  Future<H2HMarket?> getH2HForFixture(int fixtureId, {int? season}) async =>
-      null;
+  Future<H2HMarket?> getH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) async => null;
 }
 
 class TestOddsApiProvider extends OddsApiProvider {

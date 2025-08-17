@@ -12,7 +12,12 @@ import 'package:tippmixapp/widgets/event_bet_card.dart';
 class _CountingApi extends ApiFootballService {
   int calls = 0;
   @override
-  Future<OddsMarket?> getH2HForFixture(int fixtureId, {int? season}) async {
+  Future<OddsMarket?> getH2HForFixture(
+    int fixtureId, {
+    int? season,
+    String? homeName,
+    String? awayName,
+  }) async {
     calls++;
     return H2HMarket(
       outcomes: [
