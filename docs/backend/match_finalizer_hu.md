@@ -1,4 +1,4 @@
-version: "2025-08-17"
+version: "2025-08-18"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -18,3 +18,4 @@ Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Felad
 
 Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
+A `firebase-functions` v2 `onMessagePublished` triggert használja, így nem szükséges a régi `GCLOUD_PROJECT` környezeti változó.

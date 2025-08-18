@@ -1,4 +1,4 @@
-version: "2025-08-17"
+version: "2025-08-18"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -19,3 +19,4 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 This document covers the TypeScript skeleton with atomic payout handling.
 
 **Runtime**: Node.js 20 on 2nd gen Cloud Functions.
+Uses the firebase-functions v2 `onMessagePublished` trigger, avoiding the legacy `GCLOUD_PROJECT` requirement.
