@@ -31,6 +31,11 @@ class _EventsFilterBarState extends State<EventsFilterBar> {
       '',
       ...EventsFilter.leaguesOf(widget.source, country: f.country),
     ];
+    // Biztosítsuk, hogy a vezérlők csak érvényes értéket kapjanak
+    final String? countryValue =
+        (f.country != null && countries.contains(f.country)) ? f.country : null;
+    final String? leagueValue =
+        (f.league != null && leagues.contains(f.league)) ? f.league : null;
 
     return Material(
       color: Theme.of(context).colorScheme.surface,
@@ -51,7 +56,7 @@ class _EventsFilterBarState extends State<EventsFilterBar> {
                     widget.onChanged(f);
                   },
                 ),
-                _Drop(loc.filtersCountry, countries, f.country, (v) {
+                _Drop(loc.filtersCountry, countries, countryValue, (v) {
                   // Ország váltásakor a liga nullázása
                   setState(() => f = f.copyWith(
                     country: v?.isEmpty == true ? null : v,
@@ -59,7 +64,7 @@ class _EventsFilterBarState extends State<EventsFilterBar> {
                   ));
                   widget.onChanged(f);
                 }),
-                _Drop(loc.filtersLeague, leagues, f.league, (v) {
+                _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
                   setState(
                     () => f = f.copyWith(league: v?.isEmpty == true ? null : v),
                   );
