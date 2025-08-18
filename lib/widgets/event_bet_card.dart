@@ -151,7 +151,7 @@ class EventBetCard extends StatelessWidget {
 
             const SizedBox(height: 6),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.centerLeft,
               child: Text(
                 loc.updated_time_ago(_formatYMDHM(ra)),
                 style: Theme.of(context).textTheme.labelSmall,
@@ -284,12 +284,12 @@ class EventBetCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _Countdown(to: e.commenceTime),
         Text(
           l.starts_at(_formatYMDHM(e.commenceTime)),
-          textAlign: TextAlign.right,
+          textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.bodySmall,
         ),
+        _Countdown(to: e.commenceTime),
       ],
     );
   }
