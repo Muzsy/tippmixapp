@@ -1,12 +1,12 @@
 # 🃏 Tippkártya Action Pill gombsor (HU)
 
-Az `EventBetCard` alsó akciógombjai egységes „pill” stílusú sorban jelennek meg az újrahasznosítható `ActionPill` komponenssel.
+Az `EventBetCard` alsó akciógombjai hierarchikus „pill” elrendezésben jelennek meg az újrahasznosítható `ActionPill` komponenssel.
 
 ## Összefoglaló
 
-- Új `ActionPill` widget ikon+felirat gombokhoz.
-- Az `EventBetCard` három `ActionPill`-t jelenít meg `Divider` elválasztóval.
-- A `onMoreBets`, `onStats` és `onAi` callbackek kapcsolódnak a gombokhoz.
+- A felső sorban a teljes szélességű **„További fogadások”** gomb szerepel.
+- Alatta egymás mellett jelenik meg a **„Statisztika”** és az **„AI tippek”** gomb.
+- A `onMoreBets`, `onStats` és `onAi` callbackek továbbra is a gombokhoz kapcsolódnak.
 
 ## Tesztelés
 

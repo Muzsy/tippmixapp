@@ -171,16 +171,18 @@ class EventBetCard extends StatelessWidget {
         const SizedBox(height: 8),
         const Divider(height: 1),
         const SizedBox(height: 8),
+        // Alsó akciók – hierarchizált elrendezés (1 nagy + 2 kisebb)
+        SizedBox(
+          width: double.infinity,
+          child: ActionPill(
+            icon: Icons.more_horiz,
+            label: loc.appActionsMoreBets,
+            onTap: onMoreBets,
+          ),
+        ),
+        const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: ActionPill(
-                icon: Icons.more_horiz,
-                label: loc.appActionsMoreBets,
-                onTap: onMoreBets,
-              ),
-            ),
-            const SizedBox(width: 8),
             Expanded(
               child: ActionPill(
                 icon: Icons.bar_chart,
@@ -191,7 +193,7 @@ class EventBetCard extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: ActionPill(
-                icon: Icons.auto_awesome,
+                icon: Icons.smart_toy,
                 label: loc.appActionsAiRecommend,
                 onTap: onAi,
               ),

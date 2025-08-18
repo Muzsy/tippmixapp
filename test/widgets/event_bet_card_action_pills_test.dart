@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/odds_event.dart';
 import 'package:tippmixapp/widgets/event_bet_card.dart';
+import 'package:tippmixapp/widgets/action_pill.dart';
 import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/models/h2h_market.dart';
 
@@ -42,13 +43,24 @@ void main() {
       ),
     );
 
-    expect(find.text('More bets'), findsOneWidget);
-    expect(find.text('Statistics'), findsOneWidget);
-    expect(find.text('AI picks'), findsOneWidget);
+    final moreFinder = find.widgetWithText(ActionPill, 'More bets');
+    final statsFinder = find.widgetWithText(ActionPill, 'Statistics');
+    final aiFinder = find.widgetWithText(ActionPill, 'AI picks');
 
-    await tester.tap(find.text('More bets'));
-    await tester.tap(find.text('Statistics'));
-    await tester.tap(find.text('AI picks'));
+    expect(moreFinder, findsOneWidget);
+    expect(statsFinder, findsOneWidget);
+    expect(aiFinder, findsOneWidget);
+
+    final moreSize = tester.getSize(moreFinder);
+    final statsSize = tester.getSize(statsFinder);
+    final aiSize = tester.getSize(aiFinder);
+
+    expect(moreSize.width, greaterThan(statsSize.width));
+    expect(statsSize.width, closeTo(aiSize.width, 0.1));
+
+    await tester.tap(moreFinder);
+    await tester.tap(statsFinder);
+    await tester.tap(aiFinder);
 
     expect(moreBetsTapped, isTrue);
     expect(statsTapped, isTrue);
