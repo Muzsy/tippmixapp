@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/features/filters/events_filter.dart';
 import 'package:tippmixapp/models/odds_event.dart';
+import 'package:tippmixapp/widgets/action_pill.dart';
 
 typedef EventsFilterChanged = void Function(EventsFilter filter);
 
@@ -45,15 +46,17 @@ class _EventsFilterBarState extends State<EventsFilterBar> {
                 _DatePill(
                   date: f.date,
                   onChanged: (d) {
-                    setState(() => f = f.copyWith(date: d));
+                    // Dátum váltáskor mind az ország, mind a liga nullázása
+                    setState(() => f = f.copyWith(date: d, country: null, league: null));
                     widget.onChanged(f);
                   },
                 ),
                 _Drop(loc.filtersCountry, countries, f.country, (v) {
-                  setState(
-                    () =>
-                        f = f.copyWith(country: v?.isEmpty == true ? null : v),
-                  );
+                  // Ország váltásakor a liga nullázása
+                  setState(() => f = f.copyWith(
+                    country: v?.isEmpty == true ? null : v,
+                    league: null,
+                  ));
                   widget.onChanged(f);
                 }),
                 _Drop(loc.filtersLeague, leagues, f.league, (v) {
@@ -79,10 +82,10 @@ class _DatePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final text = date == null ? loc.filtersToday : _fmt(date!);
-    return OutlinedButton.icon(
-      icon: const Icon(Icons.event),
-      label: Text(text),
-      onPressed: () async {
+    return ActionPill(
+      icon: Icons.event,
+      label: text,
+      onTap: () async {
         final now = DateTime.now();
         final picked = await showDatePicker(
           context: context,
