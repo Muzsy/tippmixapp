@@ -1,0 +1,345 @@
+name: "Introduce Market Evaluators and wire H2H into finalizer"
+about: "Adds a pluggable evaluator layer and integrates it in match\_finalizer. See canvas: Market Evaluators – Canvas."
+references:
+
+* "Canvas: Market Evaluators – Canvas"
+
+* "Repo: tippmixapp-main/"
+  steps:
+
+* name: "ADD: evaluator interface"
+  description: "Create the MarketEvaluator interface and shared types."
+  outputs:
+
+  * patch: |
+    \*\*\* Begin Patch
+    \*\*\* Add File: tippmixapp-main/cloud\_functions/src/evaluators/MarketEvaluator.ts
+    +export type EvalOutcome = 'won' | 'lost' | 'void' | 'pending';
+    \+
+    +export interface NormalizedResult {
+
+    * completed: boolean;
+    * scores?: { home: number; away: number };
+    * home\_team?: string;
+    * away\_team?: string;
+    * winner?: string; // when available
+      +}
+    *
+
+    +export interface TipInput {
+
+    * marketKey: string;          // e.g. 'h2h'
+    * selection: string;          // current project stores raw outcome string
+    * odds: number;               // decimal odds snapshot
+      +}
+    *
+
+    +export interface EvaluatedTip {
+
+    * market: string;             // normalized market code, e.g. 'H2H'
+    * selection: string;
+    * result: EvalOutcome;
+    * oddsSnapshot: number;
+      +}
+    *
+
+    +export interface MarketEvaluator {
+
+    * key: string; // 'H2H', 'OU', 'BTTS', ...
+    * evaluate(tip: TipInput, result: NormalizedResult): EvalOutcome;
+      +}
+      \*\*\* End Patch
+
+* name: "ADD: H2H evaluator"
+  description: "Implement H2H evaluation based on provider winner or fallback to score comparison."
+  outputs:
+
+  * patch: |
+    \*\*\* Begin Patch
+    \*\*\* Add File: tippmixapp-main/cloud\_functions/src/evaluators/H2H.ts
+    +import { MarketEvaluator, TipInput, NormalizedResult, EvalOutcome } from './MarketEvaluator';
+    \+
+    +export class H2HEvaluator implements MarketEvaluator {
+
+    * key = 'H2H';
+    * evaluate(tip: TipInput, r: NormalizedResult): EvalOutcome {
+    * if (!r || !r.completed) return 'pending';
+    * // Current data model stores selection as team name or 'Draw'.
+    * const sel = (tip.selection || '').trim();
+    * const winner = (r.winner || '').trim();
+    * if (!winner) {
+    * ```
+       if (!r.scores) return 'pending';
+      ```
+    * ```
+       const { home, away } = r.scores;
+      ```
+    * ```
+       const computed = home > away ? (r.home_team || 'HOME')
+      ```
+    * ```
+         : away > home ? (r.away_team || 'AWAY')
+      ```
+    * ```
+         : 'Draw';
+      ```
+    * ```
+       return computed === sel ? 'won' : (computed === 'Draw' && sel === 'Draw' ? 'won' : 'lost');
+      ```
+    * }
+    * return winner === sel ? 'won' : 'lost';
+    * }
+      +}
+      \*\*\* End Patch
+
+* name: "ADD: evaluator registry"
+  description: "Provide getEvaluator() with simple aliasing (e.g. 'h2h'/'1x2' → 'H2H')."
+  outputs:
+
+  * patch: |
+    \*\*\* Begin Patch
+    \*\*\* Add File: tippmixapp-main/cloud\_functions/src/evaluators/index.ts
+    +import { MarketEvaluator, TipInput, NormalizedResult } from './MarketEvaluator';
+    +import { H2HEvaluator } from './H2H';
+    \+
+    +const registry: Record\<string, MarketEvaluator> = {
+
+    * H2H: new H2HEvaluator(),
+      +};
+    *
+
+    +function normKey(k: string): string {
+
+    * const x = (k || '').trim().toUpperCase();
+    * if (x === '1X2') return 'H2H';
+    * if (x === 'H2H') return 'H2H';
+    * return x; // future: OU, BTTS, DNB, ...
+      +}
+    *
+
+    +export function getEvaluator(marketKey: string): MarketEvaluator | undefined {
+
+    * return registry\[normKey(marketKey)];
+      +}
+    *
+
+    +export type { MarketEvaluator, TipInput, NormalizedResult };
+    \*\*\* End Patch
+
+* name: "UPDATE: provider adds winner and broader completed"
+  description: "Extend ApiFootballResultProvider result with winner and mark AET/PEN as completed."
+  outputs:
+
+  * patch: |
+    \*\*\* Begin Patch
+    \*\*\* Update File: tippmixapp-main/cloud\_functions/src/services/ApiFootballResultProvider.ts
+    @@
+
+* export interface ScoreResult {
+
+* id: string;
+
+* sport\_key: string;
+
+* completed: boolean;
+
+* scores?: { home: number; away: number };
+
+* home\_team?: string;
+
+* away\_team?: string;
+
+* }
+
+- export interface ScoreResult {
+- id: string;
+- sport\_key: string;
+- completed: boolean;
+- scores?: { home: number; away: number };
+- home\_team?: string;
+- away\_team?: string;
+- winner?: string;
+- }
+  @@
+
+* ```
+     const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
+  ```
+* ```
+     const goalsHome: number | null = item?.goals?.home ?? null;
+  ```
+* ```
+     const goalsAway: number | null = item?.goals?.away ?? null;
+  ```
+
+- ```
+     const statusShort: string = item?.fixture?.status?.short ?? 'UNK';
+  ```
+- ```
+     const goalsHome: number | null = item?.goals?.home ?? null;
+  ```
+- ```
+     const goalsAway: number | null = item?.goals?.away ?? null;
+  ```
+- ```
+     const completedShort = ['FT','AET','PEN'];
+  ```
+- ```
+     const completed = completedShort.includes(statusShort);
+      @@
+  ```
+
+* ```
+     completed: statusShort === 'FT',
+  ```
+
+- ```
+     completed: completed,
+      @@
+     home_team: item?.teams?.home?.name,
+     away_team: item?.teams?.away?.name,
+  ```
+- ```
+     winner: (completed && goalsHome !== null && goalsAway !== null)
+  ```
+- ```
+       ? (goalsHome > goalsAway
+  ```
+- ```
+           ? item?.teams?.home?.name
+  ```
+- ```
+           : (goalsAway > goalsHome
+  ```
+- ```
+               ? item?.teams?.away?.name
+  ```
+- ```
+               : 'Draw'))
+  ```
+- ```
+       : undefined,
+   });
+      *** End Patch
+  ```
+
+  * name: "UPDATE: finalizer uses evaluators + fixes mapping/query/userId"
+    description: "Switch to root 'tickets' query, use userId, map marketKey/odds, and compute result via evaluator registry."
+    outputs:
+
+    * patch: |
+      \*\*\* Begin Patch
+      \*\*\* Update File: tippmixapp-main/cloud\_functions/src/match\_finalizer.ts
+      @@
+
+* // 1) Collect pending tickets across all users via collectionGroup
+* // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
+* const ticketsSnap = await db
+* .collectionGroup('tickets')
+
+- // 1) Collect pending tickets in root collection
+- const ticketsSnap = await db
+- .collection('tickets')
+  .where('status', '==', 'pending')
+  .limit(200)
+  .get();
+  @@
+
+* const tipResults = tipsRaw\.map((t: any) => {
+* ```
+   const rid = t?.eventId;
+  ```
+* ```
+   const pick = (t?.outcome ?? '').trim();
+  ```
+* ```
+   const res = rid ? resultMap.get(rid) : undefined;
+  ```
+* ```
+   if (!res || !res.completed || !res.winner) {
+  ```
+* ```
+     return { ...t, market: t.market, selection: pick, result: 'pending', oddsSnapshot: t.oddsSnapshot };
+  ```
+* ```
+   }
+  ```
+* ```
+   const result = res.winner === pick ? 'won' : 'lost';
+  ```
+* ```
+   return { ...t, market: t.market, selection: pick, result, oddsSnapshot: t.oddsSnapshot };
+  ```
+* });
+
+- const { getEvaluator } = await import('./evaluators');
+- const tipResults = tipsRaw\.map((t: any) => {
+- ```
+   const rid = t?.eventId;
+  ```
+- ```
+   const pick = (t?.outcome ?? '').trim();
+  ```
+- ```
+   const marketKey = (t?.marketKey ?? t?.market ?? 'h2h');
+  ```
+- ```
+   const res = rid ? resultMap.get(rid) : undefined;
+  ```
+- ```
+   const evaluator = getEvaluator(String(marketKey));
+  ```
+- ```
+   if (!res || !evaluator) {
+  ```
+- ```
+     return { ...t, market: String(marketKey).toUpperCase(), selection: pick, result: 'pending', oddsSnapshot: t?.odds ?? t?.oddsSnapshot };
+  ```
+- ```
+   }
+  ```
+- ```
+   const tipInput = { marketKey: String(marketKey), selection: pick, odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0) };
+  ```
+- ```
+   const outcome = evaluator.evaluate(tipInput, res);
+  ```
+- ```
+   return { ...t, market: String(marketKey).toUpperCase(), selection: pick, result: outcome, oddsSnapshot: tipInput.odds };
+  ```
+- });
+  @@
+
+* await finalizeTicketAtomic(
+* ```
+   snap.ref,
+  ```
+* ```
+   db.collection('users').doc(snap.get('uid')),
+  ```
+* ```
+   { stake: snap.get('stake'), tips: tipResults },
+  ```
+* );
+
+- await finalizeTicketAtomic(
+- ```
+   snap.ref,
+  ```
+- ```
+   db.collection('users').doc(snap.get('userId')),
+  ```
+- ```
+   { stake: snap.get('stake'), tips: tipResults },
+  ```
+- );
+  \*\*\* End Patch
+
+* name: "Build & deploy Cloud Functions"
+  description: "Install, build, test (if present), and deploy match\_finalizer with new evaluator files."
+  outputs:
+
+  * run: "npm --prefix tippmixapp-main/cloud\_functions ci"
+  * run: "npm --prefix tippmixapp-main/cloud\_functions run build"
+  * run: "npm --prefix tippmixapp-main/cloud\_functions test --silent --if-present"
+  * run: "firebase deploy --only functions\:match\_finalizer --project "\$FIREBASE\_PROJECT" --force"
