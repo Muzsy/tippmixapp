@@ -122,7 +122,16 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               ),
               Expanded(
                 child: filtered.isEmpty
-                    ? Center(child: Text(loc.events_screen_no_events))
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.info_outline, size: 32),
+                            const SizedBox(height: 8),
+                            Text(loc.events_screen_no_events),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {

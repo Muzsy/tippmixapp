@@ -34,42 +34,52 @@ class _EventsFilterBarState extends State<EventsFilterBar> {
     // Biztosítsuk, hogy a vezérlők csak érvényes értéket kapjanak
     final String? countryValue =
         (f.country != null && countries.contains(f.country)) ? f.country : null;
-    final String? leagueValue =
-        (f.league != null && leagues.contains(f.league)) ? f.league : null;
+    final String? leagueValue = (f.league != null && leagues.contains(f.league))
+        ? f.league
+        : null;
 
     return Material(
-      color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Wrap(
-              spacing: 12,
-              runSpacing: 8,
+              spacing: 10,
+              runSpacing: 6,
               children: [
                 _DatePill(
                   date: f.date,
                   onChanged: (d) {
                     // Dátum váltáskor mind az ország, mind a liga nullázása
-                    setState(() => f = f.copyWith(date: d, country: null, league: null));
+                    setState(
+                      () =>
+                          f = f.copyWith(date: d, country: null, league: null),
+                    );
                     widget.onChanged(f);
                   },
                 ),
                 _Drop(loc.filtersCountry, countries, countryValue, (v) {
                   // Ország váltásakor a liga nullázása
-                  setState(() => f = f.copyWith(
-                    country: v?.isEmpty == true ? null : v,
-                    league: null,
-                  ));
-                  widget.onChanged(f);
-                }),
-                _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
                   setState(
-                    () => f = f.copyWith(league: v?.isEmpty == true ? null : v),
+                    () => f = f.copyWith(
+                      country: v?.isEmpty == true ? null : v,
+                      league: null,
+                    ),
                   );
                   widget.onChanged(f);
                 }),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  child: _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
+                    setState(
+                      () =>
+                          f = f.copyWith(league: v?.isEmpty == true ? null : v),
+                    );
+                    widget.onChanged(f);
+                  }),
+                ),
               ],
             ),
           ],

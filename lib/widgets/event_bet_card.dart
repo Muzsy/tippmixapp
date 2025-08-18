@@ -43,7 +43,7 @@ class EventBetCard extends StatelessWidget {
       key: ValueKey('bet-card-${event.id}'),
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -111,6 +111,7 @@ class EventBetCard extends StatelessWidget {
                     .toList();
                 if (existing.isNotEmpty) {
                   return _buildH2HButtonsFrom(
+                    context,
                     H2HMarket(outcomes: existing.first.outcomes),
                   );
                 }
@@ -137,7 +138,7 @@ class EventBetCard extends StatelessWidget {
                     }
                     final h2h = snapshot.data;
                     if (h2h != null) {
-                      return _buildH2HButtonsFrom(h2h);
+                      return _buildH2HButtonsFrom(context, h2h);
                     }
                     return _noMarkets(loc.events_screen_no_market);
                   },
@@ -202,33 +203,39 @@ class EventBetCard extends StatelessWidget {
   }
 
   Widget _buildH2HButtons(
+    BuildContext context,
     OddsOutcome? home,
     OddsOutcome? draw,
     OddsOutcome? away,
   ) {
-    String fmt(double v) => v.toStringAsFixed(2);
-    final hLabel = home != null ? '1 ${fmt(home.price)}' : '1 —';
-    final dLabel = draw != null ? 'X ${fmt(draw.price)}' : 'X —';
-    final aLabel = away != null ? '2 ${fmt(away.price)}' : '2 —';
     return Row(
       children: [
         Expanded(
-          child: ActionPill(
-            label: hLabel,
+          child: _oddsButton(
+            context,
+            home?.name ?? '1',
+            home?.price,
+            selected: false,
             onTap: home != null ? () => onTapHome?.call(home) : null,
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: ActionPill(
-            label: dLabel,
+          child: _oddsButton(
+            context,
+            draw?.name ?? 'X',
+            draw?.price,
+            selected: false,
             onTap: draw != null ? () => onTapDraw?.call(draw) : null,
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: ActionPill(
-            label: aLabel,
+          child: _oddsButton(
+            context,
+            away?.name ?? '2',
+            away?.price,
+            selected: false,
             onTap: away != null ? () => onTapAway?.call(away) : null,
           ),
         ),
@@ -236,7 +243,7 @@ class EventBetCard extends StatelessWidget {
     );
   }
 
-  Widget _buildH2HButtonsFrom(OddsMarket h2h) {
+  Widget _buildH2HButtonsFrom(BuildContext context, OddsMarket h2h) {
     OddsOutcome? home;
     OddsOutcome? draw;
     OddsOutcome? away;
@@ -262,7 +269,7 @@ class EventBetCard extends StatelessWidget {
         away ??= h2h.outcomes.length > 1 ? h2h.outcomes.last : null;
       }
     }
-    return _buildH2HButtons(home, draw, away);
+    return _buildH2HButtons(context, home, draw, away);
   }
 
   Widget _noMarkets(String text) => Padding(
@@ -287,9 +294,16 @@ class EventBetCard extends StatelessWidget {
         Text(
           l.starts_at(_formatYMDHM(e.commenceTime)),
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
         ),
-        _Countdown(to: e.commenceTime),
+        DefaultTextStyle.merge(
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          child: _Countdown(to: e.commenceTime),
+        ),
       ],
     );
   }
@@ -364,4 +378,41 @@ class _CountdownState extends State<_Countdown> {
     final s = two(_left.inSeconds % 60);
     return Text('$h:$m:$s', style: Theme.of(context).textTheme.bodySmall);
   }
+}
+
+Widget _oddsButton(
+  BuildContext context,
+  String label,
+  double? odds, {
+  required bool selected,
+  required VoidCallback? onTap,
+}) {
+  final border = selected
+      ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+      : Border.all(color: Colors.transparent, width: 2);
+
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: border,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.labelMedium),
+          const SizedBox(height: 2),
+          Text(
+            odds != null ? odds.toStringAsFixed(2) : '—',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
+        ],
+      ),
+    ),
+  );
 }
