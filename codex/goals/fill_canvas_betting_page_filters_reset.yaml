@@ -1,0 +1,85 @@
+# Codex cél: Fogadási oldal – ország/ligaszűrő reset és Dropdown assert hiba javítása
+# Kiegészítő információ (vászon): canvases/betting_page_filters_reset.md
+# Projektgyökér: tippmixapp
+
+steps:
+  - name: Szűrők resetelése és érték-érvényesítés bevezetése
+    description: |
+      A `lib/widgets/events_filter_bar.dart` fájlban:
+      • Dátum váltásakor állítsuk nullára az országot és a ligát.
+      • Ország váltásakor állítsuk nullára a ligát.
+      • Render előtt számoljuk ki a `countryValue`/`leagueValue` változókat, amelyek csak akkor tartalmaznak értéket,
+        ha a kiválasztott érték szerepel az `items` között. Így a `DropdownButtonFormField` nem kaphat érvénytelen `value`‑t.
+    outputs:
+      - path: lib/widgets/events_filter_bar.dart
+        diff: |
+          --- lib/widgets/events_filter_bar.dart
+          +++ lib/widgets/events_filter_bar.dart
+          @@
+           class _EventsFilterBarState extends State<EventsFilterBar> {
+             late EventsFilter f = widget.value;
+ 
+             @override
+             Widget build(BuildContext context) {
+               final loc = AppLocalizations.of(context)!;
+               final countries = ['', ...EventsFilter.countriesOf(widget.source)];
+               final leagues = [
+                 '',
+                 ...EventsFilter.leaguesOf(widget.source, country: f.country),
+               ];
++              // Biztosítsuk, hogy a vezérlők csak érvényes értéket kapjanak
++              final String? countryValue =
++                  (f.country != null && countries.contains(f.country)) ? f.country : null;
++              final String? leagueValue =
++                  (f.league != null && leagues.contains(f.league)) ? f.league : null;
+ 
+               return Material(
+                 color: Theme.of(context).colorScheme.surface,
+                 child: Padding(
+                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Wrap(
+                         spacing: 12,
+                         runSpacing: 8,
+                         children: [
+                           _DatePill(
+                             date: f.date,
+                             onChanged: (d) {
+-                              setState(() => f = f.copyWith(date: d));
++                              // Dátum váltáskor reseteljük az országot és a ligát
++                              setState(() => f = f.copyWith(date: d, country: null, league: null));
+                               widget.onChanged(f);
+                             },
+                           ),
+-                          _Drop(loc.filtersCountry, countries, f.country, (v) {
+-                            setState(
+-                              () =>
+-                                  f = f.copyWith(country: v?.isEmpty == true ? null : v),
+-                            );
+-                            widget.onChanged(f);
+-                          }),
+-                          _Drop(loc.filtersLeague, leagues, f.league, (v) {
++                          _Drop(loc.filtersCountry, countries, countryValue, (v) {
++                            // Ország váltásakor a liga nullázása
++                            setState(() => f = f.copyWith(
++                                  country: v?.isEmpty == true ? null : v,
++                                  league: null,
++                                ));
++                            widget.onChanged(f);
++                          }),
++                          _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
+                             setState(
+                               () => f = f.copyWith(league: v?.isEmpty == true ? null : v),
+                             );
+                             widget.onChanged(f);
+                           }),
+                         ],
+                       ),
+                     ],
+                   ),
+                 ),
+               );
+             }
+           }
