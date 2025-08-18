@@ -1,0 +1,74 @@
+# Codex cél: Tippkártya alsó akciógombok újrarendezése (1 nagy + 2 kisebb)
+# Kiegészítő információ (vászon): canvases/betting_card_actions_layout.md
+# Projektgyökér: tippmixapp
+
+steps:
+  - name: Gombsor elrendezésének módosítása (1 oszlop, 2 sor)
+    description: |
+      A `lib/widgets/event_bet_card.dart` fájlban a három akciógomb (További fogadások / Statisztika / AI tippek)
+      jelenleg egy sorban szerepel. Alakítsuk át úgy, hogy felül egy teljes szélességű, elsődleges gomb legyen
+      (További fogadások), alatta pedig két kisebb gomb egymás mellett (Statisztika, AI tippek). Mindhárom gomb
+      ikon+szöveg kombináció marad a meglévő pill‑stílussal.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+-          // Alsó akciók – három gomb egysorban
+-          Row(
+-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+-            children: [
+-              ActionPill(
+-                icon: Icons.more_horiz,
+-                label: loc.more_bets, // "További fogadások"
+-                onTap: onMoreBets,
+-              ),
+-              ActionPill(
+-                icon: Icons.bar_chart,
+-                label: loc.statistics, // "Statisztika"
+-                onTap: onStats,
+-              ),
+-              ActionPill(
+-                icon: Icons.smart_toy,
+-                label: loc.ai_tips, // "AI tippek"
+-                onTap: onAi,
+-              ),
+-            ],
+-          ),
++          // Alsó akciók – hierarchizált elrendezés (1 nagy + 2 kisebb)
++          Column(
++            crossAxisAlignment: CrossAxisAlignment.stretch,
++            children: [
++              // 1) Elsődleges, teljes szélességű gomb felül: További fogadások
++              SizedBox(
++                width: double.infinity,
++                child: ActionPill(
++                  icon: Icons.more_horiz,
++                  label: loc.more_bets, // "További fogadások"
++                  onTap: onMoreBets,
++                ),
++              ),
++              const SizedBox(height: 8),
++              // 2) Másodlagos gombok: Statisztika + AI tippek egymás mellett
++              Row(
++                children: [
++                  Expanded(
++                    child: ActionPill(
++                      icon: Icons.bar_chart,
++                      label: loc.statistics, // "Statisztika"
++                      onTap: onStats,
++                    ),
++                  ),
++                  const SizedBox(width: 8),
++                  Expanded(
++                    child: ActionPill(
++                      icon: Icons.smart_toy,
++                      label: loc.ai_tips, // "AI tippek"
++                      onTap: onAi,
++                    ),
++                  ),
++                ],
++              ),
++            ],
++          ),
