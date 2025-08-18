@@ -99,3 +99,4 @@
 | 2025-08-31   | @codex-bot      | TOC refreshed after odds request hardening docs update                        |
 | 2025-08-17   | @codex-bot      | TOC refreshed after ticket settlement engine docs update                      |
 | 2025-08-18   | @codex-bot      | TOC refreshed after betting page filters reset docs update                    |
+| 2025-08-18   | @codex-bot      | TOC refreshed after betting page UI/UX polish docs update                    |
