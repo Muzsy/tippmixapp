@@ -1,8 +1,8 @@
 import { ApiFootballResultProvider } from './services/ApiFootballResultProvider';
 import { calcTicketPayout } from './tickets/payout';
 import { getFirestore } from 'firebase-admin/firestore';
-
 import { db } from './lib/firebase';
+import { getEvaluator, NormalizedResult } from './evaluators';
 const resultProvider = new ApiFootballResultProvider();
 
 // After computing tip results for a ticket
@@ -48,9 +48,10 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
 
   console.log(`[match_finalizer] received job: ${job}`);
 
-  // 1) Collect pending tickets in root collection
+  // 1) Collect pending tickets across all users via collectionGroup
+  // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
   const ticketsSnap = await db
-    .collection('tickets')
+    .collectionGroup('tickets')
     .where('status', '==', 'pending')
     .limit(200)
     .get();
@@ -83,10 +84,16 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     throw err; // message will be retried / DLQ
   }
 
-  // 3) Map of results with winner name
-  const resultMap = new Map<string, { completed: boolean; winner?: string }>();
+  // 3) Map of results with normalized fields
+  const resultMap = new Map<string, NormalizedResult>();
   scores.forEach(r => {
-    resultMap.set(r.id, { completed: r.completed, winner: r.winner });
+    resultMap.set(r.id, {
+      completed: r.completed,
+      scores: r.scores,
+      home_team: r.home_team,
+      away_team: r.away_team,
+      winner: r.winner,
+    });
   });
 
   // 4) Evaluate each ticket based on its tips and finalize atomically
@@ -97,17 +104,36 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     const tipResults = tipsRaw.map((t: any) => {
       const rid = t?.eventId;
       const pick = (t?.outcome ?? '').trim();
+      const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
       const res = rid ? resultMap.get(rid) : undefined;
-      if (!res || !res.completed || !res.winner) {
-        return { ...t, market: t.marketKey, selection: pick, result: 'pending', oddsSnapshot: t.odds };
+      const evaluator = getEvaluator(String(marketKey));
+      if (!res || !evaluator) {
+        return {
+          ...t,
+          market: String(marketKey).toUpperCase(),
+          selection: pick,
+          result: 'pending',
+          oddsSnapshot: t?.odds ?? t?.oddsSnapshot,
+        };
       }
-      const result = res.winner === pick ? 'won' : 'lost';
-      return { ...t, market: t.marketKey, selection: pick, result, oddsSnapshot: t.odds };
+      const tipInput = {
+        marketKey: String(marketKey),
+        selection: pick,
+        odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
+      };
+      const outcome = evaluator.evaluate(tipInput, res);
+      return {
+        ...t,
+        market: String(marketKey).toUpperCase(),
+        selection: pick,
+        result: outcome,
+        oddsSnapshot: tipInput.odds,
+      };
     });
 
     await finalizeTicketAtomic(
       snap.ref,
-      db.collection('users').doc(snap.get('userId')),
+      db.collection('users').doc(snap.get('uid')),
       { stake: snap.get('stake'), tips: tipResults },
     );
   }
