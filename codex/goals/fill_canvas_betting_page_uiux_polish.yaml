@@ -1,0 +1,248 @@
+# Codex cél: Fogadási oldal – UI/UX finomítások (filter & kártya)
+# Kiegészítő információ (vászon): canvases/betting_page_uiux_polish.md
+# Projektgyökér: tippmixapp
+
+steps:
+  - name: Szűrősáv – háttér és gombstílus egységesítés + animáció
+    description: |
+      A filter sáv Material hátterét `surfaceVariant`-re állítjuk, a paddinget rendezzük,
+      a dátumválasztót `ActionPill`-re cseréljük, és a liga dropdown frissülését fade animációval tesszük egyértelművé.
+    outputs:
+      - path: lib/widgets/events_filter_bar.dart
+        diff: |
+          --- lib/widgets/events_filter_bar.dart
+          +++ lib/widgets/events_filter_bar.dart
+          @@
+           import 'package:tippmixapp/features/filters/events_filter.dart';
+           import 'package:tippmixapp/models/odds_event.dart';
+          +import 'package:tippmixapp/widgets/action_pill.dart';
+          @@
+-              return Material(
+-                color: Theme.of(context).colorScheme.surface,
+-                child: Padding(
+-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
++              return Material(
++                color: Theme.of(context).colorScheme.surfaceVariant,
++                child: Padding(
++                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Wrap(
+-                        spacing: 12,
+-                        runSpacing: 8,
++                        spacing: 10,
++                        runSpacing: 6,
+                         children: [
+-                          _DatePill(
++                          _DatePill(
+                             date: f.date,
+                             onChanged: (d) {
+                               // Dátum váltáskor reseteljük az országot és a ligát
+                               setState(() => f = f.copyWith(date: d, country: null, league: null));
+                               widget.onChanged(f);
+                             },
+                           ),
+-                          _Drop(loc.filtersCountry, countries, countryValue, (v) {
++                          _Drop(loc.filtersCountry, countries, countryValue, (v) {
+                             // Ország váltásakor a liga nullázása
+                             setState(() => f = f.copyWith(
+                                   country: v?.isEmpty == true ? null : v,
+                                   league: null,
+                                 ));
+                             widget.onChanged(f);
+                           }),
+-                          _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
+-                            setState(
+-                              () => f = f.copyWith(league: v?.isEmpty == true ? null : v),
+-                            );
+-                            widget.onChanged(f);
+-                          }),
++                          AnimatedSwitcher(
++                            duration: const Duration(milliseconds: 180),
++                            child: _Drop(loc.filtersLeague, leagues, leagueValue, (v) {
++                              setState(
++                                () => f = f.copyWith(league: v?.isEmpty == true ? null : v),
++                              );
++                              widget.onChanged(f);
++                            }),
++                          ),
+                         ],
+                       ),
+                     ],
+                   ),
+                 ),
+               );
+          @@
+           class _DatePill extends StatelessWidget {
+             final DateTime? date;
+             final ValueChanged<DateTime?> onChanged;
+             const _DatePill({required this.date, required this.onChanged});
+             @override
+             Widget build(BuildContext context) {
+               final loc = AppLocalizations.of(context)!;
+               final text = date == null ? loc.filtersToday : _fmt(date!);
+-              return OutlinedButton.icon(
+-                icon: const Icon(Icons.event),
+-                label: Text(text),
+-                onPressed: () async {
++              return ActionPill(
++                icon: Icons.event,
++                label: text,
++                onTap: () async {
+                   final now = DateTime.now();
+                   final picked = await showDatePicker(
+                     context: context,
+                     firstDate: now.subtract(const Duration(days: 90)),
+                     lastDate: now.add(const Duration(days: 180)),
+                     initialDate: date ?? now,
+                   );
+-                  onChanged(picked);
++                  onChanged(picked);
+                 },
+               );
+             }
+           }
+
+  - name: Tippkártya – idő és visszaszámláló stílus + térköz optimalizálás
+    description: |
+      A kezdés félkövér, a visszaszámláló secondary színnel jelenik meg. Kisebb belső térközök a kártyán.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+-    return Row(
++    return Row(
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       children: [
+-        Text(
+-          l.starts_at(_formatYMDHM(e.commenceTime)),
+-          textAlign: TextAlign.left,
+-          style: Theme.of(context).textTheme.bodySmall,
+-        ),
+-        _Countdown(to: e.commenceTime),
++        Text(
++          l.starts_at(_formatYMDHM(e.commenceTime)),
++          textAlign: TextAlign.left,
++          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
++        ),
++        DefaultTextStyle.merge(
++          style: Theme.of(context).textTheme.bodySmall?.copyWith(
++                color: Theme.of(context).colorScheme.secondary,
++              ),
++          child: _Countdown(to: e.commenceTime),
++        ),
+       ],
+     );
+          @@
+-    return Padding(
+-      padding: const EdgeInsets.all(16),
++    return Padding(
++      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+       child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           // ...
+         ],
+       ),
+     );
+
+  - name: Tippgombok – kétsoros elrendezés és aktív állapot szegéllyel
+    description: |
+      A három fő kimenet gomb (1, X, 2) kétsoros: felül lokalizált felirat (Hazai/Döntetlen/Vendég), alul az odds félkövérrel.
+      A kiválasztott opció köré primer színű border kerül.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+-Widget _oddsButton(BuildContext context, OddsOutcome o, {required VoidCallback onTap}) {
+-  final label = o.label; // "1" | "X" | "2" stb.
+-  return ActionPill(
+-    label: label,
+-    onTap: onTap,
+-  );
+-}
++Widget _oddsButton(BuildContext context, OddsOutcome o, {
++  required bool selected,
++  required VoidCallback onTap,
++}) {
++  String _pretty(String v) {
++    switch (v) {
++      case '1': return AppLocalizations.of(context)!.home_short; // "Hazai"
++      case 'X': return AppLocalizations.of(context)!.draw_short; // "Döntetlen"
++      case '2': return AppLocalizations.of(context)!.away_short; // "Vendég"
++      default: return v;
++    }
++  }
++  final border = selected
++      ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
++      : Border.all(color: Colors.transparent, width: 2);
++  return InkWell(
++    onTap: onTap,
++    child: Container(
++      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
++      decoration: BoxDecoration(
++        color: Theme.of(context).colorScheme.secondaryContainer,
++        borderRadius: BorderRadius.circular(16),
++        border: border,
++      ),
++      child: Column(
++        mainAxisSize: MainAxisSize.min,
++        children: [
++          Text(_pretty(o.label), style: Theme.of(context).textTheme.labelMedium),
++          const SizedBox(height: 2),
++          Text('${o.odds}', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
++        ],
++      ),
++    ),
++  );
++}
+
+  - name: Betöltés jelző és üres állapot ikon+szöveg
+    description: |
+      A lista betöltésekor progress indikátor jelenjen meg, üres eredménynél ikon + segítő szöveg a "Nincs esemény" felirat mellett.
+    outputs:
+      - path: lib/screens/events_screen.dart
+        diff: |
+          --- lib/screens/events_screen.dart
+          +++ lib/screens/events_screen.dart
+          @@
+-    if (state.items.isEmpty) {
+-      return Center(child: Text(loc.no_events));
+-    }
++    if (state.isLoading) {
++      return const Center(child: CircularProgressIndicator());
++    }
++    if (state.items.isEmpty) {
++      return Center(
++        child: Column(
++          mainAxisSize: MainAxisSize.min,
++          children: [
++            const Icon(Icons.info_outline, size: 32),
++            const SizedBox(height: 8),
++            Text(loc.no_events),
++          ],
++        ),
++      );
++    }
+
+  - name: Ellenőrzés
+    description: |
+      `flutter analyze` és `flutter test` futtatása; snapshot/golden frissítés.
+    outputs:
+      - path: .codex/notes/betting_page_uiux_polish_checklist.md
+        diff: |
+          --- /dev/null
+          +++ .codex/notes/betting_page_uiux_polish_checklist.md
+          @@
+          +# Betting Page UI/UX Polish – ellenőrzési lista
+          +[ ] Filter sáv: surfaceVariant háttér, rendezett padding, AnimatedSwitcher a ligára
+          +[ ] Dátumválasztó ActionPill
+          +[ ] Kezdési idő félkövér, visszaszámláló secondary színnel
+          +[ ] Tippgombok kétsorosak, odds félkövér, kiválasztott borderrel
+          +[ ] Betöltés jelző + üres állapot ikon+szöveg
+          +[ ] flutter analyze/test zöld
