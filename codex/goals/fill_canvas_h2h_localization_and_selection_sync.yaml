@@ -1,0 +1,254 @@
+# Codex cél: H2H lokalizáció + ikon konzisztencia + tipográfia + kiválasztás szinkron
+# Canvas: canvases/h2h_localization_and_selection_sync.md
+# Projektgyökér: tippmixapp
+
+steps:
+  - name: i18n kulcsok pótlása (HU/EN/DE)
+    description: Hozzáadjuk/ellenőrizzük a H2H rövid feliratok kulcsait.
+    outputs:
+      - path: lib/l10n/intl_en.arb
+        diff: |
+          --- lib/l10n/intl_en.arb
+          +++ lib/l10n/intl_en.arb
+          @@
+          {
+          +  "home_short": "Home",
+          +  "draw_short": "Draw",
+          +  "away_short": "Away"
+          }
+      - path: lib/l10n/intl_hu.arb
+        diff: |
+          --- lib/l10n/intl_hu.arb
+          +++ lib/l10n/intl_hu.arb
+          @@
+          {
+          +  "home_short": "Hazai",
+          +  "draw_short": "Döntetlen",
+          +  "away_short": "Vendég"
+          }
+      - path: lib/l10n/intl_de.arb
+        diff: |
+          --- lib/l10n/intl_de.arb
+          +++ lib/l10n/intl_de.arb
+          @@
+          {
+          +  "home_short": "Heim",
+          +  "draw_short": "Unentschieden",
+          +  "away_short": "Auswärts"
+          }
+
+  - name: ActionPill – egyedi labelStyle támogatás
+    description: A fő gomb (További fogadások) félkövér labelt kap; ehhez opcionális labelStyle paraméter az ActionPill-ben.
+    outputs:
+      - path: lib/widgets/action_pill.dart
+        diff: |
+          --- lib/widgets/action_pill.dart
+          +++ lib/widgets/action_pill.dart
+          @@
+          -class ActionPill extends StatelessWidget {
+          -  final IconData? icon;
+          -  final String label;
+          -  final VoidCallback onTap;
+          -  const ActionPill({super.key, this.icon, required this.label, required this.onTap});
+          -  @override
+          -  Widget build(BuildContext context) {
+          +class ActionPill extends StatelessWidget {
+          +  final IconData? icon;
+          +  final String label;
+          +  final VoidCallback onTap;
+          +  final TextStyle? labelStyle;
+          +  const ActionPill({super.key, this.icon, required this.label, required this.onTap, this.labelStyle});
+          +  @override
+          +  Widget build(BuildContext context) {
+               final theme = Theme.of(context);
+               return InkWell(
+                 onTap: onTap,
+                 borderRadius: BorderRadius.circular(16),
+                 child: Container(
+                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                   decoration: BoxDecoration(
+                     color: theme.colorScheme.secondaryContainer,
+                     borderRadius: BorderRadius.circular(16),
+                   ),
+                   child: Row(
+                     mainAxisSize: MainAxisSize.min,
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       if (icon != null) ...[
+                         Icon(icon, size: 18),
+                         const SizedBox(width: 8),
+                       ],
+          -            Text(label, style: theme.textTheme.labelLarge),
+          +            Text(label, style: labelStyle ?? theme.textTheme.labelLarge),
+                     ],
+                   ),
+                 ),
+               );
+             }
+           }
+
+  - name: event_bet_card – lokalizáció, ikon konzisztencia, divider eltávolítás, félkövér főgomb
+    description: |
+      A H2H feliratok `AppLocalizations` kulcsokra váltanak; a kiválasztás primer borderrel jelölve jelenik meg.
+      Az odds blokk és az akciósor közti Divider kikerül, helyette extra padding. A „További fogadások” félkövér labelt kap.
+      Az alsó gombok ikonjai egységes (filled) stílusú Material ikonok.
+    outputs:
+      - path: lib/widgets/event_bet_card.dart
+        diff: |
+          --- lib/widgets/event_bet_card.dart
+          +++ lib/widgets/event_bet_card.dart
+          @@
+          import 'package:flutter/material.dart';
+          import 'package:tippmixapp/l10n/app_localizations.dart';
+          import 'package:tippmixapp/widgets/action_pill.dart';
+          +import 'package:tippmixapp/services/ticket_service.dart';
+          @@
+          -Widget _oddsButton(BuildContext context, OddsOutcome o, {required VoidCallback onTap}) {
+          -  final label = o.label; // "Home" | "Draw" | "Away" stb.
+          -  return ActionPill(
+          -    label: label,
+          -    onTap: onTap,
+          -  );
+          -}
+          +Widget _oddsButton(BuildContext context, OddsOutcome o, {
+          +  required bool selected,
+          +  required VoidCallback onTap,
+          +}) {
+          +  final loc = AppLocalizations.of(context)!;
+          +  String _pretty(String v) {
+          +    switch (v) {
+          +      case '1':
+          +      case 'Home':
+          +        return loc.home_short; // Hazai
+          +      case 'X':
+          +      case 'Draw':
+          +        return loc.draw_short; // Döntetlen
+          +      case '2':
+          +      case 'Away':
+          +        return loc.away_short; // Vendég
+          +      default:
+          +        return v;
+          +    }
+          +  }
+          +  final theme = Theme.of(context);
+          +  return InkWell(
+          +    onTap: onTap,
+          +    borderRadius: BorderRadius.circular(16),
+          +    child: Container(
+          +      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          +      decoration: BoxDecoration(
+          +        color: theme.colorScheme.secondaryContainer,
+          +        borderRadius: BorderRadius.circular(16),
+          +        border: Border.all(
+          +          color: selected ? theme.colorScheme.primary : Colors.transparent,
+          +          width: 2,
+          +        ),
+          +      ),
+          +      child: Column(
+          +        mainAxisSize: MainAxisSize.min,
+          +        children: [
+          +          Text(_pretty(o.label), style: theme.textTheme.labelMedium),
+          +          const SizedBox(height: 2),
+          +          Text('${o.odds}', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+          +        ],
+          +      ),
+          +    ),
+          +  );
+          +}
+          @@
+          -// Odds blokk és akciók közé divider
+          -const Divider(height: 20),
+          +// Odds blokk és akciók közé csak kis extra térköz
+          +const SizedBox(height: 12),
+          @@
+          -ActionPill(
+          -  icon: Icons.more_horiz,
+          -  label: loc.more_bets,
+          -  onTap: onMoreBets,
+          -),
+          +ActionPill(
+          +  icon: Icons.more_horiz,
+          +  label: loc.more_bets,
+          +  labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+          +  onTap: onMoreBets,
+          +),
+          @@
+          -ActionPill(icon: Icons.bar_chart, label: loc.statistics, onTap: onStats),
+          -ActionPill(icon: Icons.smart_toy, label: loc.ai_tips, onTap: onAi),
+          +ActionPill(icon: Icons.bar_chart, label: loc.statistics, onTap: onStats),
+          +ActionPill(icon: Icons.smart_toy, label: loc.ai_tips, onTap: onAi),
+          @@
+          +// Szinkron a szelvény eseményeivel: törlés/beküldés → UI reset
+          +@override
+          +void initState() {
+          +  super.initState();
+          +  TicketService.signals.addListener(_onSlipSignal);
+          +}
+          +
+          +void _onSlipSignal() {
+          +  if (!mounted) return;
+          +  setState(() {
+          +    // A kiválasztások helyi állapota törlődik; a selected feltétel ezután false lesz
+          +  });
+          +}
+          +
+          +@override
+          +void dispose() {
+          +  TicketService.signals.removeListener(_onSlipSignal);
+          +  super.dispose();
+          +}
+
+  - name: TicketService – szelvény eseményjelzés (törlés/beküldés)
+    description: Egységes jelző bevezetése, amit a kártyák figyelnek és resetelik a kiemelést.
+    outputs:
+      - path: lib/services/ticket_service.dart
+        diff: |
+          --- lib/services/ticket_service.dart
+          +++ lib/services/ticket_service.dart
+          @@
+          +class SlipSignals extends ChangeNotifier {
+          +  void notifyChanged() => notifyListeners();
+          +}
+          +
+          +class TicketService {
+          +  static final SlipSignals signals = SlipSignals();
+          +  // ... meglévő kód ...
+          +  Future<void> removeTip(Tip tip) async {
+          +    // meglévő törlési logika
+          +    // ...
+          +    signals.notifyChanged();
+          +  }
+          +
+          +  Future<CreateTicketResult> confirmAndCreateTicket(/* meglévő paraméterek */) async {
+          +    final res = await _create(/* ... */);
+          +    // ha sikeres beküldés
+          +    if (res.isSuccess) {
+          +      signals.notifyChanged();
+          +    }
+          +    return res;
+          +  }
+
+  - name: l10n generálás és ellenőrzés
+    description: Fordítások generálása, kódellenőrzés és teszt futtatása.
+    outputs:
+      - path: .codex/notes/h2h_loc_and_selection_sync_checklist.md
+        diff: |
+          --- /dev/null
+          +++ .codex/notes/h2h_loc_and_selection_sync_checklist.md
+          @@
+          +# H2H i18n & selection sync – ellenőrzőlista
+          +[ ] H2H feliratok (HU/EN/DE) helyesek
+          +[ ] "További fogadások" félkövér, szín változatlan
+          +[ ] Divider eltűnt, padding megvan
+          +[ ] Kiválasztott border megjelenik és törlődik törlés/beküldés után
+          +[ ] flutter gen-l10n / analyze / test zöld
+      - path: scripts/run_l10n_analyze_test.sh
+        diff: |
+          --- /dev/null
+          +++ scripts/run_l10n_analyze_test.sh
+          @@
+          +#!/usr/bin/env bash
+          +set -e
+          +flutter gen-l10n
+          +flutter analyze
+          +flutter test -r compact
