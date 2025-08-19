@@ -6,6 +6,7 @@ class ActionPill extends StatelessWidget {
   final VoidCallback? onTap;
   final bool selected;
   final double height;
+  final TextStyle? labelStyle;
 
   const ActionPill({
     super.key,
@@ -14,6 +15,7 @@ class ActionPill extends StatelessWidget {
     this.onTap,
     this.selected = false,
     this.height = 40,
+    this.labelStyle,
   });
 
   @override
@@ -53,7 +55,8 @@ class ActionPill extends StatelessWidget {
                     child: Text(
                       label,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(color: fg),
+                      style: (labelStyle ?? theme.textTheme.labelLarge)
+                          ?.copyWith(color: fg),
                     ),
                   ),
                 ],

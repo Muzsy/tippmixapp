@@ -2,14 +2,26 @@ import 'package:flutter/widgets.dart';
 import 'api_football_service.dart';
 import 'odds_drift_checker.dart';
 import '../widgets/odds_drift_dialog.dart';
+import '../models/tip_model.dart';
+
+class SlipSignals extends ChangeNotifier {
+  void notifyChanged() => notifyListeners();
+}
 
 class TicketService {
+  static final SlipSignals signals = SlipSignals();
+
   Future<String?> createTicket({
     required List<Map<String, dynamic>> tips,
     required num stake,
   }) async {
     // TODO: integrate with backend callable
     return 'ticket-id';
+  }
+
+  Future<void> removeTip(TipModel tip) async {
+    // TODO: implement removal logic
+    signals.notifyChanged();
   }
 
   Future<String?> confirmAndCreateTicket(
@@ -28,6 +40,10 @@ class TicketService {
       // Optional: update tips with new odds here if desired
     }
     // proceed with existing createTicket flow
-    return await createTicket(tips: tips, stake: stake);
+    final id = await createTicket(tips: tips, stake: stake);
+    if (id != null) {
+      signals.notifyChanged();
+    }
+    return id;
   }
 }

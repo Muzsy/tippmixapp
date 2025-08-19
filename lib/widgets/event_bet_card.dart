@@ -9,8 +9,9 @@ import 'package:tippmixapp/services/api_football_service.dart';
 import 'package:tippmixapp/widgets/action_pill.dart';
 import 'package:tippmixapp/widgets/league_pill.dart';
 import 'package:tippmixapp/widgets/team_badge.dart';
+import 'package:tippmixapp/services/ticket_service.dart';
 
-class EventBetCard extends StatelessWidget {
+class EventBetCard extends StatefulWidget {
   final OddsEvent event;
   final ApiFootballService apiService;
   final void Function(OddsOutcome)? onTapHome;
@@ -35,9 +36,36 @@ class EventBetCard extends StatelessWidget {
   }) : apiService = apiService ?? ApiFootballService();
 
   @override
+  State<EventBetCard> createState() => _EventBetCardState();
+}
+
+class _EventBetCardState extends State<EventBetCard> {
+  String? _selected; // 'home', 'draw', 'away'
+
+  @override
+  void initState() {
+    super.initState();
+    TicketService.signals.addListener(_onSlipSignal);
+  }
+
+  void _onSlipSignal() {
+    if (!mounted) return;
+    setState(() {
+      _selected = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    TicketService.signals.removeListener(_onSlipSignal);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final ra = event.fetchedAt ?? refreshedAt ?? DateTime.now();
+    final event = widget.event;
+    final ra = event.fetchedAt ?? widget.refreshedAt ?? DateTime.now();
 
     return Card(
       key: ValueKey('bet-card-${event.id}'),
@@ -123,7 +151,7 @@ class EventBetCard extends StatelessWidget {
                     0;
                 return FutureBuilder<OddsMarket?>(
                   key: ValueKey('markets-${event.id}'),
-                  future: apiService.getH2HForFixture(
+                  future: widget.apiService.getH2HForFixture(
                     fid,
                     season: event.season ?? event.commenceTime.year,
                     homeName: event.homeTeam,
@@ -168,16 +196,18 @@ class EventBetCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 8),
-        const Divider(height: 1),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         // Alsó akciók – hierarchizált elrendezés (1 nagy + 2 kisebb)
         SizedBox(
           width: double.infinity,
           child: ActionPill(
             icon: Icons.more_horiz,
-            label: loc.appActionsMoreBets,
-            onTap: onMoreBets,
+            label: loc.more_bets,
+            labelStyle: Theme.of(context)
+                .textTheme
+                .labelLarge
+                ?.copyWith(fontWeight: FontWeight.w700),
+            onTap: widget.onMoreBets,
           ),
         ),
         const SizedBox(height: 8),
@@ -186,16 +216,16 @@ class EventBetCard extends StatelessWidget {
             Expanded(
               child: ActionPill(
                 icon: Icons.bar_chart,
-                label: loc.appActionsStatistics,
-                onTap: onStats,
+                label: loc.statistics,
+                onTap: widget.onStats,
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: ActionPill(
                 icon: Icons.smart_toy,
-                label: loc.appActionsAiRecommend,
-                onTap: onAi,
+                label: loc.ai_recommendation,
+                onTap: widget.onAi,
               ),
             ),
           ],
@@ -213,33 +243,45 @@ class EventBetCard extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _oddsButton(
-            context,
-            home?.name ?? '1',
-            home?.price,
-            selected: false,
-            onTap: home != null ? () => onTapHome?.call(home) : null,
-          ),
+          child: home != null
+              ? _oddsButton(
+                  context,
+                  home,
+                  selected: _selected == 'home',
+                  onTap: () {
+                    widget.onTapHome?.call(home);
+                    setState(() => _selected = 'home');
+                  },
+                )
+              : const SizedBox.shrink(),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: _oddsButton(
-            context,
-            draw?.name ?? 'X',
-            draw?.price,
-            selected: false,
-            onTap: draw != null ? () => onTapDraw?.call(draw) : null,
-          ),
+          child: draw != null
+              ? _oddsButton(
+                  context,
+                  draw,
+                  selected: _selected == 'draw',
+                  onTap: () {
+                    widget.onTapDraw?.call(draw);
+                    setState(() => _selected = 'draw');
+                  },
+                )
+              : const SizedBox.shrink(),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: _oddsButton(
-            context,
-            away?.name ?? '2',
-            away?.price,
-            selected: false,
-            onTap: away != null ? () => onTapAway?.call(away) : null,
-          ),
+          child: away != null
+              ? _oddsButton(
+                  context,
+                  away,
+                  selected: _selected == 'away',
+                  onTap: () {
+                    widget.onTapAway?.call(away);
+                    setState(() => _selected = 'away');
+                  },
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -384,11 +426,27 @@ class _CountdownState extends State<_Countdown> {
 
 Widget _oddsButton(
   BuildContext context,
-  String label,
-  double? odds, {
+  OddsOutcome o, {
   required bool selected,
-  required VoidCallback? onTap,
+  required VoidCallback onTap,
 }) {
+  final loc = AppLocalizations.of(context)!;
+  String pretty(String v) {
+    switch (v) {
+      case '1':
+      case 'Home':
+        return loc.home_short;
+      case 'X':
+      case 'Draw':
+        return loc.draw_short;
+      case '2':
+      case 'Away':
+        return loc.away_short;
+      default:
+        return v;
+    }
+  }
+
   final border = selected
       ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
       : Border.all(color: Colors.transparent, width: 2);
@@ -405,13 +463,15 @@ Widget _oddsButton(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
+          Text(pretty(o.name),
+              style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: 2),
           Text(
-            odds != null ? odds.toStringAsFixed(2) : '—',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            o.price.toStringAsFixed(2),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ],
       ),
