@@ -1,0 +1,64 @@
+meta:
+  canvas: uid_userId_wallet_credit_fix.md
+  priority: P0
+  notes: |
+    A YAML a vászonhoz kapcsolódó **konkrét kód‑diffeket** tartalmazza a mostani tippmixapp.zip alapján.
+    Fókusz: mezőnév‑fix (uid→userId) és wallet‑kredit bekötése a match_finalizerben.
+
+steps:
+  # 1️⃣ match_finalizer – CoinService import + users balance írás eltávolítása
+  - patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        @@
+        -import { getFirestore } from 'firebase-admin/firestore';
+        -import { db } from './lib/firebase';
+        +import { getFirestore } from 'firebase-admin/firestore';
+        +import { db } from './lib/firebase';
+        +import { CoinService } from './services/CoinService';
+        
+        @@
+        -    const balance = (uSnap.data()?.balance ?? 0) + payout;
+        -    tx.update(userRef, { balance });
+        -    tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
+        +    tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
+
+  # 2️⃣ match_finalizer – user azonosító helyes beolvasása + wallet kreditálás
+  - patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        @@
+        -    await finalizeTicketAtomic(
+        -      snap.ref,
+        -      db.collection('users').doc(snap.get('uid')),
+        -      { stake: snap.get('stake'), tips: tipResults },
+        -    );
+        +    const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
+        +    await finalizeTicketAtomic(
+        +      snap.ref,
+        +      db.collection('users').doc(uid),
+        +      { stake: snap.get('stake'), tips: tipResults },
+        +    );
+        +    // Wallet credit via CoinService (idempotens – ledger: wallets/{uid}/ledger/{ticketId})
+        +    {
+        +      const payout = calcTicketPayout(snap.get('stake'), tipResults);
+        +      if (uid && payout > 0) {
+        +        const coins = Math.round(payout);
+        +        const cs = new CoinService();
+        +        try {
+        +          await cs.credit(String(uid), coins, snap.id);
+        +        } catch (e) {
+        +          console.error('[match_finalizer] wallet credit failed', e);
+        +        }
+        +      }
+        +    }
+
+  # 3️⃣ Info – futtatási teendők (nem patch)
+  - note: |
+      * Deploy: `cd cloud_functions && npm ci && npm run build && gcloud functions deploy match_finalizer --gen2 --region=europe-central2 --runtime=nodejs20 --trigger-topic=result-check`
+      * Teszt: Pub/Sub kézi trigger: `gcloud pubsub topics publish result-check --message='{"job":"final-sweep"}'`
+      * Elvárt eredmény: a `tickets/*/tickets/*` doksik `status` mezője frissül (won/lost/void), a `processedAt` kitöltődik, **wallets/{uid}** `coins` nő a nyertes szelvény(ek) összegével és `ledger/{ticketId}` létrejön.
+
+links:
+  - canvas: uid_userId_wallet_credit_fix.md
+  - reference: wallet.pdf
