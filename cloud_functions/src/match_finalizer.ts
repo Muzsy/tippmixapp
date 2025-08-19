@@ -2,6 +2,7 @@ import { ApiFootballResultProvider } from './services/ApiFootballResultProvider'
 import { calcTicketPayout } from './tickets/payout';
 import { getFirestore } from 'firebase-admin/firestore';
 import { db } from './lib/firebase';
+import { CoinService } from './services/CoinService';
 import { getEvaluator, NormalizedResult } from './evaluators';
 const resultProvider = new ApiFootballResultProvider();
 
@@ -13,7 +14,7 @@ async function finalizeTicketAtomic(
 ) {
   const db = getFirestore();
   await db.runTransaction(async (tx) => {
-    const [tSnap, uSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
+    const [tSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
     const t = tSnap.data();
     if (!t) throw new Error('Ticket not found');
     if (t.processedAt) {
@@ -29,8 +30,6 @@ async function finalizeTicketAtomic(
     if (tips.some((x: any) => x.result === 'pending')) return;
     const payout = calcTicketPayout(ticketData.stake, tips);
     const status = tips.some((x: any) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
-    const balance = (uSnap.data()?.balance ?? 0) + payout;
-    tx.update(userRef, { balance });
     tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
   });
 }
@@ -131,11 +130,25 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
       };
     });
 
+    const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
     await finalizeTicketAtomic(
       snap.ref,
-      db.collection('users').doc(snap.get('uid')),
+      db.collection('users').doc(uid),
       { stake: snap.get('stake'), tips: tipResults },
     );
+    // Wallet credit via CoinService (idempotens – ledger: wallets/{uid}/ledger/{ticketId})
+    {
+      const payout = calcTicketPayout(snap.get('stake'), tipResults);
+      if (uid && payout > 0) {
+        const coins = Math.round(payout);
+        const cs = new CoinService();
+        try {
+          await cs.credit(String(uid), coins, snap.id);
+        } catch (e) {
+          console.error('[match_finalizer] wallet credit failed', e);
+        }
+      }
+    }
   }
 
   console.log('[match_finalizer] ticket finalization loop done');

@@ -1,4 +1,4 @@
-version: "2025-08-18"
+version: "2025-09-30"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -11,9 +11,9 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 3. Fetch scores via `ResultProvider`, which now returns the `winner` and treats `FT/AET/PEN` as completed.
 4. Evaluate each ticket's tips through the pluggable Market Evaluator registry (mapping `marketKey`, `outcome`, `odds`) and, once none remain `pending`, execute a Firestore **transaction** that:
    - computes payout via `calcTicketPayout`,
-   - updates ticket `status`, `payout` and `processedAt`,
-   - credits the user's `balance` atomically.
-   Idempotency is enforced by checking `processedAt`.
+   - updates ticket `status`, `payout` and `processedAt`.
+   The ticket owner is resolved from the `userId` field (fallback: path segment) and any positive payout is credited to `wallets/{uid}` via `CoinService.credit(uid, amount, ticketId)`, which writes an idempotent `ledger/{ticketId}` entry.
+   Idempotency is enforced by checking `processedAt` and the wallet ledger.
 5. Future step: create `notifications/{uid}` document and send FCM push.
 
 This document covers the TypeScript skeleton with atomic payout handling.
