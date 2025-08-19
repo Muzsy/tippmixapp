@@ -1,4 +1,4 @@
-version: "2025-08-18"
+version: "2025-09-30"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -11,9 +11,9 @@ Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Felad
 3. A `ResultProvider` visszaadja a `winner` mezőt, és az `FT/AET/PEN` státuszokat lezártnak tekinti.
 4. A tippek kiértékelését a bővíthető Market Evaluator registry végzi (`marketKey`, `outcome`, `odds` mezők), és ha egy sem `pending`, egyetlen Firestore **tranzakcióban**:
    - kiszámolja a kifizetést a `calcTicketPayout` függvénnyel,
-   - frissíti a ticket `status`, `payout`, `processedAt` mezőit,
-   - jóváírja a felhasználó `balance` mezőjét.
-   Az idempotenciát a `processedAt` mező védi.
+   - frissíti a ticket `status`, `payout`, `processedAt` mezőit.
+   A ticket tulajdonosa a `userId` mezőből (fallback: útvonal) kerül meghatározásra, és a pozitív kifizetés a `CoinService.credit(uid, amount, ticketId)` hívással kerül jóváírásra a `wallets/{uid}` ág alatt, idempotens `ledger/{ticketId}` bejegyzéssel.
+   Az idempotenciát a `processedAt` mező és a wallet ledger védi.
 5. Következő lépésként `notifications/{uid}` dokumentumot hoz létre és FCM push-t küld.
 
 Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
