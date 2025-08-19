@@ -9,6 +9,15 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get home_short => 'Heim';
+
+  @override
+  String get draw_short => 'Unentschieden';
+
+  @override
+  String get away_short => 'Auswärts';
+
+  @override
   String get accept => 'Akzeptieren';
 
   @override

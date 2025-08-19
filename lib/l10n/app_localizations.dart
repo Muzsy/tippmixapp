@@ -100,6 +100,24 @@ abstract class AppLocalizations {
     Locale('hu'),
   ];
 
+  /// No description provided for @home_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home_short;
+
+  /// No description provided for @draw_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw'**
+  String get draw_short;
+
+  /// No description provided for @away_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Away'**
+  String get away_short;
+
   /// No description provided for @accept.
   ///
   /// In en, this message translates to:

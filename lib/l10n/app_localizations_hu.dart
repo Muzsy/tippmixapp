@@ -9,6 +9,15 @@ class AppLocalizationsHu extends AppLocalizations {
   AppLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
+  String get home_short => 'Hazai';
+
+  @override
+  String get draw_short => 'Döntetlen';
+
+  @override
+  String get away_short => 'Vendég';
+
+  @override
   String get accept => 'Elfogad';
 
   @override
