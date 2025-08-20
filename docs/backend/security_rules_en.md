@@ -10,7 +10,7 @@ This document defines the security model and Firestore access rules for TippmixA
 - Prevent manipulation of TippCoin or tickets
 - Ensure data integrity during bet placement
 - Leaderboard requires read-only access to all `users/{uid}` docs for signed-in users
-- TippCoin balances mirror to `wallets/{uid}` and `users/{uid}/wallet`, writable only by privileged server code
+- TippCoin balances stored in `users/{uid}/wallet` only; legacy `wallets/*` and `coin_logs/*` are read-only
 
 ---
 
@@ -23,6 +23,7 @@ users/{uid}
   wallet
   ledger/{entryId}
 wallets/{uid} (legacy)
+coin_logs/{logId} (legacy)
 tickets/{ticketId}
 public_feed/{postId}
   reports/{reportId}
@@ -44,24 +45,29 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
+    match /coin_logs/{logId} {
+      allow create, update, delete: if false;
+      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+
     match /wallets/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
 
       match /ledger/{ticketId} {
         allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if request.auth == null;
+        allow write: if false;
       }
     }
 
-    // NEW: user-centric wallet & ledger (SoT)
+    // user-centric wallet & ledger (SoT)
     match /users/{userId}/wallet {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
     }
 
     match /tickets/{ticketId} {
@@ -131,3 +137,4 @@ service cloud.firestore {
 
 - 2025-08-06: Corrected `/tickets/{ticketId}` field whitelist to cover all client-sent keys.
 - 2025-08-20: Added user-centric wallet & ledger rules and dual-write notes.
+- 2025-08-20: Disabled writes to legacy `wallets` and `coin_logs` paths.

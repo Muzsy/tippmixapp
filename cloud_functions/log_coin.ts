@@ -40,14 +40,17 @@ export const log_coin = functions
       );
     }
 
-    const logRef = db.collection('coin_logs').doc(transactionId);
-    await logRef.set({
-      userId: context.auth.uid,
-      amount,
-      type,
-      meta,
-      transactionId,
-      timestamp: FieldValue.serverTimestamp(),
-    });
+    const logRef = db.doc(`users/${context.auth.uid}/ledger/${transactionId}`);
+    await logRef.set(
+      {
+        amount,
+        type,
+        refId: transactionId,
+        source: 'log_coin',
+        meta,
+        createdAt: FieldValue.serverTimestamp(),
+      },
+      { merge: true },
+    );
     return { success: true };
   });
