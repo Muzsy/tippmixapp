@@ -1,0 +1,240 @@
+# Codex YAML – Rules v1 + duplairás CF + kliens olvasás átállítás
+
+# Megjegyzés: Ez a YAML a „Firestore refaktor – Rules v1 + duplairás CF + kliens olvasás átállítás (terv)” vászonhoz készült kiegészítés.
+
+steps:
+
+* name: Firestore Rules v1 – user‑centrikus SoT hozzáadása
+  description: |
+  A `cloud_functions/firestore.rules` fájlban add hozzá az új SoT szabályokat a `users/{uid}/wallet` és `users/{uid}/ledger/{entryId}` útvonalakra. A kliensnek csak read joga legyen, write tilos (CF ír Admin SDK-val).
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/firestore.rules
+    content: |
+    \--- a/cloud\_functions/firestore.rules
+    +++ b/cloud\_functions/firestore.rules
+    @@
+    service cloud.firestore {
+    match /databases/{database}/documents {
+    @@
+* ```
+         }
+  ```
+* ```
+       }
+  ```
+
+- ```
+         }
+  ```
+-
+- ```
+         /* ——— NEW: user-centric wallet & ledger (SoT) ——— */
+  ```
+- ```
+         match /users/{uid}/wallet {
+  ```
+- ```
+           allow read: if isOwner(uid);
+  ```
+- ```
+           allow write: if false; // Only via CF (Admin SDK)
+  ```
+- ```
+         }
+  ```
+- ```
+         match /users/{uid}/ledger/{entryId} {
+  ```
+- ```
+           allow read: if isOwner(uid);
+  ```
+- ```
+           allow write: if false; // Only via CF (Admin SDK)
+  ```
+- ```
+         }
+  ```
+-
+- ```
+       }
+       }
+  ```
+
+  * name: CF – onUserCreate seedelje az új wallet docot
+    description: |
+    Az `onUserCreate` trigger jelenleg csak a `users/{uid}` dokumentumot hozza létre. Egészítsd ki, hogy a `users/{uid}/wallet` doc is létrejöjjön 50 coin kezdő egyenleggel (árnyékfutás az új SoT felé).
+    outputs:
+
+    * type: diff
+      path: cloud\_functions/coin\_trx.logic.ts
+      content: |
+      \--- a/cloud\_functions/coin\_trx.logic.ts
+      +++ b/cloud\_functions/coin\_trx.logic.ts
+      @@
+      export const onUserCreate = functions
+      .region('europe-central2')
+      .auth.user()
+      .onCreate(async (user) => {
+      const userRef = db.collection('users').doc(user.uid);
+      await userRef.set({
+      coins: 50,
+      createdAt: FieldValue.serverTimestamp(),
+      });
+- ```
+           // NEW: initialize user-centric wallet doc as SoT (duplairás átmenet)
+  ```
+- ```
+           await db.doc(`users/${user.uid}/wallet`).set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+         });
+  ```
+
+  * name: CF – coin\_trx tranzakció tükörírás az új SoT‑ra
+    description: |
+    A `coin_trx` callable tranzakciója a régi mezőket frissíti. Egészítsd ki, hogy a `users/{uid}/wallet` (increment) és `users/{uid}/ledger/{transactionId}` (audit) is frissüljön ugyanebben a tranzakcióban.
+    outputs:
+
+    * type: diff
+      path: cloud\_functions/coin\_trx.logic.ts
+      content: |
+      \--- a/cloud\_functions/coin\_trx.logic.ts
+      +++ b/cloud\_functions/coin\_trx.logic.ts
+      @@
+
+* ```
+       tx.update(userRef, { coins: newBalance });
+  ```
+
+- ```
+       tx.update(userRef, { coins: newBalance });
+  ```
+- ```
+       // NEW: mirror write to user-centric SoT
+  ```
+- ```
+       const walletDoc = db.doc(`users/${userId}/wallet`);
+  ```
+- ```
+       tx.set(walletDoc, { coins: FieldValue.increment(amount), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  ```
+- ```
+       const ledgerDoc = db.doc(`users/${userId}/ledger/${transactionId}`);
+  ```
+- ```
+       tx.set(ledgerDoc, { userId, amount, type, refId: transactionId, source: 'coin_trx', createdAt: FieldValue.serverTimestamp() }, { merge: true });
+       tx.set(logRef, {
+         userId,
+         amount,
+         type,
+         reason,
+         transactionId,
+         timestamp: FieldValue.serverTimestamp(),
+       });
+  ```
+
+  * name: CF – match\_finalizer kimeneti könyvelés tükörírása az új SoT‑ra
+    description: |
+    A nyeremény jóváíráskor a `CoinService().credit(...)` hívás után írd tükrözötten az új SoT‑ot: wallet increment + ledger sor `type: 'win'`, `refId: ticketId`.
+    outputs:
+
+    * type: diff
+      path: cloud\_functions/src/match\_finalizer.ts
+      content: |
+      \--- a/cloud\_functions/src/match\_finalizer.ts
+      +++ b/cloud\_functions/src/match\_finalizer.ts
+      @@
+      try {
+      await new CoinService().credit(String(uid), coins, snap.id);
+- ```
+          // NEW: mirror write to user-centric SoT (duplairás)
+  ```
+- ```
+          const uref = db.doc(`users/${uid}/wallet`);
+  ```
+- ```
+          await uref.set({ coins: FieldValue.increment(coins), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  ```
+- ```
+          const lref = db.doc(`users/${uid}/ledger/${snap.id}`);
+  ```
+- ```
+          await lref.set({ type: 'win', amount: coins, refId: snap.id, source: 'match_finalizer', createdAt: FieldValue.serverTimestamp() }, { merge: true });
+        } catch (e) {
+          console.error('[match_finalizer] wallet credit failed', e);
+        }
+  ```
+
+  * name: CF – CoinService előkészítés (új SoT refek)
+    description: |
+    Add hozzá a `CoinService.transact` elején az új SoT referenciákat, hogy a későbbi teljes átállás egyszerű legyen. Most még az üzleti logika nem ezen fut, csak előkészítés.
+    outputs:
+
+    * type: diff
+      path: cloud\_functions/src/services/CoinService.ts
+      content: |
+      \--- a/cloud\_functions/src/services/CoinService.ts
+      +++ b/cloud\_functions/src/services/CoinService.ts
+      @@
+      async transact(uid: string, amount: number, ticketId: string, type: 'win' | 'bet'): Promise<void> {
+      const walletRef = db.doc(`wallets/${uid}`);
+      const ledgerRef = walletRef.collection('ledger').doc(ticketId);
+- ```
+           // NEW (duplairás): user-centric SoT
+  ```
+- ```
+           const newWalletRef = db.doc(`users/${uid}/wallet`);
+  ```
+- ```
+           const newLedgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
+  ```
+
+  * name: Kliens – StatsService olvasás átállítása új SoT‑ra
+    description: |
+    A `lib/services/stats_service.dart` kiegészítése: coin balance olvasása a `users/{uid}/wallet.coins` mezőről (fallback a régi `users/{uid}.coins`‑ra), valamint a szelvények számlálása `collectionGroup('tickets')` segítségével.
+    outputs:
+
+    * type: diff
+      path: lib/services/stats\_service.dart
+      content: |
+      \--- a/lib/services/stats\_service.dart
+      +++ b/lib/services/stats\_service.dart
+      @@
+
+* final ticketsRef = \_db.collection('tickets');
+
+- final ticketsRef = \_db.collectionGroup('tickets');
+  @@
+
+* ```
+     final coins = (data['coins'] as int?) ?? 0;
+  ```
+
+- ```
+     final walletSnap = await _db.doc('users/$uid/wallet').get();
+  ```
+- ```
+     final coins = (walletSnap.data()?['coins'] as int?) ?? (data['coins'] as int? ?? 0);
+  ```
+
+  * name: Build & Lint
+    description: |
+    Futtasd a statikus ellenőrzéseket és a teszteket. Ha a Codex futtat környezetet, használd a projekt szabványait.
+    outputs:
+
+    * type: command
+      content: |
+      flutter analyze
+      flutter test
+
+      # Functions unit/integration
+
+      cd cloud\_functions && npm ci && npm test
+
+  * name: Kiegészítő információ
+    description: |
+    A lépések szakmai hátterét és döntési elveit a „Firestore refaktor – Rules v1 + duplairás CF + kliens olvasás átállítás (terv)” vászon tartalmazza.
+    outputs:
+
+    * type: note
+      content: Ez a YAML a fenti vászon kiegészítője; a pontos indoklás és QA-szcenáriók ott találhatók.
