@@ -102,3 +102,4 @@
 | 2025-08-18   | @codex-bot      | TOC refreshed after betting page UI/UX polish docs update                    |
 | 2025-08-18   | @codex-bot      | TOC refreshed after event bet card actions layout docs update                |
 | 2025-09-30   | @codex-bot      | TOC refreshed after match finalizer wallet credit docs update               |
+| 2025-10-01   | @codex-bot      | TOC refreshed after fixtureId meta resolver docs update                       |

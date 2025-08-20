@@ -1,10 +1,11 @@
-import { ApiFootballResultProvider } from './services/ApiFootballResultProvider';
+import { ApiFootballResultProvider, findFixtureIdByMeta } from './services/ApiFootballResultProvider';
 import { calcTicketPayout } from './tickets/payout';
 import { getFirestore } from 'firebase-admin/firestore';
 import { db } from './lib/firebase';
 import { CoinService } from './services/CoinService';
 import { getEvaluator, NormalizedResult } from './evaluators';
-const resultProvider = new ApiFootballResultProvider();
+
+const provider = new ApiFootballResultProvider();
 
 // After computing tip results for a ticket
 async function finalizeTicketAtomic(
@@ -30,6 +31,7 @@ async function finalizeTicketAtomic(
     if (tips.some((x: any) => x.result === 'pending')) return;
     const payout = calcTicketPayout(ticketData.stake, tips);
     const status = tips.some((x: any) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
+    // users.balance helyett csak a ticket mezői frissülnek; pénzügy a CoinService-ben
     tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
   });
 }
@@ -42,10 +44,10 @@ interface PubSubMessage {
 type JobType = 'kickoff-tracker' | 'result-poller' | 'final-sweep';
 
 export const match_finalizer = async (message: PubSubMessage): Promise<void> => {
+  console.log('[match_finalizer] received raw message');
+  try { console.log('[match_finalizer] payload:', JSON.stringify(message?.data || {})); } catch {}
   const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
   const { job }: { job: JobType } = JSON.parse(payloadStr);
-
-  console.log(`[match_finalizer] received job: ${job}`);
 
   // 1) Collect pending tickets across all users via collectionGroup
   // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
@@ -59,6 +61,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     console.log('[match_finalizer] no pending tickets – exit');
     return;
   }
+  console.log('[match_finalizer] found %d pending tickets', ticketsSnap.size);
 
   // Gather unique eventIds from tips[] arrays
   const eventIdSet = new Set<string>();
@@ -77,7 +80,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
   // 2) Fetch scores
   let scores;
   try {
-    scores = await resultProvider.getScores(eventIds);
+    scores = await provider.getScores(eventIds);
   } catch (err) {
     console.error('[match_finalizer] ResultProvider error', err);
     throw err; // message will be retried / DLQ
@@ -100,20 +103,39 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     const tipsRaw = (snap.get('tips') as any[]) || [];
     if (!tipsRaw.length) continue;
 
-    const tipResults = tipsRaw.map((t: any) => {
-      const rid = t?.eventId;
+    const pendingTipUpdates: { index: number; fixtureId: number }[] = [];
+    const tipResults: any[] = [];
+    for (let ti = 0; ti < tipsRaw.length; ti++) {
+      const t = tipsRaw[ti];
+      const rid0 = t?.fixtureId ?? t?.eventId;
+      const rid = rid0 ? String(rid0) : '';
+      let res = rid ? resultMap.get(rid) : undefined;
+      if (!res && t?.eventName && t?.startTime) {
+        try {
+          const found = await findFixtureIdByMeta({
+            eventName: String(t.eventName),
+            startTime: new Date(String(t.startTime)).toISOString(),
+          });
+          if (found?.id) {
+            res = resultMap.get(String(found.id));
+            pendingTipUpdates.push({ index: ti, fixtureId: Number(found.id) });
+          }
+        } catch (e) {
+          console.warn('[match_finalizer] fixture resolver failed', e);
+        }
+      }
       const pick = (t?.outcome ?? '').trim();
       const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
-      const res = rid ? resultMap.get(rid) : undefined;
       const evaluator = getEvaluator(String(marketKey));
       if (!res || !evaluator) {
-        return {
+        tipResults.push({
           ...t,
           market: String(marketKey).toUpperCase(),
           selection: pick,
           result: 'pending',
           oddsSnapshot: t?.odds ?? t?.oddsSnapshot,
-        };
+        });
+        continue;
       }
       const tipInput = {
         marketKey: String(marketKey),
@@ -121,29 +143,35 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
         odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
       };
       const outcome = evaluator.evaluate(tipInput, res);
-      return {
+      tipResults.push({
         ...t,
         market: String(marketKey).toUpperCase(),
         selection: pick,
         result: outcome,
         oddsSnapshot: tipInput.odds,
-      };
-    });
+      });
+    }
 
     const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
     await finalizeTicketAtomic(
       snap.ref,
-      db.collection('users').doc(uid),
+      db.collection('users').doc(String(uid)),
       { stake: snap.get('stake'), tips: tipResults },
     );
-    // Wallet credit via CoinService (idempotens – ledger: wallets/{uid}/ledger/{ticketId})
+    if (pendingTipUpdates.length) {
+      const updates: any = {};
+      for (const u of pendingTipUpdates) {
+        updates[`tips.${u.index}.fixtureId`] = u.fixtureId;
+      }
+      await snap.ref.update(updates);
+    }
+    // Wallet credit via CoinService (idempotens – ledger kulcs: ticketId)
     {
       const payout = calcTicketPayout(snap.get('stake'), tipResults);
       if (uid && payout > 0) {
         const coins = Math.round(payout);
-        const cs = new CoinService();
         try {
-          await cs.credit(String(uid), coins, snap.id);
+          await new CoinService().credit(String(uid), coins, snap.id);
         } catch (e) {
           console.error('[match_finalizer] wallet credit failed', e);
         }
@@ -151,6 +179,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
     }
   }
 
-  console.log('[match_finalizer] ticket finalization loop done');
+  // zárás után:
+  console.log('[match_finalizer] finalize done for batch');
 };
 

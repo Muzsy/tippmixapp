@@ -7,6 +7,8 @@ Az API-Football fixtures végpontját használó adapter. Prod módban élő HTT
 - `MODE=dev` esetén mock üzemmódra vált.
 - Hibát dob, ha hiányzik az `API_FOOTBALL_KEY` vagy a válasz nem 200-as.
 - `FT/AET/PEN` státuszokat lezártnak tekinti és visszaadja a `winner` mezőt (hazai/idegen/döntetlen).
+- `findFixtureIdByMeta(eventName,startTime)` segédfüggvény a `fixtureId` feloldására csapatnevek és kezdési idő alapján, ha csak metaadat áll rendelkezésre.
 
 ## Tesztelés
 - Unit teszt fedi a mock módot a `fixtures_sample.json` segítségével.
+- Unit teszt ellenőrzi a `findFixtureIdByMeta` hibás input kezelését.

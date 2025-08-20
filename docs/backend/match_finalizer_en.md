@@ -1,4 +1,4 @@
-version: "2025-09-30"
+version: "2025-10-01"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -7,7 +7,7 @@ depends_on: []
 Background worker processing `result-check` Pub/Sub messages. Its responsibilities:
 
 1. Decode job type (`kickoff-tracker`, `result-poller`, `final-sweep`).
-2. Query pending tickets across all users via `collectionGroup('tickets')` and gather `eventId`s from each ticket's `tips[]` array.
+2. Query pending tickets across all users via `collectionGroup('tickets')` and gather `fixtureId ?? eventId` from each ticket's `tips[]` array. Missing IDs trigger a metadata lookup (`findFixtureIdByMeta`) using `eventName` and `startTime`, and the resolved `fixtureId` is cached back to the tip.
 3. Fetch scores via `ResultProvider`, which now returns the `winner` and treats `FT/AET/PEN` as completed.
 4. Evaluate each ticket's tips through the pluggable Market Evaluator registry (mapping `marketKey`, `outcome`, `odds`) and, once none remain `pending`, execute a Firestore **transaction** that:
    - computes payout via `calcTicketPayout`,
