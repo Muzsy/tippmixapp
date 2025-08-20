@@ -22,16 +22,17 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On placing a ticket
 
-- A `debitAndCreateTicket()` method runs a Firestore transaction
-  that:
-  - reads the current balance from `users/{uid}/wallet.coins`;
-  - aborts with `FirebaseException(insufficient_coins)` if balance < stake;
-  - subtracts `stake` from `users/{uid}/wallet.coins`;
-  - writes an audit entry `users/{uid}/ledger/{ticketId}`;
-  - writes the new `tickets/{ticketId}` document in the same transaction.
+- `debitAndCreateTicket()` first writes the ticket to
+  `users/{uid}/tickets/{ticketId}`.
+- It then calls the `coin_trx` Cloud Function with
+  `{ amount: stake, type: 'debit', reason: 'bet', transactionId: ticketId }`.
+- The Cloud Function deducts the balance in
+  `users/{uid}/wallet.coins` and appends a ledger entry
+  `users/{uid}/ledger/{ticketId}` atomically.
+- If the function call fails, the client deletes the created ticket
+  (compensation) and rethrows the error.
 
-This guarantees atomicity – the user can never end up with a negative
-balance and a missing ticket.
+This keeps the client free of any direct wallet writes.
 
 ### On result finalization
 
@@ -45,9 +46,9 @@ balance and a missing ticket.
 
 ## 🧾 Technical Plan
 
-- TippCoin changes must be done server-side
-- Prefer Firebase Cloud Functions for mutations
- - Each transaction should be logged (TippCoinLogModel)
+- TippCoin changes must be done server-side via Cloud Functions.
+- Client code never modifies `users/{uid}/wallet` or `users/{uid}/ledger` directly.
+- Each transaction is logged in the ledger with an idempotent `refId`.
 
 ```json
 TippCoinLog {
@@ -79,10 +80,10 @@ TippCoinLog {
 
 ## ⚠️ Current Status
 
-- `CoinService.transact()` ensures idempotent balance changes and ledger entries in the user-centric SoT.
-- `CoinService.debitAndCreateTicket()` handles atomic stake deduction with ticket creation.
-- Wallet balance stored at `users/{uid}/wallet.coins` updates immediately.
-- `coin_logs` collection deprecated in favor of per-user ledger.
+- `CoinService.debitCoin` and `creditCoin` only invoke `coin_trx`; all wallet updates happen server-side.
+- `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
+- Wallet balance stored at `users/{uid}/wallet.coins` is treated as source of truth and updated by Cloud Functions.
+- `coin_logs` collection remains deprecated in favor of per-user ledger.
 
 ---
 
@@ -96,3 +97,4 @@ TippCoinLog {
 
 - 2025-08-20: Documented dual-write to user-centric wallet & ledger and registration seeding.
 - 2025-08-20: Updated to single SoT (`users/{uid}/wallet` + `users/{uid}/ledger`) and removed legacy writes.
+- 2025-08-20: Removed client-side wallet writes; `coin_trx` handles all balance changes.

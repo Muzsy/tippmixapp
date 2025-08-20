@@ -22,9 +22,10 @@ users/{uid}
   settings/{settingId}
   wallet
   ledger/{entryId}
+  tickets/{ticketId}
 wallets/{uid} (legacy)
 coin_logs/{logId} (legacy)
-tickets/{ticketId}
+tickets/{ticketId} (legacy csak olvasás)
 public_feed/{postId}
   reports/{reportId}
 moderation_reports/{reportId}
@@ -70,12 +71,21 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // gyökér tickets kollekció (legacy, csak olvasás)
     match /tickets/{ticketId} {
+      allow create: if false;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
+
+    // felhasználói tickets alkollekció
+    match /users/{userId}/tickets/{ticketId} {
       allow create: if request.auth != null
-        && request.resource.data.userId == request.auth.uid
+        && request.auth.uid == userId
+        && request.resource.data.userId == userId
         && request.resource.data.keys().hasOnly([
           'id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
-      allow read: if request.auth != null;
+      allow read: if request.auth != null && request.auth.uid == userId;
       allow update, delete: if false;
     }
 

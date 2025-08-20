@@ -2,7 +2,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/simple_logger.dart';
-import '../utils/transaction_wrapper.dart';
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
 // for details about the coin transaction model and integration points.
@@ -14,19 +13,16 @@ class CoinService {
   final FirebaseFirestore _firestore;
   final FirebaseAuth? _auth;
   final Logger _logger;
-  late final TransactionWrapper _wrapper;
 
   CoinService({
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
     FirebaseAuth? auth,
     Logger? logger,
-  })  : _functions = functions,
-        _firestore = firestore,
-        _auth = auth,
-        _logger = logger ?? Logger('CoinService') {
-    _wrapper = TransactionWrapper(firestore: _firestore, logger: _logger);
-  }
+  }) : _functions = functions,
+       _firestore = firestore,
+       _auth = auth,
+       _logger = logger ?? Logger('CoinService');
 
   FirebaseFirestore get _fs => _firestore;
   FirebaseAuth get _fa => _auth ?? FirebaseAuth.instance;
@@ -51,13 +47,6 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    await _wrapper.run((txn) async {
-      final uid = _fa.currentUser!.uid;
-      final ref = _fs.collection('wallets').doc(uid);
-      final snap = await txn.get(ref);
-      final current = (snap.data()?['coins'] as int?) ?? 0;
-      txn.set(ref, {'coins': current - amount}, SetOptions(merge: true));
-    });
     await _callCoinTrx(
       amount: amount,
       type: 'debit',
@@ -72,13 +61,6 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    await _wrapper.run((txn) async {
-      final uid = _fa.currentUser!.uid;
-      final ref = _fs.collection('wallets').doc(uid);
-      final snap = await txn.get(ref);
-      final current = (snap.data()?['coins'] as int?) ?? 0;
-      txn.set(ref, {'coins': current + amount}, SetOptions(merge: true));
-    });
     await _callCoinTrx(
       amount: amount,
       type: 'credit',
@@ -111,15 +93,15 @@ class CoinService {
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     final query = await db
-        .collection('wallets')
+        .collection('users')
         .doc(user.uid)
-        .collection('coin_logs')
-        .where('reason', isEqualTo: 'daily_bonus')
+        .collection('ledger')
+        .where('source', isEqualTo: 'daily_bonus')
         .where(
-          'timestamp',
+          'createdAt',
           isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
         )
-        .where('timestamp', isLessThan: Timestamp.fromDate(endOfDay))
+        .where('createdAt', isLessThan: Timestamp.fromDate(endOfDay))
         .limit(1)
         .get();
 
@@ -129,47 +111,27 @@ class CoinService {
   /// Claim today's daily bonus for the authenticated user.
   Future<void> claimDailyBonus() => creditDailyBonus();
 
-  /// Atomically deducts [stake] TippCoins **and** creates the betting
-  /// ticket in a single Firestore transaction so the balance can never
-  /// go negative and data stays consistent.
+  /// Creates a ticket under the user and triggers a debit via Cloud Function.
+  /// If the debit fails, the created ticket is removed.
   Future<void> debitAndCreateTicket({
     required int stake,
     required Map<String, dynamic> ticketData,
   }) async {
     final uid = _fa.currentUser!.uid;
-    final walletRef = _fs.collection('wallets').doc(uid);
-    final userRef = _fs.collection('users').doc(uid);
-    final ticketRef = _fs.collection('tickets').doc(ticketData['id'] as String);
-
-    await _fs.runTransaction((txn) async {
-      final walletSnap = await txn.get(walletRef);
-      int current;
-      if (walletSnap.exists && walletSnap.data()!.containsKey('coins')) {
-        current = walletSnap.data()!['coins'] as int;
-      } else {
-        // ➡️ fallback: read balance from users doc
-        final userSnap = await txn.get(userRef);
-        current = (userSnap.data()?['coins'] as int?) ?? 0;
-
-        // ➡️ LAZY‑CREATE wallet doc so subsequent requests use it
-        txn.set(walletRef, {
-          'coins': current,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
-
-      if (current < stake) {
-        throw FirebaseException(
-          plugin: 'coin_service',
-          code: 'insufficient_coins',
-          message: 'Not enough TippCoin balance.',
-        );
-      }
-
-      txn.update(walletRef, {'coins': current - stake});
-      txn.set(userRef, {'coins': current - stake}, SetOptions(merge: true));
-      txn.set(ticketRef, ticketData);
-    });
+    final ticketId = ticketData['id'] as String;
+    final ticketRef = _fs.doc('users/$uid/tickets/$ticketId');
+    await ticketRef.set(ticketData);
+    try {
+      await _callCoinTrx(
+        amount: stake,
+        type: 'debit',
+        reason: 'bet',
+        transactionId: ticketId,
+      );
+    } catch (e) {
+      await ticketRef.delete();
+      rethrow;
+    }
   }
 
   Future<void> _callCoinTrx({

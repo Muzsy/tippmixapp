@@ -16,8 +16,9 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
     return Stream.value([]);
   }
   return FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
       .collection('tickets')
-      .where('userId', isEqualTo: uid)
       .orderBy('createdAt', descending: true)
       .snapshots()
       .map((snap) => snap.docs.map((d) => Ticket.fromJson(d.data())).toList());

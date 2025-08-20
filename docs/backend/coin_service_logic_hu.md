@@ -22,14 +22,18 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 
 ### Szelvény beküldésekor
 
-- A `debitAndCreateTicket()` metódus Firestore tranzakciót futtat, amely:
-    - beolvassa az aktuális egyenleget a `users/{uid}/wallet.coins` mezőből;
-    - ha az egyenleg < tét, `FirebaseException(insufficient_coins)` hibával megszakad;
-    - levonja a tétet a `users/{uid}/wallet.coins` mezőből;
-    - audit sort ír a `users/{uid}/ledger/{ticketId}` útvonalra;
-    - ugyanebben a tranzakcióban létrehozza a `tickets/{ticketId}` dokumentumot.
+- A `debitAndCreateTicket()` először létrehozza a szelvényt a
+  `users/{uid}/tickets/{ticketId}` útvonalon.
+- Ezután meghívja a `coin_trx` Cloud Functiont a
+  `{ amount: stake, type: 'debit', reason: 'bet', transactionId: ticketId }`
+  paraméterekkel.
+- A Cloud Function levonja az egyenleget a
+  `users/{uid}/wallet.coins` mezőből és létrehoz egy ledger sort
+  `users/{uid}/ledger/{ticketId}` alatt atomikusan.
+- Ha a függvényhívás elbukik, a kliens törli a létrehozott szelvényt
+  és továbbdobja a hibát.
 
-Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenlegbe szelvény nélkül.
+Így a kliens soha nem ír közvetlenül a walletre.
 
 ### Eredmény kiértékelésekor
 
@@ -43,9 +47,9 @@ Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenleg
 
 ## 🧾 Technikai megvalósítási terv
 
-- TippCoin módosítás kizárólag szerveroldalon történhet
-- Firebase Cloud Functions használata javasolt
-- Minden tranzakció legyen naplózva (`TippCoinLogModel`)
+- TippCoin módosítás kizárólag szerveroldalon, Cloud Functionökön keresztül történhet.
+- A kliens nem módosítja közvetlenül a `users/{uid}/wallet` vagy `users/{uid}/ledger` útvonalakat.
+- Minden tranzakció legyen naplózva idempotens `refId` mezővel.
 ```json
 TippCoinLog {
   type: "stake" | "reward",
@@ -77,10 +81,10 @@ TippCoinLog {
 
 ## ⚠️ Jelenlegi állapot
 
-- A `CoinService.transact()` idempotens módon frissíti az egyenleget és létrehozza a ledger bejegyzést az új SoT alatt.
-- A `CoinService.debitAndCreateTicket()` továbbra is atomikusan levonja a tétet és létrehozza a szelvényt.
-  - A wallet egyenleg a `users/{uid}/wallet.coins` mezőn azonnal frissül.
-- A `coin_logs` gyűjtemény kivezetésre került, helyette a ledger szolgál naplóként.
+- A `CoinService.debitCoin` és `creditCoin` csak a `coin_trx` függvényt hívja; minden wallet módosítás szerveroldalon zajlik.
+- A `CoinService.debitAndCreateTicket()` létrehozza a szelvényt, majd `coin_trx` segítségével vonja le a tétet.
+- A wallet egyenleg forrása a `users/{uid}/wallet.coins`, melyet Cloud Function frissít.
+- A `coin_logs` gyűjtemény továbbra is kivezetett, helyette a ledger szolgál naplóként.
 
 ---
 
@@ -94,3 +98,4 @@ TippCoinLog {
 
 - 2025-08-20: Dokumentálva a user-centrikus wallet és ledger duplairás, valamint a regisztrációs inicializálás.
 - 2025-08-20: Frissítve az egyetlen SoT-ra (`users/{uid}/wallet` + `users/{uid}/ledger`), legacy írások megszüntetése.
+- 2025-08-20: Kivezetve a kliens oldali wallet írás; a `coin_trx` végzi az összes egyenlegváltozást.
