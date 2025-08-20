@@ -18,15 +18,15 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 
 ### Regisztrációkor
 
-- Cloud Function inicializálja a `users/{uid}` és `users/{uid}/wallet` dokumentumot **50** coin kezdő egyenleggel
+- Cloud Function létrehozza a `users/{uid}/wallet` dokumentumot **50** coin kezdő egyenleggel (a felhasználói doksi nem tartalmaz `coins` mezőt)
 
 ### Szelvény beküldésekor
 
 - A `debitAndCreateTicket()` metódus Firestore tranzakciót futtat, amely:
-    - beolvassa az aktuális egyenleget a `wallets/{uid}.coins` mezőből;
+    - beolvassa az aktuális egyenleget a `users/{uid}/wallet.coins` mezőből;
     - ha az egyenleg < tét, `FirebaseException(insufficient_coins)` hibával megszakad;
-    - levonja a tétet mind a `wallets/{uid}.coins`, mind a `users/{uid}.coins` mezőből;
-    - tükrözi a változást a `users/{uid}/wallet` dokumentumba és audit sort ír a `users/{uid}/ledger/{ticketId}` útvonalra;
+    - levonja a tétet a `users/{uid}/wallet.coins` mezőből;
+    - audit sort ír a `users/{uid}/ledger/{ticketId}` útvonalra;
     - ugyanebben a tranzakcióban létrehozza a `tickets/{ticketId}` dokumentumot.
 
 Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenlegbe szelvény nélkül.
@@ -34,9 +34,9 @@ Ez garantálja az atomitást – a felhasználó nem kerülhet negatív egyenleg
 ### Eredmény kiértékelésekor
 
 - A `CoinService.credit(uid, potentialWin, ticketId)` Firestore tranzakciót futtat, amely:
-    - ellenőrzi a `wallets/{uid}/ledger/{ticketId}` dokumentumot és ha létezik, kilép (idempotens);
-    - növeli a `wallets/{uid}.balance` mezőt és tükrözi `users/{uid}/wallet` dokumentumba `FieldValue.increment` használatával;
-    - létrehozza a ledger bejegyzést `{ amount, type: 'win', createdAt }` és tükrözi a `users/{uid}/ledger/{ticketId}` útvonalra.
+    - ellenőrzi a `users/{uid}/ledger/{ticketId}` dokumentumot és ha létezik, kilép (idempotens);
+    - növeli a `users/{uid}/wallet.coins` mezőt `FieldValue.increment` segítségével;
+    - létrehozza a ledger bejegyzést `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - A `CoinService.debit(uid, stake, ticketId)` ugyanezt a folyamatot hajtja végre negatív összeggel és `type: 'bet'` értékkel.
 
 ---
@@ -58,33 +58,29 @@ TippCoinLog {
 - Wallet struktúra:
 
   ```
-   wallets/{uid}
-     balance: number
-     updatedAt: timestamp
-     ledger/{ticketId}
-       amount: number
-       type: 'bet' | 'win'
-       createdAt: timestamp
-  users/{uid}/wallet (tükör)
+  users/{uid}/wallet
     coins: number
     updatedAt: timestamp
-  users/{uid}/ledger/{ticketId} (tükör)
+  users/{uid}/ledger/{ticketId}
+    userId: string
     amount: number
     type: 'bet' | 'win'
+    refId: string
+    source: 'coin_trx' | 'log_coin'
     createdAt: timestamp
-   ```
+  ```
 
-- Naplók: `users/{uid}/coin_logs/` kollekció alatt
+- Legacy `wallets/*` és `coin_logs/*` csak olvasásra marad
 - A profil UI-on megjeleníthetők az utolsó tranzakciók
 
 ---
 
 ## ⚠️ Jelenlegi állapot
 
-- A `CoinService.transact()` idempotens módon frissíti az egyenleget és létrehozza a ledger bejegyzést.
+- A `CoinService.transact()` idempotens módon frissíti az egyenleget és létrehozza a ledger bejegyzést az új SoT alatt.
 - A `CoinService.debitAndCreateTicket()` továbbra is atomikusan levonja a tétet és létrehozza a szelvényt.
-  - A wallet egyenleg a `wallets/{uid}.balance` mezőn azonnal frissül és tükröződik a `users/{uid}/wallet` dokumentumba.
-- A `coin_logs` naplózás még hiányzik.
+  - A wallet egyenleg a `users/{uid}/wallet.coins` mezőn azonnal frissül.
+- A `coin_logs` gyűjtemény kivezetésre került, helyette a ledger szolgál naplóként.
 
 ---
 
@@ -97,3 +93,4 @@ TippCoinLog {
 ## 📘 Változásnapló
 
 - 2025-08-20: Dokumentálva a user-centrikus wallet és ledger duplairás, valamint a regisztrációs inicializálás.
+- 2025-08-20: Frissítve az egyetlen SoT-ra (`users/{uid}/wallet` + `users/{uid}/ledger`), legacy írások megszüntetése.

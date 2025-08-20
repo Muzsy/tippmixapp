@@ -10,7 +10,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 - A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
-- A TippCoin egyenlegek egyszerre vannak a `wallets/{uid}` és `users/{uid}/wallet` útvonalakon, írásuk csak privilegizált szerver kóddal lehetséges
+- A TippCoin egyenlegek a `users/{uid}/wallet` alatt tárolódnak; a `wallets/*` és `coin_logs/*` útvonalak csak olvashatók
 
 ---
 
@@ -23,6 +23,7 @@ users/{uid}
   wallet
   ledger/{entryId}
 wallets/{uid} (legacy)
+coin_logs/{logId} (legacy)
 tickets/{ticketId}
 public_feed/{postId}
   reports/{reportId}
@@ -44,24 +45,29 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
+    match /coin_logs/{logId} {
+      allow create, update, delete: if false;
+      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+
     match /wallets/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
 
       match /ledger/{ticketId} {
         allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if request.auth == null;
+        allow write: if false;
       }
     }
 
-    // ÚJ: user-centrikus wallet és ledger (SoT)
+    // user-centrikus wallet és ledger (SoT)
     match /users/{userId}/wallet {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth == null;
+      allow write: if false;
     }
 
     match /tickets/{ticketId} {
@@ -131,3 +137,4 @@ service cloud.firestore {
 
 - 2025-08-06: Javítva a `/tickets/{ticketId}` mezőlista, hogy a kliens összes kulcsa engedélyezett legyen.
 - 2025-08-20: Hozzáadva user-centrikus wallet és ledger szabályok, duplairás.
+- 2025-08-20: Letiltva a `wallets` és `coin_logs` legacy írása.

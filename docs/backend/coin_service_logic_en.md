@@ -18,16 +18,16 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On registration
 
-- Cloud Function seeds `users/{uid}` and `users/{uid}/wallet` with **50** coins
+- Cloud Function seeds `users/{uid}/wallet` with **50** coins (user doc has no `coins` field)
 
 ### On placing a ticket
 
 - A `debitAndCreateTicket()` method runs a Firestore transaction
   that:
-  - reads the current balance from `wallets/{uid}.coins`;
+  - reads the current balance from `users/{uid}/wallet.coins`;
   - aborts with `FirebaseException(insufficient_coins)` if balance < stake;
-  - subtracts `stake` from both `wallets/{uid}.coins` and `users/{uid}.coins`;
-  - mirrors the change to `users/{uid}/wallet` and audit entry `users/{uid}/ledger/{ticketId}`;
+  - subtracts `stake` from `users/{uid}/wallet.coins`;
+  - writes an audit entry `users/{uid}/ledger/{ticketId}`;
   - writes the new `tickets/{ticketId}` document in the same transaction.
 
 This guarantees atomicity – the user can never end up with a negative
@@ -36,9 +36,9 @@ balance and a missing ticket.
 ### On result finalization
 
 - `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
-  - checks `wallets/{uid}/ledger/{ticketId}` and exits if already exists (idempotent);
-  - increments `wallets/{uid}.balance` and mirrors `users/{uid}/wallet` with `FieldValue.increment`;
-  - writes ledger entry `{ amount, type: 'win', createdAt }` and mirrors `users/{uid}/ledger/{ticketId}`.
+  - checks `users/{uid}/ledger/{ticketId}` and exits if already exists (idempotent);
+  - increments `users/{uid}/wallet.coins` with `FieldValue.increment`;
+  - writes ledger entry `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
 
 ---
@@ -61,32 +61,28 @@ TippCoinLog {
 - Wallet structure:
 
   ```
-  wallets/{uid}
-    balance: number
-    updatedAt: timestamp
-    ledger/{ticketId}
-      amount: number
-      type: 'bet' | 'win'
-      createdAt: timestamp
-  users/{uid}/wallet (mirror)
+  users/{uid}/wallet
     coins: number
     updatedAt: timestamp
-  users/{uid}/ledger/{ticketId} (mirror)
+  users/{uid}/ledger/{ticketId}
+    userId: string
     amount: number
     type: 'bet' | 'win'
+    refId: string
+    source: 'coin_trx' | 'log_coin'
     createdAt: timestamp
   ```
-- Logs stored under `users/{uid}/coin_logs/`
+- Legacy paths `wallets/*` and `coin_logs/*` remain for read-only access
 - UI should show recent changes in profile
 
 ---
 
 ## ⚠️ Current Status
 
-- `CoinService.transact()` ensures idempotent balance changes and ledger entries.
+- `CoinService.transact()` ensures idempotent balance changes and ledger entries in the user-centric SoT.
 - `CoinService.debitAndCreateTicket()` handles atomic stake deduction with ticket creation.
-- Wallet balance stored at `wallets/{uid}.balance` updates immediately and mirrors to `users/{uid}/wallet`.
-- Logging to `coin_logs` pending implementation.
+- Wallet balance stored at `users/{uid}/wallet.coins` updates immediately.
+- `coin_logs` collection deprecated in favor of per-user ledger.
 
 ---
 
@@ -99,3 +95,4 @@ TippCoinLog {
 ## 📘 Changelog
 
 - 2025-08-20: Documented dual-write to user-centric wallet & ledger and registration seeding.
+- 2025-08-20: Updated to single SoT (`users/{uid}/wallet` + `users/{uid}/ledger`) and removed legacy writes.

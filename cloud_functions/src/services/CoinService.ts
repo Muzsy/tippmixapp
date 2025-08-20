@@ -9,11 +9,8 @@ export class CoinService {
    * @param ticketId az érintett szelvény azonosítója – ledger primary key
    */
   async transact(uid: string, amount: number, ticketId: string, type: 'win' | 'bet'): Promise<void> {
-    const walletRef = db.doc(`wallets/${uid}`);
-    const ledgerRef = walletRef.collection('ledger').doc(ticketId);
-    // NEW (dual write): user-centric SoT
-    const newWalletRef = db.doc(`users/${uid}/wallet`);
-    const newLedgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
+    const walletRef = db.doc(`users/${uid}/wallet`);
+    const ledgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
 
     await db.runTransaction(async (tx) => {
       const ledgerSnap = await tx.get(ledgerRef);
@@ -23,17 +20,28 @@ export class CoinService {
       }
 
       // Balance frissítés (wallet doksi létrehozása, ha hiányzik)
-      tx.set(walletRef, {
-        balance: FieldValue.increment(amount),
-        updatedAt: FieldValue.serverTimestamp()
-      }, { merge: true });
+      tx.set(
+        walletRef,
+        {
+          coins: FieldValue.increment(amount),
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
 
-      // Ledger entry
-      tx.set(ledgerRef, {
-        amount,
-        type,
-        createdAt: FieldValue.serverTimestamp()
-      });
+      // Ledger entry az új SoT alatt
+      tx.set(
+        ledgerRef,
+        {
+          userId: uid,
+          amount,
+          type,
+          refId: ticketId,
+          source: 'coin_trx',
+          createdAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
     });
   }
 
