@@ -1,0 +1,326 @@
+# Codex YAML – Rules v2 + duplairás lekapcsolás
+
+# Megjegyzés: Ez a YAML a „Firestore refaktor – Rules v2 + duplairás lekapcsolás (terv)” vászonhoz készült kiegészítés.
+
+steps:
+
+* name: Firestore Rules v2 – új SoT + legacy write tiltás
+  description: |
+  Add hozzá az új user‑centrikus SoT szabályokat, és tiltsd le a legacy írásokat a `wallets/*` és `coin_logs/*` útvonalakon.
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/firestore.rules
+    content: |
+    \--- a/cloud\_functions/firestore.rules
+    +++ b/cloud\_functions/firestore.rules
+    @@
+    service cloud.firestore {
+    match /databases/{database}/documents {
+    @@
+* /\* ——— coin\_logs ——— \*/
+
+- /\* ——— coin\_logs ——— (LEGACY – WRITE TILTVA) \*/
+  match /coin\_logs/{logId} {
+  @@
+
+* ```
+   allow create: if createShapeOK();
+  ```
+* ```
+   allow read:   if isOwner(resource.data.userId);
+  ```
+* ```
+   allow update, delete: if false;
+  ```
+
+- ```
+   // V2: írni már nem lehet ide; olvasás a saját logokra engedett marad
+  ```
+- ```
+   allow create, update, delete: if false;
+  ```
+- ```
+   allow read:   if isOwner(resource.data.userId);
+  }
+  ```
+
+@@
+
+* // Wallets: read allowed to owner, write only via privileged server context
+
+- // Wallets (LEGACY): csak olvasás, write tiltva – SoT az users/{uid}/wallet
+  match /wallets/{userId} {
+  allow read: if request.auth != null && request.auth.uid == userId;
+
+* ```
+   allow write: if request.auth == null; // Only server (admin) SDK without auth
+  ```
+
+- ```
+   allow write: if false;
+
+   match /ledger/{ticketId} {
+     allow read: if request.auth != null && request.auth.uid == userId;
+  ```
+
+* ```
+     allow write: if request.auth == null;
+  ```
+
+- ```
+     allow write: if false;
+   }
+  ```
+
+  }
+-
+- /\* ——— NEW: user‑centrikus pénzügyi SoT ——— \*/
+- match /users/{uid} {
+- ```
+   match /wallet {
+  ```
+- ```
+     allow read: if request.auth != null && request.auth.uid == uid;
+  ```
+- ```
+     allow write: if false; // kizárólag CF (Admin SDK)
+  ```
+- ```
+   }
+  ```
+- ```
+   match /ledger/{entryId} {
+  ```
+- ```
+     allow read: if request.auth != null && request.auth.uid == uid;
+  ```
+- ```
+     allow write: if false; // kizárólag CF (Admin SDK)
+  ```
+- ```
+   }
+  ```
+- }
+
+  ```
+    }
+    }
+  ```
+
+* name: CF – CoinService az új SoT‑ra állítása (duplairás megszüntetése)
+  description: |
+  A `CoinService.transact(...)` most a legacy `wallets/{uid}` alatt ír. Cseréld a hivatkozásokat az új SoT‑ra: `users/{uid}/wallet` és `users/{uid}/ledger/{ticketId}`.
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/src/services/CoinService.ts
+    content: |
+    \--- a/cloud\_functions/src/services/CoinService.ts
+    +++ b/cloud\_functions/src/services/CoinService.ts
+    @@
+* const walletRef = db.doc(`wallets/${uid}`);
+* const ledgerRef = walletRef.collection('ledger').doc(ticketId);
+
+- const walletRef = db.doc(`users/${uid}/wallet`);
+- const ledgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
+
+* name: CF – onUserCreate csak az új SoT‑ot seedelje
+  description: |
+  A felhasználó létrejöttekor a `users/{uid}` docba eddig `coins: 50` is került. V2‑ben a kezdő egyenleg kizárólag a `users/{uid}/wallet` docban legyen.
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/coin\_trx.logic.ts
+    content: |
+    \--- a/cloud\_functions/coin\_trx.logic.ts
+    +++ b/cloud\_functions/coin\_trx.logic.ts
+    @@
+* await userRef.set({
+* ```
+   coins: 50,
+  ```
+* ```
+   createdAt: FieldValue.serverTimestamp(),
+  ```
+* });
+
+- await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
+- await db.doc(`users/${user.uid}/wallet`).set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+
+* name: CF – coin\_trx csak az új SoT‑ra írjon (ledger + wallet), coin\_logs kivezetése
+  description: |
+  A callable tranzakció a `users/{uid}.coins` és `coin_logs` útvonalakat használta. Cseréld `users/{uid}/wallet` + `users/{uid}/ledger/{transactionId}` útvonalakra.
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/coin\_trx.logic.ts
+    content: |
+    \--- a/cloud\_functions/coin\_trx.logic.ts
+    +++ b/cloud\_functions/coin\_trx.logic.ts
+    @@
+* const logRef = db.collection('coin\_logs').doc(transactionId);
+
+- const logRef = db.doc(`users/${userId}/ledger/${transactionId}`);
+  @@
+
+* await db.runTransaction(async (tx) => {
+* ```
+   const userRef = db.collection('users').doc(userId);
+  ```
+* ```
+   const userSnap = await tx.get(userRef);
+  ```
+
+- await db.runTransaction(async (tx) => {
+- ```
+   const walletRef = db.doc(`users/${userId}/wallet`);
+  ```
+- ```
+   const walletSnap = await tx.get(walletRef);
+  ```
+
+@@
+
+* ```
+   let currentBalance = 0;
+  ```
+* ```
+   if (!userSnap.exists) {
+  ```
+* ```
+     tx.set(userRef, { coins: 0, createdAt: FieldValue.serverTimestamp() });
+  ```
+* ```
+   } else {
+  ```
+* ```
+     currentBalance = (userSnap.get('coins') as number) || 0;
+  ```
+* ```
+   }
+  ```
+
+- ```
+   let currentBalance = (walletSnap.exists && (walletSnap.get('coins') as number) != null)
+  ```
+- ```
+     ? (walletSnap.get('coins') as number)
+  ```
+- ```
+     : 0;
+  ```
+
+@@
+
+* ```
+   tx.update(userRef, { coins: newBalance });
+  ```
+* ```
+   tx.set(logRef, {
+  ```
+* ```
+     userId,
+  ```
+* ```
+     amount,
+  ```
+* ```
+     type,
+  ```
+* ```
+     reason,
+  ```
+* ```
+     transactionId,
+  ```
+* ```
+     timestamp: FieldValue.serverTimestamp(),
+  ```
+* ```
+   });
+  ```
+
+- ```
+   tx.set(walletRef, { coins: newBalance, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  ```
+- ```
+   tx.set(logRef, { amount, type, refId: transactionId, source: 'coin_trx', createdAt: FieldValue.serverTimestamp() }, { merge: true });
+  ```
+
+  });
+
+  * name: CF – log\_coin a ledger‑re írjon (coin\_logs kivezetése)
+    description: |
+    A `log_coin` callable‑t állítsd át úgy, hogy a root `coin_logs` helyett a per‑user ledger‑be írjon (SoT‑kompatibilis naplózás).
+    outputs:
+
+    * type: diff
+      path: cloud\_functions/log\_coin.ts
+      content: |
+      \--- a/cloud\_functions/log\_coin.ts
+      +++ b/cloud\_functions/log\_coin.ts
+      @@
+
+* const logRef = db.collection('coin\_logs').doc(transactionId);
+* await logRef.set({
+* ```
+   userId: context.auth.uid,
+  ```
+* ```
+   amount,
+  ```
+* ```
+   type,
+  ```
+* ```
+   meta,
+  ```
+* ```
+   transactionId,
+  ```
+* ```
+   timestamp: FieldValue.serverTimestamp(),
+  ```
+* });
+
+- const logRef = db.doc(`users/${context.auth.uid}/ledger/${transactionId}`);
+- await logRef.set({
+- ```
+   amount,
+  ```
+- ```
+   type,
+  ```
+- ```
+   refId: transactionId,
+  ```
+- ```
+   source: 'log_coin',
+  ```
+- ```
+   meta,
+  ```
+- ```
+   createdAt: FieldValue.serverTimestamp(),
+  ```
+- }, { merge: true });
+
+* name: Build & Test
+  description: |
+  Statikus ellenőrzések és unit/e2e futtatás. A Cloud Functions mappában Node 20‑ra számítunk.
+  outputs:
+
+  * type: command
+    content: |
+    flutter analyze
+    flutter test
+    cd cloud\_functions && npm ci && npm test
+
+* name: Kiegészítő információ
+  description: |
+  A lépések szakmai hátterét és döntési elveit a „Firestore refaktor – Rules v2 + duplairás lekapcsolás (terv)” vászon tartalmazza.
+  outputs:
+
+  * type: note
+    content: Ez a YAML a fenti vászon kiegészítője; a pontos indoklás és QA-szcenáriók ott találhatók.
