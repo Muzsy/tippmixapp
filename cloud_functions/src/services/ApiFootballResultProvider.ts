@@ -72,3 +72,13 @@ export class ApiFootballResultProvider {
     return results;
   }
 }
+
+export async function findFixtureIdByMeta(params: { eventName: string; startTime: string }): Promise<{ id: number } | null> {
+  const [home, away] = params.eventName.split(' - ').map(s => s?.trim()).filter(Boolean);
+  if (!home || !away) return null;
+  const date = params.startTime.slice(0, 10); // YYYY-MM-DD
+  // Példa: GET /fixtures?date=YYYY-MM-DD&team=... (vagy search endpoint a bevezetett logika szerint)
+  // Itt a projekt meglévő fetch utilját használjuk, és a válaszból a (home,away,start) egyezést keressük.
+  // A pontos implementáció a szolgáltató végpontjaihoz igazodik.
+  return null; // helykitöltő: a tényleges végpont-hívás a projekt utils szerint kerül megírásra
+}

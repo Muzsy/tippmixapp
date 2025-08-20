@@ -1,6 +1,6 @@
 jest.unmock("../src/services/ApiFootballResultProvider");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { ApiFootballResultProvider } = require("../src/services/ApiFootballResultProvider");
+const { ApiFootballResultProvider, findFixtureIdByMeta } = require("../src/services/ApiFootballResultProvider");
 
 // Mock fetch
 const globalAny: any = global;
@@ -56,4 +56,9 @@ test('treats AET as completed and computes winner', async () => {
   const res = await p.getScores(['456']);
   expect(res[0].completed).toBe(true);
   expect(res[0].winner).toBe('Away');
+});
+
+test('findFixtureIdByMeta returns null for invalid eventName', async () => {
+  const res = await findFixtureIdByMeta({ eventName: 'SingleTeam', startTime: '2025-08-01T00:00:00Z' });
+  expect(res).toBeNull();
 });

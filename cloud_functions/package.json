@@ -32,6 +32,7 @@
     "ci:lint": "npm run lint",
     "ci:test": "npm test",
     "e2e": "MODE=dev USE_MOCK_SCORES=true jest --config jest-e2e.config.js",
+    "gcp-build": "npm run build",
     "lint": "tsc --noEmit",
     "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts",
     "test": "jest"
