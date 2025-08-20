@@ -1,0 +1,137 @@
+# Hivatkozás a vászonra: match_finalizer_fixtureId_wallet.md
+# A YAML a most feltöltött tippmixapp.zip-hez igazított, konkrét diffeket tartalmazza.
+
+steps:
+  - name: CoinService import és users.balance írás eltávolítása
+    description: A match_finalizer a wallet‑kreditre áll át; a közvetlen users balance/coins frissítés kivezetése.
+    outputs:
+      - |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@
+        -import { getFirestore } from 'firebase-admin/firestore';
+        +import { getFirestore } from 'firebase-admin/firestore';
+        +import { CoinService } from './services/CoinService';
+        @@
+        -    const balance = (uSnap.data()?.balance ?? 0) + payout;
+        -    tx.update(userRef, { balance });
+        -    tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
+        +    // users.balance helyett csak a ticket mezői frissülnek; pénzügy a CoinService-ben
+        +    tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
+
+  - name: userId mezőnév használata, path‑fallbackkel
+    description: A felhasználó azonosítója a ticket `userId` mezőjéből olvasódjon, hiány esetén a path szülő id-ból.
+    outputs:
+      - |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@
+        -    await finalizeTicketAtomic(
+        -      snap.ref,
+        -      db.collection('users').doc(snap.get('uid')),
+        -      { stake: snap.get('stake'), tips: tipResults },
+        -    );
+        +    const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
+        +    await finalizeTicketAtomic(
+        +      snap.ref,
+        +      db.collection('users').doc(String(uid)),
+        +      { stake: snap.get('stake'), tips: tipResults },
+        +    );
+
+  - name: wallet‑kredit bekötése idempotens ledgerrel
+    description: A finalizer a számolt payoutot a CoinService segítségével jóváírja a wallets kollekcióban, a ticketId-t használva ledger kulcsként.
+    outputs:
+      - |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@
+        +    // Wallet credit via CoinService (idempotens – ledger kulcs: ticketId)
+        +    {
+        +      const payout = calcTicketPayout(snap.get('stake'), tipResults);
+        +      if (uid && payout > 0) {
+        +        const coins = Math.round(payout);
+        +        try {
+        +          await new CoinService().credit(String(uid), coins, snap.id);
+        +        } catch (e) {
+        +          console.error('[match_finalizer] wallet credit failed', e);
+        +        }
+        +      }
+        +    }
+
+  - name: fixtureId támogatás és meta‑alapú feloldás
+    description: A tippek elsődlegesen `fixtureId` mezőt használjanak; ha csak `eventId` áll rendelkezésre vagy nem egyértelmű, akkor csapatnevek és kezdési idő alapján keressük meg a fixture ID-t, és írjuk vissza a tippre cache-ként.
+    outputs:
+      - |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@
+        -    const rid = String(t.eventId);
+        -    const res = rid ? resultMap.get(rid) : undefined;
+        +    const rid0 = (t.fixtureId ?? t.eventId);
+        +    const rid = rid0 ? String(rid0) : '';
+        +    let res = rid ? resultMap.get(rid) : undefined;
+        +    if (!res && t.eventName && t.startTime) {
+        +      try {
+        +        const found = await provider.findFixtureIdByMeta({
+        +          eventName: String(t.eventName),
+        +          startTime: new Date(String(t.startTime)).toISOString(),
+        +        });
+        +        if (found?.id) {
+        +          res = resultMap.get(String(found.id));
+        +          // cache: visszaírjuk a tippre a fixtureId-t
+        +          pendingTipUpdates.push({ index: ti, fixtureId: Number(found.id) });
+        +        }
+        +      } catch (e) {
+        +        console.warn('[match_finalizer] fixture resolver failed', e);
+        +      }
+        +    }
+      - |
+        --- a/cloud_functions/src/services/ApiFootballResultProvider.ts
+        +++ b/cloud_functions/src/services/ApiFootballResultProvider.ts
+        @@
+        +export async function findFixtureIdByMeta(params: { eventName: string; startTime: string }): Promise<{ id: number } | null> {
+        +  const [home, away] = params.eventName.split(' - ').map(s => s?.trim()).filter(Boolean);
+        +  if (!home || !away) return null;
+        +  const date = params.startTime.slice(0, 10); // YYYY-MM-DD
+        +  // Példa: GET /fixtures?date=YYYY-MM-DD&team=... (vagy search endpoint a bevezetett logika szerint)
+        +  // Itt a projekt meglévő fetch utilját használjuk, és a válaszból a (home,away,start) egyezést keressük.
+        +  // A pontos implementáció a szolgáltató végpontjaihoz igazodik.
+        +  return null; // helykitöltő: a tényleges végpont‑hívás a projekt utils szerint kerül megírásra
+        +}
+
+  - name: build script hozzáadása a Gen2 fordításhoz
+    description: A TS→JS fordítás garantálása minden deploynál `gcp-build` script-tel.
+    outputs:
+      - |
+        --- a/cloud_functions/package.json
+        +++ b/cloud_functions/package.json
+        @@
+        {
+        -  "scripts": {
+        -    "build": "tsc"
+        -  }
+        +  "scripts": {
+        +    "build": "tsc",
+        +    "gcp-build": "npm run build"
+        +  }
+        }
+
+  - name: diagnosztikai logok bővítése
+    description: Nyers üzenet és parse logok, talált ticketek száma, lezárási összegzés kiírása.
+    outputs:
+      - |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@
+        -  console.log('[match_finalizer] received job');
+        +  console.log('[match_finalizer] received raw message');
+        +  try { console.log('[match_finalizer] payload:', JSON.stringify(message?.data || {})); } catch {}
+        @@
+        -  console.log('[match_finalizer] found %d tickets', snapshot.size);
+        +  console.log('[match_finalizer] found %d pending tickets', snapshot.size);
+        +  // zárás után:
+        +  console.log('[match_finalizer] finalize done for batch');
+
+links:
+  - canvas: match_finalizer_fixtureId_wallet.md
+  - reference: wallet.pdf

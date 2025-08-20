@@ -5,13 +5,14 @@ const ApiFootballResultProvider_1 = require("./services/ApiFootballResultProvide
 const payout_1 = require("./tickets/payout");
 const firestore_1 = require("firebase-admin/firestore");
 const firebase_1 = require("./lib/firebase");
+const CoinService_1 = require("./services/CoinService");
 const evaluators_1 = require("./evaluators");
 const resultProvider = new ApiFootballResultProvider_1.ApiFootballResultProvider();
 // After computing tip results for a ticket
 async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
     const db = (0, firestore_1.getFirestore)();
     await db.runTransaction(async (tx) => {
-        const [tSnap, uSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
+        const [tSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
         const t = tSnap.data();
         if (!t)
             throw new Error('Ticket not found');
@@ -29,8 +30,6 @@ async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
             return;
         const payout = (0, payout_1.calcTicketPayout)(ticketData.stake, tips);
         const status = tips.some((x) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
-        const balance = (uSnap.data()?.balance ?? 0) + payout;
-        tx.update(userRef, { balance });
         tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
     });
 }
@@ -115,7 +114,22 @@ const match_finalizer = async (message) => {
                 oddsSnapshot: tipInput.odds,
             };
         });
-        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(snap.get('uid')), { stake: snap.get('stake'), tips: tipResults });
+        const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
+        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(uid), { stake: snap.get('stake'), tips: tipResults });
+        // Wallet credit via CoinService (idempotens – ledger: wallets/{uid}/ledger/{ticketId})
+        {
+            const payout = (0, payout_1.calcTicketPayout)(snap.get('stake'), tipResults);
+            if (uid && payout > 0) {
+                const coins = Math.round(payout);
+                const cs = new CoinService_1.CoinService();
+                try {
+                    await cs.credit(String(uid), coins, snap.id);
+                }
+                catch (e) {
+                    console.error('[match_finalizer] wallet credit failed', e);
+                }
+            }
+        }
     }
     console.log('[match_finalizer] ticket finalization loop done');
 };
