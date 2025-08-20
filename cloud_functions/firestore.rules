@@ -13,12 +13,30 @@ service cloud.firestore {
       allow read:   if isOwner(resource.data.userId);
     }
 
-    /* ——— tickets ——— */
+    /* --- tickets gyökérkollekció (csak olvasás) --- */
     match /tickets/{ticketId} {
-      allow create: if signedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasOnly(['id','userId','tips','stake','totalOdd','potentialWin','createdAt','updatedAt','status']);
+      // V3: új jegyek nem a gyökérben jönnek létre
+      allow create: if false;
       allow read: if signedIn();
+      allow update, delete: if false;
+    }
+
+    /* --- users/{userId}/tickets alkollekció --- */
+    match /users/{userId}/tickets/{ticketId} {
+      allow create: if isOwner(userId)
+        && request.resource.data.userId == userId
+        && request.resource.data.keys().hasOnly([
+          'id',
+          'userId',
+          'tips',
+          'stake',
+          'totalOdd',
+          'potentialWin',
+          'createdAt',
+          'updatedAt',
+          'status',
+        ]);
+      allow read: if isOwner(userId);
       allow update, delete: if false;
     }
 

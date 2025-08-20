@@ -1,7 +1,7 @@
 # Firestore – `tickets` schema (provider‑agnostic)
 
 ## Quick overview
-Collection: `tickets/{ticketId}`
+Collection: `users/{uid}/tickets/{ticketId}`
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
@@ -47,8 +47,8 @@ Collection: `tickets/{ticketId}`
 ```
 
 ## Indexes
-- `tickets`: (userId ASC, createdAt DESC)
-- `tickets`: (status ASC, createdAt DESC)
+- `users/{uid}/tickets`: (createdAt DESC)
+- `users/{uid}/tickets`: (status ASC, createdAt DESC)
 
 ## Notes
-- Cloud Functions write `tickets` via the Admin SDK (bypassing rules), so denying client writes is safe.
+- Clients create tickets under their own user document; Cloud Functions handle coin deductions and may aggregate reads via `collectionGroup('tickets')`.

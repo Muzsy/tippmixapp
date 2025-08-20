@@ -76,7 +76,7 @@ TicketModel {
 }
 ```
 
-- Elérési út: `tickets/{userId}/{ticketId}`
+- Elérési út: `users/{userId}/tickets/{ticketId}`
 - Státusz később frissül a meccsek lezárása után
 
 ## 🔜 Tervezett modellek

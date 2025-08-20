@@ -76,7 +76,7 @@ TicketModel {
 }
 ```
 
-- Stored under `tickets/{userId}/{ticketId}`
+- Stored under `users/{userId}/tickets/{ticketId}`
 - Status updated after match finalization
 
 ## 🔜 Planned Models

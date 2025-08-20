@@ -1,7 +1,7 @@
 # Firestore – `tickets` séma (provider‑független)
 
 ## Gyors áttekintés
-Kollekció: `tickets/{ticketId}`
+Kollekció: `users/{uid}/tickets/{ticketId}`
 
 | Mező | Típus | Kötelező | Megjegyzés |
 |---|---|---|---|
@@ -47,8 +47,8 @@ Kollekció: `tickets/{ticketId}`
 ```
 
 ## Indexek
-- `tickets`: (userId ASC, createdAt DESC)
-- `tickets`: (status ASC, createdAt DESC)
+- `users/{uid}/tickets`: (createdAt DESC)
+- `users/{uid}/tickets`: (status ASC, createdAt DESC)
 
 ## Megjegyzés
-- A `tickets` írását Cloud Functions végzi Admin SDK‑val (rules megkerülve), ezért a kliens‑write tiltása biztonságos.
+- A szelvényeket a felhasználó saját ágán hozza létre; a pénzmozgást Cloud Functions intézi, a globális lekérések `collectionGroup('tickets')` használatával történnek.
