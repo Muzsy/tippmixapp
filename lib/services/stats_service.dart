@@ -25,14 +25,16 @@ class StatsService {
 
   Stream<List<UserStatsModel>> _streamFromFirestore(LeaderboardMode mode) {
     final usersRef = _db.collection('users');
-    final ticketsRef = _db.collection('tickets');
+    final ticketsRef = _db.collectionGroup('tickets');
 
     return usersRef.snapshots().asyncMap((userSnap) async {
       final stats = <UserStatsModel>[];
       for (final userDoc in userSnap.docs) {
         final data = userDoc.data();
         final uid = userDoc.id;
-        final coins = (data['coins'] as int?) ?? 0;
+        final walletSnap = await _db.doc('users/$uid/wallet').get();
+        final coins =
+            (walletSnap.data()?['coins'] as int?) ?? (data['coins'] as int? ?? 0);
         final displayName = data['nickname'] as String? ?? '';
 
         final userTickets = await ticketsRef
@@ -116,11 +118,13 @@ class StatsService {
     if (!userDoc.exists) return null;
     final userData = userDoc.data() ?? <String, dynamic>{};
 
-    final coins = (userData['coins'] as int?) ?? 0;
+    final walletSnap = await _db.doc('users/$uid/wallet').get();
+    final coins =
+        (walletSnap.data()?['coins'] as int?) ?? (userData['coins'] as int? ?? 0);
     final displayName = userData['nickname'] as String? ?? '';
 
     final ticketSnap = await _db
-        .collection('tickets')
+        .collectionGroup('tickets')
         .where('userId', isEqualTo: uid)
         .get();
     final totalBets = ticketSnap.docs.length;

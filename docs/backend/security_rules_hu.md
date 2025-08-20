@@ -10,7 +10,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 - A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
-- TippCoin egyenleg a `wallets/{uid}` kollekcióban tárolódik, amelyet csak a privilegizált szerver kód írhat
+- A TippCoin egyenlegek egyszerre vannak a `wallets/{uid}` és `users/{uid}/wallet` útvonalakon, írásuk csak privilegizált szerver kóddal lehetséges
 
 ---
 
@@ -20,7 +20,9 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 users/{uid}
   badges/{badgeId}
   settings/{settingId}
-wallets/{uid}
+  wallet
+  ledger/{entryId}
+wallets/{uid} (legacy)
 tickets/{ticketId}
 public_feed/{postId}
   reports/{reportId}
@@ -50,6 +52,16 @@ service cloud.firestore {
         allow read: if request.auth != null && request.auth.uid == userId;
         allow write: if request.auth == null;
       }
+    }
+
+    // ÚJ: user-centrikus wallet és ledger (SoT)
+    match /users/{userId}/wallet {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null;
+    }
+    match /users/{userId}/ledger/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null;
     }
 
     match /tickets/{ticketId} {
@@ -118,3 +130,4 @@ service cloud.firestore {
 ## 📘 Változásnapló
 
 - 2025-08-06: Javítva a `/tickets/{ticketId}` mezőlista, hogy a kliens összes kulcsa engedélyezett legyen.
+- 2025-08-20: Hozzáadva user-centrikus wallet és ledger szabályok, duplairás.

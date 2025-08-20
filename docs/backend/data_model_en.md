@@ -38,9 +38,10 @@ WalletModel {
 }
 ```
 
-- Location: `wallets/{userId}`
+- Location: `wallets/{userId}` (legacy) and `users/{userId}/wallet` (user-centric SoT)
 - This document is **lazy‑created** by the mobile client on the first bet.
-- Later it will be initialised automatically via an **Auth onCreate Cloud Function**.
+- An Auth onCreate Cloud Function now seeds both locations with a 50 coin balance.
+- Ledger entries mirror to `users/{userId}/ledger/{entryId}` for audit.
 
 ## 🎯 TipModel
 
@@ -84,3 +85,7 @@ TicketModel {
 - `BadgeModel`: for achievements and badge rules
 - `LeaderboardEntryModel`: cached leaderboard data
 - `FeedEventModel`: recent user activity (for Feed)
+
+## 📘 Changelog
+
+- 2025-08-20: Documented dual-write wallet/ledger paths and onCreate seeding.

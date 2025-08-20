@@ -18,7 +18,7 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On registration
 
-- `UserModel.tippCoin = 1000`
+- Cloud Function seeds `users/{uid}` and `users/{uid}/wallet` with **50** coins
 
 ### On placing a ticket
 
@@ -27,6 +27,7 @@ TippCoin is used as a betting stake and gamification reward.
   - reads the current balance from `wallets/{uid}.coins`;
   - aborts with `FirebaseException(insufficient_coins)` if balance < stake;
   - subtracts `stake` from both `wallets/{uid}.coins` and `users/{uid}.coins`;
+  - mirrors the change to `users/{uid}/wallet` and audit entry `users/{uid}/ledger/{ticketId}`;
   - writes the new `tickets/{ticketId}` document in the same transaction.
 
 This guarantees atomicity – the user can never end up with a negative
@@ -36,8 +37,8 @@ balance and a missing ticket.
 
 - `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
   - checks `wallets/{uid}/ledger/{ticketId}` and exits if already exists (idempotent);
-  - increments `wallets/{uid}.balance`;
-  - writes ledger entry `{ amount, type: 'win', createdAt }`.
+  - increments `wallets/{uid}.balance` and mirrors `users/{uid}/wallet` with `FieldValue.increment`;
+  - writes ledger entry `{ amount, type: 'win', createdAt }` and mirrors `users/{uid}/ledger/{ticketId}`.
 - `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
 
 ---
@@ -67,6 +68,13 @@ TippCoinLog {
       amount: number
       type: 'bet' | 'win'
       createdAt: timestamp
+  users/{uid}/wallet (mirror)
+    coins: number
+    updatedAt: timestamp
+  users/{uid}/ledger/{ticketId} (mirror)
+    amount: number
+    type: 'bet' | 'win'
+    createdAt: timestamp
   ```
 - Logs stored under `users/{uid}/coin_logs/`
 - UI should show recent changes in profile
@@ -77,7 +85,7 @@ TippCoinLog {
 
 - `CoinService.transact()` ensures idempotent balance changes and ledger entries.
 - `CoinService.debitAndCreateTicket()` handles atomic stake deduction with ticket creation.
-- Wallet balance stored at `wallets/{uid}.balance` updates immediately.
+- Wallet balance stored at `wallets/{uid}.balance` updates immediately and mirrors to `users/{uid}/wallet`.
 - Logging to `coin_logs` pending implementation.
 
 ---
@@ -87,3 +95,7 @@ TippCoinLog {
 - All TippCoin updates must be test-covered
 - User must never gain/lose coin client-side
 - Security rules must prevent unauthorized writes
+
+## 📘 Changelog
+
+- 2025-08-20: Documented dual-write to user-centric wallet & ledger and registration seeding.

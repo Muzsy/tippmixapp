@@ -11,6 +11,9 @@ export class CoinService {
   async transact(uid: string, amount: number, ticketId: string, type: 'win' | 'bet'): Promise<void> {
     const walletRef = db.doc(`wallets/${uid}`);
     const ledgerRef = walletRef.collection('ledger').doc(ticketId);
+    // NEW (dual write): user-centric SoT
+    const newWalletRef = db.doc(`users/${uid}/wallet`);
+    const newLedgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
 
     await db.runTransaction(async (tx) => {
       const ledgerSnap = await tx.get(ledgerRef);

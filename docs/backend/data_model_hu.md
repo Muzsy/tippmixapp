@@ -28,7 +28,7 @@ UserModel {
 
 # 💰 WalletModel (Új)
 
-TippCoin‑egyenleg tárolása felhasználónkként.
+TippCoin‑egyenleg tárolása felhasználónként.
 
 ```dart
 WalletModel {
@@ -38,9 +38,10 @@ WalletModel {
 }
 ```
 
-- Elérési út: `wallets/{userId}`
+- Elérési út: `wallets/{userId}` (legacy) és `users/{userId}/wallet` (user-centrikus SoT)
 - A dokumentum **lazy‑create** módon jön létre az első fogadáskor.
-  Később egy **Auth onCreate** Cloud Function fogja automatikusan létrehozni.
+- Egy **Auth onCreate** Cloud Function most mindkét helyre 50 coin kezdő egyenleget ír.
+- Ledger bejegyzések a `users/{userId}/ledger/{entryId}` útvonalon tükröződnek.
 
 ## 🎯 TipModel
 
@@ -84,3 +85,7 @@ TicketModel {
 - `BadgeModel`: badge-szabályok és megszerzett címek
 - `LeaderboardEntryModel`: ranglista gyorsított tárolása
 - `FeedEventModel`: közösségi események (feed)
+
+## 📘 Változásnapló
+
+- 2025-08-20: Frissítve a wallet és ledger duplairás, onCreate inicializálás dokumentációja.
