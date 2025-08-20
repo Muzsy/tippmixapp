@@ -14,6 +14,11 @@ export const onUserCreate = functions
       coins: 50,
       createdAt: FieldValue.serverTimestamp(),
     });
+    // NEW: initialize user-centric wallet doc as SoT (dual write transition)
+    await db.doc(`users/${user.uid}/wallet`).set(
+      { coins: 50, updatedAt: FieldValue.serverTimestamp() },
+      { merge: true },
+    );
   });
 
 interface CoinTrxData {
@@ -80,7 +85,8 @@ export const coin_trx = functions
         currentBalance = (userSnap.get('coins') as number) || 0;
       }
 
-      const newBalance = type === 'debit' ? currentBalance - amount : currentBalance + amount;
+      const delta = type === 'debit' ? -amount : amount;
+      const newBalance = currentBalance + delta;
       if (newBalance < 0) {
         throw new functions.https.HttpsError(
           'failed-precondition',
@@ -89,6 +95,29 @@ export const coin_trx = functions
       }
 
       tx.update(userRef, { coins: newBalance });
+      // NEW: mirror write to user-centric SoT
+      const walletDoc = db.doc(`users/${userId}/wallet`);
+      tx.set(
+        walletDoc,
+        {
+          coins: FieldValue.increment(delta),
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
+      const ledgerDoc = db.doc(`users/${userId}/ledger/${transactionId}`);
+      tx.set(
+        ledgerDoc,
+        {
+          userId,
+          amount,
+          type,
+          refId: transactionId,
+          source: 'coin_trx',
+          createdAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
       tx.set(logRef, {
         userId,
         amount,

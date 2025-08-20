@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [🧑‍💻 Codex Dokumentációs Központ / Documentation Hub](#-codex-dokument%C3%A1ci%C3%B3s-k%C3%B6zpont--documentation-hub)
+  - [Hogyan használd / How to use this folder](#hogyan-haszn%C3%A1ld--how-to-use-this-folder)
+    - [Mappa‑szabályok / Folder rules](#mappa%E2%80%91szab%C3%A1lyok--folder-rules)
+  - [Tartalomjegyzék / Table of Contents](#tartalomjegyz%C3%A9k--table-of-contents)
+  - [Változásnapló / Changelog](#v%C3%A1ltoz%C3%A1snapl%C3%B3--changelog)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 🧑‍💻 Codex Dokumentációs Központ / Documentation Hub
 
 > **Cél / Purpose**
@@ -103,3 +115,4 @@
 | 2025-08-18   | @codex-bot      | TOC refreshed after event bet card actions layout docs update                |
 | 2025-09-30   | @codex-bot      | TOC refreshed after match finalizer wallet credit docs update               |
 | 2025-10-01   | @codex-bot      | TOC refreshed after fixtureId meta resolver docs update                       |
+| 2025-08-20   | @codex-bot      | TOC refreshed after Firestore dual-write docs update                           |

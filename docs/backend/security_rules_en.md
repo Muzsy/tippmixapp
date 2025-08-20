@@ -10,7 +10,7 @@ This document defines the security model and Firestore access rules for TippmixA
 - Prevent manipulation of TippCoin or tickets
 - Ensure data integrity during bet placement
 - Leaderboard requires read-only access to all `users/{uid}` docs for signed-in users
-- Each TippCoin balance lives under `wallets/{uid}` and is writable only by privileged server code
+- TippCoin balances mirror to `wallets/{uid}` and `users/{uid}/wallet`, writable only by privileged server code
 
 ---
 
@@ -20,7 +20,9 @@ This document defines the security model and Firestore access rules for TippmixA
 users/{uid}
   badges/{badgeId}
   settings/{settingId}
-wallets/{uid}
+  wallet
+  ledger/{entryId}
+wallets/{uid} (legacy)
 tickets/{ticketId}
 public_feed/{postId}
   reports/{reportId}
@@ -50,6 +52,16 @@ service cloud.firestore {
         allow read: if request.auth != null && request.auth.uid == userId;
         allow write: if request.auth == null;
       }
+    }
+
+    // NEW: user-centric wallet & ledger (SoT)
+    match /users/{userId}/wallet {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null;
+    }
+    match /users/{userId}/ledger/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth == null;
     }
 
     match /tickets/{ticketId} {
@@ -118,3 +130,4 @@ service cloud.firestore {
 ## 📘 Changelog
 
 - 2025-08-06: Corrected `/tickets/{ticketId}` field whitelist to cover all client-sent keys.
+- 2025-08-20: Added user-centric wallet & ledger rules and dual-write notes.
