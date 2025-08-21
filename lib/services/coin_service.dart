@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/simple_logger.dart';
+import '../utils/transaction_wrapper.dart';
 
 // See docs/tippmix_app_teljes_adatmodell.md and docs/betting_ticket_data_model.md
 // for details about the coin transaction model and integration points.
@@ -13,16 +14,20 @@ class CoinService {
   final FirebaseFirestore _firestore;
   final FirebaseAuth? _auth;
   final Logger _logger;
+  final TransactionWrapper _wrapper;
 
   CoinService({
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
     FirebaseAuth? auth,
     Logger? logger,
+    TransactionWrapper? wrapper,
   }) : _functions = functions,
        _firestore = firestore,
        _auth = auth,
-       _logger = logger ?? Logger('CoinService');
+       _logger = logger ?? Logger('CoinService'),
+       _wrapper =
+           wrapper ?? TransactionWrapper(firestore: firestore, logger: logger ?? Logger('CoinService'));
 
   FirebaseFirestore get _fs => _firestore;
   FirebaseAuth get _fa => _auth ?? FirebaseAuth.instance;
@@ -142,9 +147,14 @@ class CoinService {
   }) async {
     _logger.info('coin_trx $type $amount');
     if (_functions == null) {
-      return;
+      return _applyLedger(
+        amount: amount,
+        type: type,
+        reason: reason,
+        transactionId: transactionId,
+      );
     }
-    final callable = _functions.httpsCallable('coin_trx');
+    final callable = _functions!.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(
         <String, dynamic>{
@@ -166,5 +176,30 @@ class CoinService {
       // Log the error and rethrow
       rethrow;
     }
+  }
+
+  Future<void> _applyLedger({
+    required int amount,
+    required String type,
+    required String reason,
+    required String transactionId,
+  }) async {
+    final uid = _fa.currentUser!.uid;
+    final walletRef = _fs.collection('wallets').doc(uid);
+    final ledgerRef = walletRef.collection('ledger').doc(transactionId);
+    await _wrapper.run((tx) async {
+      final ledgerSnap = await tx.get(ledgerRef);
+      if (ledgerSnap.exists) return;
+      final snap = await tx.get(walletRef);
+      final current = (snap.data()?['coins'] ?? 0) as int;
+      final updated = type == 'debit' ? current - amount : current + amount;
+      tx.update(walletRef, {'coins': updated});
+      tx.set(ledgerRef, {
+        'amount': amount,
+        'type': type,
+        'reason': reason,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    });
   }
 }
