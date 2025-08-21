@@ -5,13 +5,17 @@ import 'simple_logger.dart';
 
 class TooManyAttemptsException implements Exception {}
 
+// Retry policy defaults used by [TransactionWrapper].
+const int kTransactionMaxRetries = 3;
+const Duration kTransactionRetryDelay = Duration(milliseconds: 50);
+
 /// Wraps [FirebaseFirestore.runTransaction] with retry logic.
 class TransactionWrapper {
   TransactionWrapper({
     required FirebaseFirestore firestore,
     required Logger logger,
-    this.maxRetries = 3,
-    this.delayBetweenRetries = Duration.zero,
+    this.maxRetries = kTransactionMaxRetries,
+    this.delayBetweenRetries = kTransactionRetryDelay,
   }) : _firestore = firestore,
        _logger = logger;
 
@@ -34,7 +38,10 @@ class TransactionWrapper {
       attempt++;
       try {
         _logger.info('[TransactionWrapper] attempt $attempt');
-        return await _firestore.runTransaction(body);
+        return await _firestore.runTransaction(
+          body,
+          maxAttempts: 1,
+        );
       } on FirebaseException catch (e) {
         final retriable = e.code == 'aborted' || e.code == 'deadline-exceeded';
         if (!retriable) rethrow;
@@ -43,7 +50,8 @@ class TransactionWrapper {
         }
       }
       if (delayBetweenRetries > Duration.zero) {
-        await Future<void>.delayed(delayBetweenRetries);
+        // Linear backoff based on current attempt count.
+        await Future<void>.delayed(delayBetweenRetries * attempt);
       }
     }
   }
