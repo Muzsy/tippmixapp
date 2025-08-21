@@ -93,8 +93,8 @@ void main() {
 
     await tester.pump();
 
-    expect(find.text('Team A'), findsOneWidget);
-    expect(find.text('Team B'), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-team-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('away-team-1')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('refresh_button')));
     await tester.pump();

@@ -93,6 +93,7 @@ class _EventBetCardState extends State<EventBetCard> {
                       Flexible(
                         child: Text(
                           event.homeTeam,
+                          key: ValueKey('home-team-${event.id}'),
                           maxLines: 2,
                           softWrap: true,
                           style: Theme.of(context).textTheme.titleMedium,
@@ -109,6 +110,7 @@ class _EventBetCardState extends State<EventBetCard> {
                       Flexible(
                         child: Text(
                           event.awayTeam,
+                          key: ValueKey('away-team-${event.id}'),
                           textAlign: TextAlign.right,
                           maxLines: 2,
                           softWrap: true,
