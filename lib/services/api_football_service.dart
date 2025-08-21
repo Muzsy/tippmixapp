@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/api_response.dart';
 import '../models/odds_event.dart';
 import '../models/odds_market.dart';
+import '../models/odds_bookmaker.dart';
 import 'market_mapping.dart';
 
 class ApiFootballService {
@@ -91,8 +92,42 @@ class ApiFootballService {
       for (final f in fixtures) {
         final fixtureMap = Map<String, dynamic>.from(f as Map);
         final base = _mapFixtureToOddsEvent(fixtureMap);
-        // H2H a kártyán töltődik – 60s cache
-        events.add(base);
+        final oddsJson = await getOddsForFixture(
+          base.id,
+          season: base.season,
+        );
+        final h2h = MarketMapping.h2hFromApi(
+          oddsJson,
+          preferredBookmakerId: defaultBookmakerId,
+          homeName: base.homeTeam,
+          awayName: base.awayTeam,
+        );
+        final bookmakers = <OddsBookmaker>[
+          if (h2h != null)
+            OddsBookmaker(
+              key: 'apifootball',
+              title: 'API-Football',
+              markets: [h2h],
+            ),
+        ];
+        events.add(
+          OddsEvent(
+            id: base.id,
+            sportKey: base.sportKey,
+            sportTitle: base.sportTitle,
+            homeTeam: base.homeTeam,
+            awayTeam: base.awayTeam,
+            season: base.season,
+            countryName: base.countryName,
+            leagueName: base.leagueName,
+            leagueLogoUrl: base.leagueLogoUrl,
+            homeLogoUrl: base.homeLogoUrl,
+            awayLogoUrl: base.awayLogoUrl,
+            commenceTime: base.commenceTime,
+            fetchedAt: base.fetchedAt,
+            bookmakers: bookmakers,
+          ),
+        );
       }
 
       return ApiResponse(data: events);

@@ -8,7 +8,8 @@ class MarketMapping {
   static const String asianHandicap = 'ah';
 
   static String? fromApiFootball(String key) {
-    switch (key.toLowerCase()) {
+    final normalized = key.trim().toLowerCase();
+    switch (normalized) {
       case '1x2':
       case 'h2h':
       case 'match winner':
@@ -85,13 +86,13 @@ class MarketMapping {
               final price = double.tryParse(oddStr.replaceAll(',', '.'));
               if (price == null) continue;
               if (val == 'home' || val == '1' || (hn != null && valn == hn)) {
-                home = OddsOutcome(name: 'Home', price: price);
+                home = OddsOutcome(name: homeName ?? 'Home', price: price);
               } else if (val == 'draw' || val == 'x') {
                 draw = OddsOutcome(name: 'Draw', price: price);
               } else if (val == 'away' ||
                   val == '2' ||
                   (an != null && valn == an)) {
-                away = OddsOutcome(name: 'Away', price: price);
+                away = OddsOutcome(name: awayName ?? 'Away', price: price);
               }
             }
             final outs = [
@@ -135,13 +136,13 @@ class MarketMapping {
             final price = double.tryParse(oddStr.replaceAll(',', '.'));
             if (price == null) continue;
             if (val == 'home' || val == '1' || (hn != null && valn == hn)) {
-              home = OddsOutcome(name: 'Home', price: price);
+              home = OddsOutcome(name: homeName ?? 'Home', price: price);
             } else if (val == 'draw' || val == 'x') {
               draw = OddsOutcome(name: 'Draw', price: price);
             } else if (val == 'away' ||
                 val == '2' ||
                 (an != null && valn == an)) {
-              away = OddsOutcome(name: 'Away', price: price);
+              away = OddsOutcome(name: awayName ?? 'Away', price: price);
             }
           }
           final outs = [

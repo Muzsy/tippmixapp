@@ -41,6 +41,7 @@ class EventBetCard extends StatefulWidget {
 
 class _EventBetCardState extends State<EventBetCard> {
   String? _selected; // 'home', 'draw', 'away'
+  Future<OddsMarket?>? _h2hFuture;
 
   @override
   void initState() {
@@ -151,14 +152,15 @@ class _EventBetCardState extends State<EventBetCard> {
                       RegExp(r'\d+').firstMatch(event.id)?.group(0) ?? '',
                     ) ??
                     0;
+                _h2hFuture ??= widget.apiService.getH2HForFixture(
+                  fid,
+                  season: event.season ?? event.commenceTime.year,
+                  homeName: event.homeTeam,
+                  awayName: event.awayTeam,
+                );
                 return FutureBuilder<OddsMarket?>(
                   key: ValueKey('markets-${event.id}'),
-                  future: widget.apiService.getH2HForFixture(
-                    fid,
-                    season: event.season ?? event.commenceTime.year,
-                    homeName: event.homeTeam,
-                    awayName: event.awayTeam,
-                  ),
+                  future: _h2hFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return _loadingMarkets();
@@ -185,6 +187,7 @@ class _EventBetCardState extends State<EventBetCard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 loc.updated_time_ago(_formatYMDHM(ra)),
+                key: ValueKey('updated-${event.id}'),
                 style: Theme.of(context).textTheme.labelSmall,
               ),
             ),
@@ -242,6 +245,7 @@ class _EventBetCardState extends State<EventBetCard> {
     OddsOutcome? away,
   ) {
     return Row(
+      key: const ValueKey('h2h-row'),
       children: [
         Expanded(
           child: home != null
@@ -341,6 +345,7 @@ class _EventBetCardState extends State<EventBetCard> {
       children: [
         Text(
           l.starts_at(_formatYMDHM(e.commenceTime)),
+          key: ValueKey('kickoff-${e.id}'),
           textAlign: TextAlign.left,
           style: Theme.of(
             context,

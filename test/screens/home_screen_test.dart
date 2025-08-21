@@ -160,7 +160,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // ✅ Assertions
-    expect(find.byType(UserStatsHeader), findsOneWidget);
+    expect(find.byKey(const ValueKey('user-stats-header')), findsOneWidget);
     expect(find.text('Daily Bonus'), findsOneWidget);
   });
 }

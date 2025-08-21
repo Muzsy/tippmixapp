@@ -142,13 +142,20 @@ class HomeScreen extends ConsumerWidget {
     final user = authState.user; // lehet null vendégnél
     final stats = ref.watch(userStatsProvider).asData?.value;
     final showHeader = showStats || _isRootRoute(context);
+    Widget? header;
+    if (showHeader) {
+      if (stats != null || user != null) {
+        header = UserStatsHeader(
+          key: const ValueKey('user-stats-header'),
+          stats: stats,
+        );
+      } else {
+        header = const HomeGuestCtaTile();
+      }
+    }
     return Column(
       children: [
-        // Fejléc a képernyő tetején: vendég → CTA, bejelentkezett → profil header
-        if (showHeader)
-          (user == null
-              ? const HomeGuestCtaTile()
-              : UserStatsHeader(stats: stats)),
+        if (header != null) header,
         Expanded(
           child: GridView.count(
             padding: const EdgeInsets.all(16),
