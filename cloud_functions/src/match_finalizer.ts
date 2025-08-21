@@ -171,24 +171,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
       if (uid && payout > 0) {
         const coins = Math.round(payout);
         try {
-            await new CoinService().credit(String(uid), coins, snap.id);
-            // NEW: mirror write to user-centric SoT (dual write)
-            const uref = db.doc(`users/${uid}/wallet`);
-            await uref.set(
-              { coins: FieldValue.increment(coins), updatedAt: FieldValue.serverTimestamp() },
-              { merge: true },
-            );
-            const lref = db.doc(`users/${uid}/ledger/${snap.id}`);
-            await lref.set(
-              {
-                type: 'win',
-                amount: coins,
-                refId: snap.id,
-                source: 'match_finalizer',
-                createdAt: FieldValue.serverTimestamp(),
-              },
-              { merge: true },
-            );
+          await new CoinService().credit(String(uid), coins, snap.id);
         } catch (e) {
           console.error('[match_finalizer] wallet credit failed', e);
         }
