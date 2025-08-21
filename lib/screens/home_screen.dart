@@ -146,7 +146,7 @@ class HomeScreen extends ConsumerWidget {
       children: [
         // Fejléc a képernyő tetején: vendég → CTA, bejelentkezett → profil header
         if (showHeader)
-          (user == null && !showStats
+          (user == null
               ? const HomeGuestCtaTile()
               : UserStatsHeader(stats: stats)),
         Expanded(
