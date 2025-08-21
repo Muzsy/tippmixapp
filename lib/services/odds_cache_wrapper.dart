@@ -74,6 +74,6 @@ class OddsCacheWrapper {
     final datePart = date != null
         ? date.toIso8601String().split('T').first
         : '';
-    return 'odds_${sport}|$datePart';
+    return 'odds_$sport|$datePart';
   }
 }
