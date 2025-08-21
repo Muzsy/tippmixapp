@@ -30,13 +30,11 @@ class TransactionWrapper {
 
   Future<T> _runWithRetry<T>(Future<T> Function(Transaction) body) async {
     var attempt = 0;
-    while (attempt < maxRetries) {
+    while (true) {
       attempt++;
       try {
         _logger.info('[TransactionWrapper] attempt $attempt');
         return await _firestore.runTransaction(body);
-      } on UnimplementedError {
-        return Future<T>.value(null);
       } on FirebaseException catch (e) {
         final retriable = e.code == 'aborted' || e.code == 'deadline-exceeded';
         if (!retriable) rethrow;
@@ -48,6 +46,5 @@ class TransactionWrapper {
         await Future<void>.delayed(delayBetweenRetries);
       }
     }
-    throw TooManyAttemptsException();
   }
 }
