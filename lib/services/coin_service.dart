@@ -194,10 +194,10 @@ class CoinService {
     await _wrapper.run((tx) async {
       final ledgerSnap = await tx.get(ledgerRef);
       if (ledgerSnap.exists) return;
-      final snap = await tx.get(walletRef);
-      final current = (snap.data()?['coins'] ?? 0) as int;
-      final updated = type == 'debit' ? current - amount : current + amount;
-      tx.update(walletRef, {'coins': updated});
+      final delta = type == 'debit' ? -amount : amount;
+      tx.update(walletRef, {
+        'coins': FieldValue.increment(delta),
+      });
       tx.set(ledgerRef, {
         'amount': amount,
         'type': type,
