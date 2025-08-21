@@ -4,6 +4,7 @@ import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer'
 export { onUserCreate, coin_trx } from './coin_trx.logic';
 export { log_coin } from './log_coin';
 export { onFriendRequestAccepted } from './friend_request';
+export { daily_bonus } from './src/daily_bonus';
 
 // Gen2 Pub/Sub trigger (topic: result-check, region via global options)
 export const match_finalizer = onMessagePublished('result-check', async (event) => {

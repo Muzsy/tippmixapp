@@ -42,6 +42,11 @@ This keeps the client free of any direct wallet writes.
   - writes ledger entry `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
 
+### Daily bonus credit
+
+- The scheduled `daily_bonus` Cloud Function grants **50** coins to each user.
+- Credit is executed via `CoinService.credit(uid, 50, daily_bonus_YYYYMMDD)` where the `refId` is based on the day to ensure idempotency.
+
 ---
 
 ## 🧾 Technical Plan
@@ -98,3 +103,4 @@ TippCoinLog {
 - 2025-08-20: Documented dual-write to user-centric wallet & ledger and registration seeding.
 - 2025-08-20: Updated to single SoT (`users/{uid}/wallet` + `users/{uid}/ledger`) and removed legacy writes.
 - 2025-08-20: Removed client-side wallet writes; `coin_trx` handles all balance changes.
+- 2025-08-21: Added daily bonus credit via CoinService with deterministic `refId`.
