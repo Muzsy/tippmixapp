@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Thin wrapper over [FirebaseAnalytics] to record login A/B events.
 class AnalyticsService {
   AnalyticsService([FirebaseAnalytics? analytics])
-      : _analytics = analytics ?? _tryInstance();
+    : _analytics = analytics ?? _tryInstance();
 
   static FirebaseAnalytics? _tryInstance() {
     try {

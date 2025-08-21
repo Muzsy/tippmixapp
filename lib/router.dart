@@ -45,7 +45,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
     '/register',
     '/onboarding',
     '/splash',
-    '/auth/email-not-verified'
+    '/auth/email-not-verified',
   };
   if (!loggedIn && !publicPaths.contains(loc)) {
     return '/login';

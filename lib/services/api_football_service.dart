@@ -94,10 +94,7 @@ class ApiFootballService {
       for (final f in fixtures) {
         final fixtureMap = Map<String, dynamic>.from(f as Map);
         final base = _mapFixtureToOddsEvent(fixtureMap);
-        final oddsJson = await getOddsForFixture(
-          base.id,
-          season: base.season,
-        );
+        final oddsJson = await getOddsForFixture(base.id, season: base.season);
         final bookmakers = _parseBookmakers(oddsJson);
         events.add(
           OddsEvent(
