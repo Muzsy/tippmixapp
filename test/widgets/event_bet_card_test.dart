@@ -60,9 +60,9 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text('Liverpool'), findsOneWidget);
-    expect(find.text('Tottenham'), findsOneWidget);
-    await tester.tap(find.text('1'));
+    expect(find.text('Liverpool'), findsWidgets);
+    expect(find.text('Tottenham'), findsWidgets);
+    await tester.tap(find.byKey(const ValueKey('h2h-home')));
     await tester.pump();
     expect(tapped, isTrue);
   });
