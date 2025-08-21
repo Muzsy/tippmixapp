@@ -1,0 +1,193 @@
+# Hivatkozás: lásd a részletes háttér-információt a "Firestore refaktor – Rules v2 igazítás + CF duplairás kivezetés (terv)" vásznon.
+# A lépések a mostani tippmixapp.zip kódjára vannak pontosítva. A Codex minden diffet az alábbiak szerint alkalmazzon.
+
+steps:
+  - name: Firestore rules igazítása a pénzügyi SoT-hoz (firebase.rules)
+    description: Frissítsd a firebase.rules fájlt úgy, hogy a kliens ne írhasson sem a legacy wallets/*, sem a user-centrikus wallet/ledger ágakra; tiltsd a tickets gyökér create-et.
+    outputs:
+      - path: firebase.rules
+        diff: |
+          --- a/firebase.rules
+          +++ b/firebase.rules
+          @@
+           match /wallets/{userId} {
+-            allow read: if request.auth != null && request.auth.uid == userId;
+-            // Engedd meg a saját wallet egyenleg módosítását a bejelentkezett usernek
+-            allow write: if request.auth != null
+-                        && request.auth.uid == userId
+-                        // ⬇︎ opcionális formai védelem, de erősen ajánlott
+-                        && request.resource.data.keys().hasOnly(['coins','createdAt'])
+-                        && request.resource.data.coins is int
+-                        && request.resource.data.coins >= 0;
+-
+-            match /ledger/{ticketId} {
+-              allow read: if request.auth != null && request.auth.uid == userId;
+-              allow write: if request.auth == null;
+-            }
++            // LEGACY: csak olvasás maradhat; írni kizárólag CF/Admin SDK
++            allow read: if request.auth != null && request.auth.uid == userId;
++            allow write: if false;
++
++            match /ledger/{ticketId} {
++              allow read: if request.auth != null && request.auth.uid == userId;
++              allow write: if false;
++            }
+           }
+          @@
++          /* --- NEW: user-centric wallet & ledger (SoT) --- */
++          match /users/{uid}/wallet {
++            allow read: if isOwner(uid);
++            allow write: if false; // Only via CF (Admin SDK)
++          }
++          match /users/{uid}/ledger/{entryId} {
++            allow read: if isOwner(uid);
++            allow write: if false; // Only via CF (Admin SDK)
++          }
++
++          /* --- tickets gyökérkollekció: create tiltás --- */
++          match /tickets/{ticketId} {
++            allow read: if signedIn();
++            allow create, update, delete: if false;
++          }
+
+  - name: match_finalizer – duplairás blokk eltávolítása
+    description: A CoinService().credit() után ne legyen tükör-írás ugyanarra a SoT-ra. Töröld a wallet increment + ledger set blokkot.
+    outputs:
+      - path: cloud_functions/src/match_finalizer.ts
+        diff: |
+          --- a/cloud_functions/src/match_finalizer.ts
+          +++ b/cloud_functions/src/match_finalizer.ts
+          @@
+-    // Wallet credit via CoinService (idempotens – ledger kulcs: ticketId)
+-    {
+-      const payout = calcTicketPayout(snap.get('stake'), tipResults);
+-      if (uid && payout > 0) {
+-        const coins = Math.round(payout);
+-        try {
+-            await new CoinService().credit(String(uid), coins, snap.id);
+-            // NEW: mirror write to user-centric SoT (dual write)
+-            const uref = db.doc(`users/${uid}/wallet`);
+-            await uref.set(
+-              { coins: FieldValue.increment(coins), updatedAt: FieldValue.serverTimestamp() },
+-              { merge: true },
+-            );
+-            const lref = db.doc(`users/${uid}/ledger/${snap.id}`);
+-            await lref.set(
+-              {
+-                type: 'win',
+-                amount: coins,
+-                refId: snap.id,
+-                source: 'match_finalizer',
+-                createdAt: FieldValue.serverTimestamp(),
+-              },
+-              { merge: true },
+-            );
+-        } catch (e) {
+-          console.error('[match_finalizer] wallet credit failed', e);
+-        }
+-      }
+-    }
++    // Wallet credit via CoinService (idempotens – ledger kulcs: ticketId)
++    {
++      const payout = calcTicketPayout(snap.get('stake'), tipResults);
++      if (uid && payout > 0) {
++        const coins = Math.round(payout);
++        try {
++          await new CoinService().credit(String(uid), coins, snap.id);
++        } catch (e) {
++          console.error('[match_finalizer] wallet credit failed', e);
++        }
++      }
++    }
+
+  - name: coin_trx.logic – teljes átállás az új SoT-ra
+    description: A coin_trx logika ne használja többé a users/{uid}.coins mezőt és a coin_logs kollekciót; helyette tranzakcióban a users/{uid}/wallet + users/{uid}/ledger/{transactionId} párost írja. Az onUserCreate is a wallet doc-ot hozza létre.
+    outputs:
+      - path: cloud_functions/coin_trx.logic.ts
+        diff: |
+          --- a/cloud_functions/coin_trx.logic.ts
+          +++ b/cloud_functions/coin_trx.logic.ts
+          @@
+-  .onCreate(async (user) => {
+-    const userRef = db.collection('users').doc(user.uid);
+-    await userRef.set({
+-      coins: 50,
+-      createdAt: FieldValue.serverTimestamp(),
+-    });
+-  });
++  .onCreate(async (user) => {
++    const userRef = db.collection('users').doc(user.uid);
++    await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
++    const walletRef = db.doc(`users/${user.uid}/wallet`);
++    await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
++  });
+          @@
+-    // Prevent duplicate transactions
+-    const logRef = db.collection('coin_logs').doc(transactionId);
+-    const existingLog = await logRef.get();
+-    if (existingLog.exists) {
+-      return { success: true };
+-    }
++    // Idempotencia: ledger primer kulcs a transactionId lesz
++    const ledgerRef = db.doc(`users/${userId}/ledger/${transactionId}`);
++    const existingLedger = await ledgerRef.get();
++    if (existingLedger.exists) {
++      return { success: true };
++    }
+          @@
+-    // Transaction: update user balance and log atomically
+-    await db.runTransaction(async (tx) => {
+-      const userRef = db.collection('users').doc(userId);
+-      const userSnap = await tx.get(userRef);
+-
+-      // If somehow user doc is missing, initialize with zero balance
+-      if (!userSnap.exists) {
+-        tx.set(userRef, { coins: 0, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+-      }
+-
+-      // Update the user's coin balance
+-      tx.set(
+-        userRef,
+-        { coins: FieldValue.increment(type === 'debit' ? -amount : amount) },
+-        { merge: true },
+-      );
+-      tx.set(logRef, {
+-        userId,
+-        amount,
+-        type,
+-        reason,
+-        transactionId,
+-        timestamp: FieldValue.serverTimestamp(),
+-      });
+-    });
++    // Transaction: wallet + ledger (SoT)
++    await db.runTransaction(async (tx) => {
++      const userRef = db.collection('users').doc(userId);
++      const walletRef = db.doc(`users/${userId}/wallet`);
++      const walletSnap = await tx.get(walletRef);
++      const before = (walletSnap.data()?.coins as number) ?? 0;
++      const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
++      const after = before + delta;
++
++      tx.set(walletRef, { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
++      tx.set(ledgerRef, {
++        type: type === 'debit' ? 'bet' : 'bonus',
++        amount: delta,
++        before,
++        after,
++        refId: transactionId,
++        source: 'coin_trx',
++        createdAt: FieldValue.serverTimestamp(),
++      }, { merge: true });
++    });
+
+  - name: Megjegyzés – build & deploy (emberi lépés)
+    description: A CF futó kódja a lib/ alól épül. A fenti módosítások után futtasd le helyben vagy CI-ben az npm buildet és a deploy-t a europe-central2 régióra.
+    outputs:
+      - path: .codex/notes/post_build_reminder.md
+        content: |
+          # Post-build/deploy emlékeztető
+          - cd cloud_functions && npm ci && npm run build
+          - gcloud functions deploy match_finalizer --gen2 --runtime=nodejs20 --region=europe-central2 --trigger-topic=result-check --entry-point=match_finalizer --quiet
+          - gcloud functions deploy coin_trx --gen2 --runtime=nodejs20 --region=europe-central2 --trigger-http --allow-unauthenticated --entry-point=coin_trx --quiet
+          - Ellenőrzés: a Firestore Rules a frissített firebase.rules alapján legyen deployolva.
