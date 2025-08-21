@@ -1,0 +1,262 @@
+# Codex cél: CI deploy finomítása + Firestore Rules kanonizálás
+# Kapcsolódó vászon: "CI pipeline finomítás + Rules szinkron – vászon"
+# Séma: steps: [] (name, description, outputs[, inputs])
+
+steps:
+  - name: Workflow fájlok felderítése
+    description: |
+      A legutóbb feltöltött tippmixapp.zip kicsomagolása után ellenőrizzük, hogy létezik a következő útvonal:
+      - .github/workflows/deploy.yml
+      - firebase.rules
+      - cloud_functions/firestore.rules
+      - infra/test/deploy_workflow.spec.ts
+      - README.md
+    outputs:
+      - path_exists:.github/workflows/deploy.yml
+      - path_exists:firebase.rules
+      - path_exists:cloud_functions/firestore.rules
+      - path_exists:infra/test/deploy_workflow.spec.ts
+      - path_exists:README.md
+
+  - name: Stale build védelem és Rules deploy beépítése a deploy.yml-be
+    description: |
+      Egészítsük ki a .github/workflows/deploy.yml fájlt. A jelenlegi fájl a végén így deployol:
+
+        - name: Firebase deploy (dev/main)
+          run: |
+            # Biztosítsuk, hogy mindig explicit projektet adunk meg
+            if [ "$MODE" = "prod" ]; then
+              PROJECT_ID="tippmix-prod"
+            else
+              PROJECT_ID="tippmix-dev"
+            fi
+            # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
+            firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
+
+      A módosítások:
+      1) A build ELŐTT adjunk hozzá egy "Clean stale build artifacts" lépést, ami törli a cloud_functions/lib mappát.
+      2) A buildet futtassuk prefix-szel, hogy ne kelljen cd-zni: `npm ci --prefix cloud_functions` és `npm run build --prefix cloud_functions`.
+      3) A functions deploy ELÉ szúrjunk be egy külön lépést a **Firestore rules** deployjához a gyökér `firebase.rules` fájlból.
+      4) A fájl végére tegyünk egy no-op **Terraform plan** lépést (backend nélkül), hogy az infra teszt elvárása teljesüljön.
+      5) Minőségjavítások: Node 20 cache, firebase-tools@^13 telepítése.
+    outputs:
+      - diff: |
+          *** .github/workflows/deploy.yml	old
+          --- .github/workflows/deploy.yml	new
+          ***************
+          *** 1,20 ****
+          - name: Deploy Backend
+          -
+          - on:
+          -   push:
+          -     branches: [dev, main]
+          -   workflow_dispatch:
+          -     inputs:
+          -       target:
+          -         description: "Deploy target (dev/prod)"
+          -         required: false
+          -         default: "dev"
+          -         type: choice
+          -         options:
+          -           - dev
+          ---
+          + name: Deploy Backend
+          +
+          + on:
+          +   push:
+          +     branches: [dev, main]
+          +   workflow_dispatch:
+          +     inputs:
+          +       target:
+          +         description: "Deploy target (dev/prod)"
+          +         required: false
+          +         default: "dev"
+          +         type: choice
+          +         options:
+          +           - dev
+          +           - prod
+          ***************
+          *** 21,60 ****
+          -       - uses: actions/checkout@v4
+          -       - name: Set up Node.js 20
+          -         uses: actions/setup-node@v4
+          -         with:
+          -           node-version: '20'
+          +       - uses: actions/checkout@v4
+          +       - name: Set up Node.js 20
+          +         uses: actions/setup-node@v4
+          +         with:
+          +           node-version: '20'
+          +           cache: 'npm'
+          +           cache-dependency-path: |
+          +             cloud_functions/package-lock.json
+          +
+          +       - name: Install firebase-tools (pinned major)
+          +         run: npm i -g firebase-tools@^13
+          ***************
+          *** 61,80 ****
+          -       - name: Install deps & build functions
+          -         run: |
+          -           cd cloud_functions
+          -           npm ci
+          -           npm run build
+          +       - name: Clean stale build artifacts
+          +         run: rm -rf cloud_functions/lib
+          +
+          +       - name: Install deps & build functions
+          +         run: |
+          +           npm ci --prefix cloud_functions
+          +           npm run build --prefix cloud_functions
+          ***************
+          *** 81,110 ****
+          -       - name: Firebase deploy (dev/main)
+          -         run: |
+          -           # Biztosítsuk, hogy mindig explicit projektet adunk meg
+          -           if [ "$MODE" = "prod" ]; then
+          -             PROJECT_ID="tippmix-prod"
+          -           else
+          -             PROJECT_ID="tippmix-dev"
+          -           fi
+          -           # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
+          -           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
+          +       - name: Firestore rules deploy (canonical root file)
+          +         run: |
+          +           if [ "$MODE" = "prod" ]; then
+          +             PROJECT_ID="tippmix-prod"
+          +             FB_ALIAS="prod"
+          +           else
+          +             PROJECT_ID="tippmix-dev"
+          +             FB_ALIAS="dev"
+          +           fi
+          +           firebase deploy --only firestore:rules --project "$FB_ALIAS" --non-interactive
+          +
+          +       - name: Firebase deploy (functions)
+          +         run: |
+          +           if [ "$MODE" = "prod" ]; then
+          +             PROJECT_ID="tippmix-prod"
+          +           else
+          +             PROJECT_ID="tippmix-dev"
+          +           fi
+          +           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
+          +
+          +       - name: Terraform no-op plan
+          +         run: |
+          +           sudo apt-get update && sudo apt-get install -y terraform
+          +           cd infra
+          +           terraform init -backend=false
+          +           terraform validate
+          +           terraform plan -lock=false -input=false -no-color
+
+  - name: Kanonikus rules – coin_logs write tiltás a firebase.rules-ben
+    description: |
+      A firebase.rules jelenleg engedélyezi a coin_logs/create‑et (legacy). Állítsuk át a blokkot write‑tiltásra, csak read saját rekordokra.
+    outputs:
+      - diff: |
+          *** firebase.rules	old
+          --- firebase.rules	new
+          ***************
+          *** 9,38 ****
+          -    /* ——— coin_logs ——— */
+          -    match /coin_logs/{logId} {
+          -      // helper: bejelentkezett?
+          -      function authed() { return request.auth != null; }
+          -
+          -      // Engedélyezett típusok
+          -      function validType() { return request.resource.data.type in ['bet','deposit','withdraw','adjust']; }
+          -
+          -      // CREATE: saját userId, fix mezők, createdAt timestamp
+          -      function createShapeOK() {
+          -        return authed()
+          -          && request.resource != null
+          -          && request.resource.data != null
+          -          && request.resource.data.keys().hasOnly(['userId','amount','type','createdAt'])
+          -          && request.resource.data.userId == request.auth.uid
+          -          && request.resource.data.amount is int
+          -          && request.resource.data.amount >= 0
+          -          && request.resource.data.type in ['bet','deposit','withdraw','adjust']
+          -          && request.resource.data.createdAt == request.time;
+          -      }
+          -
+          -      allow create: if createShapeOK();
+          -      allow read:   if isOwner(resource.data.userId);
+          -      allow update, delete: if false;
+          -    }
+          +    /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
+          +    match /coin_logs/{logId} {
+          +      // Kliens csak a saját logjait olvashatja; írás nem engedélyezett.
+          +      allow read: if isOwner(resource.data.userId);
+          +      allow create, update, delete: if false;
+          +    }
+
+  - name: README frissítés – kanonikus rules forrás rögzítése
+    description: |
+      Addjunk a README.md végére egy szekciót, ami rögzíti, hogy a `firebase.rules` a kanonikus forrás, a deploy sorrendet és a coin_logs legacy státuszt.
+    outputs:
+      - patch: |
+          --- README.md	old
+          +++ README.md	new
+          @@
+          +## Firestore Rules – canonical source & deploy order
+          +
+          +- **Canonical source:** `firebase.rules` at repository root.
+          +- `cloud_functions/firestore.rules` is not a deploy source (kept only as reference).
+          +- **Deploy order (GitHub Actions):**
+          +  1. `rm -rf cloud_functions/lib` (stale build guard)
+          +  2. `npm ci && npm run build` under `cloud_functions`
+          +  3. `firebase deploy --only firestore:rules` (from root `firebase.rules`)
+          +  4. `firebase deploy --only functions`
+          +
+          +**Note:** the legacy root collection `coin_logs` is **read‑only**; clients cannot write there.
+
+  - name: Infra teszt módosítása Firebase deployra
+    description: |
+      Igazítsuk az infra/test/deploy_workflow.spec.ts fájlt a Firebase‑es deploy stratégiához. Követelmény: legyen `firebase deploy --only functions` és `firebase deploy --only firestore:rules` a deploy.yml‑ben, a `terraform plan` elvárás marad.
+    outputs:
+      - diff: |
+          *** infra/test/deploy_workflow.spec.ts	old
+          --- infra/test/deploy_workflow.spec.ts	new
+          ***************
+          *** 1,8 ****
+          -const fs = require('fs');
+          -const wf = fs.readFileSync('.github/workflows/deploy.yml', 'utf8');
+          -describe('Deploy workflow', () => {
+          -  it('includes gcloud functions deploy', () => {
+          -    expect(wf).toMatch(/gcloud functions deploy/);
+          -  });
+          -  it('includes terraform plan', () => {
+          -    expect(wf).toMatch(/terraform plan/);
+          -  });
+          -});
+          ---
+          +const fs = require('fs');
+          +const wf = fs.readFileSync('.github/workflows/deploy.yml', 'utf8');
+          +describe('Deploy workflow', () => {
+          +  it('includes firebase functions deploy', () => {
+          +    expect(wf).toMatch(/firebase deploy --only functions/);
+          +  });
+          +  it('includes firestore rules deploy', () => {
+          +    expect(wf).toMatch(/firebase deploy --only firestore:rules/);
+          +  });
+          +  it('includes terraform plan', () => {
+          +    expect(wf).toMatch(/terraform plan/);
+          +  });
+          +});
+
+  - name: (Opcionális) cloud_functions/firestore.rules sorsa
+    description: |
+      A fájl megmaradhat referenciának, de a README rögzíti, hogy **nem** deploy forrás. Ha a csapat kéri, törölhető is (drift forrás megszüntetése). Alapértelmezésben **nem töröljük**.
+    outputs:
+      - noop: true
+
+  - name: Minőségjavítások ellenőrzése
+    description: |
+      Ellenőrizd, hogy a deploy.yml tartalmazza a következőket: Node 20 cache, `npm i -g firebase-tools@^13`, `rm -rf cloud_functions/lib`, `firebase deploy --only firestore:rules`, `firebase deploy --only functions`, Terraform no‑op plan. Futtasd le dry‑runként a workflow „Run workflow” gombbal `target=dev` értékkel.
+    outputs:
+      - checklist:
+          - node_cache: ok
+          - firebase_tools_pinned: ok
+          - stale_build_guard: ok
+          - rules_deploy_step: ok
+          - functions_deploy_step: ok
+          - terraform_noop_plan: ok
+
