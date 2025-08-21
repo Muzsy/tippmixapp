@@ -15,7 +15,7 @@ void main() {
           'league': {'country': 'England', 'name': 'Premier League'},
           'teams': {
             'home': {'name': 'Arsenal'},
-            'away': {'name': 'Chelsea'}
+            'away': {'name': 'Chelsea'},
           },
           'bookmakers': [
             {
@@ -27,14 +27,14 @@ void main() {
                   'values': [
                     {'value': 'Home', 'odd': '1.50'},
                     {'value': 'Draw', 'odd': '3.80'},
-                    {'value': 'Away', 'odd': '2.10'}
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                    {'value': 'Away', 'odd': '2.10'},
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
     final client = MockClient((request) async {
       return http.Response(jsonEncode(mockResponse), 200);

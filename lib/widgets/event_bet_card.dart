@@ -203,10 +203,9 @@ class _EventBetCardState extends State<EventBetCard> {
           child: ActionPill(
             icon: Icons.more_horiz,
             label: loc.more_bets,
-            labelStyle: Theme.of(context)
-                .textTheme
-                .labelLarge
-                ?.copyWith(fontWeight: FontWeight.w700),
+            labelStyle: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
             onTap: widget.onMoreBets,
           ),
         ),
@@ -463,15 +462,13 @@ Widget _oddsButton(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(pretty(o.name),
-              style: Theme.of(context).textTheme.labelMedium),
+          Text(pretty(o.name), style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: 2),
           Text(
             o.price.toStringAsFixed(2),
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
         ],
       ),

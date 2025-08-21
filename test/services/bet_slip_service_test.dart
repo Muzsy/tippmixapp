@@ -42,8 +42,10 @@ class FakeCoinService extends Fake implements CoinService {
     required Map<String, dynamic> ticketData,
   }) async {
     last = {'amount': stake, 'ticket': ticketData};
-    final store =
-        firestore?.data.putIfAbsent('tickets', () => <String, Map<String, dynamic>>{});
+    final store = firestore?.data.putIfAbsent(
+      'tickets',
+      () => <String, Map<String, dynamic>>{},
+    );
     if (store != null) {
       store[ticketData['id'] as String] = ticketData;
     }

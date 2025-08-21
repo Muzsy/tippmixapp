@@ -13,8 +13,11 @@ import 'package:tippmixapp/providers/recaptcha_service_provider.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 
 class _MockRepo extends Mock implements AuthRepository {}
+
 class _MockHIBP extends Mock implements HIBPService {}
+
 class _MockAnalytics extends Mock implements AnalyticsService {}
+
 class _MockRecaptcha extends Mock implements RecaptchaService {}
 
 void main() {

@@ -39,6 +39,7 @@ class FakeFirebaseAnalytics extends Fake implements FirebaseAnalytics {}
 class _FakeAnalyticsService extends AnalyticsService {
   _FakeAnalyticsService() : super(FakeFirebaseAnalytics());
 }
+
 void main() {
   testWidgets('entering valid data enables continue and navigates', (
     tester,
@@ -73,10 +74,7 @@ void main() {
       find.byType(TextFormField).at(0),
       'user@example.com',
     );
-    await tester.enterText(
-      find.byType(TextFormField).at(1),
-      'ValidPass!123',
-    );
+    await tester.enterText(find.byType(TextFormField).at(1), 'ValidPass!123');
     await tester.pump();
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));

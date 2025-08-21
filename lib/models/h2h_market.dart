@@ -6,7 +6,8 @@ class H2HMarket extends OddsMarket {
   H2HMarket({required super.outcomes}) : super(key: 'h2h');
 
   factory H2HMarket.fromJson(Map<String, dynamic> json) {
-    final outcomes = (json['outcomes'] as List?)
+    final outcomes =
+        (json['outcomes'] as List?)
             ?.map((o) => OddsOutcome.fromJson(Map<String, dynamic>.from(o)))
             .toList() ??
         [];
