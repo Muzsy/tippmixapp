@@ -71,9 +71,10 @@ class OddsCacheWrapper {
     String? league,
     DateTime? date,
   }) {
+    String norm(String? value) => value?.trim().toLowerCase() ?? '';
     final datePart = date != null
         ? date.toIso8601String().split('T').first
         : '';
-    return 'odds_$sport|$datePart';
+    return 'odds_${norm(sport)}|$datePart|${norm(country)}|${norm(league)}';
   }
 }
