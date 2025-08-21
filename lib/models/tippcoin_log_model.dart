@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+@Deprecated(
+  'Use per-user ledger entries under users/{uid}/ledger instead of coin_logs.',
+)
 class TippCoinLogModel {
   final String id;
   final String userId;
