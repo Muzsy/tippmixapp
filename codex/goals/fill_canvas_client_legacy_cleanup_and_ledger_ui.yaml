@@ -1,0 +1,518 @@
+# Codex YAML – Kliens legacy takarítás + bónusz/ledger megjelenítések
+
+# Megjegyzés: Ez a YAML a „Firestore refaktor – Kliens legacy takarítás + bónusz/ledger megjelenítések (terv)” vászonhoz készült kiegészítés.
+
+steps:
+
+* name: Firestore Rules – users/{uid}/tickets engedélyezése, root tickets create tiltása
+  description: |
+  A gyökér `tickets/*` create tiltása, és az új user‑centrikus `users/{userId}/tickets/{ticketId}` szabályblokk felvétele.
+  outputs:
+
+  * type: diff
+    path: cloud\_functions/firestore.rules
+    content: |
+    \--- a/cloud\_functions/firestore.rules
+    +++ b/cloud\_functions/firestore.rules
+    @@
+    match /tickets/{ticketId} {
+* ```
+         allow create: if signedIn()
+  ```
+* ```
+           && request.resource.data.userId == request.auth.uid
+  ```
+* ```
+           && request.resource.data.keys().hasOnly(['id','userId','...e','totalOdd','potentialWin','createdAt','updatedAt','status']);
+  ```
+
+- ```
+         // V3: új jegyek már a users/{uid}/tickets alá kerülnek
+  ```
+- ```
+         allow create: if false;
+         allow read: if signedIn();
+         allow update, delete: if false;
+       }
+  ```
+-
+- ```
+       /*  ─── Users tickets subcollection (új írási útvonal) ───  */
+  ```
+- ```
+       match /users/{userId}/tickets/{ticketId} {
+  ```
+- ```
+         allow create: if isOwner(userId) && request.resource.data.userId == userId;
+  ```
+- ```
+         allow read: if isOwner(userId);
+  ```
+- ```
+         allow update, delete: if false;
+  ```
+- ```
+       }
+  ```
+
+  * name: MyTickets – stream átállítása users/{uid}/tickets alá
+    description: |
+    A gyökér `tickets` helyett a user saját ágáról olvasunk; a `where userId == uid` feltétel felesleges.
+    outputs:
+
+    * type: diff
+      path: lib/screens/my\_tickets\_screen.dart
+      content: |
+      \--- a/lib/screens/my\_tickets\_screen.dart
+      +++ b/lib/screens/my\_tickets\_screen.dart
+      @@
+
+* return FirebaseFirestore.instance
+* ```
+   .collection('tickets')
+  ```
+* ```
+   .where('userId', isEqualTo: uid)
+  ```
+
+- return FirebaseFirestore.instance
+- ```
+   .collection('users')
+  ```
+- ```
+   .doc(uid)
+  ```
+- ```
+   .collection('tickets')
+   .orderBy('createdAt', descending: true)
+   .snapshots()
+   .map((snap) => snap.docs.map((d) => Ticket.fromJson(d.data())).toList());
+  ```
+
+  * name: CoinService – kliens oldali wallet‑módosítások eltávolítása (debit/credit)
+    description: |
+    A `debitCoin` és `creditCoin` többé nem módosítja lokális tranzakcióban a walletet; kizárólag a `coin_trx` Cloud Function végzi a pénzmozgást.
+    outputs:
+
+    * type: diff
+      path: lib/services/coin\_service.dart
+      content: |
+      \--- a/lib/services/coin\_service.dart
+      +++ b/lib/services/coin\_service.dart
+      @@
+      Future<void> debitCoin({
+      required int amount,
+      required String reason,
+      required String transactionId,
+      }) async {
+
+* ```
+         await _wrapper.run((txn) async {
+  ```
+* ```
+           final uid = _fa.currentUser!.uid;
+  ```
+* ```
+           final ref = _fs.collection('wallets').doc(uid);
+  ```
+* ```
+           final snap = await txn.get(ref);
+  ```
+* ```
+           final current = (snap.data()?['coins'] as int?) ?? 0;
+  ```
+* ```
+           txn.set(ref, {'coins': current - amount}, SetOptions(merge: true));
+  ```
+* ```
+         });
+  ```
+
+- ```
+         // Client-side wallet mutation removed: handled by Cloud Function (coin_trx)
+         await _callCoinTrx(
+           amount: amount,
+           type: 'debit',
+           reason: reason,
+           transactionId: transactionId,
+         );
+       }
+      @@
+       Future<void> creditCoin({
+         required int amount,
+         required String reason,
+         required String transactionId,
+       }) async {
+  ```
+
+* ```
+         await _wrapper.run((txn) async {
+  ```
+* ```
+           final uid = _fa.currentUser!.uid;
+  ```
+* ```
+           final ref = _fs.collection('wallets').doc(uid);
+  ```
+* ```
+           final snap = await txn.get(ref);
+  ```
+* ```
+           final current = (snap.data()?['coins'] as int?) ?? 0;
+  ```
+* ```
+           txn.set(ref, {'coins': current + amount}, SetOptions(merge: true));
+  ```
+* ```
+         });
+  ```
+
+- ```
+         // Client-side wallet mutation removed: handled by Cloud Function (coin_trx)
+         await _callCoinTrx(
+           amount: amount,
+           type: 'credit',
+           reason: reason,
+           transactionId: transactionId,
+         );
+       }
+  ```
+
+  * name: CoinService – hasClaimedToday → ledger alapú ellenőrzés
+    description: |
+    A napi bónusz ellenőrzése a per‑user `ledger` alá kerül (`source == 'daily_bonus'`, időfilter `createdAt` szerint).
+    outputs:
+
+    * type: diff
+      path: lib/services/coin\_service.dart
+      content: |
+      \--- a/lib/services/coin\_service.dart
+      +++ b/lib/services/coin\_service.dart
+      @@
+
+* final query = await db
+* ```
+     .collection('wallets')
+  ```
+* ```
+     .doc(user.uid)
+  ```
+* ```
+     .collection('coin_logs')
+  ```
+* ```
+     .where('reason', isEqualTo: 'daily_bonus')
+  ```
+* ```
+     .where(
+  ```
+* ```
+       'timestamp',
+  ```
+* ```
+       isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+  ```
+* ```
+     )
+  ```
+* ```
+     .where('timestamp', isLessThan: Timestamp.fromDate(endOfDay))
+  ```
+
+- final query = await db
+- ```
+     .collection('users')
+  ```
+- ```
+     .doc(user.uid)
+  ```
+- ```
+     .collection('ledger')
+  ```
+- ```
+     .where('source', isEqualTo: 'daily_bonus')
+  ```
+- ```
+     .where(
+  ```
+- ```
+       'createdAt',
+  ```
+- ```
+       isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+  ```
+- ```
+     )
+  ```
+- ```
+     .where('createdAt', isLessThan: Timestamp.fromDate(endOfDay))
+     .limit(1)
+     .get();
+  ```
+
+  * name: CoinService – debitAndCreateTicket: user‑ág + CF debit + kompenzáció
+    description: |
+    A jegy létrehozása a `users/{uid}/tickets/{ticketId}` alá történik. Lokális wallet módosítás törölve. Sikeres jegylétrehozás után `coin_trx` debit hívás (reason: `bet`, `transactionId` = ticketId). CF hiba esetén a jegy törlésre kerül.
+    outputs:
+
+    * type: diff
+      path: lib/services/coin\_service.dart
+      content: |
+      \--- a/lib/services/coin\_service.dart
+      +++ b/lib/services/coin\_service.dart
+      @@
+      Future<void> debitAndCreateTicket({
+      required int stake,
+      required Map\<String, dynamic> ticketData,
+      }) async {
+
+* final uid = \_fa.currentUser!.uid;
+* final walletRef = \_fs.collection('wallets').doc(uid);
+* final userRef = \_fs.collection('users').doc(uid);
+* final ticketRef = \_fs.collection('tickets').doc(ticketData\['id'] as String);
+*
+* await \_fs.runTransaction((txn) async {
+* ```
+   final walletSnap = await txn.get(walletRef);
+  ```
+* ```
+   int current;
+  ```
+* ```
+   if (walletSnap.exists && walletSnap.data()!.containsKey('coins')) {
+  ```
+* ```
+     current = walletSnap.data()!['coins'] as int;
+  ```
+* ```
+   } else {
+  ```
+* ```
+     // ➡️ fallback: read balance from users doc
+  ```
+* ```
+     final userSnap = await txn.get(userRef);
+  ```
+* ```
+     current = (userSnap.data()?['coins'] as int?) ?? 0;
+  ```
+*
+* ```
+     // ➡️ LAZY‑CREATE wallet doc so subsequent requests use it
+  ```
+* ```
+     txn.set(walletRef, {
+  ```
+* ```
+       'coins': current,
+  ```
+* ```
+       'createdAt': FieldValue.serverTimestamp(),
+  ```
+* ```
+     });
+  ```
+* ```
+   }
+  ```
+*
+* ```
+   if (current < stake) {
+  ```
+* ```
+     throw FirebaseException(
+  ```
+* ```
+       plugin: 'coin_service',
+  ```
+* ```
+       code: 'insufficient_coins',
+  ```
+* ```
+       message: 'Not enough TippCoin balance.',
+  ```
+* ```
+     );
+  ```
+* ```
+   }
+  ```
+*
+* ```
+   txn.update(walletRef, {'coins': current - stake});
+  ```
+* ```
+   txn.set(userRef, {'coins': current - stake}, SetOptions(merge: true));
+  ```
+* ```
+   txn.set(ticketRef, ticketData);
+  ```
+* });
+
+- final uid = \_fa.currentUser!.uid;
+- final ticketId = ticketData\['id'] as String;
+- final ticketRef = \_fs.doc('users/\$uid/tickets/\$ticketId');
+- await ticketRef.set(ticketData);
+- try {
+- ```
+   await _callCoinTrx(
+  ```
+- ```
+     amount: stake,
+  ```
+- ```
+     type: 'debit',
+  ```
+- ```
+     reason: 'bet',
+  ```
+- ```
+     transactionId: ticketId,
+  ```
+- ```
+   );
+  ```
+- } catch (e) {
+- ```
+   // Kompenzáció: ha a CF debit elbukik, töröljük a létrehozott jegyet
+  ```
+- ```
+   await ticketRef.delete();
+  ```
+- ```
+   rethrow;
+  ```
+- }
+  }
+
+* name: StatsService – coins a wallet docból, jegyek user ágáról, leaderboard: collectionGroup('tickets')
+  description: |
+  A felhasználói statok lekérdezése a `users/{uid}/wallet.coins` mezőt használja (fallback a `users/{uid}.coins`‑ra), a jegyek per‑user ágról jönnek; a leaderboard aggregáció `collectionGroup('tickets')` segítségével.
+  outputs:
+
+  * type: diff
+    path: lib/services/stats\_service.dart
+    content: |
+    \--- a/lib/services/stats\_service.dart
+    +++ b/lib/services/stats\_service.dart
+    @@
+* Stream\<List<UserStatsModel>> \_streamFromFirestore(LeaderboardMode mode) {
+* final usersRef = \_db.collection('users');
+* final ticketsRef = \_db.collection('tickets');
+
+- Stream\<List<UserStatsModel>> \_streamFromFirestore(LeaderboardMode mode) {
+- final usersRef = \_db.collection('users');
+- final ticketsRef = \_db.collectionGroup('tickets');
+
+  return usersRef.snapshots().asyncMap((userSnap) async {
+  final stats = <UserStatsModel>\[];
+  for (final userDoc in userSnap.docs) {
+  final data = userDoc.data();
+  final uid = userDoc.id;
+
+* ```
+     final coins = (data['coins'] as int?) ?? 0;
+  ```
+
+- ```
+     final walletSnap = await _db.doc('users/$uid/wallet').get();
+  ```
+- ```
+     final coins = (walletSnap.data()?['coins'] as int?) ?? (data['coins'] as int? ?? 0);
+     final displayName = data['nickname'] as String? ?? '';
+  ```
+
+* ```
+     final userTickets = await ticketsRef
+  ```
+* ```
+         .where('userId', isEqualTo: uid)
+  ```
+* ```
+         .get();
+  ```
+
+- ```
+     final userTickets = await ticketsRef.where('userId', isEqualTo: uid).get();
+      @@
+  ```
+
+* Future\<UserStatsModel?> getUserStats({FirebaseAuth? auth}) async {
+
+- Future\<UserStatsModel?> getUserStats({FirebaseAuth? auth}) async {
+  final currentUser = auth?.currentUser ?? FirebaseAuth.instance.currentUser;
+  if (currentUser == null) return null;
+
+  final uid = currentUser.uid;
+  final userDoc = await \_db.collection('users').doc(uid).get();
+  if (!userDoc.exists) return null;
+  final userData = userDoc.data() ?? \<String, dynamic>{};
+
+*
+* final coins = (userData\['coins'] as int?) ?? 0;
+
+- final walletSnap = await \_db.doc('users/\$uid/wallet').get();
+- final coins = (walletSnap.data()?\['coins'] as int?) ?? (userData\['coins'] as int? ?? 0);
+  final displayName = userData\['nickname'] as String? ?? '';
+
+* final ticketSnap = await \_db
+* ```
+     .collection('tickets')
+  ```
+* ```
+     .where('userId', isEqualTo: uid)
+  ```
+* ```
+     .get();
+  ```
+
+- final ticketSnap = await \_db
+- ```
+     .collection('users')
+  ```
+- ```
+     .doc(uid)
+  ```
+- ```
+     .collection('tickets')
+  ```
+- ```
+     .get();
+  ```
+
+  final totalBets = ticketSnap.docs.length;
+
+  * name: TippCoinLogModel – deprecate (ledgerre migrált naplózás)
+    description: |
+    Jelöld elavultnak a `TippCoinLogModel`‑t, mert a naplózás a per‑user `ledger` alá került. (A fájl használata jelenleg minimális, így a jelölés biztonságos.)
+    outputs:
+
+    * type: diff
+      path: lib/models/tippcoin\_log\_model.dart
+      content: |
+      \--- a/lib/models/tippcoin\_log\_model.dart
+      +++ b/lib/models/tippcoin\_log\_model.dart
+      @@
+      -import 'package\:cloud\_firestore/cloud\_firestore.dart';
+      +import 'package\:cloud\_firestore/cloud\_firestore.dart';
+      +\@Deprecated('Use per-user ledger entries under users/{uid}/ledger instead of coin\_logs.')
+      class TippCoinLogModel {
+
+  * name: Build & Test
+    description: |
+    Statikus ellenőrzések és unit/e2e futtatás.
+    outputs:
+
+    * type: command
+      content: |
+      flutter analyze
+      flutter test
+      cd cloud\_functions && npm ci && npm test
+
+  * name: Kiegészítő információ
+    description: |
+    A lépések szakmai hátterét és döntési elveit a „Firestore refaktor – Kliens legacy takarítás + bónusz/ledger megjelenítések (terv)” vászon tartalmazza.
+    outputs:
+
+    * type: note
+      content: Ez a YAML a fenti vászon kiegészítője; a pontos indoklás és QA-szcenáriók ott találhatók.
