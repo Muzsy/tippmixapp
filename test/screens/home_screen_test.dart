@@ -23,7 +23,6 @@ import 'package:tippmixapp/screens/home_screen.dart'
         latestFeedActivityProvider;
 import 'package:tippmixapp/routes/app_route.dart';
 import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/widgets/home/user_stats_header.dart';
 
 /// Simplest possible stub that fulfils every member of [AuthService]
 /// without touching Firebase during widget tests.

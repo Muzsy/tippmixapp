@@ -86,6 +86,8 @@ jobs:
             PROJECT_ID="tippmix-dev"
           fi
           # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
+          echo "API_FOOTBALL_KEY=${API_FOOTBALL_KEY}" > "cloud_functions/.env.${PROJECT_ID}"
+          echo "Wrote cloud_functions/.env.${PROJECT_ID}"
           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
 
       - name: Terraform no-op plan
