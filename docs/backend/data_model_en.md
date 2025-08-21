@@ -81,10 +81,13 @@ TicketModel {
 
 ## 🔜 Planned Models
 
-- `TippCoinLogModel`: logs coin transactions
 - `BadgeModel`: for achievements and badge rules
 - `LeaderboardEntryModel`: cached leaderboard data
 - `FeedEventModel`: recent user activity (for Feed)
+
+## 🗑️ Deprecated Models
+
+- `TippCoinLogModel`: replaced by per-user ledger entries under `users/{uid}/ledger`
 
 ## 📘 Changelog
 

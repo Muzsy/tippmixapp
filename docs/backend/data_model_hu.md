@@ -81,10 +81,13 @@ TicketModel {
 
 ## 🔜 Tervezett modellek
 
-- `TippCoinLogModel`: coin tranzakciók naplózása
 - `BadgeModel`: badge-szabályok és megszerzett címek
 - `LeaderboardEntryModel`: ranglista gyorsított tárolása
 - `FeedEventModel`: közösségi események (feed)
+
+## 🗑️ Elavult modellek
+
+- `TippCoinLogModel`: leváltva a `users/{uid}/ledger` alatti naplóbejegyzésekkel
 
 ## 📘 Változásnapló
 
