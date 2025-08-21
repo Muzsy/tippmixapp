@@ -43,9 +43,7 @@ void main() {
       ),
     );
 
-    final loc = AppLocalizations.of(
-      tester.element(find.byType(EventBetCard)),
-    )!;
+    final loc = AppLocalizations.of(tester.element(find.byType(EventBetCard)))!;
 
     final moreFinder = find.widgetWithText(ActionPill, loc.more_bets);
     final statsFinder = find.widgetWithText(ActionPill, loc.statistics);

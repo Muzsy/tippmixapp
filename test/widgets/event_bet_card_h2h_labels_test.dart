@@ -47,9 +47,7 @@ void main() {
       _wrap(EventBetCard(event: event, apiService: _FakeApi())),
     );
     await tester.pump(const Duration(milliseconds: 50));
-    final loc = AppLocalizations.of(
-      tester.element(find.byType(EventBetCard)),
-    )!;
+    final loc = AppLocalizations.of(tester.element(find.byType(EventBetCard)))!;
 
     final home = find.byKey(const ValueKey('h2h-home'));
     final draw = find.byKey(const ValueKey('h2h-draw'));

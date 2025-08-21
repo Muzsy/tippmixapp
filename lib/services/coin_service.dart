@@ -27,7 +27,11 @@ class CoinService {
        _auth = auth,
        _logger = logger ?? Logger('CoinService'),
        _wrapper =
-           wrapper ?? TransactionWrapper(firestore: firestore, logger: logger ?? Logger('CoinService'));
+           wrapper ??
+           TransactionWrapper(
+             firestore: firestore,
+             logger: logger ?? Logger('CoinService'),
+           );
 
   FirebaseFirestore get _fs => _firestore;
   FirebaseAuth get _fa => _auth ?? FirebaseAuth.instance;
@@ -154,7 +158,7 @@ class CoinService {
         transactionId: transactionId,
       );
     }
-    final callable = _functions!.httpsCallable('coin_trx');
+    final callable = _functions.httpsCallable('coin_trx');
     try {
       final result = await callable.call<Map<String, dynamic>>(
         <String, dynamic>{
