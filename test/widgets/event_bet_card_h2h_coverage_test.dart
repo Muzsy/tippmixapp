@@ -56,8 +56,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('1'), findsWidgets);
-    expect(find.text('X'), findsWidgets);
-    expect(find.text('2'), findsWidgets);
+    expect(find.byKey(const ValueKey('h2h-home')), findsWidgets);
+    expect(find.byKey(const ValueKey('h2h-draw')), findsWidgets);
+    expect(find.byKey(const ValueKey('h2h-away')), findsWidgets);
   });
 }

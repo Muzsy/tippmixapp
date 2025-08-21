@@ -47,8 +47,39 @@ void main() {
       _wrap(EventBetCard(event: event, apiService: _FakeApi())),
     );
     await tester.pump(const Duration(milliseconds: 50));
-    expect(find.text('1 6.00'), findsOneWidget);
-    expect(find.text('X 4.33'), findsOneWidget);
-    expect(find.text('2 1.47'), findsOneWidget);
+    final loc = AppLocalizations.of(
+      tester.element(find.byType(EventBetCard)),
+    )!;
+
+    final home = find.byKey(const ValueKey('h2h-home'));
+    final draw = find.byKey(const ValueKey('h2h-draw'));
+    final away = find.byKey(const ValueKey('h2h-away'));
+
+    expect(
+      find.descendant(of: home, matching: find.text(loc.home_short)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: home, matching: find.text('6.00')),
+      findsOneWidget,
+    );
+
+    expect(
+      find.descendant(of: draw, matching: find.text(loc.draw_short)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: draw, matching: find.text('4.33')),
+      findsOneWidget,
+    );
+
+    expect(
+      find.descendant(of: away, matching: find.text(loc.away_short)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: away, matching: find.text('1.47')),
+      findsOneWidget,
+    );
   });
 }

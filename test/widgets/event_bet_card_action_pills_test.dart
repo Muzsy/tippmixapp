@@ -43,9 +43,13 @@ void main() {
       ),
     );
 
-    final moreFinder = find.widgetWithText(ActionPill, 'More bets');
-    final statsFinder = find.widgetWithText(ActionPill, 'Statistics');
-    final aiFinder = find.widgetWithText(ActionPill, 'AI picks');
+    final loc = AppLocalizations.of(
+      tester.element(find.byType(EventBetCard)),
+    )!;
+
+    final moreFinder = find.widgetWithText(ActionPill, loc.more_bets);
+    final statsFinder = find.widgetWithText(ActionPill, loc.statistics);
+    final aiFinder = find.widgetWithText(ActionPill, loc.ai_recommendation);
 
     expect(moreFinder, findsOneWidget);
     expect(statsFinder, findsOneWidget);

@@ -246,6 +246,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   home,
+                  key: const ValueKey('h2h-home'),
                   selected: _selected == 'home',
                   onTap: () {
                     widget.onTapHome?.call(home);
@@ -260,6 +261,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   draw,
+                  key: const ValueKey('h2h-draw'),
                   selected: _selected == 'draw',
                   onTap: () {
                     widget.onTapDraw?.call(draw);
@@ -274,6 +276,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   away,
+                  key: const ValueKey('h2h-away'),
                   selected: _selected == 'away',
                   onTap: () {
                     widget.onTapAway?.call(away);
@@ -428,6 +431,7 @@ Widget _oddsButton(
   OddsOutcome o, {
   required bool selected,
   required VoidCallback onTap,
+  Key? key,
 }) {
   final loc = AppLocalizations.of(context)!;
   String pretty(String v) {
@@ -451,6 +455,7 @@ Widget _oddsButton(
       : Border.all(color: Colors.transparent, width: 2);
 
   return InkWell(
+    key: key,
     onTap: onTap,
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
