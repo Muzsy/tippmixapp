@@ -16,34 +16,48 @@ class _FakeAuthNotifier extends StateNotifier<AuthState> {
 
 void main() {
   testWidgets('Guest shows GuestCtaTile', (tester) async {
-    final container = ProviderContainer(overrides: [
-      authProvider.overrideWith((ref) => _FakeAuthNotifier(const AuthState()) as dynamic),
-      userStatsProvider.overrideWith((ref) async => null),
-    ]);
-    await tester.pumpWidget(ProviderScope(
-      parent: container,
-      child: const MaterialApp(home: HomeScreen(showStats: true)),
-    ));
+    final container = ProviderContainer(
+      overrides: [
+        authProvider.overrideWith(
+          (ref) => _FakeAuthNotifier(const AuthState()) as dynamic,
+        ),
+        userStatsProvider.overrideWith((ref) async => null),
+      ],
+    );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: HomeScreen(showStats: true)),
+      ),
+    );
     expect(find.byType(GuestCtaTile), findsOneWidget);
   });
 
   testWidgets('Logged-in shows ProfileSummary', (tester) async {
     final user = User(id: '1', email: 'a@a.com', displayName: 'Alice');
-    final container = ProviderContainer(overrides: [
-      authProvider.overrideWith((ref) => _FakeAuthNotifier(AuthState(user: user)) as dynamic),
-      userStatsProvider.overrideWith((ref) async => UserStatsModel(
+    final container = ProviderContainer(
+      overrides: [
+        authProvider.overrideWith(
+          (ref) => _FakeAuthNotifier(AuthState(user: user)) as dynamic,
+        ),
+        userStatsProvider.overrideWith(
+          (ref) async => UserStatsModel(
             uid: '1',
             displayName: 'Alice',
             coins: 0,
             totalBets: 0,
             totalWins: 0,
             winRate: 0,
-          )),
-    ]);
-    await tester.pumpWidget(ProviderScope(
-      parent: container,
-      child: const MaterialApp(home: HomeScreen(showStats: true)),
-    ));
+          ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: HomeScreen(showStats: true)),
+      ),
+    );
     expect(find.byType(ProfileSummary), findsOneWidget);
   });
 }

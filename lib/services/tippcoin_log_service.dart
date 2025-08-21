@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:cloud_functions/cloud_functions.dart';
 
 import '../models/tippcoin_log_model.dart';

@@ -65,13 +65,13 @@ class MarketMapping {
             final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
             if (!aliases.contains(raw)) continue;
             final values = (m['values'] as List?) ?? const [];
-            final _n = (String s) => s
+            String normalize(String s) => s
                 .toLowerCase()
                 .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
                 .replaceAll(' fc', '')
                 .trim();
-            final hn = homeName != null ? _n(homeName) : null;
-            final an = awayName != null ? _n(awayName) : null;
+            final hn = homeName != null ? normalize(homeName) : null;
+            final an = awayName != null ? normalize(awayName) : null;
             OddsOutcome? home;
             OddsOutcome? draw;
             OddsOutcome? away;
@@ -79,7 +79,7 @@ class MarketMapping {
               if (v is! Map) continue;
               final val0 = (v['value'] ?? '').toString();
               final val = val0.toLowerCase();
-              final valn = _n(val0);
+              final valn = normalize(val0);
               final oddStr = (v['odd'] ?? '').toString();
               final price = double.tryParse(oddStr.replaceAll(',', '.'));
               if (price == null) continue;
@@ -115,13 +115,13 @@ class MarketMapping {
           final raw = (m['name'] ?? m['key'] ?? '').toString().toLowerCase();
           if (!aliases.contains(raw)) continue;
           final values = (m['values'] as List?) ?? const [];
-          final _n = (String s) => s
+          String normalize(String s) => s
               .toLowerCase()
               .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
               .replaceAll(' fc', '')
               .trim();
-          final hn = homeName != null ? _n(homeName) : null;
-          final an = awayName != null ? _n(awayName) : null;
+          final hn = homeName != null ? normalize(homeName) : null;
+          final an = awayName != null ? normalize(awayName) : null;
           OddsOutcome? home;
           OddsOutcome? draw;
           OddsOutcome? away;
@@ -129,7 +129,7 @@ class MarketMapping {
             if (v is! Map) continue;
             final val0 = (v['value'] ?? '').toString();
             final val = val0.toLowerCase();
-            final valn = _n(val0);
+            final valn = normalize(val0);
             final oddStr = (v['odd'] ?? '').toString();
             final price = double.tryParse(oddStr.replaceAll(',', '.'));
             if (price == null) continue;
