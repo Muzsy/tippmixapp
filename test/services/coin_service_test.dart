@@ -107,10 +107,10 @@ class FakeQuery extends Fake implements Query<Map<String, dynamic>> {
 }
 
 // ignore: subtype_of_sealed_class
-class FakeCoinLogsCollection extends Fake
+class FakeLedgerCollection extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final List<Map<String, dynamic>> store;
-  FakeCoinLogsCollection(this.store);
+  FakeLedgerCollection(this.store);
 
   @override
   Query<Map<String, dynamic>> where(
@@ -147,16 +147,16 @@ class FakeUserDocument extends Fake
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String path) {
-    if (path == 'coin_logs') return FakeCoinLogsCollection(logs);
+    if (path == 'ledger') return FakeLedgerCollection(logs);
     throw UnimplementedError();
   }
 }
 
 // ignore: subtype_of_sealed_class
-class FakeWalletsCollection extends Fake
+class FakeUsersCollection extends Fake
     implements CollectionReference<Map<String, dynamic>> {
   final Map<String, List<Map<String, dynamic>>> data;
-  FakeWalletsCollection(this.data);
+  FakeUsersCollection(this.data);
 
   @override
   DocumentReference<Map<String, dynamic>> doc([String? id]) {
@@ -167,11 +167,11 @@ class FakeWalletsCollection extends Fake
 
 // ignore: subtype_of_sealed_class
 class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
-  final Map<String, List<Map<String, dynamic>>> wallets = {};
+  final Map<String, List<Map<String, dynamic>>> users = {};
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String path) {
-    if (path == 'wallets') return FakeWalletsCollection(wallets);
+    if (path == 'users') return FakeUsersCollection(users);
     throw UnimplementedError();
   }
 }
@@ -239,10 +239,10 @@ void main() {
 
   test('hasClaimedToday returns true when log exists', () async {
     final firestore = FakeFirebaseFirestore();
-    firestore.wallets['u1'] = [
+    firestore.users['u1'] = [
       {
-        'reason': 'daily_bonus',
-        'timestamp': Timestamp.fromDate(DateTime.now()),
+        'source': 'daily_bonus',
+        'createdAt': Timestamp.fromDate(DateTime.now()),
       },
     ];
     final auth = FakeFirebaseAuth(FakeUser('u1'));
@@ -258,7 +258,7 @@ void main() {
 
   test('hasClaimedToday returns false when no log', () async {
     final firestore = FakeFirebaseFirestore();
-    firestore.wallets['u1'] = [];
+    firestore.users['u1'] = [];
     final auth = FakeFirebaseAuth(FakeUser('u1'));
     final service = CoinService(firestore: firestore);
 
