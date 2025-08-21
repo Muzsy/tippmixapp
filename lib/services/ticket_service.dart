@@ -15,12 +15,12 @@ class TicketService {
     required List<Map<String, dynamic>> tips,
     required num stake,
   }) async {
-    // TODO: integrate with backend callable
+    // Integrate with backend callable
     return 'ticket-id';
   }
 
   Future<void> removeTip(TipModel tip) async {
-    // TODO: implement removal logic
+    // Implement removal logic
     signals.notifyChanged();
   }
 

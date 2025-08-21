@@ -69,11 +69,7 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   }
 
   Future<void> completeRegistration() async {
-    // ignore: avoid_print
-    print('[REGISTER] STARTED');
     final user = await _auth.registerWithEmail(state.email, state.password);
-    // ignore: avoid_print
-    print('[REGISTER] SUCCESS');
     if (user == null) return;
     if (Firebase.apps.isNotEmpty) {
       final model = UserModel(

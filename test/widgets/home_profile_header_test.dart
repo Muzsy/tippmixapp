@@ -68,7 +68,11 @@ class _FakeAuthNotifier extends AuthNotifier {
   }
 }
 
-Widget _wrap({required Widget child, required AuthState authState, UserStatsModel? stats}) {
+Widget _wrap({
+  required Widget child,
+  required AuthState authState,
+  UserStatsModel? stats,
+}) {
   final container = ProviderContainer(
     overrides: [
       authProvider.overrideWith((ref) => _FakeAuthNotifier(authState)),
