@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
-import 'package:tippmixapp/ui/auth/email_not_verified_screen.dart';
+import 'package:tippmixapp/screens/auth/email_not_verified_screen.dart';
 import 'package:tippmixapp/providers/onboarding_provider.dart';
 import 'package:tippmixapp/router.dart'; // Make sure this imports the router object
 import 'package:tippmixapp/l10n/app_localizations.dart';
