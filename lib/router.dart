@@ -40,7 +40,7 @@ String? _redirect(BuildContext context, GoRouterState state) {
   }
   final loggedIn = user != null; // meglévő logika
   final loc = state.matchedLocation;
-  const publicPaths = {'/', '/login', '/register', '/onboarding'};
+  const publicPaths = {'/', '/login', '/register', '/onboarding', '/splash'};
   if (!loggedIn && !publicPaths.contains(loc)) {
     return '/login';
   }

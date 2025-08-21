@@ -141,11 +141,12 @@ class HomeScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
     final user = authState.user; // lehet null vendégnél
     final stats = ref.watch(userStatsProvider).asData?.value;
+    final showHeader = showStats || _isRootRoute(context);
     return Column(
       children: [
         // Fejléc a képernyő tetején: vendég → CTA, bejelentkezett → profil header
-        if (!showStats && _isRootRoute(context))
-          (user == null
+        if (showHeader)
+          (user == null && !showStats
               ? const HomeGuestCtaTile()
               : UserStatsHeader(stats: stats)),
         Expanded(
