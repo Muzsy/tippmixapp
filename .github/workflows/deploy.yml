@@ -35,22 +35,19 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: cloud_functions/package-lock.json
+          cache-dependency-path: |
+            cloud_functions/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci --prefix cloud_functions
+      - name: Install firebase-tools (pinned major)
+        run: npm i -g firebase-tools@^13
 
-      # Ha TypeScript-es a projekt, buildeljünk; ha nem, ez átugorható
-      - name: Build (tsc)
+      - name: Clean stale build artifacts
+        run: rm -rf cloud_functions/lib
+
+      - name: Install deps & build functions
         run: |
-          if [ -f cloud_functions/tsconfig.json ]; then
-            npm run build --prefix cloud_functions
-          else
-            echo "No tsconfig.json; skipping build."
-          fi
-
-      - name: Install Firebase CLI
-        run: npm i -g firebase-tools@13
+          npm ci --prefix cloud_functions
+          npm run build --prefix cloud_functions
       # 1) ADC (Application Default Credentials) beállítása a SA JSON-ból
       - name: Google Auth (ADC)
         uses: google-github-actions/auth@v2
@@ -71,6 +68,15 @@ jobs:
           fi
           gcloud auth list
 
+      - name: Firebase deploy – Firestore rules
+        run: |
+          if [ "$MODE" = "prod" ]; then
+            PROJECT_ID="tippmix-prod"
+          else
+            PROJECT_ID="tippmix-dev"
+          fi
+          firebase deploy --only firestore:rules --project "$PROJECT_ID" --non-interactive
+
       - name: Firebase deploy (dev/main)
         run: |
           # Biztosítsuk, hogy mindig explicit projektet adunk meg
@@ -81,3 +87,10 @@ jobs:
           fi
           # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
+
+      - name: Terraform no-op plan
+        run: |
+          cd infra
+          terraform init -backend=false
+          terraform validate
+          terraform plan -lock=false -input=false -no-color

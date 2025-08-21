@@ -57,12 +57,13 @@ Alap lépések:
 
 A `.github/workflows/deploy.yml` a `dev` és `main` branch-ekre érkező push esetén fut:
 
-1. Node 20 környezet beállítása és a `functions/` függőségek telepítése.
-2. Lint, unit és e2e tesztek futtatása a Cloud Functions kódra.
-3. Terraform inicializálás és plan környezetspecifikus változókkal.
-4. Terraform apply automatikusan `dev` környezetben (prod esetén manuális jóváhagyás).
-5. `match_finalizer` Cloud Function deploy az `env.settings.*` fájlokból összefűzött env változókkal.
-6. Siker vagy hiba üzenet küldése Slackre.
+1. Node 20 beállítása npm cache-sel.
+2. `firebase-tools@^13` telepítése.
+3. `cloud_functions/lib` maradék build artefaktok törlése.
+4. Függőségek telepítése és build futtatása: `npm ci --prefix cloud_functions` majd `npm run build --prefix cloud_functions`.
+5. Firestore rules deploy a gyökér `firebase.rules` fájlból.
+6. Cloud Functions deploy explicit projektválasztással.
+7. Terraform no-op plan futtatása (`terraform init -backend=false && terraform validate && terraform plan`).
 
 A szükséges GitHub Secret-eket lásd a [README-ci.md](../../README-ci.md) fájlban.
 
