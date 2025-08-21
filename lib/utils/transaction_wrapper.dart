@@ -38,10 +38,7 @@ class TransactionWrapper {
       attempt++;
       try {
         _logger.info('[TransactionWrapper] attempt $attempt');
-        return await _firestore.runTransaction(
-          body,
-          maxAttempts: 1,
-        );
+        return await _firestore.runTransaction(body, maxAttempts: 1);
       } on FirebaseException catch (e) {
         final retriable = e.code == 'aborted' || e.code == 'deadline-exceeded';
         if (!retriable) rethrow;

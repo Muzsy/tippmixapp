@@ -46,7 +46,7 @@ class OddsDriftChecker {
     String market,
     String selection,
   ) {
-    // TODO: map API‑Football markets → internal markets; for now, expect normalized keys
+    // Map API‑Football markets to internal markets; currently expecting normalized keys
     try {
       final markets =
           fresh['markets'] as List<dynamic>?; // expected normalized structure

@@ -195,9 +195,7 @@ class CoinService {
       final ledgerSnap = await tx.get(ledgerRef);
       if (ledgerSnap.exists) return;
       final delta = type == 'debit' ? -amount : amount;
-      tx.update(walletRef, {
-        'coins': FieldValue.increment(delta),
-      });
+      tx.update(walletRef, {'coins': FieldValue.increment(delta)});
       tx.set(ledgerRef, {
         'amount': amount,
         'type': type,
