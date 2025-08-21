@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../screens/auth/login_screen.dart';
 // HomeScreen-import kivezetve – a ShellRoute hozza be
 import '../../providers/auth_provider.dart';
-import 'email_not_verified_screen.dart';
+import 'package:go_router/go_router.dart';
+import '../../routes/app_route.dart';
 
 /// Gate widget deciding whether to show the login, verification
 /// prompt or the home screen based on auth state.
@@ -19,7 +20,12 @@ class AuthGate extends ConsumerWidget {
       return const LoginScreen();
     }
     if (!notifier.isEmailVerified) {
-      return const EmailNotVerifiedScreen();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          context.goNamed(AppRoute.emailNotVerified.name);
+        }
+      });
+      return const SizedBox.shrink();
     }
     // Bejelentkezett és verifikált felhasználó → maradunk a '/' útvonalon,
     // a ShellRoute + HomeScreen héj megjeleníti a fő (csempés) kezdőképernyőt.
