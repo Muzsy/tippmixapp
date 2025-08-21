@@ -52,7 +52,7 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --fatal-infos --fatal-warnings lib test integration_test
       - name: Unit & widget tests (coverage)
         run: flutter test --coverage
       - name: Upload coverage
