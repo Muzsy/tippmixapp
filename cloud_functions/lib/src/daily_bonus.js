@@ -35,31 +35,19 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.daily_bonus = void 0;
 const functions = __importStar(require("firebase-functions"));
-const firestore_1 = require("firebase-admin/firestore");
-const firebase_1 = require("./src/lib/firebase");
+const firebase_1 = require("./lib/firebase");
+const CoinService_1 = require("./services/CoinService");
 exports.daily_bonus = functions
     .region('europe-central2')
     .pubsub.schedule('5 0 * * *')
     .timeZone('Europe/Budapest')
     .onRun(async () => {
     const usersSnap = await firebase_1.db.collection('users').get();
-    const batch = firebase_1.db.batch();
-    usersSnap.docs.forEach((doc) => {
-        const userId = doc.id;
-        const logRef = firebase_1.db
-            .collection('users')
-            .doc(userId)
-            .collection('coin_logs')
-            .doc();
-        batch.set(logRef, {
-            userId,
-            amount: 50,
-            type: 'credit',
-            reason: 'daily_bonus',
-            transactionId: logRef.id,
-            timestamp: firestore_1.FieldValue.serverTimestamp(),
-            description: 'Daily bonus',
-        });
-    });
-    await batch.commit();
+    const bonusCoins = 50;
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const refId = `daily_bonus_${today}`;
+    for (const doc of usersSnap.docs) {
+        const uid = doc.id;
+        await new CoinService_1.CoinService().credit(uid, bonusCoins, refId);
+    }
 });

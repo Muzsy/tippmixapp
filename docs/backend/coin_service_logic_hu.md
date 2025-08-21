@@ -43,6 +43,11 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
     - létrehozza a ledger bejegyzést `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - A `CoinService.debit(uid, stake, ticketId)` ugyanezt a folyamatot hajtja végre negatív összeggel és `type: 'bet'` értékkel.
 
+### Napi bónusz jóváírás
+
+- A `daily_bonus` időzített Cloud Function felhasználónként **50** coint ír jóvá.
+- A jóváírás a `CoinService.credit(uid, 50, daily_bonus_YYYYMMDD)` metódussal történik, ahol a `refId` dátum alapú az idempotencia érdekében.
+
 ---
 
 ## 🧾 Technikai megvalósítási terv
@@ -99,3 +104,4 @@ TippCoinLog {
 - 2025-08-20: Dokumentálva a user-centrikus wallet és ledger duplairás, valamint a regisztrációs inicializálás.
 - 2025-08-20: Frissítve az egyetlen SoT-ra (`users/{uid}/wallet` + `users/{uid}/ledger`), legacy írások megszüntetése.
 - 2025-08-20: Kivezetve a kliens oldali wallet írás; a `coin_trx` végzi az összes egyenlegváltozást.
+- 2025-08-21: Dokumentálva a napi bónusz jóváírás CoinService használatával és dátum alapú `refId`-val.
