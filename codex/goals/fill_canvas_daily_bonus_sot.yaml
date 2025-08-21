@@ -1,0 +1,35 @@
+# Hivatkozás: lásd a részletes hátteret a "Daily Bonus CF – coin_logs kivezetés és SoT véglegesítés (terv)" vásznon.
+# A lépések a legutóbb feltöltött tippmixapp.zip forrására vannak pontosítva.
+
+steps:
+  - name: daily_bonus – átállítás CoinService alapú könyvelésre (SoT)
+    description: Távolíts el minden coin_logs hivatkozást a daily_bonus forrásból, és a jóváírást a CoinService().credit(uid, amount, refId) híváson keresztül végezd. A refId legyen napi determinisztikus (pl. daily_bonus_YYYYMMDD), hogy idempotens legyen.
+    outputs:
+      - path: cloud_functions/src/daily_bonus.ts
+        diff: |
+          --- a/cloud_functions/src/daily_bonus.ts
+          +++ b/cloud_functions/src/daily_bonus.ts
+          @@
+- import * as admin from 'firebase-admin';
++ import * as admin from 'firebase-admin';
++ import { CoinService } from './services/CoinService';
+          @@
+-  // ... meglévő kód ...
+-  const logsRef = admin.firestore().collection('coin_logs');
+-  await logsRef.doc(`${uid}_${Date.now()}`).set({
+-    userId: uid,
+-    amount: bonusCoins,
+-    type: 'bonus',
+-    reason: 'daily_bonus',
+-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+-  });
+-
+-  // korábbi balance frissítés (root users/{uid}.coins vagy wallets/*) TÖRLENDŐ
+-  // ...
++  // Idempotens jóváírás a végleges SoT-on: users/{uid}/wallet + users/{uid}/ledger/{refId}
++  const today = new Date().toISOString().slice(0,10).replace(/-/g, ''); // YYYYMMDD
++  const refId = `daily_bonus_${today}`;
++  await new CoinService().credit(uid, bonusCoins, refId);
+          @@
+-  return { success: true };
++  return { success: true };

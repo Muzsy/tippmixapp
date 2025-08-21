@@ -3,6 +3,7 @@
 // Node 18+ global fetch; no extra deps required
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiFootballResultProvider = void 0;
+exports.findFixtureIdByMeta = findFixtureIdByMeta;
 class ApiFootballResultProvider {
     constructor(apiKey = process.env.API_FOOTBALL_KEY ?? '') {
         this.baseUrl = 'https://v3.football.api-sports.io';
@@ -59,3 +60,13 @@ class ApiFootballResultProvider {
     }
 }
 exports.ApiFootballResultProvider = ApiFootballResultProvider;
+async function findFixtureIdByMeta(params) {
+    const [home, away] = params.eventName.split(' - ').map(s => s?.trim()).filter(Boolean);
+    if (!home || !away)
+        return null;
+    const date = params.startTime.slice(0, 10); // YYYY-MM-DD
+    // Példa: GET /fixtures?date=YYYY-MM-DD&team=... (vagy search endpoint a bevezetett logika szerint)
+    // Itt a projekt meglévő fetch utilját használjuk, és a válaszból a (home,away,start) egyezést keressük.
+    // A pontos implementáció a szolgáltató végpontjaihoz igazodik.
+    return null; // helykitöltő: a tényleges végpont-hívás a projekt utils szerint kerül megírásra
+}

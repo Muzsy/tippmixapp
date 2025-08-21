@@ -45,10 +45,9 @@ exports.onUserCreate = functions
     .auth.user()
     .onCreate(async (user) => {
     const userRef = firebase_1.db.collection('users').doc(user.uid);
-    await userRef.set({
-        coins: 50,
-        createdAt: firestore_1.FieldValue.serverTimestamp(),
-    });
+    await userRef.set({ createdAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
+    const walletRef = firebase_1.db.doc(`users/${user.uid}/wallet`);
+    await walletRef.set({ coins: 50, updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
 });
 /**
  * HTTPS Callable function to handle coin transactions atomically.
@@ -73,37 +72,30 @@ exports.coin_trx = functions
     if (!transactionId) {
         throw new functions.https.HttpsError('invalid-argument', 'A valid transactionId is required.');
     }
-    // Prevent duplicate transactions
-    const logRef = firebase_1.db.collection('coin_logs').doc(transactionId);
-    const existingLog = await logRef.get();
-    if (existingLog.exists) {
+    // Idempotencia: ledger primer kulcs a transactionId lesz
+    const ledgerRef = firebase_1.db.doc(`users/${userId}/ledger/${transactionId}`);
+    const existingLedger = await ledgerRef.get();
+    if (existingLedger.exists) {
         return { success: true };
     }
-    // Transaction: update user balance and log atomically
+    // Transaction: wallet + ledger (SoT)
     await firebase_1.db.runTransaction(async (tx) => {
         const userRef = firebase_1.db.collection('users').doc(userId);
-        const userSnap = await tx.get(userRef);
-        // If somehow user doc is missing, initialize with zero balance
-        let currentBalance = 0;
-        if (!userSnap.exists) {
-            tx.set(userRef, { coins: 0, createdAt: firestore_1.FieldValue.serverTimestamp() });
-        }
-        else {
-            currentBalance = userSnap.get('coins') || 0;
-        }
-        const newBalance = type === 'debit' ? currentBalance - amount : currentBalance + amount;
-        if (newBalance < 0) {
-            throw new functions.https.HttpsError('failed-precondition', 'Insufficient funds.');
-        }
-        tx.update(userRef, { coins: newBalance });
-        tx.set(logRef, {
-            userId,
-            amount,
-            type,
-            reason,
-            transactionId,
-            timestamp: firestore_1.FieldValue.serverTimestamp(),
-        });
+        const walletRef = firebase_1.db.doc(`users/${userId}/wallet`);
+        const walletSnap = await tx.get(walletRef);
+        const before = walletSnap.data()?.coins ?? 0;
+        const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
+        const after = before + delta;
+        tx.set(walletRef, { coins: firestore_1.FieldValue.increment(delta), updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
+        tx.set(ledgerRef, {
+            type: type === 'debit' ? 'bet' : 'bonus',
+            amount: delta,
+            before,
+            after,
+            refId: transactionId,
+            source: 'coin_trx',
+            createdAt: firestore_1.FieldValue.serverTimestamp(),
+        }, { merge: true });
     });
     return { success: true };
 });

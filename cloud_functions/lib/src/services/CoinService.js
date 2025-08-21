@@ -11,8 +11,8 @@ class CoinService {
      * @param ticketId az érintett szelvény azonosítója – ledger primary key
      */
     async transact(uid, amount, ticketId, type) {
-        const walletRef = firebase_1.db.doc(`wallets/${uid}`);
-        const ledgerRef = walletRef.collection('ledger').doc(ticketId);
+        const walletRef = firebase_1.db.doc(`users/${uid}/wallet`);
+        const ledgerRef = firebase_1.db.doc(`users/${uid}/ledger/${ticketId}`);
         await firebase_1.db.runTransaction(async (tx) => {
             const ledgerSnap = await tx.get(ledgerRef);
             if (ledgerSnap.exists) {
@@ -21,15 +21,18 @@ class CoinService {
             }
             // Balance frissítés (wallet doksi létrehozása, ha hiányzik)
             tx.set(walletRef, {
-                balance: firestore_1.FieldValue.increment(amount),
-                updatedAt: firestore_1.FieldValue.serverTimestamp()
+                coins: firestore_1.FieldValue.increment(amount),
+                updatedAt: firestore_1.FieldValue.serverTimestamp(),
             }, { merge: true });
-            // Ledger entry
+            // Ledger entry az új SoT alatt
             tx.set(ledgerRef, {
+                userId: uid,
                 amount,
                 type,
-                createdAt: firestore_1.FieldValue.serverTimestamp()
-            });
+                refId: ticketId,
+                source: 'coin_trx',
+                createdAt: firestore_1.FieldValue.serverTimestamp(),
+            }, { merge: true });
         });
     }
     /** Convenience wrap – nyeremény jóváírás */

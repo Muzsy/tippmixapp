@@ -7,7 +7,7 @@ const firestore_1 = require("firebase-admin/firestore");
 const firebase_1 = require("./lib/firebase");
 const CoinService_1 = require("./services/CoinService");
 const evaluators_1 = require("./evaluators");
-const resultProvider = new ApiFootballResultProvider_1.ApiFootballResultProvider();
+const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider();
 // After computing tip results for a ticket
 async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
     const db = (0, firestore_1.getFirestore)();
@@ -30,13 +30,18 @@ async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
             return;
         const payout = (0, payout_1.calcTicketPayout)(ticketData.stake, tips);
         const status = tips.some((x) => x.result === 'lost') ? 'lost' : (payout > 0 ? 'won' : 'void');
+        // users.balance helyett csak a ticket mezői frissülnek; pénzügy a CoinService-ben
         tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
     });
 }
 const match_finalizer = async (message) => {
+    console.log('[match_finalizer] received raw message');
+    try {
+        console.log('[match_finalizer] payload:', JSON.stringify(message?.data || {}));
+    }
+    catch { }
     const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
     const { job } = JSON.parse(payloadStr);
-    console.log(`[match_finalizer] received job: ${job}`);
     // 1) Collect pending tickets across all users via collectionGroup
     // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
     const ticketsSnap = await firebase_1.db
@@ -48,6 +53,7 @@ const match_finalizer = async (message) => {
         console.log('[match_finalizer] no pending tickets – exit');
         return;
     }
+    console.log('[match_finalizer] found %d pending tickets', ticketsSnap.size);
     // Gather unique eventIds from tips[] arrays
     const eventIdSet = new Set();
     for (const doc of ticketsSnap.docs) {
@@ -63,7 +69,7 @@ const match_finalizer = async (message) => {
     // 2) Fetch scores
     let scores;
     try {
-        scores = await resultProvider.getScores(eventIds);
+        scores = await provider.getScores(eventIds);
     }
     catch (err) {
         console.error('[match_finalizer] ResultProvider error', err);
@@ -85,20 +91,40 @@ const match_finalizer = async (message) => {
         const tipsRaw = snap.get('tips') || [];
         if (!tipsRaw.length)
             continue;
-        const tipResults = tipsRaw.map((t) => {
-            const rid = t?.eventId;
+        const pendingTipUpdates = [];
+        const tipResults = [];
+        for (let ti = 0; ti < tipsRaw.length; ti++) {
+            const t = tipsRaw[ti];
+            const rid0 = t?.fixtureId ?? t?.eventId;
+            const rid = rid0 ? String(rid0) : '';
+            let res = rid ? resultMap.get(rid) : undefined;
+            if (!res && t?.eventName && t?.startTime) {
+                try {
+                    const found = await (0, ApiFootballResultProvider_1.findFixtureIdByMeta)({
+                        eventName: String(t.eventName),
+                        startTime: new Date(String(t.startTime)).toISOString(),
+                    });
+                    if (found?.id) {
+                        res = resultMap.get(String(found.id));
+                        pendingTipUpdates.push({ index: ti, fixtureId: Number(found.id) });
+                    }
+                }
+                catch (e) {
+                    console.warn('[match_finalizer] fixture resolver failed', e);
+                }
+            }
             const pick = (t?.outcome ?? '').trim();
             const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
-            const res = rid ? resultMap.get(rid) : undefined;
             const evaluator = (0, evaluators_1.getEvaluator)(String(marketKey));
             if (!res || !evaluator) {
-                return {
+                tipResults.push({
                     ...t,
                     market: String(marketKey).toUpperCase(),
                     selection: pick,
                     result: 'pending',
                     oddsSnapshot: t?.odds ?? t?.oddsSnapshot,
-                };
+                });
+                continue;
             }
             const tipInput = {
                 marketKey: String(marketKey),
@@ -106,24 +132,30 @@ const match_finalizer = async (message) => {
                 odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
             };
             const outcome = evaluator.evaluate(tipInput, res);
-            return {
+            tipResults.push({
                 ...t,
                 market: String(marketKey).toUpperCase(),
                 selection: pick,
                 result: outcome,
                 oddsSnapshot: tipInput.odds,
-            };
-        });
+            });
+        }
         const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
-        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(uid), { stake: snap.get('stake'), tips: tipResults });
-        // Wallet credit via CoinService (idempotens – ledger: wallets/{uid}/ledger/{ticketId})
+        await finalizeTicketAtomic(snap.ref, firebase_1.db.collection('users').doc(String(uid)), { stake: snap.get('stake'), tips: tipResults });
+        if (pendingTipUpdates.length) {
+            const updates = {};
+            for (const u of pendingTipUpdates) {
+                updates[`tips.${u.index}.fixtureId`] = u.fixtureId;
+            }
+            await snap.ref.update(updates);
+        }
+        // Wallet credit via CoinService (idempotens – ledger kulcs: ticketId)
         {
             const payout = (0, payout_1.calcTicketPayout)(snap.get('stake'), tipResults);
             if (uid && payout > 0) {
                 const coins = Math.round(payout);
-                const cs = new CoinService_1.CoinService();
                 try {
-                    await cs.credit(String(uid), coins, snap.id);
+                    await new CoinService_1.CoinService().credit(String(uid), coins, snap.id);
                 }
                 catch (e) {
                     console.error('[match_finalizer] wallet credit failed', e);
@@ -131,6 +163,7 @@ const match_finalizer = async (message) => {
             }
         }
     }
-    console.log('[match_finalizer] ticket finalization loop done');
+    // zárás után:
+    console.log('[match_finalizer] finalize done for batch');
 };
 exports.match_finalizer = match_finalizer;

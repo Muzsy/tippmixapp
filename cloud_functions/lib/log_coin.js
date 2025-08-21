@@ -54,14 +54,14 @@ exports.log_coin = functions
     if (!transactionId) {
         throw new functions.https.HttpsError('invalid-argument', 'transactionId required');
     }
-    const logRef = firebase_1.db.collection('coin_logs').doc(transactionId);
+    const logRef = firebase_1.db.doc(`users/${context.auth.uid}/ledger/${transactionId}`);
     await logRef.set({
-        userId: context.auth.uid,
         amount,
         type,
+        refId: transactionId,
+        source: 'log_coin',
         meta,
-        transactionId,
-        timestamp: firestore_1.FieldValue.serverTimestamp(),
-    });
+        createdAt: firestore_1.FieldValue.serverTimestamp(),
+    }, { merge: true });
     return { success: true };
 });
