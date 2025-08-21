@@ -19,9 +19,9 @@ class ProfileSummary extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            child: Text(user?.displayName.isNotEmpty == true
-                ? user!.displayName[0]
-                : '?'),
+            child: Text(
+              user?.displayName.isNotEmpty == true ? user!.displayName[0] : '?',
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

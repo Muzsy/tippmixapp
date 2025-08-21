@@ -17,9 +17,15 @@ class GuestCtaTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(loc.home_guest_title, style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              loc.home_guest_title,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 8),
-            Text(loc.home_guest_subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              loc.home_guest_subtitle,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: 16),
             Row(
               children: [

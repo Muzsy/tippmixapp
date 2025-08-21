@@ -22,10 +22,10 @@ void main() {
                   'league': {'country': 'England', 'name': 'EPL'},
                   'teams': {
                     'home': {'name': 'Arsenal'},
-                    'away': {'name': 'Chelsea'}
-                  }
-                }
-              ]
+                    'away': {'name': 'Chelsea'},
+                  },
+                },
+              ],
             };
             return http.Response(jsonEncode(fixtures), 200);
           }
@@ -42,14 +42,14 @@ void main() {
                           'values': [
                             {'value': 'Home', 'odd': '1.50'},
                             {'value': 'Draw', 'odd': '3.20'},
-                            {'value': 'Away', 'odd': '5.00'}
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+                            {'value': 'Away', 'odd': '5.00'},
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             };
             return http.Response(jsonEncode(odds), 200);
           }
@@ -82,15 +82,25 @@ void main() {
     test('maps various keys correctly', () {
       expect(MarketMapping.fromApiFootball('1x2'), MarketMapping.h2h);
       expect(MarketMapping.fromApiFootball('h2h'), MarketMapping.h2h);
-      expect(MarketMapping.fromApiFootball('over_under'), MarketMapping.overUnder);
+      expect(
+        MarketMapping.fromApiFootball('over_under'),
+        MarketMapping.overUnder,
+      );
       expect(MarketMapping.fromApiFootball('ou'), MarketMapping.overUnder);
       expect(MarketMapping.fromApiFootball('totals'), MarketMapping.overUnder);
-      expect(MarketMapping.fromApiFootball('btts'), MarketMapping.bothTeamsToScore);
-      expect(MarketMapping.fromApiFootball('both_teams_to_score'),
-          MarketMapping.bothTeamsToScore);
+      expect(
+        MarketMapping.fromApiFootball('btts'),
+        MarketMapping.bothTeamsToScore,
+      );
+      expect(
+        MarketMapping.fromApiFootball('both_teams_to_score'),
+        MarketMapping.bothTeamsToScore,
+      );
       expect(MarketMapping.fromApiFootball('ah'), MarketMapping.asianHandicap);
-      expect(MarketMapping.fromApiFootball('asian_handicap'),
-          MarketMapping.asianHandicap);
+      expect(
+        MarketMapping.fromApiFootball('asian_handicap'),
+        MarketMapping.asianHandicap,
+      );
       expect(MarketMapping.fromApiFootball('unknown'), isNull);
     });
   });

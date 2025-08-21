@@ -45,7 +45,9 @@ void main() {
       ProviderScope(
         overrides: [
           hibpServiceProvider.overrideWith((ref) => FakeHIBPService()),
-          recaptchaServiceProvider.overrideWith((ref) => FakeRecaptchaService()),
+          recaptchaServiceProvider.overrideWith(
+            (ref) => FakeRecaptchaService(),
+          ),
           authServiceProvider.overrideWith((ref) => MockAuthService()),
           authRepositoryProvider.overrideWith((ref) => FakeAuthRepository()),
           analyticsServiceProvider.overrideWith(

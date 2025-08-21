@@ -20,30 +20,30 @@ Widget _wrap(Widget child) {
 void _mockAssets() {
   TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
       .setMockMessageHandler('flutter/assets', (ByteData? message) async {
-    final key = utf8.decode(message!.buffer.asUint8List());
-    if (key == 'AssetManifest.bin') {
-      final manifest = <String, Object?>{
-        kDefaultAvatarPath: const [
-          <String, Object?>{'asset': kDefaultAvatarPath},
-        ],
-      };
-      return const StandardMessageCodec().encodeMessage(manifest)!;
-    }
-    if (key == 'AssetManifest.json') {
-      final manifest = json.encode({
-        kDefaultAvatarPath: const [
-          <String, String>{'asset': kDefaultAvatarPath},
-        ],
+        final key = utf8.decode(message!.buffer.asUint8List());
+        if (key == 'AssetManifest.bin') {
+          final manifest = <String, Object?>{
+            kDefaultAvatarPath: const [
+              <String, Object?>{'asset': kDefaultAvatarPath},
+            ],
+          };
+          return const StandardMessageCodec().encodeMessage(manifest)!;
+        }
+        if (key == 'AssetManifest.json') {
+          final manifest = json.encode({
+            kDefaultAvatarPath: const [
+              <String, String>{'asset': kDefaultAvatarPath},
+            ],
+          });
+          return ByteData.view(
+            Uint8List.fromList(utf8.encode(manifest)).buffer,
+          );
+        }
+        if (key == kDefaultAvatarPath) {
+          return ByteData.view(Uint8List.fromList(_kTransparentImage).buffer);
+        }
+        return null;
       });
-      return ByteData.view(
-        Uint8List.fromList(utf8.encode(manifest)).buffer,
-      );
-    }
-    if (key == kDefaultAvatarPath) {
-      return ByteData.view(Uint8List.fromList(_kTransparentImage).buffer);
-    }
-    return null;
-  });
 }
 
 void _resetAssets() {

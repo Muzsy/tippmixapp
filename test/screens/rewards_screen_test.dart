@@ -33,7 +33,8 @@ class FakeFirebaseFunctions extends Fake implements FirebaseFunctions {
 }
 
 class FakeRewardService extends RewardService {
-  FakeRewardService(List<RewardModel> rewards) : super(FakeFirebaseFunctions()) {
+  FakeRewardService(List<RewardModel> rewards)
+    : super(FakeFirebaseFunctions()) {
     loadRewards(rewards);
   }
 
