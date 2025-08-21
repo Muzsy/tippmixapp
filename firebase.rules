@@ -6,30 +6,11 @@ service cloud.firestore {
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
 
-    /* ——— coin_logs ——— */
+    /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
     match /coin_logs/{logId} {
-      // helper: bejelentkezett?
-      function authed() { return request.auth != null; }
-
-      // Engedélyezett típusok
-      function validType() { return request.resource.data.type in ['bet','deposit','withdraw','adjust']; }
-
-      // CREATE: saját userId, fix mezők, createdAt timestamp
-      function createShapeOK() {
-        return authed()
-          && request.resource != null
-          && request.resource.data != null
-          && request.resource.data.keys().hasOnly(['userId','amount','type','createdAt'])
-          && request.resource.data.userId == request.auth.uid
-          && request.resource.data.amount is int
-          && request.resource.data.amount >= 0
-          && request.resource.data.type in ['bet','deposit','withdraw','adjust']
-          && request.resource.data.createdAt == request.time;
-      }
-
-      allow create: if createShapeOK();
-      allow read:   if isOwner(resource.data.userId);
-      allow update, delete: if false;
+      // Kliens csak a saját logjait olvashatja; írás nem engedélyezett.
+      allow read: if isOwner(resource.data.userId);
+      allow create, update, delete: if false;
     }
 
     /*  ─── Felhasználói beállítások alkollekció ───  */

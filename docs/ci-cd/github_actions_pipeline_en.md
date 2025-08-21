@@ -57,12 +57,13 @@ Basic steps:
 
 `.github/workflows/deploy.yml` runs on pushes to the `dev` and `main` branches:
 
-1. Set up Node 20 and install `functions/` dependencies.
-2. Run lint, unit and e2e tests for Cloud Functions.
-3. Initialize and plan Terraform with environment-specific variables.
-4. Apply Terraform automatically on `dev` (manual approval for `main`).
-5. Deploy the `match_finalizer` Cloud Function with flattened env vars from `env.settings.*`.
-6. Send success or failure notifications to Slack.
+1. Set up Node 20 with npm cache.
+2. Install `firebase-tools@^13`.
+3. Remove stale `cloud_functions/lib` artifacts.
+4. Install dependencies and build functions with `npm ci --prefix cloud_functions` and `npm run build --prefix cloud_functions`.
+5. Deploy Firestore rules from the root `firebase.rules`.
+6. Deploy Cloud Functions with explicit project selection.
+7. Execute a Terraform no-op plan (`terraform init -backend=false && terraform validate && terraform plan`).
 
 See [README-ci.md](../../README-ci.md) for required GitHub Secrets.
 

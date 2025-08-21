@@ -131,4 +131,16 @@ Terraform includes an optional Slack webhook for alerts. `slack_webhook_url` def
 
 ---
 
+## Firestore Rules – canonical source & deploy order
+
+- **Canonical source:** `firebase.rules` at repository root.
+- `cloud_functions/firestore.rules` is not a deploy source (kept only as reference).
+- **Deploy order (GitHub Actions):**
+  1. `rm -rf cloud_functions/lib` (stale build guard)
+  2. `npm ci && npm run build` under `cloud_functions`
+  3. `firebase deploy --only firestore:rules` (from root `firebase.rules`)
+  4. `firebase deploy --only functions`
+
+**Note:** the legacy root collection `coin_logs` is **read-only**; clients cannot write there.
+
 For Codex configuration, see: [`AGENTS.md`](./AGENTS.md)
