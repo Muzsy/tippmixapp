@@ -22,6 +22,7 @@ class MarketMapping {
         return overUnder;
       case 'btts':
       case 'both teams to score':
+      case 'both_teams_to_score':
         return bothTeamsToScore;
       case 'ah':
       case 'asian_handicap':

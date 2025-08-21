@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import '../models/api_response.dart';
 import '../models/odds_event.dart';
 import '../models/odds_market.dart';
+import '../models/odds_bookmaker.dart';
+import '../models/odds_outcome.dart';
+import '../models/h2h_market.dart';
 import 'market_mapping.dart';
 
 class ApiFootballService {
@@ -87,11 +90,35 @@ class ApiFootballService {
         );
       }
 
-      final events = fixtures
-          .map((f) => _mapFixtureToOddsEvent(Map<String, dynamic>.from(f)))
-          .toList();
+      final events = <OddsEvent>[];
+      for (final f in fixtures) {
+        final fixtureMap = Map<String, dynamic>.from(f as Map);
+        final base = _mapFixtureToOddsEvent(fixtureMap);
+        final oddsJson = await getOddsForFixture(
+          base.id,
+          season: base.season,
+        );
+        final bookmakers = _parseBookmakers(oddsJson);
+        events.add(
+          OddsEvent(
+            id: base.id,
+            sportKey: base.sportKey,
+            sportTitle: base.sportTitle,
+            homeTeam: base.homeTeam,
+            awayTeam: base.awayTeam,
+            season: base.season,
+            countryName: base.countryName,
+            leagueName: base.leagueName,
+            leagueLogoUrl: base.leagueLogoUrl,
+            homeLogoUrl: base.homeLogoUrl,
+            awayLogoUrl: base.awayLogoUrl,
+            commenceTime: base.commenceTime,
+            fetchedAt: base.fetchedAt,
+            bookmakers: bookmakers,
+          ),
+        );
+      }
 
-      // H2H a kártyán töltődik, 60s cache
       return ApiResponse(data: events);
     } on http.ClientException {
       return const ApiResponse(
@@ -184,6 +211,50 @@ class ApiFootballService {
       return body;
     }
     return {};
+  }
+
+  List<OddsBookmaker> _parseBookmakers(Map<String, dynamic> json) {
+    final resp = json['response'];
+    if (resp is! List) return const [];
+    final List<OddsBookmaker> result = [];
+    for (final item in resp) {
+      final bms = (item is Map<String, dynamic>) ? item['bookmakers'] : null;
+      if (bms is! List) continue;
+      for (final b in bms) {
+        final bm = b as Map<String, dynamic>;
+        final name = (bm['name'] ?? '').toString();
+        final bets = bm['bets'];
+        if (bets is! List) continue;
+        final markets = <OddsMarket>[];
+        for (final bet in bets) {
+          final m = bet as Map<String, dynamic>;
+          final raw = (m['name'] ?? m['key'] ?? '').toString();
+          final key = MarketMapping.fromApiFootball(raw);
+          if (key == null) continue;
+          final values = (m['values'] as List?) ?? const [];
+          final outcomes = <OddsOutcome>[];
+          for (final v in values) {
+            if (v is! Map) continue;
+            final oddStr = (v['odd'] ?? '').toString();
+            final price = double.tryParse(oddStr.replaceAll(',', '.'));
+            if (price == null) continue;
+            final valName = (v['value'] ?? '').toString();
+            outcomes.add(OddsOutcome(name: valName, price: price));
+          }
+          if (outcomes.isEmpty) continue;
+          markets.add(
+            key == MarketMapping.h2h
+                ? H2HMarket(outcomes: outcomes)
+                : OddsMarket(key: key, outcomes: outcomes),
+          );
+        }
+        if (markets.isNotEmpty) {
+          final bmKey = name.toLowerCase().replaceAll(' ', '_');
+          result.add(OddsBookmaker(key: bmKey, title: name, markets: markets));
+        }
+      }
+    }
+    return result;
   }
 
   Future<OddsMarket?> getH2HForFixture(
