@@ -10,15 +10,9 @@ export const onUserCreate = functions
   .auth.user()
   .onCreate(async (user) => {
     const userRef = db.collection('users').doc(user.uid);
-    await userRef.set({
-      coins: 50,
-      createdAt: FieldValue.serverTimestamp(),
-    });
-    // NEW: initialize user-centric wallet doc as SoT (dual write transition)
-    await db.doc(`users/${user.uid}/wallet`).set(
-      { coins: 50, updatedAt: FieldValue.serverTimestamp() },
-      { merge: true },
-    );
+    await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    const walletRef = db.doc(`users/${user.uid}/wallet`);
+    await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
   });
 
 interface CoinTrxData {
@@ -65,67 +59,32 @@ export const coin_trx = functions
       );
     }
 
-    // Prevent duplicate transactions
-    const logRef = db.collection('coin_logs').doc(transactionId);
-    const existingLog = await logRef.get();
-    if (existingLog.exists) {
+    // Idempotencia: ledger primer kulcs a transactionId lesz
+    const ledgerRef = db.doc(`users/${userId}/ledger/${transactionId}`);
+    const existingLedger = await ledgerRef.get();
+    if (existingLedger.exists) {
       return { success: true };
     }
 
-    // Transaction: update user balance and log atomically
+    // Transaction: wallet + ledger (SoT)
     await db.runTransaction(async (tx) => {
       const userRef = db.collection('users').doc(userId);
-      const userSnap = await tx.get(userRef);
+      const walletRef = db.doc(`users/${userId}/wallet`);
+      const walletSnap = await tx.get(walletRef);
+      const before = (walletSnap.data()?.coins as number) ?? 0;
+      const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
+      const after = before + delta;
 
-      // If somehow user doc is missing, initialize with zero balance
-      let currentBalance = 0;
-      if (!userSnap.exists) {
-        tx.set(userRef, { coins: 0, createdAt: FieldValue.serverTimestamp() });
-      } else {
-        currentBalance = (userSnap.get('coins') as number) || 0;
-      }
-
-      const delta = type === 'debit' ? -amount : amount;
-      const newBalance = currentBalance + delta;
-      if (newBalance < 0) {
-        throw new functions.https.HttpsError(
-          'failed-precondition',
-          'Insufficient funds.'
-        );
-      }
-
-      tx.update(userRef, { coins: newBalance });
-      // NEW: mirror write to user-centric SoT
-      const walletDoc = db.doc(`users/${userId}/wallet`);
-      tx.set(
-        walletDoc,
-        {
-          coins: FieldValue.increment(delta),
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
-      const ledgerDoc = db.doc(`users/${userId}/ledger/${transactionId}`);
-      tx.set(
-        ledgerDoc,
-        {
-          userId,
-          amount,
-          type,
-          refId: transactionId,
-          source: 'coin_trx',
-          createdAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
-      tx.set(logRef, {
-        userId,
-        amount,
-        type,
-        reason,
-        transactionId,
-        timestamp: FieldValue.serverTimestamp(),
-      });
+      tx.set(walletRef, { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+      tx.set(ledgerRef, {
+        type: type === 'debit' ? 'bet' : 'bonus',
+        amount: delta,
+        before,
+        after,
+        refId: transactionId,
+        source: 'coin_trx',
+        createdAt: FieldValue.serverTimestamp(),
+      }, { merge: true });
     });
 
     return { success: true };

@@ -73,7 +73,7 @@ TippCoinLog {
     source: 'coin_trx' | 'log_coin'
     createdAt: timestamp
   ```
-- Legacy paths `wallets/*` and `coin_logs/*` remain for read-only access
+- Legacy path `wallets/*` remains read-only; `coin_logs/*` has been removed
 - UI should show recent changes in profile
 
 ---
@@ -83,7 +83,7 @@ TippCoinLog {
 - `CoinService.debitCoin` and `creditCoin` only invoke `coin_trx`; all wallet updates happen server-side.
 - `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
 - Wallet balance stored at `users/{uid}/wallet.coins` is treated as source of truth and updated by Cloud Functions.
-- `coin_logs` collection remains deprecated in favor of per-user ledger.
+- `coin_logs` collection removed; per-user ledger is the sole transaction log.
 
 ---
 

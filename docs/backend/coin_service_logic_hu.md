@@ -74,7 +74,7 @@ TippCoinLog {
     createdAt: timestamp
   ```
 
-- Legacy `wallets/*` és `coin_logs/*` csak olvasásra marad
+- Legacy `wallets/*` csak olvasásra marad, a `coin_logs/*` gyűjtemény megszűnt
 - A profil UI-on megjeleníthetők az utolsó tranzakciók
 
 ---
@@ -84,7 +84,7 @@ TippCoinLog {
 - A `CoinService.debitCoin` és `creditCoin` csak a `coin_trx` függvényt hívja; minden wallet módosítás szerveroldalon zajlik.
 - A `CoinService.debitAndCreateTicket()` létrehozza a szelvényt, majd `coin_trx` segítségével vonja le a tétet.
 - A wallet egyenleg forrása a `users/{uid}/wallet.coins`, melyet Cloud Function frissít.
-- A `coin_logs` gyűjtemény továbbra is kivezetett, helyette a ledger szolgál naplóként.
+- A `coin_logs` gyűjtemény teljesen kivezetésre került, a ledger az egyetlen napló.
 
 ---
 
