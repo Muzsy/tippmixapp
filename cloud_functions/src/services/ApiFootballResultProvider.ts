@@ -1,5 +1,6 @@
 // Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
+import * as functions from 'firebase-functions';
 
 export interface ScoreResult {
   id: string;
@@ -15,10 +16,11 @@ export class ApiFootballResultProvider {
   private readonly baseUrl = 'https://v3.football.api-sports.io';
   private readonly apiKey: string;
 
-  constructor(apiKey = process.env.API_FOOTBALL_KEY ?? '') {
-    if (!apiKey) {
-      throw new Error('Missing API_FOOTBALL_KEY');
-    }
+  constructor(
+    apiKey =
+      (process.env.API_FOOTBALL_KEY || functions.config().apifootball?.key) ??
+      '',
+  ) {
     this.apiKey = apiKey;
   }
 
@@ -27,6 +29,9 @@ export class ApiFootballResultProvider {
    * to the legacy ScoreResult structure used by match_finalizer.
    */
   async getScores(eventIds: string[]): Promise<ScoreResult[]> {
+    if (!this.apiKey) {
+      throw new Error('Missing API_FOOTBALL_KEY');
+    }
     const headers = { 'x-apisports-key': this.apiKey } as const;
     const results: ScoreResult[] = [];
 
