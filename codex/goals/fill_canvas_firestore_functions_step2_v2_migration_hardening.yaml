@@ -1,0 +1,309 @@
+# Codex Canvas Yaml Guide szerinti séma
+# Ez a YAML a "canvases/firestore_functions_step2_v2_migration_hardening.md" vásznat tölti ki.
+
+canvas: "canvases/firestore_functions_step2_v2_migration_hardening.md"
+version: 1
+steps:
+  - name: Globális Gen2 opciók + Secret binding a match_finalizer-hez
+    description: |
+      Az index.ts-ben vezessük be a v2 globális régióbeállítást, és kössük a GSM titkot a Pub/Sub triggerhez.
+      A provider process.env.API_FOOTBALL_KEY-et olvas, a v2 secret binding ezt automatikusan injektálja.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/index.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/index.ts
+          +++ tippmixapp-main/cloud_functions/index.ts
+          @@ -1,3 +1,5 @@
+          +import { setGlobalOptions } from 'firebase-functions/v2/options';
+          +import { defineSecret } from 'firebase-functions/params';
+           import { onMessagePublished } from 'firebase-functions/v2/pubsub';
+           import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
+           
+          @@ -6,8 +8,12 @@
+           export { onFriendRequestAccepted } from './friend_request';
+           export { daily_bonus } from './src/daily_bonus';
+           
+          -// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
+          -export const match_finalizer = onMessagePublished('result-check', async (event) => {
+          +// Gen2 – globális opciók (régió) + Secret Manager binding
+          +setGlobalOptions({ region: 'europe-central2' });
+          +const API_FOOTBALL_KEY = defineSecret('API_FOOTBALL_KEY');
+          +
+          +// Gen2 Pub/Sub trigger (topic: result-check, secret binding)
+          +export const match_finalizer = onMessagePublished({ topic: 'result-check', secrets: [API_FOOTBALL_KEY] }, async (event) => {
+             const msg = {
+               data: event.data.message?.data,
+               attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
+             };
+             await matchFinalizerHandler(msg as any);
+           });
+
+  - name: coin_trx és onUserCreate v1→v2 migráció
+    description: |
+      A callable és az identity trigger átállítása v2 API-ra. A logika változatlan, a hibák HttpsError-ra cserélve.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/coin_trx.logic.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/coin_trx.logic.ts
+          +++ tippmixapp-main/cloud_functions/coin_trx.logic.ts
+          @@ -1,19 +1,18 @@
+          -import * as functions from 'firebase-functions';
+          +import { onCall, HttpsError } from 'firebase-functions/v2/https';
+          +import { onUserCreated } from 'firebase-functions/v2/identity';
+           import { FieldValue } from 'firebase-admin/firestore';
+           import { db } from './src/lib/firebase';
+           
+           /**
+            * Automatically create a user document when a new Auth user is created.
+            */
+          -export const onUserCreate = functions
+          -  .region('europe-central2')
+          -  .auth.user()
+          -  .onCreate(async (user) => {
+          +export const onUserCreate = onUserCreated(async (event) => {
+          +  const user = event.data;
+               const userRef = db.collection('users').doc(user.uid);
+               await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
+               const walletRef = db.doc(`users/${user.uid}/wallet`);
+               await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+-          });
++          });
+          @@
+          -export const coin_trx = functions
+          -  .region('europe-central2')
+          -  .https.onCall(async (data, context) => {
+          +export const coin_trx = onCall(async (request) => {
+          +  const data = request.data as any;
+          +  const context = request as any;
+             // Ensure the user is authenticated
+             if (!context.auth || !context.auth.uid) {
+-              throw new functions.https.HttpsError(
++              throw new HttpsError(
+                 'unauthenticated',
+                 'User must be signed in to perform coin transactions.'
+               );
+             }
+             const userId = context.auth.uid;
+          @@
+          -    if (type !== 'debit' && type !== 'credit') {
+-      throw new functions.https.HttpsError(
++      throw new HttpsError(
+         'invalid-argument',
+         'Transaction type must be "debit" or "credit".'
+       );
+     }
+-    if (!transactionId) {
+-      throw new functions.https.HttpsError(
++    if (!transactionId) {
++      throw new HttpsError(
+         'invalid-argument',
+         'A valid transactionId is required.'
+       );
+     }
+
+  - name: daily_bonus v1 scheduler → v2 scheduler
+    description: |
+      A napi bónusz időzítője v2/scheduler-re kerül, régiót globálisan állítjuk.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/src/daily_bonus.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/src/daily_bonus.ts
+          +++ tippmixapp-main/cloud_functions/src/daily_bonus.ts
+          @@ -1,12 +1,8 @@
+          -import * as functions from 'firebase-functions';
+          +import { onSchedule } from 'firebase-functions/v2/scheduler';
+           import { db } from './lib/firebase';
+           import { CoinService } from './services/CoinService';
+           
+          -export const daily_bonus = functions
+          -  .region('europe-central2')
+          -  .pubsub.schedule('5 0 * * *')
+          -  .timeZone('Europe/Budapest')
+          -  .onRun(async () => {
+          +export const daily_bonus = onSchedule({ schedule: '5 0 * * *', timeZone: 'Europe/Budapest' }, async () => {
+               const usersSnap = await db.collection('users').get();
+               const bonusCoins = 50;
+               const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+  - name: admin_coin_ops SoT-javítás (CoinService + v2 onCall)
+    description: |
+      Az admin műveletek többé nem írnak közvetlenül users/{uid}.coins mezőt. Helyette CoinService.credit/debit fut tranzakcióban,
+      ledger bejegyzéssel; csak admin hívhatja.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/admin_coin_ops.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/admin_coin_ops.ts
+          +++ tippmixapp-main/cloud_functions/admin_coin_ops.ts
+          @@ -1,13 +1,16 @@
+          -import * as functions from 'firebase-functions';
+          +import { onCall, HttpsError } from 'firebase-functions/v2/https';
+           import { db } from './src/lib/firebase';
+          +import { CoinService } from './src/services/CoinService';
+           
+-          export const admin_coin_ops = functions.https.onCall(async (data, context) => {
++          export const admin_coin_ops = onCall(async (request) => {
++            const data = request.data as any;
++            const context = request as any;
+             if (!context.auth) {
+-              throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
++              throw new HttpsError('unauthenticated', 'Authentication required');
+             }
+             
+-            if (!context.auth.token.admin) {
+-              throw new functions.https.HttpsError('permission-denied', 'Admin privileges required');
++            if (!context.auth.token?.admin) {
++              throw new HttpsError('permission-denied', 'Admin privileges required');
+             }
+          @@
+-            const userRef = db.collection('users').doc(userId);
+-
+-            await db.runTransaction(async (t) => {
+-              const snap = await t.get(userRef);
+-              if (!snap.exists) {
+-                throw new functions.https.HttpsError('not-found', 'User not found');
+-              }
+-              let newBalance = 0;
+-              if (operation === 'reset') {
+-                newBalance = 0;
+-              } else if (operation === 'credit') {
+-                const current = snap.get('coins') || 0;
+-                newBalance = current + (amount || 0);
+-              } else {
+-                throw new functions.https.HttpsError('invalid-argument', 'Unknown operation');
+-              }
+-              t.update(userRef, { coins: newBalance });
+-            });
+-
+-            return { success: true };
+-          });
++            const svc = new CoinService();
++            if (operation === 'reset') {
++              const walletSnap = await db.doc(`users/${userId}/wallet`).get();
++              const current = (walletSnap.get('coins') as number) || 0;
++              if (current > 0) {
++                await svc.debit(userId, current, `admin:reset:${Date.now()}`);
++              } else if (current < 0) {
++                await svc.credit(userId, Math.abs(current), `admin:reset:${Date.now()}`);
++              }
++            } else if (operation === 'credit') {
++              if (typeof amount !== 'number' || amount <= 0) {
++                throw new HttpsError('invalid-argument', 'amount must be positive');
++              }
++              await svc.credit(userId, amount, `admin:credit:${Date.now()}`);
++            } else {
++              throw new HttpsError('invalid-argument', 'Unknown operation');
++            }
++            return { success: true };
++          });
+
+  - name: log_coin ártalmatlanítás (admin-only audit, v2 onCall)
+    description: |
+      A log_coin nem írhat ledger-t. Admin-only hívás, audit a system_counters alatt.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/log_coin.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/log_coin.ts
+          +++ tippmixapp-main/cloud_functions/log_coin.ts
+          @@ -1,4 +1,4 @@
+          -import * as functions from 'firebase-functions';
+          +import { onCall, HttpsError } from 'firebase-functions/v2/https';
+           import { FieldValue } from 'firebase-admin/firestore';
+           import { db } from './src/lib/firebase';
+          @@
+-          export const log_coin = functions
+-            .region('europe-central2')
+-            .https.onCall(async (data, context) => {
++          export const log_coin = onCall(async (request) => {
++            const data = request.data as any;
++            const context = request as any;
+             if (!context.auth || !context.auth.uid) {
+-              throw new functions.https.HttpsError(
++              throw new HttpsError(
+                 'unauthenticated',
+                 'Must be signed in'
+               );
+             }
++            if (!context.auth.token?.admin) {
++              throw new HttpsError('permission-denied','Admin only');
++            }
+          @@
+-            const logRef = db.doc(`users/${context.auth.uid}/ledger/${transactionId}`);
++            const logRef = db.doc(`system_counters/coin_logs_legacy/logs/${transactionId}`);
+             await logRef.set(
+               {
+                 amount,
+                 type,
+                 refId: transactionId,
+                 source: 'log_coin',
+                 meta,
+                 createdAt: FieldValue.serverTimestamp(),
+               },
+               { merge: true },
+             );
+             return { success: true };
+-          });
++          });
+
+  - name: Értesítések user-ágra mozgatása + régió-duplikáció törlése
+    description: |
+      A friend_request trigger értesítést mostantól users/{toUid}/notifications alá ír; a lokális setGlobalOptions hívást töröljük.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/friend_request.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/friend_request.ts
+          +++ tippmixapp-main/cloud_functions/friend_request.ts
+          @@ -1,7 +1,5 @@
+-          import { setGlobalOptions } from 'firebase-functions/v2/options';
+           import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
+           import { FieldValue } from 'firebase-admin/firestore';
+           import { db } from './src/lib/firebase';
+          -
+-          // Gen 2 – mindenhol europe-central2
+-          setGlobalOptions({ region: 'europe-central2' });
++          
+           export const onFriendRequestAccepted = onDocumentUpdated(
+             'relations/{uid}/friendRequests/{requestId}',
+             async (event) => {
+               const before = event.data?.before.data();
+               const after = event.data?.after.data();
+               if (before && after && !before.accepted && after.accepted) {
+                 const toUid = after.toUid as string;
+                 const fromUid = after.fromUid as string;
+-                await db
+-                  .collection('notifications')
+-                  .doc(toUid)
+-                  .collection('n')
+-                  .add({
++                await db.collection('users').doc(toUid).collection('notifications').doc().set({
+                   type: 'friend',
+                   fromUid,
+                   createdAt: FieldValue.serverTimestamp(),
+                 });
+               }
+             });
+
+  - name: CI tisztítás – runtime config + .env eltávolítása
+    description: |
+      A deploy workflow nem ír .env fájlt és nem használ functions:config-ot; minden titok GSM-ből jön.
+    outputs:
+      - path: tippmixapp-main/.github/workflows/deploy.yml
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/.github/workflows/deploy.yml
+          +++ tippmixapp-main/.github/workflows/deploy.yml
+          @@ -86,11 +86,8 @@
+                     PROJECT_ID="tippmix-dev"
+           fi
+           # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
+-          echo "API_FOOTBALL_KEY=${{ '{{' }}} secrets.API_FOOTBALL_KEY {{ '}}' }}" > "cloud_functions/.env.${{ '{{' }}} PROJECT_ID {{ '}}' }}"
+           echo "Wrote cloud_functions/.env.${{ '{{' }}} PROJECT_ID {{ '}}' }}"
+-          firebase functions:config:set apifootball.key="$API_FOOTBALL_KEY" --project "$PROJECT_ID"
+           # a projekt runtime config lokális exportja az elemzéshez
+-          firebase functions:config:get --project "$PROJECT_ID" > cloud_functions/.runtimeconfig.json
+           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
