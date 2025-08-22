@@ -23,6 +23,7 @@ class ApiFootballService {
     String? country,
     String? league,
     DateTime? date,
+    bool includeH2H = false,
   }) async {
     final String? apiKey = dotenv.env['API_FOOTBALL_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
@@ -92,16 +93,19 @@ class ApiFootballService {
       for (final f in fixtures) {
         final fixtureMap = Map<String, dynamic>.from(f as Map);
         final base = _mapFixtureToOddsEvent(fixtureMap);
-        final oddsJson = await getOddsForFixture(
-          base.id,
-          season: base.season,
-        );
-        final h2h = MarketMapping.h2hFromApi(
-          oddsJson,
-          preferredBookmakerId: defaultBookmakerId,
-          homeName: base.homeTeam,
-          awayName: base.awayTeam,
-        );
+        OddsMarket? h2h;
+        if (includeH2H) {
+          final oddsJson = await getOddsForFixture(
+            base.id,
+            season: base.season,
+          );
+          h2h = MarketMapping.h2hFromApi(
+            oddsJson,
+            preferredBookmakerId: defaultBookmakerId,
+            homeName: base.homeTeam,
+            awayName: base.awayTeam,
+          );
+        }
         final bookmakers = <OddsBookmaker>[
           if (h2h != null)
             OddsBookmaker(
@@ -228,32 +232,31 @@ class ApiFootballService {
     if (cached != null && now.isBefore(cached.until)) {
       return cached.f;
     }
-    final future =
-        _fetchH2HForFixture(
-          fixtureId,
-          season: season,
-          homeName: homeName,
-          awayName: awayName,
-        ).then(
-          (value) {
-            if (value != null) {
-              // Csak sikeres eredményt cache-eljünk
-              _h2hCache[fixtureId] = _CachedH2H(
-                Future<OddsMarket?>.value(value),
-                DateTime.now().add(_h2hTtl),
-              );
-            } else {
-              // Üres eredményt ne tartsunk 60 mp-ig
-              _h2hCache.remove(fixtureId);
-            }
-            return value;
-          },
-          onError: (e) {
-            _h2hCache.remove(fixtureId);
-            throw e;
-          },
-        );
-    return future;
+    final future = _fetchH2HForFixture(
+      fixtureId,
+      season: season,
+      homeName: homeName,
+      awayName: awayName,
+    );
+    final wrapped = future.then(
+      (value) {
+        if (value != null) {
+          _h2hCache[fixtureId] = _CachedH2H(
+            Future<OddsMarket?>.value(value),
+            DateTime.now().add(_h2hTtl),
+          );
+        } else {
+          _h2hCache.remove(fixtureId);
+        }
+        return value;
+      },
+      onError: (e) {
+        _h2hCache.remove(fixtureId);
+        throw e;
+      },
+    );
+    _h2hCache[fixtureId] = _CachedH2H(wrapped, now.add(_h2hTtl));
+    return wrapped;
   }
 
   Future<OddsMarket?> _fetchH2HForFixture(
