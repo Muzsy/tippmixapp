@@ -34,16 +34,15 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.coin_trx = exports.onUserCreate = void 0;
-const functions = __importStar(require("firebase-functions"));
+const https_1 = require("firebase-functions/v2/https");
+const identity = __importStar(require("firebase-functions/v2/identity"));
 const firestore_1 = require("firebase-admin/firestore");
 const firebase_1 = require("./src/lib/firebase");
 /**
  * Automatically create a user document when a new Auth user is created.
  */
-exports.onUserCreate = functions
-    .region('europe-central2')
-    .auth.user()
-    .onCreate(async (user) => {
+exports.onUserCreate = identity.onUserCreated(async (event) => {
+    const user = event.data;
     const userRef = firebase_1.db.collection('users').doc(user.uid);
     await userRef.set({ createdAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
     const walletRef = firebase_1.db.doc(`users/${user.uid}/wallet`);
@@ -53,24 +52,24 @@ exports.onUserCreate = functions
  * HTTPS Callable function to handle coin transactions atomically.
  * Uses the authenticated user's UID rather than trusting a client-provided ID.
  */
-exports.coin_trx = functions
-    .region('europe-central2')
-    .https.onCall(async (data, context) => {
+exports.coin_trx = (0, https_1.onCall)(async (request) => {
+    const data = request.data;
+    const context = request;
     // Ensure the user is authenticated
     if (!context.auth || !context.auth.uid) {
-        throw new functions.https.HttpsError('unauthenticated', 'User must be signed in to perform coin transactions.');
+        throw new https_1.HttpsError('unauthenticated', 'User must be signed in to perform coin transactions.');
     }
     const userId = context.auth.uid;
     // Unpack and validate parameters
     const { amount, type, reason, transactionId } = data;
     if (typeof amount !== 'number' || amount <= 0) {
-        throw new functions.https.HttpsError('invalid-argument', 'Amount must be a positive number.');
+        throw new https_1.HttpsError('invalid-argument', 'Amount must be a positive number.');
     }
     if (type !== 'debit' && type !== 'credit') {
-        throw new functions.https.HttpsError('invalid-argument', 'Transaction type must be "debit" or "credit".');
+        throw new https_1.HttpsError('invalid-argument', 'Transaction type must be "debit" or "credit".');
     }
     if (!transactionId) {
-        throw new functions.https.HttpsError('invalid-argument', 'A valid transactionId is required.');
+        throw new https_1.HttpsError('invalid-argument', 'A valid transactionId is required.');
     }
     // Idempotencia: ledger primer kulcs a transactionId lesz
     const ledgerRef = firebase_1.db.doc(`users/${userId}/ledger/${transactionId}`);

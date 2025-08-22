@@ -7,8 +7,8 @@ Ez a dokumentum bemutatja, hogyan töltik be a Cloud Functions a nem érzékeny 
 - `env.settings.prod` – éles cron ütemezések, minden sport, magas kvóta küszöb.
 
 ## Betöltő
-A `functions/src/config.ts` először beolvassa a `.env` fájlt (titkok, `MODE`), majd összefésüli az `env.settings.${MODE}` tartalmával.
-A feltöltött `process.env` változókat `Config` néven exportálja a modulok számára.
+A `functions/src/config.ts` a környezetből olvassa a `MODE` értékét (a `.env` csak lokálisan használatos), majd összefésüli az `env.settings.${MODE}` tartalmával.
+A titkokat futásidőben a Google Secret Manager injektálja. A feltöltött `process.env` változókat `Config` néven exportálja a modulok számára.
 
 ## Cron változók
 

@@ -1,4 +1,4 @@
-version: "2025-08-11"
+version: "2025-08-26"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -62,7 +62,7 @@ Basic steps:
 3. Remove stale `cloud_functions/lib` artifacts.
 4. Install dependencies and build functions with `npm ci --prefix cloud_functions` and `npm run build --prefix cloud_functions`.
 5. Deploy Firestore rules from the root `firebase.rules`.
-6. Deploy Cloud Functions with explicit project selection.
+6. Deploy Cloud Functions with explicit project selection (secrets via Secret Manager; no `.env` or runtime config).
 7. Execute a Terraform no-op plan (`terraform init -backend=false && terraform validate && terraform plan`).
 
 See [README-ci.md](../../README-ci.md) for required GitHub Secrets.

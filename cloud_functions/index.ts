@@ -1,4 +1,4 @@
-import { setGlobalOptions } from 'firebase-functions/v2';
+import { setGlobalOptions } from 'firebase-functions/v2/options';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import { defineSecret } from 'firebase-functions/params';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
