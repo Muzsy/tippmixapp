@@ -7,8 +7,8 @@ This document explains how Cloud Functions load non-secret configuration values.
 - `env.settings.prod` – production cron schedules, all sports, high quota threshold.
 
 ## Loader
-`functions/src/config.ts` first loads secrets and `MODE` from `.env`, then merges `env.settings.${MODE}`.
-It re-exports the populated `process.env` as `Config` for other modules.
+`functions/src/config.ts` reads `MODE` from the environment (`.env` is only used locally), then merges `env.settings.${MODE}`.
+Secrets are injected from Google Secret Manager at runtime. The populated `process.env` is re-exported as `Config` for other modules.
 
 ## Cron variables
 

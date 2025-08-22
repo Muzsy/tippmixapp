@@ -26,7 +26,6 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     env:
       MODE: dev
-      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -86,11 +85,6 @@ jobs:
             PROJECT_ID="tippmix-dev"
           fi
           # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
-          echo "API_FOOTBALL_KEY=${API_FOOTBALL_KEY}" > "cloud_functions/.env.${PROJECT_ID}"
-          echo "Wrote cloud_functions/.env.${PROJECT_ID}"
-          firebase functions:config:set apifootball.key="$API_FOOTBALL_KEY" --project "$PROJECT_ID"
-          # a projekt runtime config lokális exportja az elemzéshez
-          firebase functions:config:get --project "$PROJECT_ID" > cloud_functions/.runtimeconfig.json
           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
 
       - name: Terraform no-op plan

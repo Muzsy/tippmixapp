@@ -1,4 +1,4 @@
-version: "2025-08-11"
+version: "2025-08-26"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -62,7 +62,7 @@ A `.github/workflows/deploy.yml` a `dev` és `main` branch-ekre érkező push es
 3. `cloud_functions/lib` maradék build artefaktok törlése.
 4. Függőségek telepítése és build futtatása: `npm ci --prefix cloud_functions` majd `npm run build --prefix cloud_functions`.
 5. Firestore rules deploy a gyökér `firebase.rules` fájlból.
-6. Cloud Functions deploy explicit projektválasztással.
+6. Cloud Functions deploy explicit projektválasztással (titkok Secret Managerből; nincs `.env` és `functions:config`).
 7. Terraform no-op plan futtatása (`terraform init -backend=false && terraform validate && terraform plan`).
 
 A szükséges GitHub Secret-eket lásd a [README-ci.md](../../README-ci.md) fájlban.

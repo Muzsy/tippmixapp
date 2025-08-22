@@ -1,10 +1,6 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { setGlobalOptions } from 'firebase-functions/v2';
 import { db } from './lib/firebase';
 import { CoinService } from './services/CoinService';
-
-// region default for v2
-setGlobalOptions({ region: 'europe-central2' });
 
 export const daily_bonus = onSchedule(
   { schedule: '5 0 * * *', timeZone: 'Europe/Budapest' },

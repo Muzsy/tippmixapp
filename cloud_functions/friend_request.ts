@@ -1,10 +1,6 @@
-import { setGlobalOptions } from 'firebase-functions/v2/options';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
 import { db } from './src/lib/firebase';
-
-// Gen 2 – mindenhol europe-central2
-setGlobalOptions({ region: 'europe-central2' });
 
 export const onFriendRequestAccepted = onDocumentUpdated(
   'relations/{uid}/friendRequests/{requestId}',
@@ -15,10 +11,11 @@ export const onFriendRequestAccepted = onDocumentUpdated(
       const toUid = after.toUid as string;
       const fromUid = after.fromUid as string;
       await db
-        .collection('notifications')
+        .collection('users')
         .doc(toUid)
-        .collection('n')
-        .add({
+        .collection('notifications')
+        .doc()
+        .set({
           type: 'friend',
           fromUid,
           createdAt: FieldValue.serverTimestamp(),
