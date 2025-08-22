@@ -1,12 +1,14 @@
-import * as functions from 'firebase-functions';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { setGlobalOptions } from 'firebase-functions/v2';
 import { db } from './lib/firebase';
 import { CoinService } from './services/CoinService';
 
-export const daily_bonus = functions
-  .region('europe-central2')
-  .pubsub.schedule('5 0 * * *')
-  .timeZone('Europe/Budapest')
-  .onRun(async () => {
+// region default for v2
+setGlobalOptions({ region: 'europe-central2' });
+
+export const daily_bonus = onSchedule(
+  { schedule: '5 0 * * *', timeZone: 'Europe/Budapest' },
+  async () => {
     const usersSnap = await db.collection('users').get();
     const bonusCoins = 50;
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -16,4 +18,5 @@ export const daily_bonus = functions
       const uid = doc.id;
       await new CoinService().credit(uid, bonusCoins, refId);
     }
-  });
+  }
+);

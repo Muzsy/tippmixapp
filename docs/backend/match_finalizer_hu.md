@@ -19,3 +19,4 @@ Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Felad
 Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
 A `firebase-functions` v2 `onMessagePublished` triggert használja, így nem szükséges a régi `GCLOUD_PROJECT` környezeti változó.
+Az `API_FOOTBALL_KEY` titok a Secret Managerből `defineSecret` segítségével kerül be és `process.env.API_FOOTBALL_KEY` néven érhető el.
