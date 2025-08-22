@@ -57,7 +57,7 @@ void main() {
         }),
       );
 
-      final res = await service.getOdds(sport: 'soccer');
+      final res = await service.getOdds(sport: 'soccer', includeH2H: true);
       expect(res.errorType, ApiErrorType.none);
       final event = res.data!.first;
       expect(event.homeTeam, 'Arsenal');
