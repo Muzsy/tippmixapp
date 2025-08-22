@@ -1,57 +1,85 @@
+import { createHash } from 'crypto';
 import { db } from '../lib/firebase';
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Transaction } from 'firebase-admin/firestore';
 
 export class CoinService {
-  /**
-   * Idempotens TIPP‑Coin jóváírás.
-   * @param uid felhasználó azonosító
-   * @param amount pozitív (nyeremény) vagy negatív (tétlevonás) összeg
-   * @param ticketId az érintett szelvény azonosítója – ledger primary key
-   */
-  async transact(uid: string, amount: number, ticketId: string, type: 'win' | 'bet'): Promise<void> {
+  private async writeLedger(
+    t: Transaction,
+    uid: string,
+    type: 'bet' | 'win' | 'bonus' | 'refund' | 'adjust',
+    amount: number,
+    before: number,
+    after: number,
+    refId: string,
+    source: string,
+  ) {
+    const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+    const checksum = createHash('sha1')
+      .update(`${uid}:${type}:${refId}:${amount}`)
+      .digest('hex');
+    t.set(
+      ledgerRef,
+      { type, amount, before, after, refId, source, checksum, createdAt: FieldValue.serverTimestamp() },
+      { merge: true },
+    );
+  }
+
+  private async transact(
+    uid: string,
+    amount: number,
+    refId: string,
+    type: 'bet' | 'win' | 'bonus' | 'refund' | 'adjust',
+    source: string,
+    t?: Transaction,
+    before?: number,
+  ) {
     const walletRef = db.doc(`users/${uid}/wallet`);
-    const ledgerRef = db.doc(`users/${uid}/ledger/${ticketId}`);
+    if (t) {
+      const beforeBal = before ?? ((await t.get(walletRef)).data()?.coins as number) ?? 0;
+      const after = beforeBal + amount;
+      t.set(
+        walletRef,
+        { coins: FieldValue.increment(amount), updatedAt: FieldValue.serverTimestamp() },
+        { merge: true },
+      );
+      await this.writeLedger(t, uid, type, amount, beforeBal, after, refId, source);
+      return;
+    }
 
     await db.runTransaction(async (tx) => {
-      const ledgerSnap = await tx.get(ledgerRef);
-      if (ledgerSnap.exists) {
-        // Idempotens: már jóváírva
-        return;
-      }
-
-      // Balance frissítés (wallet doksi létrehozása, ha hiányzik)
+      const snap = await tx.get(walletRef);
+      const beforeBal = (snap.data()?.coins as number) ?? 0;
+      const after = beforeBal + amount;
       tx.set(
         walletRef,
-        {
-          coins: FieldValue.increment(amount),
-          updatedAt: FieldValue.serverTimestamp(),
-        },
+        { coins: FieldValue.increment(amount), updatedAt: FieldValue.serverTimestamp() },
         { merge: true },
       );
-
-      // Ledger entry az új SoT alatt
-      tx.set(
-        ledgerRef,
-        {
-          userId: uid,
-          amount,
-          type,
-          refId: ticketId,
-          source: 'coin_trx',
-          createdAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
+      await this.writeLedger(tx, uid, type, amount, beforeBal, after, refId, source);
     });
   }
 
-  /** Convenience wrap – nyeremény jóváírás */
-  credit(uid: string, amount: number, ticketId: string) {
-    return this.transact(uid, amount, ticketId, 'win');
+  credit(
+    uid: string,
+    amount: number,
+    refId: string,
+    source = 'coin_trx',
+    t?: Transaction,
+    before?: number,
+  ) {
+    const type = source === 'coin_trx' ? 'win' : 'bonus';
+    return this.transact(uid, Math.abs(amount), refId, type, source, t, before);
   }
 
-  /** Convenience wrap – tét levonás */
-  debit(uid: string, amount: number, ticketId: string) {
-    return this.transact(uid, -Math.abs(amount), ticketId, 'bet');
+  debit(
+    uid: string,
+    amount: number,
+    refId: string,
+    source = 'coin_trx',
+    t?: Transaction,
+    before?: number,
+  ) {
+    const type = source === 'coin_trx' ? 'bet' : 'adjust';
+    return this.transact(uid, -Math.abs(amount), refId, type, source, t, before);
   }
 }

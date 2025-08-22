@@ -79,6 +79,31 @@ TicketModel {
 - Elérési út: `users/{userId}/tickets/{ticketId}`
 - Státusz később frissül a meccsek lezárása után
 
+## 🎁 Bónusz szabályok és állapot
+
+A globális szabályokat a `system_configs/bonus_rules` dokumentum tartalmazza.
+
+```json
+BonusRules {
+  version: number,
+  killSwitch: boolean,
+  signup?: { enabled: boolean, amount: number, once: boolean },
+  daily?: { enabled: boolean, amount: number, cooldownHours: number, maxPerDay?: number }
+}
+```
+
+Felhasználónkénti bónusz állapot a `users/{uid}/bonus_state` dokumentumban tárolódik.
+
+```json
+BonusState {
+  signupClaimed?: boolean,
+  lastDailyClaimAt?: timestamp,
+  dailyCooldownUntil?: timestamp,
+  lastAppliedVersion?: number,
+  lock?: { active: boolean, expiresAt: timestamp | null }
+}
+```
+
 ## 🔜 Tervezett modellek
 
 - `BadgeModel`: badge-szabályok és megszerzett címek
@@ -92,3 +117,4 @@ TicketModel {
 ## 📘 Változásnapló
 
 - 2025-08-20: Frissítve a wallet és ledger duplairás, onCreate inicializálás dokumentációja.
+- 2025-08-22: Hozzáadva a BonusRules és BonusState modellek a Bonus Engine-hez.

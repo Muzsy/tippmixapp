@@ -1,0 +1,36 @@
+{
+  "abVariant": "A",
+  "daily": {
+    "amount": 5,
+    "cooldownHours": 24,
+    "enabled": true,
+    "maxPerDay": 1
+  },
+  "endAt": null,
+  "killSwitch": false,
+  "priority": [
+    "signup",
+    "daily",
+    "streak"
+  ],
+  "signup": {
+    "amount": 50,
+    "enabled": true,
+    "once": true
+  },
+  "startAt": null,
+  "streak": {
+    "amounts": [
+      5,
+      15,
+      40
+    ],
+    "enabled": false,
+    "thresholds": [
+      3,
+      7,
+      14
+    ]
+  },
+  "version": 3
+}

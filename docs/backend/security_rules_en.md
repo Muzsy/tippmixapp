@@ -23,6 +23,7 @@ users/{uid}
   wallet
   ledger/{entryId}
   tickets/{ticketId}
+  bonus_state
 wallets/{uid} (legacy)
 coin_logs/{logId} (legacy)
 tickets/{ticketId} (legacy read-only)
@@ -67,6 +68,14 @@ service cloud.firestore {
       allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+    match /system_configs/{key} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /users/{userId}/bonus_state {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if false;
     }
@@ -148,3 +157,4 @@ service cloud.firestore {
 - 2025-08-06: Corrected `/tickets/{ticketId}` field whitelist to cover all client-sent keys.
 - 2025-08-20: Added user-centric wallet & ledger rules and dual-write notes.
 - 2025-08-20: Disabled writes to legacy `wallets` and `coin_logs` paths.
+- 2025-08-22: Added read-only rules for `system_configs/bonus_rules` and `users/{uid}/bonus_state`.
