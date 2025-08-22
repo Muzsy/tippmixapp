@@ -8,7 +8,7 @@ import 'package:tippmixapp/services/api_football_service.dart';
 void main() {
   test('maps Match Winner bet to h2h market and team names', () async {
     dotenv.testLoad(fileInput: 'API_FOOTBALL_KEY=test');
-    final mockResponse = {
+    final fixturesResponse = {
       'response': [
         {
           'fixture': {'id': 1, 'date': '2024-08-20T12:00:00Z'},
@@ -17,10 +17,16 @@ void main() {
             'home': {'name': 'Arsenal'},
             'away': {'name': 'Chelsea'},
           },
+        },
+      ],
+    };
+    final oddsResponse = {
+      'response': [
+        {
           'bookmakers': [
             {
-              'id': 1,
-              'name': 'Bet365',
+              'id': 8,
+              'name': 'DemoBook',
               'bets': [
                 {
                   'name': 'Match Winner',
@@ -37,10 +43,16 @@ void main() {
       ],
     };
     final client = MockClient((request) async {
-      return http.Response(jsonEncode(mockResponse), 200);
+      if (request.url.path.contains('/fixtures')) {
+        return http.Response(jsonEncode(fixturesResponse), 200);
+      }
+      if (request.url.path.contains('/odds')) {
+        return http.Response(jsonEncode(oddsResponse), 200);
+      }
+      return http.Response('Not Found', 404);
     });
     final service = ApiFootballService(client);
-    final result = await service.getOdds(sport: 'soccer');
+    final result = await service.getOdds(sport: 'soccer', includeH2H: true);
     final event = result.data!.first;
     expect(event.countryName, 'England');
     expect(event.leagueName, 'Premier League');
