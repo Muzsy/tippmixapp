@@ -89,6 +89,8 @@ jobs:
           echo "API_FOOTBALL_KEY=${API_FOOTBALL_KEY}" > "cloud_functions/.env.${PROJECT_ID}"
           echo "Wrote cloud_functions/.env.${PROJECT_ID}"
           firebase functions:config:set runtime.api_football_key="$API_FOOTBALL_KEY" --project "$PROJECT_ID"
+          # a projekt runtime config lokális exportja az elemzéshez
+          firebase functions:config:get --project "$PROJECT_ID" > cloud_functions/.runtimeconfig.json
           firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
 
       - name: Terraform no-op plan
