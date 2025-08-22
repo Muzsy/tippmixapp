@@ -1,0 +1,219 @@
+# Codex Canvas Yaml Guide szerinti séma
+# Ez a YAML a "canvases/firestore_functions_step3_bonus_engine.md" vásznat tölti ki.
+
+canvas: "canvases/firestore_functions_step3_bonus_engine.md"
+version: 1
+steps:
+  - name: CoinService – checksum mező hozzáadása minden ledger bejegyzéshez
+    description: |
+      Bővítjük a CoinService-t: a ledger sorokba bekerül a determinisztikus `checksum` mező
+      (SHA1(uid:type:refId:amount)). A meglévő before/after logika változatlan.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/src/services/CoinService.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/src/services/CoinService.ts
+          +++ tippmixapp-main/cloud_functions/src/services/CoinService.ts
+          @@
+          +import { createHash } from 'crypto';
+          @@
+          -  private async writeLedger(
+          +  private async writeLedger(
+               uid: string,
+               type: 'bet' | 'win' | 'bonus' | 'refund' | 'adjust',
+               amount: number,
+               before: number,
+               after: number,
+               refId: string,
+               source: string,
+             ) {
+               const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+          -    await ledgerRef.set({ type, amount, before, after, refId, source, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+          +    const checksum = createHash('sha1').update(`${uid}:${type}:${refId}:${amount}`).digest('hex');
+          +    await ledgerRef.set({ type, amount, before, after, refId, source, checksum, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+             }
+
+  - name: Bonus config – system_configs/bonus_rules seed fájl (mintadokumentum)
+    description: |
+      Hozzáadunk egy mintakonfigurációt a Bonus Engine-hez JSON formában. Ez futtatáskor nem íródik be
+      automatikusan Firestore-ba, de CI/ops hivatkozásként szolgál és lokális seed-hez használható.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/config/bonus_rules.sample.json
+        type: file
+        content: |
+          {
+            "version": 3,
+            "killSwitch": false,
+            "signup": { "enabled": true, "amount": 50, "once": true },
+            "daily": { "enabled": true, "amount": 5, "cooldownHours": 24, "maxPerDay": 1 },
+            "streak": { "enabled": false, "thresholds": [3, 7, 14], "amounts": [5, 15, 40] },
+            "startAt": null,
+            "endAt": null,
+            "priority": ["signup", "daily", "streak"],
+            "abVariant": "A"
+          }
+
+  - name: claim_daily_bonus – új v2 callable function
+    description: |
+      Új v2 `onCall` CF: daily bonus igénylése. Először beolvassa a `system_configs/bonus_rules`-t,
+      majd tranzakcióban lockolja a `users/{uid}/bonus_state`-et, ellenőrzi a jogosultságot/cooldownt,
+      jóváír a `CoinService.credit()`-tel (refId=`bonus:daily:YYYY-MM-DD`), frissíti a `bonus_state` mezőket,
+      végül feloldja a lockot. Idempotencia a refId és a ledger kulcsán biztosított.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/src/bonus_claim.ts
+        type: file
+        content: |
+          import { onCall, HttpsError } from 'firebase-functions/v2/https';
+          import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+          import { db } from './lib/firebase';
+          import { CoinService } from './services/CoinService';
+          
+          type BonusRules = {
+            killSwitch: boolean;
+            version: number;
+            daily?: { enabled: boolean; amount: number; cooldownHours: number; maxPerDay?: number };
+          };
+          
+          function ymdUtc(d = new Date()): string {
+            const iso = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())).toISOString().slice(0,10);
+            return iso.replace(/-/g, '');
+          }
+          
+          export const claim_daily_bonus = onCall(async (request) => {
+            const ctx: any = request;
+            if (!ctx.auth?.uid) throw new HttpsError('unauthenticated', 'Sign in required');
+            const uid = ctx.auth.uid as string;
+            
+            const rulesSnap = await db.doc('system_configs/bonus_rules').get();
+            if (!rulesSnap.exists) throw new HttpsError('failed-precondition', 'Bonus rules missing');
+            const rules = rulesSnap.data() as BonusRules;
+            if (rules.killSwitch) throw new HttpsError('failed-precondition', 'Bonus disabled');
+            if (!rules.daily?.enabled) throw new HttpsError('failed-precondition', 'Daily bonus disabled');
+            const amount = rules.daily.amount;
+            const cooldownH = rules.daily.cooldownHours ?? 24;
+            const now = new Date();
+            const todayKey = ymdUtc(now);
+            const refId = `bonus:daily:${todayKey}`;
+            
+            const bonusStateRef = db.doc(`users/${uid}/bonus_state`);
+            const walletRef = db.doc(`users/${uid}/wallet`);
+            
+            await db.runTransaction(async (t) => {
+              const [stateDoc, walletDoc] = await Promise.all([t.get(bonusStateRef), t.get(walletRef)]);
+              const state = stateDoc.exists ? stateDoc.data() as any : {};
+              const lock = state.lock ?? { active: false, expiresAt: null };
+              if (lock.active) throw new HttpsError('aborted', 'Bonus is locked, try again');
+              const nowTs = Timestamp.now();
+              const cooldownUntil: Timestamp | null = state.dailyCooldownUntil ?? null;
+              if (cooldownUntil && nowTs.toMillis() < cooldownUntil.toMillis()) {
+                throw new HttpsError('failed-precondition', 'Cooldown');
+              }
+              // Lock on
+              t.set(bonusStateRef, { lock: { active: true, expiresAt: Timestamp.fromMillis(nowTs.toMillis() + 60000) } }, { merge: true });
+              const before = (walletDoc.get('coins') as number) ?? 0;
+              const svc = new CoinService();
+              await svc.credit(uid, amount, refId, 'daily_bonus', t, before);
+              const nextCooldown = Timestamp.fromMillis(nowTs.toMillis() + cooldownH * 3600 * 1000);
+              t.set(bonusStateRef, {
+                lastDailyClaimAt: nowTs,
+                dailyCooldownUntil: nextCooldown,
+                lastAppliedVersion: rules.version,
+                lock: { active: false, expiresAt: null }
+              }, { merge: true });
+            });
+            return { ok: true, amount };
+          });
+
+  - name: index.ts – claim_daily_bonus export
+    description: |
+      Az új callable regisztrálása az indexben, hogy a deploy felvegye.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/index.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/index.ts
+          +++ tippmixapp-main/cloud_functions/index.ts
+          @@
+           export { onUserCreate, coin_trx } from './coin_trx.logic';
+           export { log_coin } from './log_coin';
+           export { onFriendRequestAccepted } from './friend_request';
+           export { daily_bonus } from './src/daily_bonus';
+          +export { claim_daily_bonus } from './src/bonus_claim';
+
+  - name: onUserCreate – signup bonus a szabály szerint (once)
+    description: |
+      Az onUserCreate v2 trigger bővítése: ha a `system_configs/bonus_rules.signup.enabled` igaz, és `once=true`,
+      akkor jóváírja a signup bónuszt ledgerrel (`refId='bonus:signup'`), és megjelöli a `bonus_state.signupClaimed=true` mezőt.
+    outputs:
+      - path: tippmixapp-main/cloud_functions/coin_trx.logic.ts
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/cloud_functions/coin_trx.logic.ts
+          +++ tippmixapp-main/cloud_functions/coin_trx.logic.ts
+          @@
+-          export const onUserCreate = onUserCreated(async (event) => {
++          export const onUserCreate = onUserCreated(async (event) => {
+             const user = event.data;
+             const userRef = db.collection('users').doc(user.uid);
+             await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
+             const walletRef = db.doc(`users/${user.uid}/wallet`);
+             await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
++            // Bonus Engine – optional signup bonus
++            const rulesSnap = await db.doc('system_configs/bonus_rules').get();
++            if (rulesSnap.exists) {
++              const rules: any = rulesSnap.data();
++              const signup = rules?.signup;
++              if (signup?.enabled === true) {
++                const bonusStateRef = db.doc(`users/${user.uid}/bonus_state`);
++                await db.runTransaction(async (t) => {
++                  const st = await t.get(bonusStateRef);
++                  const already = st.exists && st.get('signupClaimed') === true;
++                  if (signup.once === true && already) return;
++                  const beforeSnap = await t.get(walletRef);
++                  const before = (beforeSnap.get('coins') as number) ?? 0;
++                  const svc = new CoinService();
++                  await svc.credit(user.uid, Number(signup.amount || 0), 'bonus:signup', 'signup_bonus', t, before);
++                  t.set(bonusStateRef, { signupClaimed: true, lastAppliedVersion: rules.version ?? 1 }, { merge: true });
++                });
++              }
++            }
+           });
+
+  - name: Firestore Security Rules – bonus_state és bonus_rules védelem
+    description: |
+      A bonus_state kliens‑write tiltása, a system_configs/bonus_rules kliens‑oldali írás tiltása.
+    outputs:
+      - path: tippmixapp-main/firestore.rules
+        type: unified_diff
+        content: |
+          --- tippmixapp-main/firestore.rules
+          +++ tippmixapp-main/firestore.rules
+          @@
+           service cloud.firestore {
+             match /databases/{db}/documents {
++              match /system_configs/{key} {
++                allow read: if true;
++                allow write: if false;
++              }
+               match /users/{uid} {
+                 allow read, write: if request.auth != null && request.auth.uid == uid;
+                 match /wallet {
+                   allow read: if request.auth != null && request.auth.uid == uid;
+                   allow write: if false;
+                 }
+                 match /ledger/{entryId} {
+                   allow read: if request.auth != null && request.auth.uid == uid;
+                   allow write: if false;
+                 }
++                match /bonus_state {
++                  allow read: if request.auth != null && request.auth.uid == uid;
++                  allow write: if false;
++                }
+               }
+             }
+           }
+
+notes:
+  - "A canvasban részletezett Bonus Engine elvek szerint dolgozunk; a patch-ek nem sértik a meglévő funkciókat."
+  - "A claim_daily_bonus callable nem igényel külső secretet; a rules/docok Firestore-ban szerkeszthetők deploy nélkül."
+  - "A CoinService változtatás visszafelé kompatibilis: régi ledger sorokon hiányozhat a checksum mező, ez elfogadható."
