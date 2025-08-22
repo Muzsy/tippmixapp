@@ -2,6 +2,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import * as identity from 'firebase-functions/v2/identity';
 import { FieldValue } from 'firebase-admin/firestore';
 import { db } from './src/lib/firebase';
+import { CoinService } from './src/services/CoinService';
 
 /**
  * Automatically create a user document when a new Auth user is created.
@@ -12,6 +13,25 @@ export const onUserCreate = (identity as any).onUserCreated(async (event: any) =
   await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
   const walletRef = db.doc(`users/${user.uid}/wallet`);
   await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  // Bonus Engine – optional signup bonus
+  const rulesSnap = await db.doc('system_configs/bonus_rules').get();
+  if (rulesSnap.exists) {
+    const rules: any = rulesSnap.data();
+    const signup = rules?.signup;
+    if (signup?.enabled === true) {
+      const bonusStateRef = db.doc(`users/${user.uid}/bonus_state`);
+      await db.runTransaction(async (t) => {
+        const st = await t.get(bonusStateRef);
+        const already = st.exists && st.get('signupClaimed') === true;
+        if (signup.once === true && already) return;
+        const beforeSnap = await t.get(walletRef);
+        const before = (beforeSnap.get('coins') as number) ?? 0;
+        const svc = new CoinService();
+        await svc.credit(user.uid, Number(signup.amount || 0), 'bonus:signup', 'signup_bonus', t, before);
+        t.set(bonusStateRef, { signupClaimed: true, lastAppliedVersion: rules.version ?? 1 }, { merge: true });
+      });
+    }
+  }
 });
 
 interface CoinTrxData {

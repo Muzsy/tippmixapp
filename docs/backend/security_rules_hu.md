@@ -23,6 +23,7 @@ users/{uid}
   wallet
   ledger/{entryId}
   tickets/{ticketId}
+  bonus_state
 wallets/{uid} (legacy)
 coin_logs/{logId} (legacy)
 tickets/{ticketId} (legacy csak olvasás)
@@ -67,6 +68,14 @@ service cloud.firestore {
       allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+    match /system_configs/{key} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /users/{userId}/bonus_state {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if false;
     }
@@ -148,3 +157,4 @@ service cloud.firestore {
 - 2025-08-06: Javítva a `/tickets/{ticketId}` mezőlista, hogy a kliens összes kulcsa engedélyezett legyen.
 - 2025-08-20: Hozzáadva user-centrikus wallet és ledger szabályok, duplairás.
 - 2025-08-20: Letiltva a `wallets` és `coin_logs` legacy írása.
+- 2025-08-22: Hozzáadva a `system_configs/bonus_rules` és `users/{uid}/bonus_state` csak olvasható szabályai.

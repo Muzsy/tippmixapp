@@ -7,6 +7,7 @@ export { onUserCreate, coin_trx } from './coin_trx.logic';
 export { log_coin } from './log_coin';
 export { onFriendRequestAccepted } from './friend_request';
 export { daily_bonus } from './src/daily_bonus';
+export { claim_daily_bonus } from './src/bonus_claim';
 
 // Global options for all v2 functions
 setGlobalOptions({ region: 'europe-central2' });

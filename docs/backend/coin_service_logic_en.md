@@ -45,7 +45,8 @@ This keeps the client free of any direct wallet writes.
 ### Daily bonus credit
 
 - The scheduled `daily_bonus` Cloud Function grants **50** coins to each user.
-- Credit is executed via `CoinService.credit(uid, 50, daily_bonus_YYYYMMDD)` where the `refId` is based on the day to ensure idempotency.
+- Users can also claim a bonus via the `claim_daily_bonus` callable, which reads `system_configs/bonus_rules` and credits the wallet with `CoinService.credit(uid, amount, refId, 'daily_bonus', t, before)`.
+- Credit operations use a deterministic `refId` (`bonus:daily:YYYYMMDD`) to ensure idempotency.
 
 ---
 
@@ -76,6 +77,7 @@ TippCoinLog {
     type: 'bet' | 'win'
     refId: string
     source: 'coin_trx' | 'log_coin'
+    checksum: string // SHA1(uid:type:refId:amount)
     createdAt: timestamp
   ```
 - Legacy path `wallets/*` remains read-only; `coin_logs/*` has been removed
@@ -89,6 +91,7 @@ TippCoinLog {
 - `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
 - Wallet balance stored at `users/{uid}/wallet.coins` is treated as source of truth and updated by Cloud Functions.
 - `coin_logs` collection removed; per-user ledger is the sole transaction log.
+- Signup bonus and daily bonus claims are governed by `system_configs/bonus_rules`.
 
 ---
 
@@ -104,3 +107,4 @@ TippCoinLog {
 - 2025-08-20: Updated to single SoT (`users/{uid}/wallet` + `users/{uid}/ledger`) and removed legacy writes.
 - 2025-08-20: Removed client-side wallet writes; `coin_trx` handles all balance changes.
 - 2025-08-21: Added daily bonus credit via CoinService with deterministic `refId`.
+- 2025-08-22: Introduced ledger `checksum` field and callable `claim_daily_bonus`; signup bonus handled on user creation.

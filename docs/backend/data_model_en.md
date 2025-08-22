@@ -79,6 +79,31 @@ TicketModel {
 - Stored under `users/{userId}/tickets/{ticketId}`
 - Status updated after match finalization
 
+## 🎁 Bonus rules & state
+
+Global bonus configuration is stored in `system_configs/bonus_rules`.
+
+```json
+BonusRules {
+  version: number,
+  killSwitch: boolean,
+  signup?: { enabled: boolean, amount: number, once: boolean },
+  daily?: { enabled: boolean, amount: number, cooldownHours: number, maxPerDay?: number }
+}
+```
+
+Per-user bonus progress lives at `users/{uid}/bonus_state`.
+
+```json
+BonusState {
+  signupClaimed?: boolean,
+  lastDailyClaimAt?: timestamp,
+  dailyCooldownUntil?: timestamp,
+  lastAppliedVersion?: number,
+  lock?: { active: boolean, expiresAt: timestamp | null }
+}
+```
+
 ## 🔜 Planned Models
 
 - `BadgeModel`: for achievements and badge rules
@@ -92,3 +117,4 @@ TicketModel {
 ## 📘 Changelog
 
 - 2025-08-20: Documented dual-write wallet/ledger paths and onCreate seeding.
+- 2025-08-22: Added BonusRules and BonusState models for Bonus Engine.

@@ -6,6 +6,11 @@ service cloud.firestore {
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
 
+    match /system_configs/{key} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
     match /coin_logs/{logId} {
       // Kliens csak a saját logjait olvashatja; írás nem engedélyezett.
@@ -85,6 +90,12 @@ service cloud.firestore {
         allow read:   if signedIn() && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
         allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
         allow delete: if false;
+      }
+
+      /* --- bonus state doc --- */
+      match /bonus_state {
+        allow read: if isOwner(userId);
+        allow write: if false;
       }
     }
 

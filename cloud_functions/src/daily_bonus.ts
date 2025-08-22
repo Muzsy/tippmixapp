@@ -12,7 +12,7 @@ export const daily_bonus = onSchedule(
 
     for (const doc of usersSnap.docs) {
       const uid = doc.id;
-      await new CoinService().credit(uid, bonusCoins, refId);
+      await new CoinService().credit(uid, bonusCoins, refId, 'daily_bonus');
     }
   }
 );
