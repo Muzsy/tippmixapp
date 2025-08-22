@@ -17,6 +17,7 @@ class FakeApiFootballService extends ApiFootballService {
     String? country,
     String? league,
     DateTime? date,
+    bool includeH2H = false,
   }) async {
     callCount++;
     return response;
