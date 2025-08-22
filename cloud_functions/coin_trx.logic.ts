@@ -1,6 +1,7 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import * as identity from 'firebase-functions/v2/identity';
 import { FieldValue } from 'firebase-admin/firestore';
+import * as logger from 'firebase-functions/logger';
 import { db } from './src/lib/firebase';
 import { CoinService } from './src/services/CoinService';
 
@@ -85,26 +86,36 @@ export const coin_trx = onCall(async (request) => {
     return { success: true };
   }
 
-  // Transaction: wallet + ledger (SoT)
-  await db.runTransaction(async (tx) => {
-    const userRef = db.collection('users').doc(userId);
-    const walletRef = db.doc(`users/${userId}/wallet`);
-    const walletSnap = await tx.get(walletRef);
-    const before = (walletSnap.data()?.coins as number) ?? 0;
-    const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
-    const after = before + delta;
+  try {
+    let after = 0;
+    // Transaction: wallet + ledger (SoT)
+    await db.runTransaction(async (tx) => {
+      const userRef = db.collection('users').doc(userId);
+      const walletRef = db.doc(`users/${userId}/wallet`);
+      const walletSnap = await tx.get(walletRef);
+      const before = (walletSnap.data()?.coins as number) ?? 0;
+      const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
+      after = before + delta;
 
-    tx.set(walletRef, { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
-    tx.set(ledgerRef, {
-      type: type === 'debit' ? 'bet' : 'bonus',
-      amount: delta,
-      before,
-      after,
-      refId: transactionId,
-      source: 'coin_trx',
-      createdAt: FieldValue.serverTimestamp(),
-    }, { merge: true });
-  });
-
-  return { success: true };
+      tx.set(walletRef, { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+      tx.set(
+        ledgerRef,
+        {
+          type: type === 'debit' ? 'bet' : 'bonus',
+          amount: delta,
+          before,
+          after,
+          refId: transactionId,
+          source: 'coin_trx',
+          createdAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
+    });
+    logger.info('coin_trx.success', { uid: userId, type, amount, transactionId, after });
+    return { success: true, balance: after };
+  } catch (e: any) {
+    logger.error('coin_trx.error', { uid: context?.auth?.uid, type, amount, transactionId, error: e?.message || String(e) });
+    throw new HttpsError('internal', e?.message || 'Unknown error');
+  }
 });

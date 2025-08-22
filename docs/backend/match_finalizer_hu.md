@@ -1,4 +1,4 @@
-version: "2025-10-01"
+version: "2025-10-02"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -20,3 +20,4 @@ Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
 A `firebase-functions` v2 `onMessagePublished` triggert használja, így nem szükséges a régi `GCLOUD_PROJECT` környezeti változó.
 Az `API_FOOTBALL_KEY` titok a Secret Managerből `defineSecret` segítségével kerül be és `process.env.API_FOOTBALL_KEY` néven érhető el.
+`retry: true` engedélyezve van, és strukturált logolást használ a `firebase-functions/logger`.

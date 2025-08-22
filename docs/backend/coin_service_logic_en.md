@@ -47,6 +47,7 @@ This keeps the client free of any direct wallet writes.
 - The scheduled `daily_bonus` Cloud Function grants **50** coins to each user.
 - Users can also claim a bonus via the `claim_daily_bonus` callable, which reads `system_configs/bonus_rules` and credits the wallet with `CoinService.credit(uid, amount, refId, 'daily_bonus', t, before)`.
 - Credit operations use a deterministic `refId` (`bonus:daily:YYYYMMDD`) to ensure idempotency.
+- The scheduled job paginates users in batches of 200 and logs progress via `firebase-functions/logger`.
 
 ---
 
@@ -55,6 +56,7 @@ This keeps the client free of any direct wallet writes.
 - TippCoin changes must be done server-side via Cloud Functions.
 - Client code never modifies `users/{uid}/wallet` or `users/{uid}/ledger` directly.
 - Each transaction is logged in the ledger with an idempotent `refId`.
+- Composite Firestore index: `collectionGroup('ledger')` on `(type ASC, createdAt DESC)`.
 
 ```json
 TippCoinLog {
@@ -108,3 +110,4 @@ TippCoinLog {
 - 2025-08-20: Removed client-side wallet writes; `coin_trx` handles all balance changes.
 - 2025-08-21: Added daily bonus credit via CoinService with deterministic `refId`.
 - 2025-08-22: Introduced ledger `checksum` field and callable `claim_daily_bonus`; signup bonus handled on user creation.
+- 2025-10-02: Added paginated daily bonus with structured logging and ledger type+createdAt index.

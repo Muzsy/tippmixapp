@@ -48,6 +48,7 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 - A `daily_bonus` időzített Cloud Function felhasználónként **50** coint ír jóvá.
 - A felhasználók a `claim_daily_bonus` callable függvénnyel is igényelhetik a napi bónuszt, amely beolvassa a `system_configs/bonus_rules` dokumentumot, és `CoinService.credit(uid, amount, refId, 'daily_bonus', t, before)` hívással könyvel.
 - A jóváírás determinisztikus `refId` (`bonus:daily:YYYYMMDD`) alapján történik az idempotencia érdekében.
+- Az időzített feladat 200‑as lapokban iterál a felhasználókon, és `firebase-functions/logger` segítségével naplózza az előrehaladást.
 
 ---
 
@@ -56,6 +57,7 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 - TippCoin módosítás kizárólag szerveroldalon, Cloud Functionökön keresztül történhet.
 - A kliens nem módosítja közvetlenül a `users/{uid}/wallet` vagy `users/{uid}/ledger` útvonalakat.
 - Minden tranzakció legyen naplózva idempotens `refId` mezővel.
+- Összetett Firestore index: `collectionGroup('ledger')` `(type ASC, createdAt DESC)` mezőkre.
 ```json
 TippCoinLog {
   type: "stake" | "reward",
@@ -109,3 +111,4 @@ TippCoinLog {
 - 2025-08-20: Kivezetve a kliens oldali wallet írás; a `coin_trx` végzi az összes egyenlegváltozást.
 - 2025-08-21: Dokumentálva a napi bónusz jóváírás CoinService használatával és dátum alapú `refId`-val.
 - 2025-08-22: Bevezetve a ledger `checksum` mező és a `claim_daily_bonus` callable; regisztrációs bónusz CF-ből kezelve.
+- 2025-10-02: Hozzáadva a lapozott napi bónusz strukturált logolással és a ledger `type+createdAt` index.

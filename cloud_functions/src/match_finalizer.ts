@@ -1,6 +1,7 @@
 import { ApiFootballResultProvider, findFixtureIdByMeta } from './services/ApiFootballResultProvider';
 import { calcTicketPayout } from './tickets/payout';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import * as logger from 'firebase-functions/logger';
 import { db } from './lib/firebase';
 import { CoinService } from './services/CoinService';
 import { getEvaluator, NormalizedResult } from './evaluators';
@@ -44,47 +45,47 @@ interface PubSubMessage {
 type JobType = 'kickoff-tracker' | 'result-poller' | 'final-sweep';
 
 export const match_finalizer = async (message: PubSubMessage): Promise<void> => {
-  console.log('[match_finalizer] received raw message');
-  try { console.log('[match_finalizer] payload:', JSON.stringify(message?.data || {})); } catch {}
-  const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
-  const { job }: { job: JobType } = JSON.parse(payloadStr);
+  logger.info('match_finalizer.handle', { hasData: !!message?.data, attrKeys: Object.keys(message.attributes || {}) });
+  try {
+    const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
+    const { job }: { job: JobType } = JSON.parse(payloadStr);
 
   // 1) Collect pending tickets across all users via collectionGroup
   // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
-  const ticketsSnap = await db
-    .collectionGroup('tickets')
-    .where('status', '==', 'pending')
-    .limit(200)
-    .get();
+    const ticketsSnap = await db
+      .collectionGroup('tickets')
+      .where('status', '==', 'pending')
+      .limit(200)
+      .get();
 
-  if (ticketsSnap.empty) {
-    console.log('[match_finalizer] no pending tickets – exit');
-    return;
-  }
-  console.log('[match_finalizer] found %d pending tickets', ticketsSnap.size);
+    if (ticketsSnap.empty) {
+      logger.info('match_finalizer.no_pending');
+      return;
+    }
+    logger.info('match_finalizer.pending_tickets', { count: ticketsSnap.size });
 
-  // Gather unique eventIds from tips[] arrays
-  const eventIdSet = new Set<string>();
-  for (const doc of ticketsSnap.docs) {
-    const tips = (doc.get('tips') as any[]) || [];
-    for (const t of tips) {
-      if (t && typeof t.eventId === 'string' && t.eventId.trim()) {
-        eventIdSet.add(t.eventId.trim());
+    // Gather unique eventIds from tips[] arrays
+    const eventIdSet = new Set<string>();
+    for (const doc of ticketsSnap.docs) {
+      const tips = (doc.get('tips') as any[]) || [];
+      for (const t of tips) {
+        if (t && typeof t.eventId === 'string' && t.eventId.trim()) {
+          eventIdSet.add(t.eventId.trim());
+        }
       }
     }
-  }
 
-  const eventIds = Array.from(eventIdSet);
-  console.log(`[match_finalizer] found ${eventIds.length} unique eventIds`);
+    const eventIds = Array.from(eventIdSet);
+    logger.info('match_finalizer.unique_events', { count: eventIds.length });
 
-  // 2) Fetch scores
-  let scores;
-  try {
-    scores = await provider.getScores(eventIds);
-  } catch (err) {
-    console.error('[match_finalizer] ResultProvider error', err);
-    throw err; // message will be retried / DLQ
-  }
+    // 2) Fetch scores
+    let scores;
+    try {
+      scores = await provider.getScores(eventIds);
+    } catch (err) {
+      logger.error('match_finalizer.result_provider_error', { error: err });
+      throw err; // message will be retried / DLQ
+    }
 
   // 3) Map of results with normalized fields
   const resultMap = new Map<string, NormalizedResult>();
@@ -121,7 +122,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
             pendingTipUpdates.push({ index: ti, fixtureId: Number(found.id) });
           }
         } catch (e) {
-          console.warn('[match_finalizer] fixture resolver failed', e);
+          logger.warn('match_finalizer.fixture_resolver_failed', { error: e });
         }
       }
       const pick = (t?.outcome ?? '').trim();
@@ -173,13 +174,17 @@ export const match_finalizer = async (message: PubSubMessage): Promise<void> => 
         try {
           await new CoinService().credit(String(uid), coins, snap.id);
         } catch (e) {
-          console.error('[match_finalizer] wallet credit failed', e);
+          logger.error('match_finalizer.wallet_credit_failed', { error: e, uid: String(uid), ticketId: snap.id });
         }
       }
     }
   }
 
-  // zárás után:
-  console.log('[match_finalizer] finalize done for batch');
+    // zárás után:
+    logger.info('match_finalizer.finalize_done');
+  } catch (e: any) {
+    logger.error('match_finalizer.handle_error', { error: e?.message || String(e) });
+    throw e;
+  }
 };
 
