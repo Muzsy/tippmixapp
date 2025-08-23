@@ -118,3 +118,4 @@
 | 2025-08-20   | @codex-bot      | TOC refreshed after Firestore dual-write docs update                           |
 | 2025-10-02   | @codex-bot      | TOC refreshed after Firestore functions ops docs update                        |
 | 2025-10-03   | @codex-bot      | TOC refreshed after finalizer hardening docs update                            |
+| 2025-10-05   | @codex-bot      | TOC refreshed after CI deploy MODE fix docs update                              |

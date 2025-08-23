@@ -1,4 +1,4 @@
-version: "2025-08-26"
+version: "2025-10-05"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -55,15 +55,16 @@ Alap lépések:
 
 ## 🚀 Backend deploy workflow
 
-A `.github/workflows/deploy.yml` a `dev` és `main` branch-ekre érkező push esetén fut:
+A `.github/workflows/deploy.yml` a `dev` és `main` branch-ekre érkező push esetén vagy manuális `workflow_dispatch` futtatásával indul:
 
-1. Node 20 beállítása npm cache-sel.
-2. `firebase-tools@^13` telepítése.
-3. `cloud_functions/lib` maradék build artefaktok törlése.
-4. Függőségek telepítése és build futtatása: `npm ci --prefix cloud_functions` majd `npm run build --prefix cloud_functions`.
-5. Firestore rules deploy a gyökér `firebase.rules` fájlból.
-6. Cloud Functions deploy explicit projektválasztással (titkok Secret Managerből; nincs `.env` és `functions:config`).
-7. Terraform no-op plan futtatása (`terraform init -backend=false && terraform validate && terraform plan`).
+1. Meghatározza a deploy `MODE` változót a branch alapján (`main` → `prod`, egyéb → `dev`) vagy a `workflow_dispatch` `target` inputja alapján, és beírja a `$GITHUB_ENV`-be.
+2. Node 20 beállítása npm cache-sel.
+3. `firebase-tools@^13` telepítése.
+4. `cloud_functions/lib` maradék build artefaktok törlése.
+5. Függőségek telepítése és build futtatása: `npm ci --prefix cloud_functions` majd `npm run build --prefix cloud_functions`.
+6. Firestore rules deploy a gyökér `firebase.rules` fájlból.
+7. Cloud Functions deploy explicit projektválasztással (titkok Secret Managerből; nincs `.env` és `functions:config`).
+8. Terraform no-op plan futtatása (`terraform init -backend=false && terraform validate && terraform plan`).
 
 A szükséges GitHub Secret-eket lásd a [README-ci.md](../../README-ci.md) fájlban.
 

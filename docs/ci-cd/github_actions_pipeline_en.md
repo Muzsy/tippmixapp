@@ -1,4 +1,4 @@
-version: "2025-08-26"
+version: "2025-10-05"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -55,15 +55,16 @@ Basic steps:
 
 ## 🚀 Backend deploy workflow
 
-`.github/workflows/deploy.yml` runs on pushes to the `dev` and `main` branches:
+`.github/workflows/deploy.yml` runs on pushes to the `dev` and `main` branches or via manual `workflow_dispatch`:
 
-1. Set up Node 20 with npm cache.
-2. Install `firebase-tools@^13`.
-3. Remove stale `cloud_functions/lib` artifacts.
-4. Install dependencies and build functions with `npm ci --prefix cloud_functions` and `npm run build --prefix cloud_functions`.
-5. Deploy Firestore rules from the root `firebase.rules`.
-6. Deploy Cloud Functions with explicit project selection (secrets via Secret Manager; no `.env` or runtime config).
-7. Execute a Terraform no-op plan (`terraform init -backend=false && terraform validate && terraform plan`).
+1. Determine deploy `MODE` from branch (`main` → `prod`, others → `dev`) or `workflow_dispatch` `target`, writing the result to `$GITHUB_ENV`.
+2. Set up Node 20 with npm cache.
+3. Install `firebase-tools@^13`.
+4. Remove stale `cloud_functions/lib` artifacts.
+5. Install dependencies and build functions with `npm ci --prefix cloud_functions` and `npm run build --prefix cloud_functions`.
+6. Deploy Firestore rules from the root `firebase.rules`.
+7. Deploy Cloud Functions with explicit project selection (secrets via Secret Manager; no `.env` or runtime config).
+8. Execute a Terraform no-op plan (`terraform init -backend=false && terraform validate && terraform plan`).
 
 See [README-ci.md](../../README-ci.md) for required GitHub Secrets.
 
