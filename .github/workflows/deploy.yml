@@ -24,10 +24,19 @@ jobs:
     runs-on: ubuntu-latest
     # csak saját branch push esetén fusson (nem PR)
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
-    env:
-      MODE: dev
     steps:
       - uses: actions/checkout@v4
+
+      - name: Determine MODE (branch or input)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TARGET="${{ inputs.target }}"
+          else
+            BR="${GITHUB_REF##*/}"
+            if [ "$BR" = "main" ]; then TARGET="prod"; else TARGET="dev"; fi
+          fi
+          echo "MODE=$TARGET" >> $GITHUB_ENV
+          echo "MODE=$TARGET"
 
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
