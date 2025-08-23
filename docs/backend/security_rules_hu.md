@@ -10,7 +10,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 - A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
-- A TippCoin egyenlegek a `users/{uid}/wallet` alatt tárolódnak; a `wallets/*` és `coin_logs/*` útvonalak csak olvashatók
+- A TippCoin egyenlegek a `users/{uid}/wallet` alatt tárolódnak; a `wallets/*` és `coin_logs/*` útvonalak kivezetve
 
 ---
 
@@ -24,8 +24,6 @@ users/{uid}
   ledger/{entryId}
   tickets/{ticketId}
   bonus_state
-wallets/{uid} (legacy)
-coin_logs/{logId} (legacy)
 tickets/{ticketId} (legacy csak olvasás)
 public_feed/{postId}
   reports/{reportId}
@@ -45,21 +43,6 @@ service cloud.firestore {
     match /users/{userId} {
       allow read:  if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    match /coin_logs/{logId} {
-      allow create, update, delete: if false;
-      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
-    }
-
-    match /wallets/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
-
-      match /ledger/{ticketId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if false;
-      }
     }
 
     // user-centrikus wallet és ledger (SoT)
@@ -158,3 +141,4 @@ service cloud.firestore {
 - 2025-08-20: Hozzáadva user-centrikus wallet és ledger szabályok, duplairás.
 - 2025-08-20: Letiltva a `wallets` és `coin_logs` legacy írása.
 - 2025-08-22: Hozzáadva a `system_configs/bonus_rules` és `users/{uid}/bonus_state` csak olvasható szabályai.
+- 2025-08-23: Eltávolítva a `coin_logs` és `wallets/*` legacy szabályblokkok.

@@ -11,13 +11,6 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
-    match /coin_logs/{logId} {
-      // Kliens csak a saját logjait olvashatja; írás nem engedélyezett.
-      allow read: if isOwner(resource.data.userId);
-      allow create, update, delete: if false;
-    }
-
     /*  ─── Felhasználói beállítások alkollekció ───  */
     match /users/{userId}/settings/{settingId} {
       allow read, write: if isOwner(userId);
@@ -95,17 +88,6 @@ service cloud.firestore {
       /* --- bonus state doc --- */
       match /bonus_state {
         allow read: if isOwner(userId);
-        allow write: if false;
-      }
-    }
-
-    match /wallets/{userId} {
-      // LEGACY: csak olvasás maradhat; írni kizárólag CF/Admin SDK
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
-
-      match /ledger/{ticketId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
         allow write: if false;
       }
     }

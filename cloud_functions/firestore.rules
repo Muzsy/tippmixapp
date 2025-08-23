@@ -6,13 +6,6 @@ service cloud.firestore {
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
 
-    /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
-    match /coin_logs/{logId} {
-      // V2: írni már nem lehet ide; olvasás a saját logokra engedett marad
-      allow create, update, delete: if false;
-      allow read:   if isOwner(resource.data.userId);
-    }
-
     /* --- tickets gyökérkollekció (csak olvasás) --- */
     match /tickets/{ticketId} {
       // V3: új jegyek nem a gyökérben jönnek létre
@@ -112,17 +105,6 @@ service cloud.firestore {
         allow read:   if signedIn() && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
         allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
         allow delete: if false;
-      }
-    }
-
-    // Wallets (LEGACY): csak olvasás, write tiltva – SoT az users/{uid}/wallet
-    match /wallets/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
-
-      match /ledger/{ticketId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if false;
       }
     }
 
