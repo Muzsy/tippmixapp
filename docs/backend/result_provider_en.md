@@ -7,7 +7,7 @@ Adapter around API-Football fixtures endpoint. In production it performs live HT
 - Falls back to local JSON when `MODE=dev` and mocking enabled.
 - Throws on missing `API_FOOTBALL_KEY` or non-200 responses.
 - Treats `FT/AET/PEN` statuses as completed and returns `winner` (home/away/draw).
-- Provides `findFixtureIdByMeta(eventName,startTime)` helper to resolve a `fixtureId` from team names and kickoff time when only metadata is available.
+- Provides `findFixtureIdByMeta(eventName,startTime)` helper to resolve a `fixtureId` from team names and kickoff time when only metadata is available. It queries `GET /fixtures?date=YYYY-MM-DD&search=<team>` for both home and away names and returns the match with a case-insensitive name/date match.
 
 ## Testing
 - Unit test covers mock mode with `fixtures_sample.json`.
