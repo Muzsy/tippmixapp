@@ -5,12 +5,16 @@ Kollekció: `users/{uid}/tickets/{ticketId}`
 
 | Mező | Típus | Kötelező | Megjegyzés |
 |---|---|---|---|
+| id | string | igen | Ticket dokumentum ID |
 | userId | string | igen | Ticket tulajdonosa |
-| createdAt | timestamp | igen | Szerver idő |
-| status | string | igen | `pending|won|lost|void` |
-| stake | number | igen | TippCoin tét |
-| payout | number | igen | Záráskor számolt |
 | tips | array<Tip> | igen | Lásd alább |
+| stake | number | igen | TippCoin tét |
+| totalOdd | number | igen | Oddsok szorzata (2 tizedes) |
+| potentialWin | number | igen | `stake * totalOdd` |
+| createdAt | timestamp | igen | Szerver idő |
+| updatedAt | timestamp | igen | Szerver idő |
+| status | string | igen | `pending|won|lost|void` |
+| payout | number | nem | Záráskor számolt |
 | processedAt | timestamp | nem | Finalizer állítja |
 
 **Tip**
@@ -26,11 +30,8 @@ Kollekció: `users/{uid}/tickets/{ticketId}`
 ## Példadokumentum
 ```json
 {
+  "id": "abc123",
   "userId": "uid_123",
-  "createdAt": {"_seconds": 1700000000, "_nanoseconds": 0},
-  "status": "pending",
-  "stake": 100,
-  "payout": 0,
   "tips": [
     {
       "fixtureId": "120934",
@@ -42,7 +43,14 @@ Kollekció: `users/{uid}/tickets/{ticketId}`
       "odds": 1.85,
       "kickoff": {"_seconds": 1700003600, "_nanoseconds": 0}
     }
-  ]
+  ],
+  "stake": 100,
+  "totalOdd": 1.85,
+  "potentialWin": 185,
+  "createdAt": {"_seconds": 1700000000, "_nanoseconds": 0},
+  "updatedAt": {"_seconds": 1700000000, "_nanoseconds": 0},
+  "status": "pending",
+  "payout": 0
 }
 ```
 
