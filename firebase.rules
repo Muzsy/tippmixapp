@@ -122,6 +122,18 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    /* --- users/{userId}/tickets alkollekció --- */
+    match /users/{userId}/tickets/{ticketId} {
+      // Olvasás: a saját szelvényeidet láthatod
+      allow read: if isOwner(userId);
+      // Létrehozás: csak a saját nevedben és csak kezdeti 'pending' státusszal
+      allow create: if isOwner(userId)
+        && request.resource.data.userId == userId
+        && request.resource.data.status == 'pending';
+      // Módosítás/törlés: kliensről tiltott (Admin SDK/CF végzi)
+      allow update, delete: if false;
+    }
+
     /* ——— relations (followers & friends) ——— */
     match /relations/{uid} {
       match /followers/{followerUid} {
