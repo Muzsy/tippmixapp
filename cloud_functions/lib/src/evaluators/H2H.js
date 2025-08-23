@@ -9,16 +9,20 @@ class H2HEvaluator {
         if (!r || !r.completed)
             return 'pending';
         // Current data model stores selection as team name or 'Draw'.
-        const sel = (tip.selection || '').trim();
-        const winner = (r.winner || '').trim();
+        const norm = (s) => (s || '').trim().toLowerCase();
+        const sel = norm(tip.selection);
+        const winner = norm(r.winner || '');
         if (!winner) {
             if (!r.scores)
                 return 'pending';
             const { home, away } = r.scores;
-            const computed = home > away ? (r.home_team || 'HOME')
-                : away > home ? (r.away_team || 'AWAY')
-                    : 'Draw';
-            return computed === sel ? 'won' : (computed === 'Draw' && sel === 'Draw' ? 'won' : 'lost');
+            const compRaw = home > away ? (r.home_team || 'home')
+                : away > home ? (r.away_team || 'away')
+                    : 'draw';
+            const computed = norm(compRaw);
+            if (computed === 'draw' && sel === 'draw')
+                return 'won';
+            return computed === sel ? 'won' : 'lost';
         }
         return winner === sel ? 'won' : 'lost';
     }

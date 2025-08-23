@@ -5,6 +5,16 @@ service cloud.firestore {
     /* ——— SEGÉDFÜGGVÉNYEK ——— */
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+    // ÚJ: kliens oldali ticket create ellenőrzéshez
+    function isValidTicketCreate(data) {
+      // Kötelező: ownerId == saját uid és kezdeti státusz 'pending'
+      return data.ownerId == request.auth.uid
+             && data.status == 'pending';
+    }
+    // ÚJ: olvasásnál védelem – csak a saját ticket olvasható
+    function canReadTicket(resourceData) {
+      return signedIn() && resourceData.ownerId == request.auth.uid;
+    }
 
     match /system_configs/{key} {
       allow read: if true;
@@ -102,10 +112,14 @@ service cloud.firestore {
       allow write: if false; // Only via CF (Admin SDK)
     }
 
-    /* --- tickets gyökérkollekció: create tiltás --- */
+    /* --- tickets gyökérkollekció --- */
     match /tickets/{ticketId} {
-      allow read: if signedIn();
-      allow create, update, delete: if false;
+      // Olvasás: csak a saját szelvény olvasható
+      allow read: if canReadTicket(resource.data);
+      // Létrehozás: csak saját névben, csak pending státusszal
+      allow create: if signedIn() && isValidTicketCreate(request.resource.data);
+      // Módosítás/törlés: tilos kliensről (Admin SDK/CF kezeli)
+      allow update, delete: if false;
     }
 
     /* ——— relations (followers & friends) ——— */

@@ -96,12 +96,43 @@ class ApiFootballResultProvider {
 }
 exports.ApiFootballResultProvider = ApiFootballResultProvider;
 async function findFixtureIdByMeta(params) {
-    const [home, away] = params.eventName.split(' - ').map(s => s?.trim()).filter(Boolean);
+    const [home, away] = (params.eventName || '')
+        .split(' - ')
+        .map((s) => s?.trim())
+        .filter(Boolean);
     if (!home || !away)
         return null;
-    const date = params.startTime.slice(0, 10); // YYYY-MM-DD
-    // Példa: GET /fixtures?date=YYYY-MM-DD&team=... (vagy search endpoint a bevezetett logika szerint)
-    // Itt a projekt meglévő fetch utilját használjuk, és a válaszból a (home,away,start) egyezést keressük.
-    // A pontos implementáció a szolgáltató végpontjaihoz igazodik.
-    return null; // helykitöltő: a tényleges végpont-hívás a projekt utils szerint kerül megírásra
+    const date = (params.startTime || '').slice(0, 10); // YYYY-MM-DD
+    const apiKey = (process.env.API_FOOTBALL_KEY || functions.config().apifootball?.key) ?? '';
+    if (!apiKey || !date)
+        return null;
+    const base = 'https://v3.football.api-sports.io';
+    async function searchByTeam(teamName) {
+        const url = `${base}/fixtures?date=${encodeURIComponent(date)}&search=${encodeURIComponent(teamName)}`;
+        const res = await fetch(url, {
+            headers: { 'x-rapidapi-key': apiKey, 'x-apisports-key': apiKey },
+        });
+        if (!res.ok)
+            return [];
+        const json = await res.json().catch(() => null);
+        return (json?.response || []);
+    }
+    // Keresés mindkét csapatnévre, majd metával pontosítunk
+    const [hCand, aCand] = await Promise.all([searchByTeam(home), searchByTeam(away)]);
+    const candidates = [...hCand, ...aCand];
+    // Pontos egyezés: ugyanaz a nap, egyező home/away (case-insensitive, trim)
+    const norm = (s) => (s || '').trim().toLowerCase();
+    const match = candidates.find((c) => {
+        const f = c?.fixture;
+        const t = c?.teams;
+        if (!f || !t)
+            return false;
+        const d = (f.date || '').slice(0, 10);
+        return (d === date &&
+            (norm(t.home?.name) === norm(home) || norm(t.home?.name).includes(norm(home))) &&
+            (norm(t.away?.name) === norm(away) || norm(t.away?.name).includes(norm(away))));
+    });
+    if (match?.fixture?.id)
+        return { id: Number(match.fixture.id) };
+    return null;
 }
