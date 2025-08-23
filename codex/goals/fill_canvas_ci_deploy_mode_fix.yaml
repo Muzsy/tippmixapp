@@ -1,0 +1,86 @@
+version: 1
+name: "Tippmixapp – CI/CD deploy MODE fix"
+references:
+  - canvas: "Codex Canvas — Tippmixapp CI/CD deploy MODE fix"
+changes:
+  - path: .github/workflows/deploy.yml
+    diff: |
+      --- a/.github/workflows/deploy.yml
+      +++ b/.github/workflows/deploy.yml
+      @@ -24,10 +24,18 @@
+           runs-on: ubuntu-latest
+           # csak saját branch push esetén fusson (nem PR)
+           if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+      -    env:
+      -      MODE: dev
+           steps:
+             - uses: actions/checkout@v4
+      +      - name: Determine MODE (branch or input)
+      +        run: |
+      +          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+      +            TARGET="${{ inputs.target }}"
+      +          else
+      +            BR="${GITHUB_REF##*/}"
+      +            if [ "$BR" = "main" ]; then TARGET="prod"; else TARGET="dev"; fi
+      +          fi
+      +          echo "MODE=$TARGET" >> $GITHUB_ENV
+      +          echo "MODE=$TARGET"
+      
+             - name: Set up Node.js 20
+               uses: actions/setup-node@v4
+               with:
+                 node-version: 20
+                 cache: 'npm'
+                 cache-dependency-path: |
+                   cloud_functions/package-lock.json
+      
+             - name: Install firebase-tools (pinned major)
+               run: npm i -g firebase-tools@^13
+      
+             - name: Clean stale build artifacts
+               run: rm -rf cloud_functions/lib
+      
+             - name: Install deps & build functions
+               run: |
+                 npm ci --prefix cloud_functions
+                 npm run build --prefix cloud_functions
+      
+             # 1) ADC (Application Default Credentials) beállítása a SA JSON-ból
+             - name: Google Auth (ADC)
+               uses: google-github-actions/auth@v2
+               with:
+                 credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      
+             # 2) (Opció) gcloud felrakása és projekt beállítása – a Firebase CLI is ezt fogja látni
+             - name: Setup gcloud
+               uses: google-github-actions/setup-gcloud@v2
+               with:
+                 version: '>= 470.0.0'
+             - name: Set gcloud project
+               run: |
+                 if [ "$MODE" = "prod" ]; then
+                   gcloud config set core/project tippmix-prod
+                 else
+                   gcloud config set core/project tippmix-dev
+                 fi
+                 gcloud auth list
+      
+             - name: Firebase deploy – Firestore rules
+               run: |
+                 if [ "$MODE" = "prod" ]; then
+                   PROJECT_ID="tippmix-prod"
+                 else
+                   PROJECT_ID="tippmix-dev"
+                 fi
+                 firebase deploy --only firestore:rules --project "$PROJECT_ID" --non-interactive
+      
+             - name: Firebase deploy (dev/main)
+               run: |
+                 # Biztosítsuk, hogy mindig explicit projektet adunk meg
+                 if [ "$MODE" = "prod" ]; then
+                   PROJECT_ID="tippmix-prod"
+                 else
+                   PROJECT_ID="tippmix-dev"
+                 fi
+                 # Non-interactive mód kötelező CI-ben; ADC-t már beállította a google-github-actions/auth
+                 firebase deploy --only functions --project "$PROJECT_ID" --non-interactive
