@@ -1,0 +1,40 @@
+meta:
+  canvas: canvases/onusercreate_wallet_fix.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: cloud_functions/src/coin_trx.logic.ts
+      patch: |
+        --- a/cloud_functions/src/coin_trx.logic.ts
+        +++ b/cloud_functions/src/coin_trx.logic.ts
+        @@ -48,7 +48,9 @@
+         export const onUserCreate = functions.auth.user().onCreate(async (user) => {
+           const uid = user.uid;
+           const userRef = db.collection('users').doc(uid);
+        -  const walletRef = db.doc(`users/${uid}/wallet`);
+        +  // wallet is a single document under the user → fix doc() path
+        +  // Firestore requires even number of components → add fixed docId "main"
+        +  const walletRef = db.collection('users').doc(uid).collection('wallet').doc('main');
+         
+           await db.runTransaction(async (t) => {
+             const userSnap = await t.get(userRef);
+        @@ -59,7 +61,11 @@
+               });
+             }
+         
+        -    t.set(walletRef, { coins: 50, updatedAt: FieldValue.serverTimestamp() });
+        +    t.set(walletRef, {
+        +      coins: 50,
+        +      updatedAt: FieldValue.serverTimestamp()
+        +    });
+        +
+           });
+         });
+  - run: |
+      set -euo pipefail
+      pushd cloud_functions
+      npm ci
+      npm run build
+      popd
+      echo "✅ onUserCreate wallet path javítva. Deploy után az új usereknek létrejön a wallet doksi és a signup bonus is lefut."
