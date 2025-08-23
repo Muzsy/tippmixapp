@@ -1,0 +1,39 @@
+meta:
+  canvas: CF-Auth-Trigger-Fix—onUserCreate-v1.md
+  priority: P1
+
+steps:
+  - patch_file:
+      target: cloud_functions/coin_trx.logic.ts
+      patch: |
+        *** Begin Patch
+        *** Update File: cloud_functions/coin_trx.logic.ts
+        @@
+        -import { onCall, HttpsError } from 'firebase-functions/v2/https';
+        -import * as identity from 'firebase-functions/v2/identity';
+        +import { onCall, HttpsError } from 'firebase-functions/v2/https';
+        +import * as functions from 'firebase-functions';
+        @@
+        -/**
+        - * Automatically create a user document when a new Auth user is created.
+        - */
+        -export const onUserCreate = (identity as any).onUserCreated(async (event: any) => {
+        -  const user = event.data;
+        +/**
+        + * Automatically create a user document when a new Auth user is created.
+        + * Note: v2 identity.onUserCreated is not available; use v1 Auth trigger alongside v2 functions.
+        + */
+        +export const onUserCreate = functions.auth.user().onCreate(async (user) => {
+        *** End Patch
+
+  - run: |
+      cd cloud_functions
+      npm ci
+      npm run build
+
+  - run: |
+      if grep -R "identity.onUserCreated" lib/ ; then
+        echo "ERROR: identity.onUserCreated still present in build" && exit 1
+      else
+        echo "OK: identity.onUserCreated not found in build"
+      fi

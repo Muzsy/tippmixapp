@@ -37,7 +37,9 @@ exports.coin_trx = exports.onUserCreate = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const identity = __importStar(require("firebase-functions/v2/identity"));
 const firestore_1 = require("firebase-admin/firestore");
+const logger = __importStar(require("firebase-functions/logger"));
 const firebase_1 = require("./src/lib/firebase");
+const CoinService_1 = require("./src/services/CoinService");
 /**
  * Automatically create a user document when a new Auth user is created.
  */
@@ -47,6 +49,26 @@ exports.onUserCreate = identity.onUserCreated(async (event) => {
     await userRef.set({ createdAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
     const walletRef = firebase_1.db.doc(`users/${user.uid}/wallet`);
     await walletRef.set({ coins: 50, updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
+    // Bonus Engine – optional signup bonus
+    const rulesSnap = await firebase_1.db.doc('system_configs/bonus_rules').get();
+    if (rulesSnap.exists) {
+        const rules = rulesSnap.data();
+        const signup = rules?.signup;
+        if (signup?.enabled === true) {
+            const bonusStateRef = firebase_1.db.doc(`users/${user.uid}/bonus_state`);
+            await firebase_1.db.runTransaction(async (t) => {
+                const st = await t.get(bonusStateRef);
+                const already = st.exists && st.get('signupClaimed') === true;
+                if (signup.once === true && already)
+                    return;
+                const beforeSnap = await t.get(walletRef);
+                const before = beforeSnap.get('coins') ?? 0;
+                const svc = new CoinService_1.CoinService();
+                await svc.credit(user.uid, Number(signup.amount || 0), 'bonus:signup', 'signup_bonus', t, before);
+                t.set(bonusStateRef, { signupClaimed: true, lastAppliedVersion: rules.version ?? 1 }, { merge: true });
+            });
+        }
+    }
 });
 /**
  * HTTPS Callable function to handle coin transactions atomically.
@@ -77,24 +99,32 @@ exports.coin_trx = (0, https_1.onCall)(async (request) => {
     if (existingLedger.exists) {
         return { success: true };
     }
-    // Transaction: wallet + ledger (SoT)
-    await firebase_1.db.runTransaction(async (tx) => {
-        const userRef = firebase_1.db.collection('users').doc(userId);
-        const walletRef = firebase_1.db.doc(`users/${userId}/wallet`);
-        const walletSnap = await tx.get(walletRef);
-        const before = walletSnap.data()?.coins ?? 0;
-        const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
-        const after = before + delta;
-        tx.set(walletRef, { coins: firestore_1.FieldValue.increment(delta), updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
-        tx.set(ledgerRef, {
-            type: type === 'debit' ? 'bet' : 'bonus',
-            amount: delta,
-            before,
-            after,
-            refId: transactionId,
-            source: 'coin_trx',
-            createdAt: firestore_1.FieldValue.serverTimestamp(),
-        }, { merge: true });
-    });
-    return { success: true };
+    try {
+        let after = 0;
+        // Transaction: wallet + ledger (SoT)
+        await firebase_1.db.runTransaction(async (tx) => {
+            const userRef = firebase_1.db.collection('users').doc(userId);
+            const walletRef = firebase_1.db.doc(`users/${userId}/wallet`);
+            const walletSnap = await tx.get(walletRef);
+            const before = walletSnap.data()?.coins ?? 0;
+            const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
+            after = before + delta;
+            tx.set(walletRef, { coins: firestore_1.FieldValue.increment(delta), updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
+            tx.set(ledgerRef, {
+                type: type === 'debit' ? 'bet' : 'bonus',
+                amount: delta,
+                before,
+                after,
+                refId: transactionId,
+                source: 'coin_trx',
+                createdAt: firestore_1.FieldValue.serverTimestamp(),
+            }, { merge: true });
+        });
+        logger.info('coin_trx.success', { uid: userId, type, amount, transactionId, after });
+        return { success: true, balance: after };
+    }
+    catch (e) {
+        logger.error('coin_trx.error', { uid: context?.auth?.uid, type, amount, transactionId, error: e?.message || String(e) });
+        throw new https_1.HttpsError('internal', e?.message || 'Unknown error');
+    }
 });
