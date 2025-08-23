@@ -53,7 +53,17 @@ Object.defineProperty(exports, "claim_daily_bonus", { enumerable: true, get: fun
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 // Gen2 Pub/Sub trigger (topic: result-check, region via global options)
 exports.match_finalizer = (0, pubsub_1.onMessagePublished)({ topic: 'result-check', secrets: [global_1.API_FOOTBALL_KEY], retry: true }, async (event) => {
-    logger.info('match_finalizer.start');
+    // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
+    const hasMsg = !!event?.data?.message;
+    logger.info('match_finalizer.start', {
+        hasMsg,
+        hasData: !!event?.data?.message?.data,
+        attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+    });
+    if (!hasMsg) {
+        logger.warn('match_finalizer.no_message');
+        return;
+    }
     const msg = {
         data: event.data.message?.data,
         attributes: event.data.message?.attributes,
@@ -63,7 +73,6 @@ exports.match_finalizer = (0, pubsub_1.onMessagePublished)({ topic: 'result-chec
         logger.info('match_finalizer.done', { result });
     }
     catch (e) {
-        // Fallback: if handler threw, let platform retry
         logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
         throw e;
     }

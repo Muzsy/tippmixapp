@@ -1,5 +1,7 @@
 import './global';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
+import type { CloudEvent } from 'firebase-functions/v2';
+import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
 import { API_FOOTBALL_KEY } from './global';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
@@ -16,8 +18,18 @@ export { claim_daily_bonus } from './src/bonus_claim';
 // Gen2 Pub/Sub trigger (topic: result-check, region via global options)
 export const match_finalizer = onMessagePublished(
   { topic: 'result-check', secrets: [API_FOOTBALL_KEY], retry: true },
-  async (event) => {
-    logger.info('match_finalizer.start');
+  async (event: CloudEvent<MessagePublishedData>) => {
+    // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
+    const hasMsg = !!event?.data?.message;
+    logger.info('match_finalizer.start', {
+      hasMsg,
+      hasData: !!event?.data?.message?.data,
+      attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+    });
+    if (!hasMsg) {
+      logger.warn('match_finalizer.no_message');
+      return;
+    }
     const msg = {
       data: event.data.message?.data,
       attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
@@ -26,7 +38,6 @@ export const match_finalizer = onMessagePublished(
       const result = await matchFinalizerHandler(msg as any);
       logger.info('match_finalizer.done', { result });
     } catch (e: any) {
-      // Fallback: if handler threw, let platform retry
       logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
       throw e;
     }
