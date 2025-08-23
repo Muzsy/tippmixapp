@@ -59,11 +59,12 @@ exports.match_finalizer = (0, pubsub_1.onMessagePublished)({ topic: 'result-chec
         attributes: event.data.message?.attributes,
     };
     try {
-        await (0, match_finalizer_1.match_finalizer)(msg);
-        logger.info('match_finalizer.success');
+        const result = await (0, match_finalizer_1.match_finalizer)(msg);
+        logger.info('match_finalizer.done', { result });
     }
     catch (e) {
-        logger.error('match_finalizer.error', { error: e?.message || String(e) });
-        throw e; // engedjük a retry-t
+        // Fallback: if handler threw, let platform retry
+        logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
+        throw e;
     }
 });

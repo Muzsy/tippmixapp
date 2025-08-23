@@ -1,4 +1,4 @@
-version: "2025-08-05"
+version: "2025-10-03"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -9,7 +9,7 @@ Terraform-managed Google Pub/Sub topics for the result evaluation pipeline.
 ## Topics
 
 - `result-check`: primary topic for match finalizer results, 7-day retention.
-- `result-check-dlq`: dead-letter queue for failed messages, 7-day retention.
+- `match_finalizer-dlq`: dead-letter queue for failed finalizer messages, 7-day retention.
 
 ## Scheduler Jobs
 

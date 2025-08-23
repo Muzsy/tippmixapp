@@ -23,11 +23,12 @@ export const match_finalizer = onMessagePublished(
       attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
     };
     try {
-      await matchFinalizerHandler(msg as any);
-      logger.info('match_finalizer.success');
+      const result = await matchFinalizerHandler(msg as any);
+      logger.info('match_finalizer.done', { result });
     } catch (e: any) {
-      logger.error('match_finalizer.error', { error: e?.message || String(e) });
-      throw e; // engedjük a retry-t
+      // Fallback: if handler threw, let platform retry
+      logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
+      throw e;
     }
   }
 );

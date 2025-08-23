@@ -35,6 +35,12 @@ export class CoinService {
   ) {
     const walletRef = db.doc(`users/${uid}/wallet`);
     if (t) {
+      const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+      // Idempotency: skip if ledger entry already exists
+      const existing = await t.get(ledgerRef);
+      if (existing.exists) {
+        return; // idempotent no-op
+      }
       const beforeBal = before ?? ((await t.get(walletRef)).data()?.coins as number) ?? 0;
       const after = beforeBal + amount;
       t.set(
@@ -47,6 +53,11 @@ export class CoinService {
     }
 
     await db.runTransaction(async (tx) => {
+      const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+      const existing = await tx.get(ledgerRef);
+      if (existing.exists) {
+        return; // idempotent no-op
+      }
       const snap = await tx.get(walletRef);
       const beforeBal = (snap.data()?.coins as number) ?? 0;
       const after = beforeBal + amount;

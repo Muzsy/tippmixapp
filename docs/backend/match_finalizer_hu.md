@@ -1,4 +1,4 @@
-version: "2025-10-02"
+version: "2025-10-03"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -7,14 +7,15 @@ depends_on: []
 Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Feladatai:
 
 1. A payloadból kiolvassa a feladat típusát (`kickoff-tracker`, `result-poller`, `final-sweep`).
-2. A függvény a függő szelvényeket `collectionGroup('tickets')` lekérdezéssel gyűjti az összes felhasználó alatti `/tickets/{uid}/tickets/{ticketId}` struktúrából, és a `fixtureId ?? eventId` értékeket a `tips[]` tömbből olvassa. Ha hiányzik vagy nem egyértelmű az ID, a `findFixtureIdByMeta` metakereső csapatnevek és kezdési idő alapján feloldja, majd visszaírja a `fixtureId`-t a tippre.
-3. A `ResultProvider` visszaadja a `winner` mezőt, és az `FT/AET/PEN` státuszokat lezártnak tekinti.
-4. A tippek kiértékelését a bővíthető Market Evaluator registry végzi (`marketKey`, `outcome`, `odds` mezők), és ha egy sem `pending`, egyetlen Firestore **tranzakcióban**:
+2. Lapozva dolgozza fel a függő szelvényeket (`FINALIZER_BATCH_SIZE`, `FINALIZER_MAX_BATCHES`) `orderBy('__name__') + startAfter(lastDoc)` segítségével. Ha marad még feldolgozatlan tétel, új üzenetet publikál a `RESULT_TOPIC` témára `attempt=0` attribútummal.
+3. Minden batchnél a `tips[]` tömbből gyűjti a `fixtureId ?? eventId` értékeket. Hiányzó ID esetén a `findFixtureIdByMeta` metakereső csapatnév és kezdési idő alapján feloldja, majd visszaírja a `fixtureId`-t.
+4. A `ResultProvider` visszaadja a `winner` mezőt, és az `FT/AET/PEN` státuszokat lezártnak tekinti.
+5. A tippek kiértékelését a bővíthető Market Evaluator registry végzi (`marketKey`, `outcome`, `odds` mezők), és ha egy sem `pending`, egyetlen Firestore **tranzakcióban**:
    - kiszámolja a kifizetést a `calcTicketPayout` függvénnyel,
    - frissíti a ticket `status`, `payout`, `processedAt` mezőit.
-   A ticket tulajdonosa a `userId` mezőből (fallback: útvonal) kerül meghatározásra, és a pozitív kifizetés a `CoinService.credit(uid, amount, ticketId)` hívással kerül jóváírásra a `wallets/{uid}` ág alatt, idempotens `ledger/{ticketId}` bejegyzéssel.
-   Az idempotenciát a `processedAt` mező és a wallet ledger védi.
-5. Következő lépésként `notifications/{uid}` dokumentumot hoz létre és FCM push-t küld.
+   A ticket tulajdonosa a `userId` mezőből (fallback: útvonal) kerül meghatározásra, és a pozitív kifizetés a `CoinService.credit(uid, amount, ticketId)` hívással kerül jóváírásra, amely először ellenőrzi a `ledger/{ticketId}` dokumentum meglétét, és létezése esetén kihagyja a wallet írást (idempotens).
+6. Hiba esetén a `attempt` attribútum növelésével újrasorolja az üzenetet; ha `attempt >= 2`, a `DLQ_TOPIC` témára küldi és `match_finalizer.sent_to_dlq` logot ír.
+7. Következő lépésként `notifications/{uid}` dokumentumot hoz létre és FCM push-t küld.
 
 Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
