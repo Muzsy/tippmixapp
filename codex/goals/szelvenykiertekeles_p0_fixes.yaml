@@ -1,0 +1,95 @@
+# TippmixApp – Codex Patch Goal
+# Hivatkozás a kiegészítő magyarázatra: lásd a vásznat „Szelvénykiértékelés – P0 javítások (konkrét diffek)”
+version: 1
+kind: patch-series
+metadata:
+  id: szelvenykiertekeles_p0_fixes
+  title: "Szelvénykiértékelés – P0 stabilizálás (jegylétrehozás + finalizer tisztítás)"
+  related_canvas: "Szelvénykiértékelés – P0 javítások (konkrét diffek)"
+  repo_root: tippmixapp-main
+steps:
+  - id: implement_ticket_creation_firestore
+    description: "Mobil – TicketService.createTicket Firestore írás a szabályoknak megfelelő mezőkkel (status=pending)."
+    apply:
+      - path: lib/services/ticket_service.dart
+        diff: |
+          --- a/lib/services/ticket_service.dart
+          +++ b/lib/services/ticket_service.dart
+          @@ -1,4 +1,6 @@
+           import 'package:flutter/widgets.dart';
+          +import 'package:cloud_firestore/cloud_firestore.dart';
+          +import 'package:firebase_auth/firebase_auth.dart';
+           import 'api_football_service.dart';
+           import 'odds_drift_checker.dart';
+           import '../widgets/odds_drift_dialog.dart';
+          @@ -15,8 +17,37 @@
+               required List<Map<String, dynamic>> tips,
+               required num stake,
+             }) async {
+          -    // Integrate with backend callable
+          -    return 'ticket-id';
+          +    final user = FirebaseAuth.instance.currentUser;
+          +    if (user == null) {
+          +      return null;
+          +    }
+          +    final uid = user.uid;
+          +    final fs = FirebaseFirestore.instance;
+          +    final ticketRef = fs.collection('users').doc(uid).collection('tickets').doc();
+          +
+          +    double totalOdd = 1.0;
+          +    for (final t in tips) {
+          +      final o = (t['odds'] as num?)?.toDouble() ?? 1.0;
+          +      totalOdd *= o;
+          +    }
+          +    final potentialWin = stake * totalOdd;
+          +
+          +    final now = FieldValue.serverTimestamp();
+          +
+          +    final data = {
+          +      'id': ticketRef.id,
+          +      'userId': uid,
+          +      'tips': tips,
+          +      'stake': stake,
+          +      'totalOdd': double.parse(totalOdd.toStringAsFixed(2)),
+          +      'potentialWin': double.parse(potentialWin.toStringAsFixed(2)),
+          +      'createdAt': now,
+          +      'updatedAt': now,
+          +      'status': 'pending',
+          +    };
+          +
+          +    await ticketRef.set(data, SetOptions(merge: false));
+          +    return ticketRef.id;
+             }
+           
+           Future<void> removeTip(TipModel tip) async {
+             // Implement removal logic
+             signals.notifyChanged();
+           }
+  - id: finalizer_import_cleanup
+    description: "Backend – match_finalizer felesleges FieldValue import eltávolítása (tsc/CI warning stop)."
+    apply:
+      - path: cloud_functions/src/match_finalizer.ts
+        diff: |
+          --- a/cloud_functions/src/match_finalizer.ts
+          +++ b/cloud_functions/src/match_finalizer.ts
+          @@
+          -import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+          +import { getFirestore } from 'firebase-admin/firestore';
+  - id: model_comment_update
+    description: "Mobil – odds_event modell komment frissítés az új API‑Football terminológiára (opcionális, de zavaró félreértést előz meg)."
+    apply:
+      - path: lib/models/odds_event.dart
+        diff: |
+          --- a/lib/models/odds_event.dart
+          +++ b/lib/models/odds_event.dart
+          @@ -1,8 +1,8 @@
+           import 'odds_bookmaker.dart';
+           
+          -/// Egy sportesemény teljes OddsAPI reprezentációja.
+          +/// Egy sportesemény (API-Football) reprezentációja.
+           class OddsEvent {
+          -  final String id; // OddsAPI esemény ID
+          +  final String id; // API-Football fixture ID
+             final String sportKey; // Sportág azonosítója
+             final String sportTitle; // Sportág neve
+             final String homeTeam;
