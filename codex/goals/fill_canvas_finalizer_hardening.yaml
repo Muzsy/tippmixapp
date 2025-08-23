@@ -1,0 +1,182 @@
+meta:
+  canvas: canvases/finalizer_hardening.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: cloud_functions/src/services/CoinService.ts
+      patch: |
+        --- a/cloud_functions/src/services/CoinService.ts
+        +++ b/cloud_functions/src/services/CoinService.ts
+        @@ -35,6 +35,12 @@
+           ) {
+             const walletRef = db.doc(`users/${uid}/wallet`);
+             if (t) {
+        +      const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+        +      // Idempotency: skip if ledger entry already exists
+        +      const existing = await t.get(ledgerRef);
+        +      if (existing.exists) {
+        +        return; // idempotent no-op
+        +      }
+               const beforeBal = before ?? ((await t.get(walletRef)).data()?.coins as number) ?? 0;
+               const after = beforeBal + amount;
+               t.set(
+        @@ -47,6 +53,11 @@
+           }
+         
+           await db.runTransaction(async (tx) => {
+        +      const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+        +      const existing = await tx.get(ledgerRef);
+        +      if (existing.exists) {
+        +        return; // idempotent no-op
+        +      }
+               const snap = await tx.get(walletRef);
+               const beforeBal = (snap.data()?.coins as number) ?? 0;
+               const after = beforeBal + amount;
+  - patch_file:
+      target: cloud_functions/src/match_finalizer.ts
+      patch: |
+        --- a/cloud_functions/src/match_finalizer.ts
+        +++ b/cloud_functions/src/match_finalizer.ts
+        @@ -3,10 +3,19 @@
+         import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+         import * as logger from 'firebase-functions/logger';
+         import { db } from './lib/firebase';
+        +import { PubSub } from '@google-cloud/pubsub';
+         import { CoinService } from './services/CoinService';
+         import { getEvaluator, NormalizedResult } from './evaluators';
+         
+         const provider = new ApiFootballResultProvider();
+        +
+        +const pubsub = new PubSub();
+        +const RESULT_TOPIC = process.env.RESULT_TOPIC || 'result-check';
+        +const DLQ_TOPIC = process.env.DLQ_TOPIC || 'match_finalizer-dlq';
+        +const BATCH_SIZE = Number(process.env.FINALIZER_BATCH_SIZE || 200);
+        +const MAX_BATCHES = Number(process.env.FINALIZER_MAX_BATCHES || 3);
+        
+         // After computing tip results for a ticket
+        @@ -31,9 +40,10 @@
+        -export const match_finalizer = async (message: PubSubMessage): Promise<void> => {
+        -  logger.info('match_finalizer.handle', { hasData: !!message?.data, attrKeys: Object.keys(message.attributes || {}) });
+        +export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RETRY'|'DLQ'> => {
+        +  const attempt = Number((message?.attributes?.attempt as string) || '0');
+        +  logger.info('match_finalizer.handle', { hasData: !!message?.data, attempt, attrKeys: Object.keys(message.attributes || {}) });
+           try {
+             const payloadStr = Buffer.from(message.data || '', 'base64').toString('utf8');
+             const { job }: { job: JobType } = JSON.parse(payloadStr);
+        
+         // 1) Collect pending tickets across all users via collectionGroup
+         // Tickets are stored under /tickets/{uid}/tickets/{ticketId}
+        -    const ticketsSnap = await db
+        -      .collectionGroup('tickets')
+        -      .where('status', '==', 'pending')
+        -      .limit(200)
+        -      .get();
+        -
+        -    if (ticketsSnap.empty) {
+        -      logger.info('match_finalizer.no_pending');
+        -      return;
+        -    }
+        -    logger.info('match_finalizer.pending_tickets', { count: ticketsSnap.size });
+        -
+        -    // Gather unique eventIds from tips[] arrays
+        -    const eventIdSet = new Set<string>();
+        +    
+        +    // Batch pagination over pending tickets
+        +    let lastDoc: FirebaseFirestore.QueryDocumentSnapshot | undefined = undefined;
+        +    let batches = 0;
+        +    let anyProcessed = false;
+        +    let morePossible = false;
+        +
+        +    while (batches < MAX_BATCHES) {
+        +      let q = db.collectionGroup('tickets')
+        +        .where('status', '==', 'pending')
+        +        .orderBy('__name__')
+        +        .limit(BATCH_SIZE) as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
+        +
+        +      if (lastDoc) {
+        +        q = q.startAfter(lastDoc);
+        +      }
+        +      const ticketsSnap = await q.get();
+        +      if (ticketsSnap.empty) {
+        +        logger.info('match_finalizer.no_pending_batch', { batch: batches });
+        +        break;
+        +      }
+        +      anyProcessed = true;
+        +      if (ticketsSnap.size === BATCH_SIZE) {
+        +        morePossible = true;
+        +      }
+        +      logger.info('match_finalizer.pending_tickets_batch', { batch: batches, count: ticketsSnap.size });
+        +
+        +      // Gather unique eventIds from this batch's tips[] arrays
+        +      const eventIdSet = new Set<string>();
+        
+         @@
+        +      // end of batch processing for this page
+        +      lastDoc = ticketsSnap.docs[ticketsSnap.docs.length - 1];
+        +      batches += 1;
+        +    } // while
+        +
+        +    if (morePossible) {
+        +      await pubsub.topic(RESULT_TOPIC).publishMessage({
+        +        data: Buffer.from(JSON.stringify({ job })),
+        +        attributes: { attempt: '0' }
+        +      });
+        +      logger.info('match_finalizer.enqueue_next_batch', { next: true });
+        +    }
+        +
+         @@
+        -  } catch (e: any) {
+        -    logger.error('match_finalizer.handle_error', { error: e?.message || String(e) });
+        -    throw e;
+        -  }
+        -};
+        +  } catch (e: any) {
+        +    logger.error('match_finalizer.handle_error', { error: e?.message || String(e), attempt });
+        +    try {
+        +      if (attempt >= 2) {
+        +        await pubsub.topic(DLQ_TOPIC).publishMessage({ data: Buffer.from(JSON.stringify({ job })), attributes: { attempt: String(attempt) } });
+        +        logger.error('match_finalizer.sent_to_dlq', { attempt });
+        +        return 'DLQ';
+        +      } else {
+        +        await pubsub.topic(RESULT_TOPIC).publishMessage({ data: Buffer.from(JSON.stringify({ job })), attributes: { attempt: String(attempt + 1) } });
+        +        logger.warn('match_finalizer.requeued', { nextAttempt: attempt + 1 });
+        +        return 'RETRY';
+        +      }
+        +    } catch (pubErr) {
+        +      logger.error('match_finalizer.requeue_failed', { error: String(pubErr) });
+        +    }
+        +    return 'RETRY';
+        +  }
+        +};
+  - patch_file:
+      target: cloud_functions/index.ts
+      patch: |
+        --- a/cloud_functions/index.ts
+        +++ b/cloud_functions/index.ts
+        @@ -23,11 +23,12 @@
+               attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
+             };
+             try {
+        -      await matchFinalizerHandler(msg as any);
+        -      logger.info('match_finalizer.success');
+        +      const result = await matchFinalizerHandler(msg as any);
+        +      logger.info('match_finalizer.done', { result });
+             } catch (e: any) {
+        -      logger.error('match_finalizer.error', { error: e?.message || String(e) });
+        -      throw e; // engedjük a retry-t
+        +      // Fallback: if handler threw, let platform retry
+        +      logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
+        +      throw e;
+             }
+           }
+         );
+  - run: |
+      set -euo pipefail
+      pushd cloud_functions
+      npm ci
+      npm run build
+      npm run lint
+      popd
+  - run: |
+      echo "Finalizer hardening kész: batching + idempotencia + DLQ integrálva."
