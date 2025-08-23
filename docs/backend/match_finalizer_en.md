@@ -1,4 +1,4 @@
-version: "2025-10-04"
+version: "2025-10-06"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -9,8 +9,8 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 1. Decode job type (`kickoff-tracker`, `result-poller`, `final-sweep`).
 2. Page through pending tickets in batches (`FINALIZER_BATCH_SIZE`, `FINALIZER_MAX_BATCHES`) using `orderBy('__name__') + startAfter(lastDoc)`. If more remain, the function self-enqueues another message on `RESULT_TOPIC` with `attempt=0`.
 3. For each batch, gather `fixtureId ?? eventId` from `tips[]`. Missing IDs trigger a metadata lookup (`findFixtureIdByMeta`) using `eventName` and `startTime`, and the resolved `fixtureId` is cached back to the tip.
-4. Fetch scores via `ResultProvider`, which returns the `winner` and treats `FT/AET/PEN` as completed.
-5. Evaluate each ticket's tips through the pluggable Market Evaluator registry (mapping `marketKey`, `outcome`, `odds`) and, once none remain `pending`, execute a Firestore **transaction** that:
+4. Fetch scores via `ResultProvider`, which returns the `winner` and treats `FT/AET/PEN` as completed. `canceled` fixtures are flagged and later evaluated as `void` tips.
+5. Evaluate each ticket's tips through the pluggable Market Evaluator registry (mapping `marketKey`, `outcome`, `odds`); once none remain `pending`, execute a Firestore **transaction** that:
    - computes payout via `calcTicketPayout`,
    - updates ticket `status`, `payout` and `processedAt`.
    The ticket owner is resolved from the `userId` field (fallback: path segment) and any positive payout is credited to `users/{uid}/wallet` via `CoinService.credit(uid, amount, ticketId)`, which first checks `ledger/{ticketId}` and skips wallet writes if it exists (idempotent).
