@@ -1,0 +1,127 @@
+meta:
+  canvas: canvases/legacy_cleanup_client_migration.md
+  priority: P0
+
+steps:
+  # 1) Rules: legacy blokkok eltávolítása (gyökér firebase.rules)
+  - patch_file:
+      target: firebase.rules
+      patch: |
+        --- a/firebase.rules
+        +++ b/firebase.rules
+        @@ -12,11 +12,6 @@
+             }
+         
+             /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
+        -    match /coin_logs/{logId} {
+        -      // Kliens csak a saját logjait olvashatja; írás nem engedélyezett.
+        -      allow read: if isOwner(resource.data.userId);
+        -      allow create, update, delete: if false;
+        -    }
+         
+             /*  ─── Felhasználói beállítások alkollekció ───  */
+             match /users/{userId}/settings/{settingId} {
+        @@ -99,16 +94,6 @@
+               }
+             }
+         
+        -    match /wallets/{userId} {
+        -      // LEGACY: csak olvasás maradhat; írni kizárólag CF/Admin SDK
+        -      allow read: if request.auth != null && request.auth.uid == userId;
+        -      allow write: if false;
+        -
+        -      match /ledger/{ticketId} {
+        -        allow read: if request.auth != null && request.auth.uid == userId;
+        -        allow write: if false;
+        -      }
+        -    }
+         
+             /* --- NEW: user-centric wallet & ledger (SoT) --- */
+             match /users/{uid}/wallet {
+  
+  # 2) Rules: legacy blokkok eltávolítása (cloud_functions/firestore.rules)
+  - patch_file:
+      target: cloud_functions/firestore.rules
+      patch: |
+        --- a/cloud_functions/firestore.rules
+        +++ b/cloud_functions/firestore.rules
+        @@ -7,11 +7,6 @@
+             function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+         
+             /* ——— coin_logs ——— (LEGACY – WRITE TILTVA) ——— */
+        -    match /coin_logs/{logId} {
+        -      // V2: írni már nem lehet ide; olvasás a saját logokra engedett marad
+        -      allow create, update, delete: if false;
+        -      allow read:   if isOwner(resource.data.userId);
+        -    }
+         
+             /* --- tickets gyökérkollekció (csak olvasás) --- */
+             match /tickets/{ticketId} {
+        @@ -116,15 +111,6 @@
+             }
+         
+             // Wallets (LEGACY): csak olvasás, write tiltva – SoT az users/{uid}/wallet
+        -    match /wallets/{userId} {
+        -      allow read: if request.auth != null && request.auth.uid == userId;
+        -      allow write: if false;
+        -
+        -      match /ledger/{ticketId} {
+        -        allow read: if request.auth != null && request.auth.uid == userId;
+        -        allow write: if false;
+        -      }
+        -    }
+         
+             /* ——— relations (followers & friends) ——
+  
+  # 3) Kliens: StatsService – legacy users.{coins} fallback kivezetése (csak wallet)
+  - patch_file:
+      target: lib/services/stats_service.dart
+      patch: |
+        --- a/lib/services/stats_service.dart
+        +++ b/lib/services/stats_service.dart
+        @@ -33,9 +33,7 @@
+                 final data = userDoc.data();
+                 final uid = userDoc.id;
+                 final walletSnap = await _db.doc('users/$uid/wallet').get();
+        -        final coins =
+        -            (walletSnap.data()?['coins'] as int?) ??
+        -            (data['coins'] as int? ?? 0);
+        +        final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
+                 final displayName = data['nickname'] as String? ?? '';
+         
+                 final userTickets = await ticketsRef
+        @@ -120,9 +118,7 @@
+             final userData = userDoc.data() ?? <String, dynamic>{};
+         
+             final walletSnap = await _db.doc('users/$uid/wallet').get();
+        -    final coins =
+        -        (walletSnap.data()?['coins'] as int?) ??
+        -        (userData['coins'] as int? ?? 0);
+        +    final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
+             final displayName = userData['nickname'] as String? ?? '';
+         
+             final ticketSnap = await _db
+  
+  # 4) Kliens: "coin_logs" deprecated modell/szerviz törlése
+  - run: |
+      set -euo pipefail
+      rm -f lib/models/tippcoin_log_model.dart lib/services/tippcoin_log_service.dart
+      echo "Removed deprecated coin_logs model/service."
+  
+  # 5) Grep-ellenőrzések – ne maradjon legacy használat
+  - run: |
+      set -euo pipefail
+      echo "— Grep checks —"
+      ! grep -R "collection('coin_logs')" lib/ || (echo 'coin_logs usage found in lib/'; exit 1)
+      ! grep -R "wallets/" lib/ cloud_functions/src || (echo 'wallets/ path found in sources'; exit 1)
+      echo "Grep OK."
+  
+  # 6) Build & lint (szükség esetén)
+  - run: |
+      set -euo pipefail
+      pushd cloud_functions
+      npm ci
+      npm run build
+      popd
+      flutter analyze || true
+      echo "Legacy kivezetés + kliens átállítás kész."
