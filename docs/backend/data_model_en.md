@@ -38,7 +38,7 @@ WalletModel {
 }
 ```
 
-- Location: `wallets/{userId}` (legacy) and `users/{userId}/wallet` (user-centric SoT)
+- Location: `users/{userId}/wallet` (source of truth)
 - This document is **lazy‑created** by the mobile client on the first bet.
 - An Auth onCreate Cloud Function now seeds both locations with a 50 coin balance.
 - Ledger entries mirror to `users/{userId}/ledger/{entryId}` for audit.
@@ -118,3 +118,4 @@ BonusState {
 
 - 2025-08-20: Documented dual-write wallet/ledger paths and onCreate seeding.
 - 2025-08-22: Added BonusRules and BonusState models for Bonus Engine.
+- 2025-08-23: Removed legacy `wallets/{userId}` path from WalletModel.

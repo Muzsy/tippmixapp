@@ -83,7 +83,7 @@ TippCoinLog {
     createdAt: timestamp
   ```
 
-- Legacy `wallets/*` csak olvasásra marad, a `coin_logs/*` gyűjtemény megszűnt
+- A `wallets/*` és `coin_logs/*` legacy útvonalak kivezetve
 - A profil UI-on megjeleníthetők az utolsó tranzakciók
 
 ---
@@ -113,3 +113,4 @@ TippCoinLog {
 - 2025-08-22: Bevezetve a ledger `checksum` mező és a `claim_daily_bonus` callable; regisztrációs bónusz CF-ből kezelve.
 - 2025-10-02: Hozzáadva a lapozott napi bónusz strukturált logolással és a ledger `type+createdAt` index.
 - 2025-10-03: Bevezetve a ledger előzetes ellenőrzése, így meglévő bejegyzésnél a wallet növelése kimarad.
+- 2025-08-23: Dokumentálva a `wallets/*` útvonal kivezetése.

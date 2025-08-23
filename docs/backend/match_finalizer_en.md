@@ -1,4 +1,4 @@
-version: "2025-10-03"
+version: "2025-10-04"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -13,7 +13,7 @@ Background worker processing `result-check` Pub/Sub messages. Its responsibiliti
 5. Evaluate each ticket's tips through the pluggable Market Evaluator registry (mapping `marketKey`, `outcome`, `odds`) and, once none remain `pending`, execute a Firestore **transaction** that:
    - computes payout via `calcTicketPayout`,
    - updates ticket `status`, `payout` and `processedAt`.
-   The ticket owner is resolved from the `userId` field (fallback: path segment) and any positive payout is credited to `wallets/{uid}` via `CoinService.credit(uid, amount, ticketId)`, which first checks `ledger/{ticketId}` and skips wallet writes if it exists (idempotent).
+   The ticket owner is resolved from the `userId` field (fallback: path segment) and any positive payout is credited to `users/{uid}/wallet` via `CoinService.credit(uid, amount, ticketId)`, which first checks `ledger/{ticketId}` and skips wallet writes if it exists (idempotent).
 6. Errors trigger requeue with an incremented `attempt` attribute; on `attempt >= 2` the message is routed to `DLQ_TOPIC` and logged as `match_finalizer.sent_to_dlq`.
 7. Future step: create `notifications/{uid}` document and send FCM push.
 

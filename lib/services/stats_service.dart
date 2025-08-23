@@ -33,9 +33,7 @@ class StatsService {
         final data = userDoc.data();
         final uid = userDoc.id;
         final walletSnap = await _db.doc('users/$uid/wallet').get();
-        final coins =
-            (walletSnap.data()?['coins'] as int?) ??
-            (data['coins'] as int? ?? 0);
+        final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
         final displayName = data['nickname'] as String? ?? '';
 
         final userTickets = await ticketsRef
@@ -120,9 +118,7 @@ class StatsService {
     final userData = userDoc.data() ?? <String, dynamic>{};
 
     final walletSnap = await _db.doc('users/$uid/wallet').get();
-    final coins =
-        (walletSnap.data()?['coins'] as int?) ??
-        (userData['coins'] as int? ?? 0);
+    final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
     final displayName = userData['nickname'] as String? ?? '';
 
     final ticketSnap = await _db

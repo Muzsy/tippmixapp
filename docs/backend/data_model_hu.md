@@ -38,7 +38,7 @@ WalletModel {
 }
 ```
 
-- Elérési út: `wallets/{userId}` (legacy) és `users/{userId}/wallet` (user-centrikus SoT)
+- Elérési út: `users/{userId}/wallet` (forrásdokumentum)
 - A dokumentum **lazy‑create** módon jön létre az első fogadáskor.
 - Egy **Auth onCreate** Cloud Function most mindkét helyre 50 coin kezdő egyenleget ír.
 - Ledger bejegyzések a `users/{userId}/ledger/{entryId}` útvonalon tükröződnek.
@@ -118,3 +118,4 @@ BonusState {
 
 - 2025-08-20: Frissítve a wallet és ledger duplairás, onCreate inicializálás dokumentációja.
 - 2025-08-22: Hozzáadva a BonusRules és BonusState modellek a Bonus Engine-hez.
+- 2025-08-23: Törölve a `wallets/{userId}` legacy útvonal említése a WalletModelből.

@@ -10,7 +10,7 @@ This document defines the security model and Firestore access rules for TippmixA
 - Prevent manipulation of TippCoin or tickets
 - Ensure data integrity during bet placement
 - Leaderboard requires read-only access to all `users/{uid}` docs for signed-in users
-- TippCoin balances stored in `users/{uid}/wallet` only; legacy `wallets/*` and `coin_logs/*` are read-only
+- TippCoin balances stored in `users/{uid}/wallet`; legacy `wallets/*` and `coin_logs/*` paths removed
 
 ---
 
@@ -24,8 +24,6 @@ users/{uid}
   ledger/{entryId}
   tickets/{ticketId}
   bonus_state
-wallets/{uid} (legacy)
-coin_logs/{logId} (legacy)
 tickets/{ticketId} (legacy read-only)
 public_feed/{postId}
   reports/{reportId}
@@ -45,21 +43,6 @@ service cloud.firestore {
     match /users/{userId} {
       allow read:  if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    match /coin_logs/{logId} {
-      allow create, update, delete: if false;
-      allow read:   if request.auth != null && request.auth.uid == resource.data.userId;
-    }
-
-    match /wallets/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
-
-      match /ledger/{ticketId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if false;
-      }
     }
 
     // user-centric wallet & ledger (SoT)
@@ -158,3 +141,4 @@ service cloud.firestore {
 - 2025-08-20: Added user-centric wallet & ledger rules and dual-write notes.
 - 2025-08-20: Disabled writes to legacy `wallets` and `coin_logs` paths.
 - 2025-08-22: Added read-only rules for `system_configs/bonus_rules` and `users/{uid}/bonus_state`.
+- 2025-08-23: Removed legacy `coin_logs` and `wallets/*` rules after wallet migration.
