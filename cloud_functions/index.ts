@@ -1,6 +1,6 @@
-import { setGlobalOptions } from 'firebase-functions/v2/options';
+import './global';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
-import { defineSecret } from 'firebase-functions/params';
+import { API_FOOTBALL_KEY } from './global';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
 
@@ -11,11 +11,7 @@ export { onFriendRequestAccepted } from './friend_request';
 export { daily_bonus } from './src/daily_bonus';
 export { claim_daily_bonus } from './src/bonus_claim';
 
-// Global options for all v2 functions
-setGlobalOptions({ region: 'europe-central2' });
-
-// Secret from Secret Manager (Console → Secret Manager → API_FOOTBALL_KEY)
-export const API_FOOTBALL_KEY = defineSecret('API_FOOTBALL_KEY');
+// Global options a global.ts-ben kerül beállításra (régió + secretek)
 
 // Gen2 Pub/Sub trigger (topic: result-check, region via global options)
 export const match_finalizer = onMessagePublished(

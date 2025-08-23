@@ -1,3 +1,4 @@
+import '../global';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as logger from 'firebase-functions/logger';
 import { db } from './lib/firebase';

@@ -19,3 +19,6 @@ A titkokat futásidőben a Google Secret Manager injektálja. A feltöltött `pr
 ## Kvótafigyelő
 
 - `QUOTA_WARN_AT` – minimális megmaradt OddsAPI kredit riasztás előtt
+
+## Globális opciók és secretek
+Minden Cloud Function elsőként betölti a `cloud_functions/global.ts` modult. Ez definiálja a secreteket (pl. `API_FOOTBALL_KEY`) a `defineSecret` segítségével, és beállítja a `setGlobalOptions({ region: 'europe-central2', secrets: [API_FOOTBALL_KEY] })` hívást a régiódrift elkerülésére.

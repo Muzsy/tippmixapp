@@ -1,3 +1,4 @@
+import './global';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import * as functions from 'firebase-functions/v1';
 import { FieldValue } from 'firebase-admin/firestore';
