@@ -1,8 +1,8 @@
 import 'odds_bookmaker.dart';
 
-/// Egy sportesemény teljes OddsAPI reprezentációja.
+/// Egy sportesemény (API-Football) reprezentációja.
 class OddsEvent {
-  final String id; // OddsAPI esemény ID
+  final String id; // API-Football fixture ID
   final String sportKey; // Sportág azonosítója
   final String sportTitle; // Sportág neve
   final String homeTeam;

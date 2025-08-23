@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'api_football_service.dart';
 import 'odds_drift_checker.dart';
 import '../widgets/odds_drift_dialog.dart';
@@ -15,8 +17,41 @@ class TicketService {
     required List<Map<String, dynamic>> tips,
     required num stake,
   }) async {
-    // Integrate with backend callable
-    return 'ticket-id';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return null;
+    }
+    final uid = user.uid;
+    final fs = FirebaseFirestore.instance;
+    final ticketRef = fs
+        .collection('users')
+        .doc(uid)
+        .collection('tickets')
+        .doc();
+
+    double totalOdd = 1.0;
+    for (final t in tips) {
+      final o = (t['odds'] as num?)?.toDouble() ?? 1.0;
+      totalOdd *= o;
+    }
+    final potentialWin = stake * totalOdd;
+
+    final now = FieldValue.serverTimestamp();
+
+    final data = {
+      'id': ticketRef.id,
+      'userId': uid,
+      'tips': tips,
+      'stake': stake,
+      'totalOdd': double.parse(totalOdd.toStringAsFixed(2)),
+      'potentialWin': double.parse(potentialWin.toStringAsFixed(2)),
+      'createdAt': now,
+      'updatedAt': now,
+      'status': 'pending',
+    };
+
+    await ticketRef.set(data, SetOptions(merge: false));
+    return ticketRef.id;
   }
 
   Future<void> removeTip(TipModel tip) async {

@@ -5,12 +5,16 @@ Collection: `users/{uid}/tickets/{ticketId}`
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
+| id | string | yes | Ticket document ID |
 | userId | string | yes | Ticket owner |
-| createdAt | timestamp | yes | Server time |
-| status | string | yes | `pending|won|lost|void` |
-| stake | number | yes | TippCoin stake |
-| payout | number | yes | Calculated at closure |
 | tips | array<Tip> | yes | See below |
+| stake | number | yes | TippCoin stake |
+| totalOdd | number | yes | Product of odds (2 decimals) |
+| potentialWin | number | yes | `stake * totalOdd` |
+| createdAt | timestamp | yes | Server time |
+| updatedAt | timestamp | yes | Server time |
+| status | string | yes | `pending|won|lost|void` |
+| payout | number | no | Calculated at closure |
 | processedAt | timestamp | no | Set by finalizer |
 
 **Tip**
@@ -26,11 +30,8 @@ Collection: `users/{uid}/tickets/{ticketId}`
 ## Sample document
 ```json
 {
+  "id": "abc123",
   "userId": "uid_123",
-  "createdAt": {"_seconds": 1700000000, "_nanoseconds": 0},
-  "status": "pending",
-  "stake": 100,
-  "payout": 0,
   "tips": [
     {
       "fixtureId": "120934",
@@ -42,7 +43,14 @@ Collection: `users/{uid}/tickets/{ticketId}`
       "odds": 1.85,
       "kickoff": {"_seconds": 1700003600, "_nanoseconds": 0}
     }
-  ]
+  ],
+  "stake": 100,
+  "totalOdd": 1.85,
+  "potentialWin": 185,
+  "createdAt": {"_seconds": 1700000000, "_nanoseconds": 0},
+  "updatedAt": {"_seconds": 1700000000, "_nanoseconds": 0},
+  "status": "pending",
+  "payout": 0
 }
 ```
 
