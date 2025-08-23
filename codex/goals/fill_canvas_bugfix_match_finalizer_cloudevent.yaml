@@ -1,0 +1,123 @@
+# Codex canvas goal – bugfix_match_finalizer_cloudevent
+# Hivatkozás: lásd a "Bugfix Match Finalizer Cloudevent – Codex Vászon" vásznat (aktuális turn)
+
+steps:
+  - name: CloudEvent típus annotálása az index.ts-ben
+    description: |
+      A v2 Pub/Sub adapter hibáját (Cannot read properties of undefined (reading 'messageId'))
+      a CloudEvent szignatúra egyértelművé tételével és egy minimális védő ellenőrzéssel kezeljük.
+      A wrapper továbbra is PubSubMessage objektumot állít elő a `src/match_finalizer.ts` számára.
+    outputs:
+      - type: diff
+        path: cloud_functions/index.ts
+        content: |
+          --- a/cloud_functions/index.ts
+          +++ b/cloud_functions/index.ts
+          @@
+           import './global';
+           import { onMessagePublished } from 'firebase-functions/v2/pubsub';
+          +import type { CloudEvent } from 'firebase-functions/v2';
+          +import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
+           import { API_FOOTBALL_KEY } from './global';
+           import * as logger from 'firebase-functions/logger';
+           import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
+          @@
+          -// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
+          -...
+          +// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
+          +export const match_finalizer = onMessagePublished(
+          +  { topic: 'result-check', secrets: [API_FOOTBALL_KEY], retry: true },
+          +  async (event: CloudEvent<MessagePublishedData>) => {
+          +    // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
+          +    const hasMsg = !!event?.data?.message;
+          +    logger.info('match_finalizer.start', {
+          +      hasMsg,
+          +      hasData: !!event?.data?.message?.data,
+          +      attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+          +    });
+          +    if (!hasMsg) {
+          +      logger.warn('match_finalizer.no_message');
+          +      return;
+          +    }
+          +    const msg = {
+          +      data: event.data.message?.data,
+          +      attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
+          +    };
+          +    try {
+          +      const result = await matchFinalizerHandler(msg as any);
+          +      logger.info('match_finalizer.done', { result });
+          +    } catch (e: any) {
+          +      logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
+          +      throw e;
+          +    }
+          +  }
+          +);
+
+  - name: (Opció) engines mező pontosítása a package.json-ban
+    description: |
+      A Cloud Functions Gen2 Node.js 20 runtime-hoz ajánlott az engines megadása.
+      Ha már szerepel, ezt a lépést hagyd ki.
+    outputs:
+      - type: diff
+        path: cloud_functions/package.json
+        content: |
+          --- a/cloud_functions/package.json
+          +++ b/cloud_functions/package.json
+          @@
+           {
+             "dependencies": {
+          @@
+             "firebase-functions": "^6.4.0"
+           },
+           "devDependencies": {
+          @@
+           },
+          +  "engines": {
+          +    "node": ">=20"
+          +  },
+           "main": "lib/index.js",
+           "name": "cloud_functions",
+           "private": true,
+           "scripts": {
+             "build": "tsc",
+             "ci:lint": "npm run lint",
+             "ci:test": "npm test",
+             "e2e": "MODE=dev USE_MOCK_SCORES=true jest --config jest-e2e.config.js",
+             "gcp-build": "npm run build",
+             "lint": "tsc --noEmit",
+             "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts",
+             "test": "jest"
+           }
+           }
+
+  - name: Build és célzott redeploy (helyi futtatás)
+    description: |
+      A build biztosítja, hogy a `lib/index.js` frissüljön; a redeploy újraköti az Eventarc↔Pub/Sub triggert.
+    outputs:
+      - type: bash
+        content: |
+          cd cloud_functions
+          npm ci
+          npm run build
+          gcloud functions deploy match_finalizer \
+            --gen2 \
+            --region=europe-central2 \
+            --runtime=nodejs20 \
+            --trigger-topic=result-check \
+            --entry-point=match_finalizer \
+            --project=tippmix-dev \
+            --quiet
+
+  - name: Füstteszt és log ellenőrzés
+    description: |
+      Egy tesztüzenet publikálása után várunk 5–10 másodpercet, majd lekérjük a Gen2 funkció logjait
+      közvetlenül CLI-ből (így nem függünk a Log Explorer nézet-szűrőitől).
+    outputs:
+      - type: bash
+        content: |
+          gcloud pubsub topics publish projects/tippmix-dev/topics/result-check \
+            --message='{"job":"final-sweep"}' \
+            --project=tippmix-dev
+
+          gcloud functions logs read match_finalizer \
+            --gen2 --region=europe-central2 --limit=50
