@@ -1,4 +1,4 @@
-version: "2025-08-05"
+version: "2025-10-03"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -9,7 +9,7 @@ Terraform által kezelt Google Pub/Sub témák a mérkőzés-kiértékelő folya
 ## Témák
 
 - `result-check`: fő téma, 7 napos retention.
-- `result-check-dlq`: Dead-Letter Queue a hibás üzeneteknek, 7 napos retention.
+- `match_finalizer-dlq`: Dead-Letter Queue a hibás finalizer üzeneteknek, 7 napos retention.
 
 ## Ütemezett feladatok
 

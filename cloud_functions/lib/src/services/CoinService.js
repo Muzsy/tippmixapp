@@ -15,6 +15,12 @@ class CoinService {
     async transact(uid, amount, refId, type, source, t, before) {
         const walletRef = firebase_1.db.doc(`users/${uid}/wallet`);
         if (t) {
+            const ledgerRef = firebase_1.db.collection('users').doc(uid).collection('ledger').doc(refId);
+            // Idempotency: skip if ledger entry already exists
+            const existing = await t.get(ledgerRef);
+            if (existing.exists) {
+                return; // idempotent no-op
+            }
             const beforeBal = before ?? (await t.get(walletRef)).data()?.coins ?? 0;
             const after = beforeBal + amount;
             t.set(walletRef, { coins: firestore_1.FieldValue.increment(amount), updatedAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
@@ -22,6 +28,11 @@ class CoinService {
             return;
         }
         await firebase_1.db.runTransaction(async (tx) => {
+            const ledgerRef = firebase_1.db.collection('users').doc(uid).collection('ledger').doc(refId);
+            const existing = await tx.get(ledgerRef);
+            if (existing.exists) {
+                return; // idempotent no-op
+            }
             const snap = await tx.get(walletRef);
             const beforeBal = snap.data()?.coins ?? 0;
             const after = beforeBal + amount;

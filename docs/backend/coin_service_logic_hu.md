@@ -38,7 +38,7 @@ A TippCoin a fogadások tétje és a jutalmazás alapja.
 ### Eredmény kiértékelésekor
 
 - A `CoinService.credit(uid, potentialWin, ticketId)` Firestore tranzakciót futtat, amely:
-    - ellenőrzi a `users/{uid}/ledger/{ticketId}` dokumentumot és ha létezik, kilép (idempotens);
+    - ellenőrzi a `users/{uid}/ledger/{ticketId}` dokumentumot és ha létezik, kilép (idempotens); ilyenkor a wallet növelése kimarad.
     - növeli a `users/{uid}/wallet.coins` mezőt `FieldValue.increment` segítségével;
     - létrehozza a ledger bejegyzést `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - A `CoinService.debit(uid, stake, ticketId)` ugyanezt a folyamatot hajtja végre negatív összeggel és `type: 'bet'` értékkel.
@@ -112,3 +112,4 @@ TippCoinLog {
 - 2025-08-21: Dokumentálva a napi bónusz jóváírás CoinService használatával és dátum alapú `refId`-val.
 - 2025-08-22: Bevezetve a ledger `checksum` mező és a `claim_daily_bonus` callable; regisztrációs bónusz CF-ből kezelve.
 - 2025-10-02: Hozzáadva a lapozott napi bónusz strukturált logolással és a ledger `type+createdAt` index.
+- 2025-10-03: Bevezetve a ledger előzetes ellenőrzése, így meglévő bejegyzésnél a wallet növelése kimarad.

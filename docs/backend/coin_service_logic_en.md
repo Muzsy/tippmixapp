@@ -37,7 +37,7 @@ This keeps the client free of any direct wallet writes.
 ### On result finalization
 
 - `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
-  - checks `users/{uid}/ledger/{ticketId}` and exits if already exists (idempotent);
+  - checks `users/{uid}/ledger/{ticketId}` and exits if already exists (idempotent); in this case the wallet increment is skipped.
   - increments `users/{uid}/wallet.coins` with `FieldValue.increment`;
   - writes ledger entry `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
@@ -111,3 +111,4 @@ TippCoinLog {
 - 2025-08-21: Added daily bonus credit via CoinService with deterministic `refId`.
 - 2025-08-22: Introduced ledger `checksum` field and callable `claim_daily_bonus`; signup bonus handled on user creation.
 - 2025-10-02: Added paginated daily bonus with structured logging and ledger type+createdAt index.
+- 2025-10-03: Enforced ledger pre-check to skip wallet increment when refId already exists.
