@@ -1,5 +1,5 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import * as identity from 'firebase-functions/v2/identity';
+import * as functions from 'firebase-functions/v1';
 import { FieldValue } from 'firebase-admin/firestore';
 import * as logger from 'firebase-functions/logger';
 import { db } from './src/lib/firebase';
@@ -7,9 +7,9 @@ import { CoinService } from './src/services/CoinService';
 
 /**
  * Automatically create a user document when a new Auth user is created.
+ * Note: the v2 identity module lacks an onUserCreated handler; use the v1 Auth trigger alongside v2 functions.
  */
-export const onUserCreate = (identity as any).onUserCreated(async (event: any) => {
-  const user = event.data;
+export const onUserCreate = functions.auth.user().onCreate(async (user: any) => {
   const userRef = db.collection('users').doc(user.uid);
   await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
   const walletRef = db.doc(`users/${user.uid}/wallet`);
