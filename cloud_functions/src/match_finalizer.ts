@@ -85,7 +85,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RET
       }
       logger.info('match_finalizer.pending_tickets_batch', { batch: batches, count: ticketsSnap.size });
 
-      // Gather unique eventIds from this batch's tips[] arrays
+      // Gather unique eventIds from this batch's tips[] arrays (multi-event tickets támogatás)
       const eventIdSet = new Set<string>();
       for (const doc of ticketsSnap.docs) {
         const tips = (doc.get('tips') as any[]) || [];
@@ -95,29 +95,55 @@ export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RET
           }
         }
       }
+
+      // Fixture ID feloldás (ha a tipben nincs eltárolva)
+      const fixtureMap: Record<string, number> = {};
+      for (const doc of ticketsSnap.docs) {
+        const tips = (doc.get('tips') as any[]) || [];
+        for (const t of tips) {
+          if (!t.fixtureId && t.eventName && t.startTime) {
+            const found = await findFixtureIdByMeta({ eventName: t.eventName, startTime: t.startTime });
+            if (found?.id) {
+              fixtureMap[t.eventId] = found.id;
+              eventIdSet.add(String(found.id));
+            }
+          }
+        }
+      }
       const eventIds = Array.from(eventIdSet);
       logger.info('match_finalizer.unique_events_batch', { batch: batches, count: eventIds.length });
 
       // 2) Fetch scores
-      let scores;
+      let providerResultsArr;
       try {
-        scores = await provider.getScores(eventIds);
+        providerResultsArr = await provider.getScores(eventIds);
       } catch (err) {
         logger.error('match_finalizer.result_provider_error', { error: err });
         throw err; // message will be retried / DLQ
       }
 
-      // 3) Map of results with normalized fields
-      const resultMap = new Map<string, NormalizedResult>();
-      scores.forEach(r => {
-        resultMap.set(r.id, {
-          completed: r.completed,
+      const providerResults: Record<string, any> = {};
+      for (const r of providerResultsArr) {
+        providerResults[r.id] = r;
+      }
+
+      // Normalize provider result → evaluator input; canceled = void
+      const results: Record<string, NormalizedResult> = {};
+      for (const [eid, r] of Object.entries(providerResults)) {
+        results[eid] = {
+          completed: !!r.completed,
           scores: r.scores,
           home_team: r.home_team,
           away_team: r.away_team,
           winner: r.winner,
-        });
-      });
+        };
+      }
+      // canceled/void flag támogatása
+      const voidSet = new Set<string>(
+        Object.entries(providerResults)
+          .filter(([_, r]: any) => r?.canceled === true || r?.status === 'canceled')
+          .map(([eid]) => eid),
+      );
 
       // 4) Evaluate each ticket based on its tips and finalize atomically
       for (const snap of ticketsSnap.docs) {
@@ -128,27 +154,12 @@ export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RET
         const tipResults: any[] = [];
         for (let ti = 0; ti < tipsRaw.length; ti++) {
           const t = tipsRaw[ti];
-          const rid0 = t?.fixtureId ?? t?.eventId;
-          const rid = rid0 ? String(rid0) : '';
-          let res = rid ? resultMap.get(rid) : undefined;
-          if (!res && t?.eventName && t?.startTime) {
-            try {
-              const found = await findFixtureIdByMeta({
-                eventName: String(t.eventName),
-                startTime: new Date(String(t.startTime)).toISOString(),
-              });
-              if (found?.id) {
-                res = resultMap.get(String(found.id));
-                pendingTipUpdates.push({ index: ti, fixtureId: Number(found.id) });
-              }
-            } catch (e) {
-              logger.warn('match_finalizer.fixture_resolver_failed', { error: e });
-            }
-          }
+          const fid = fixtureMap[t.eventId];
+          const normRes = results[t.eventId] || (fid ? results[String(fid)] : undefined);
           const pick = (t?.outcome ?? '').trim();
           const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
           const evaluator = getEvaluator(String(marketKey));
-          if (!res || !evaluator) {
+          if (!normRes || !evaluator) {
             tipResults.push({
               ...t,
               market: String(marketKey).toUpperCase(),
@@ -163,14 +174,19 @@ export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RET
             selection: pick,
             odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
           };
-          const outcome = evaluator.evaluate(tipInput, res);
+          let result = evaluator.evaluate(tipInput, normRes);
+          const voidKey = fid ? String(fid) : t.eventId;
+          if (voidSet.has(voidKey)) result = 'void';
           tipResults.push({
             ...t,
             market: String(marketKey).toUpperCase(),
             selection: pick,
-            result: outcome,
+            result,
             oddsSnapshot: tipInput.odds,
           });
+          if (!t.fixtureId && fid) {
+            pendingTipUpdates.push({ index: ti, fixtureId: fid });
+          }
         }
 
         const uid = (snap.get('userId') || (snap.ref.parent?.parent?.id));
@@ -227,7 +243,7 @@ export const match_finalizer = async (message: PubSubMessage): Promise<'OK'|'RET
         return 'DLQ';
       } else {
         await pubsub.topic(RESULT_TOPIC).publishMessage({ data: Buffer.from(JSON.stringify({ job })), attributes: { attempt: String(attempt + 1) } });
-        logger.warn('match_finalizer.requeued', { nextAttempt: attempt + 1 });
+        logger.warn('match_finalizer.requeued', { nextAttempt: attempt + 1, job });
         return 'RETRY';
       }
     } catch (pubErr) {
