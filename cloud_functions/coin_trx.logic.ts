@@ -10,7 +10,7 @@ import { CoinService } from './src/services/CoinService';
  * Automatically create a user document when a new Auth user is created.
  * Note: the v2 identity module lacks an onUserCreated handler; use the v1 Auth trigger alongside v2 functions.
  */
-export const onUserCreate = functions.auth.user().onCreate(async (user: any) => {
+export const onUserCreate = functions.region('europe-central2').auth.user().onCreate(async (user: any) => {
   const userRef = db.collection('users').doc(user.uid);
   await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
   const walletRef = db.doc(`users/${user.uid}/wallet`);

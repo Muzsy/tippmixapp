@@ -45,7 +45,7 @@ const CoinService_1 = require("./src/services/CoinService");
  * Automatically create a user document when a new Auth user is created.
  * Note: the v2 identity module lacks an onUserCreated handler; use the v1 Auth trigger alongside v2 functions.
  */
-exports.onUserCreate = functions.auth.user().onCreate(async (user) => {
+exports.onUserCreate = functions.region('europe-central2').auth.user().onCreate(async (user) => {
     const userRef = firebase_1.db.collection('users').doc(user.uid);
     await userRef.set({ createdAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
     const walletRef = firebase_1.db.doc(`users/${user.uid}/wallet`);
