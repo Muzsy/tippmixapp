@@ -1,3 +1,4 @@
+import '../global';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { Timestamp } from 'firebase-admin/firestore';
 import { db } from './lib/firebase';

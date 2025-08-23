@@ -19,3 +19,6 @@ Secrets are injected from Google Secret Manager at runtime. The populated `proce
 ## Quota watcher
 
 - `QUOTA_WARN_AT` – minimum remaining OddsAPI credits before alerting
+
+## Global options and secrets
+All Cloud Functions import `cloud_functions/global.ts` first. This module defines secrets such as `API_FOOTBALL_KEY` via `defineSecret` and sets `setGlobalOptions({ region: 'europe-central2', secrets: [API_FOOTBALL_KEY] })` to prevent region drift.

@@ -1,3 +1,4 @@
+import './global';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
 import { db } from './src/lib/firebase';
