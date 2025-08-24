@@ -13,7 +13,7 @@ class CoinService {
         t.set(ledgerRef, { type, amount, before, after, refId, source, checksum, createdAt: firestore_1.FieldValue.serverTimestamp() }, { merge: true });
     }
     async transact(uid, amount, refId, type, source, t, before) {
-        const walletRef = firebase_1.db.doc(`users/${uid}/wallet`);
+        const walletRef = firebase_1.db.collection('users').doc(uid).collection('wallet').doc('main');
         if (t) {
             const ledgerRef = firebase_1.db.collection('users').doc(uid).collection('ledger').doc(refId);
             // Idempotency: skip if ledger entry already exists

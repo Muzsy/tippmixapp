@@ -32,7 +32,7 @@ class StatsService {
       for (final userDoc in userSnap.docs) {
         final data = userDoc.data();
         final uid = userDoc.id;
-        final walletSnap = await _db.doc('users/$uid/wallet').get();
+        final walletSnap = await _db.doc('users/$uid/wallet/main').get();
         final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
         final displayName = data['nickname'] as String? ?? '';
 
@@ -117,7 +117,7 @@ class StatsService {
     if (!userDoc.exists) return null;
     final userData = userDoc.data() ?? <String, dynamic>{};
 
-    final walletSnap = await _db.doc('users/$uid/wallet').get();
+    final walletSnap = await _db.doc('users/$uid/wallet/main').get();
     final coins = (walletSnap.data()?['coins'] as int?) ?? 0;
     final displayName = userData['nickname'] as String? ?? '';
 

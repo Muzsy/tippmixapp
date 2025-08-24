@@ -103,7 +103,7 @@ service cloud.firestore {
     }
 
     /* --- NEW: user-centric wallet & ledger (SoT) --- */
-    match /users/{uid}/wallet {
+    match /users/{uid}/wallet/{docId} {
       allow read: if isOwner(uid);
       allow write: if false; // Only via CF (Admin SDK)
     }

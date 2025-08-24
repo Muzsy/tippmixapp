@@ -21,7 +21,7 @@ export const admin_coin_ops = onCall(async (request) => {
 
   const svc = new CoinService();
   if (operation === 'reset') {
-    const walletSnap = await db.doc(`users/${userId}/wallet`).get();
+    const walletSnap = await db.collection('users').doc(userId).collection('wallet').doc('main').get();
     const current = (walletSnap.get('coins') as number) || 0;
     if (current > 0) {
       await svc.debit(userId, current, `admin:reset:${Date.now()}`);

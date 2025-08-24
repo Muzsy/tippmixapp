@@ -29,7 +29,7 @@ exports.claim_daily_bonus = (0, https_1.onCall)(async (request) => {
     const todayKey = ymdUtc(now);
     const refId = `bonus:daily:${todayKey}`;
     const bonusStateRef = firebase_1.db.doc(`users/${uid}/bonus_state`);
-    const walletRef = firebase_1.db.doc(`users/${uid}/wallet`);
+    const walletRef = firebase_1.db.collection('users').doc(uid).collection('wallet').doc('main');
     await firebase_1.db.runTransaction(async (t) => {
         const [stateDoc, walletDoc] = await Promise.all([t.get(bonusStateRef), t.get(walletRef)]);
         const state = stateDoc.exists ? stateDoc.data() : {};

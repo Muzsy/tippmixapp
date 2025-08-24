@@ -16,7 +16,7 @@ exports.admin_coin_ops = (0, https_1.onCall)(async (request) => {
     const { userId, amount, operation } = data;
     const svc = new CoinService_1.CoinService();
     if (operation === 'reset') {
-        const walletSnap = await firebase_1.db.doc(`users/${userId}/wallet`).get();
+        const walletSnap = await firebase_1.db.collection('users').doc(userId).collection('wallet').doc('main').get();
         const current = walletSnap.get('coins') || 0;
         if (current > 0) {
             await svc.debit(userId, current, `admin:reset:${Date.now()}`);

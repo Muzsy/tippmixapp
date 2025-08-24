@@ -33,7 +33,7 @@ export class CoinService {
     t?: Transaction,
     before?: number,
   ) {
-    const walletRef = db.doc(`users/${uid}/wallet`);
+    const walletRef = db.collection('users').doc(uid).collection('wallet').doc('main');
     if (t) {
       const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
       // Idempotency: skip if ledger entry already exists

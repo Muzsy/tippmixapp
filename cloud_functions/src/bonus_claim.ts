@@ -32,7 +32,7 @@ export const claim_daily_bonus = onCall(async (request) => {
   const refId = `bonus:daily:${todayKey}`;
 
   const bonusStateRef = db.doc(`users/${uid}/bonus_state`);
-  const walletRef = db.doc(`users/${uid}/wallet`);
+  const walletRef = db.collection('users').doc(uid).collection('wallet').doc('main');
 
   await db.runTransaction(async (t) => {
     const [stateDoc, walletDoc] = await Promise.all([t.get(bonusStateRef), t.get(walletRef)]);
