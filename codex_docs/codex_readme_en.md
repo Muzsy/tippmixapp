@@ -119,3 +119,4 @@
 | 2025-10-02   | @codex-bot      | TOC refreshed after Firestore functions ops docs update                        |
 | 2025-10-03   | @codex-bot      | TOC refreshed after finalizer hardening docs update                            |
 | 2025-10-05   | @codex-bot      | TOC refreshed after CI deploy MODE fix docs update                              |
+| 2025-10-15   | @codex-bot      | TOC refreshed after match finalizer CloudEvent docs update                      |

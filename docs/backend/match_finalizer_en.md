@@ -1,4 +1,4 @@
-version: "2025-10-10"
+version: "2025-10-15"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -21,6 +21,6 @@ This document covers the TypeScript skeleton with atomic payout handling.
 
 **Runtime**: Node.js 20 on 2nd gen Cloud Functions.
 Uses the firebase-functions v2 `onMessagePublished` trigger, avoiding the legacy `GCLOUD_PROJECT` requirement.
-The entry point receives a typed `CloudEvent<MessagePublishedData>` and logs `hasMsg` and attribute keys before delegating; empty events are skipped with a `match_finalizer.no_message` warning.
+The entry point receives a typed `CloudEvent<MessagePublishedData>` and logs `hasMsg`, `hasData` and attribute keys before delegating; empty events are skipped with a `match_finalizer.no_message` warning.
 `API_FOOTBALL_KEY` is injected from Secret Manager via `defineSecret` and exposed as `process.env.API_FOOTBALL_KEY`.
 `retry: true` is enabled and structured logs are emitted via `firebase-functions/logger`.
