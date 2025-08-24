@@ -9,6 +9,15 @@ class AppLocalizationsHu extends AppLocalizations {
   AppLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
+  String get home_short => 'Hazai';
+
+  @override
+  String get draw_short => 'Döntetlen';
+
+  @override
+  String get away_short => 'Vendég';
+
+  @override
   String get accept => 'Elfogad';
 
   @override
@@ -79,9 +88,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get auth_error_wrong_password => 'Hibás jelszó';
-
-  @override
-  String get away_short => 'Vendég';
 
   @override
   String get back_button => 'Vissza';
@@ -207,9 +213,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get dob_hint => 'Születési dátum';
-
-  @override
-  String get draw_short => 'Döntetlen';
 
   @override
   String get drawer_feed => 'Hírfolyam';
@@ -431,9 +434,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get home_nav_stats => 'Statisztika';
-
-  @override
-  String get home_short => 'Hazai';
 
   @override
   String get home_stats => 'Statisztika';

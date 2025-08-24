@@ -1,0 +1,70 @@
+meta:
+  canvas: canvases/submit_flow_clear_and_routing_integrity.md
+  priority: P1
+
+steps:
+  - name: CreateTicketScreen – szelvény ürítése és név alapú visszanavigálás
+    description: A `_submitTicket()` sikeres ágában hívjuk a `clearSlip()`-et, mutassuk a meglévő siker SnackBar-t, majd `goNamed(AppRoute.bets)`-szel menjünk vissza. Tartsuk be a routing_integrity szabályt.
+    outputs:
+      - lib/screens/create_ticket_screen.dart módosul
+    patch_file:
+      target: lib/screens/create_ticket_screen.dart
+      patch: |
+        --- a/lib/screens/create_ticket_screen.dart
+        +++ b/lib/screens/create_ticket_screen.dart
+        @@
+        +import 'package:go_router/go_router.dart';
+        +import 'package:tippmixapp/routes/app_route.dart';
+        +import 'package:tippmixapp/providers/bet_slip_provider.dart';
+        @@
+         Future<void> _submitTicket() async {
+           final loc = AppLocalizations.of(context)!;
+           try {
+             await ref.read(ticketServiceProvider).submitCurrentTicket();
+-            ScaffoldMessenger.of(context).showSnackBar(
+-              SnackBar(content: Text(loc.ticket_submit_success)),
+-            );
+-            Navigator.of(context).pop();
++            // Ürítsük a szelvényt sikeres beküldés után
++            ref.read(betSlipProvider.notifier).clearSlip();
++            // Diszkrét visszajelzés a meglévő kulccsal
++            ScaffoldMessenger.of(context).showSnackBar(
++              SnackBar(content: Text(loc.ticket_submit_success)),
++            );
++            // routing_integrity: név alapú visszanavigálás a Fogadások képernyőre
++            if (mounted) {
++              context.goNamed(AppRoute.bets.name);
++            }
+           } catch (e) {
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(content: Text(loc.ticket_submit_failed)),
+             );
+           }
+         }
+
+  - name: EventsScreen – FAB navigáció névvel (path helyett)
+    description: A FAB jelenleg nyers path-tal navigál a szelvénykészítő képernyőre. Cseréljük `pushNamed(AppRoute.createTicket.name)`-re a routing_integrity szerint.
+    outputs:
+      - lib/screens/events_screen.dart módosul
+    patch_file:
+      target: lib/screens/events_screen.dart
+      patch: |
+        --- a/lib/screens/events_screen.dart
+        +++ b/lib/screens/events_screen.dart
+        @@
+        +import 'package:go_router/go_router.dart';
+        +import 'package:tippmixapp/routes/app_route.dart';
+        @@
+-        onPressed: () => GoRouter.of(context).push('/create-ticket'),
++        onPressed: () => context.pushNamed(AppRoute.createTicket.name),
+         tooltip: 'create-ticket',
+         child: const Icon(Icons.shopping_cart_checkout),
+        ),
+
+  - name: Elemzés és tesztek
+    description: Statikus analízis és automata tesztek futtatása (routing és submit flow regressziók ellenőrzése).
+    outputs:
+      - analyze/test logok
+    run: |
+      flutter analyze
+      flutter test
