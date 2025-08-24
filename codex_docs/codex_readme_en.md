@@ -120,3 +120,4 @@
 | 2025-10-03   | @codex-bot      | TOC refreshed after finalizer hardening docs update                            |
 | 2025-10-05   | @codex-bot      | TOC refreshed after CI deploy MODE fix docs update                              |
 | 2025-10-15   | @codex-bot      | TOC refreshed after match finalizer CloudEvent docs update                      |
+| 2025-10-20   | @codex-bot      | TOC refreshed after bet H2H fixed labels & ticket clear docs update             |
