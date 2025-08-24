@@ -1,0 +1,116 @@
+meta:
+  canvas: canvases/bet_h2h_fixed_labels_and_ticket_clear.md
+  priority: P1
+
+steps:
+  - name: H2H gombok – fix, lokalizált felirat pozíció szerint
+    description: Az `_oddsButton` kap egy opcionális `fixedLabel` paramétert; a H2H három gombján ezt adjuk át (`home_short`, `draw_short`, `away_short`).
+    outputs:
+      - lib/widgets/event_bet_card.dart módosul
+    patch_file:
+      target: lib/widgets/event_bet_card.dart
+      patch: |
+        --- a/lib/widgets/event_bet_card.dart
+        +++ b/lib/widgets/event_bet_card.dart
+        @@ -244,6 +244,7 @@
+             OddsOutcome? draw,
+             OddsOutcome? away,
+           ) {
+        +    final loc = AppLocalizations.of(context)!;
+             return Row(
+               key: const ValueKey('h2h-row'),
+               children: [
+        @@ -252,6 +253,7 @@
+                   ? _oddsButton(
+                       context,
+                       home,
+        +              fixedLabel: loc.home_short,
+                       key: const ValueKey('h2h-home'),
+                       selected: _selected == 'home',
+                       onTap: () {
+        @@ -267,6 +269,7 @@
+                   ? _oddsButton(
+                       context,
+                       draw,
+        +              fixedLabel: loc.draw_short,
+                       key: const ValueKey('h2h-draw'),
+                       selected: _selected == 'draw',
+                       onTap: () {
+        @@ -282,6 +285,7 @@
+                   ? _oddsButton(
+                       context,
+                       away,
+        +              fixedLabel: loc.away_short,
+                       key: const ValueKey('h2h-away'),
+                       selected: _selected == 'away',
+                       onTap: () {
+        @@ -436,6 +440,7 @@
+         Widget _oddsButton(
+           BuildContext context,
+           OddsOutcome o, {
+        +  String? fixedLabel,
+           required bool selected,
+           required VoidCallback onTap,
+           Key? key,
+        @@ -474,7 +479,7 @@
+               child: Column(
+                 mainAxisSize: MainAxisSize.min,
+                 children: [
+        -          Text(pretty(o.name), style: Theme.of(context).textTheme.labelMedium),
+        +          Text((fixedLabel ?? pretty(o.name)), style: Theme.of(context).textTheme.labelMedium),
+                   const SizedBox(height: 2),
+                   Text(
+                     o.price.toStringAsFixed(2),
+
+  - name: Szelvény ürítése beküldés után + üzenet + visszanavigálás
+    description: Beküldés után töröljük a `betSlipProvider` tartalmát, majd SnackBar és vissza a fogadások képernyőre.
+    outputs:
+      - lib/screens/create_ticket_screen.dart módosul
+    patch_file:
+      target: lib/screens/create_ticket_screen.dart
+      patch: |
+        --- a/lib/screens/create_ticket_screen.dart
+        +++ b/lib/screens/create_ticket_screen.dart
+        @@ -64,6 +64,7 @@
+               _isLoading = false;
+             });
+             if (mounted) {
+        +      ref.read(betSlipProvider.notifier).clearSlip();
+               ScaffoldMessenger.of(
+                 context,
+               ).showSnackBar(SnackBar(content: Text(loc.ticket_submit_success)));
+               Navigator.of(context).pop();
+             }
+
+  - name: HU SnackBar szöveg rövidítése
+    description: A `ticket_submit_success` HU érték legyen „Szelvény beküldve”. EN/DE változat változatlan.
+    outputs:
+      - lib/l10n/app_hu.arb módosul
+    patch_file:
+      target: lib/l10n/app_hu.arb
+      patch: |
+        --- a/lib/l10n/app_hu.arb
+        +++ b/lib/l10n/app_hu.arb
+        @@ -315,7 +315,7 @@
+           "ticket_status_void": "Érvénytelen",
+           "ticket_status_won": "Nyert",
+           "ticket_submit_error": "Hiba történt:",
+        -  "ticket_submit_success": "Szelvény sikeresen elküldve",
+        +  "ticket_submit_success": "Szelvény beküldve",
+           "tips_label": "Tippek",
+           "total_odds_label": "Össz odds",
+           "unfollow": "Követve",
+
+  - name: L10n generálás
+    description: Frissítjük a fordításokat a módosított ARB alapján.
+    outputs:
+      - lib/l10n/generated (frissítve a projekt beállításai szerint)
+    run: flutter gen-l10n
+
+  - name: Elemzés és tesztek
+    description: Statikus analízis és automata tesztek futtatása.
+    outputs:
+      - analyze/test logok
+    run: |
+      flutter analyze
+      flutter test
