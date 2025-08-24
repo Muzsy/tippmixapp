@@ -244,6 +244,7 @@ class _EventBetCardState extends State<EventBetCard> {
     OddsOutcome? draw,
     OddsOutcome? away,
   ) {
+    final loc = AppLocalizations.of(context)!;
     return Row(
       key: const ValueKey('h2h-row'),
       children: [
@@ -252,6 +253,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   home,
+                  fixedLabel: loc.home_short,
                   key: const ValueKey('h2h-home'),
                   selected: _selected == 'home',
                   onTap: () {
@@ -267,6 +269,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   draw,
+                  fixedLabel: loc.draw_short,
                   key: const ValueKey('h2h-draw'),
                   selected: _selected == 'draw',
                   onTap: () {
@@ -282,6 +285,7 @@ class _EventBetCardState extends State<EventBetCard> {
               ? _oddsButton(
                   context,
                   away,
+                  fixedLabel: loc.away_short,
                   key: const ValueKey('h2h-away'),
                   selected: _selected == 'away',
                   onTap: () {
@@ -436,6 +440,7 @@ class _CountdownState extends State<_Countdown> {
 Widget _oddsButton(
   BuildContext context,
   OddsOutcome o, {
+  String? fixedLabel,
   required bool selected,
   required VoidCallback onTap,
   Key? key,
@@ -474,7 +479,10 @@ Widget _oddsButton(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(pretty(o.name), style: Theme.of(context).textTheme.labelMedium),
+          Text(
+            (fixedLabel ?? pretty(o.name)),
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
           const SizedBox(height: 2),
           Text(
             o.price.toStringAsFixed(2),

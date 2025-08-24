@@ -64,6 +64,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         _isLoading = false;
       });
       if (mounted) {
+        ref.read(betSlipProvider.notifier).clearSlip();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(loc.ticket_submit_success)));
