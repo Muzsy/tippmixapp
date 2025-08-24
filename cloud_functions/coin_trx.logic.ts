@@ -13,8 +13,13 @@ import { CoinService } from './src/services/CoinService';
 export const onUserCreate = functions.region('europe-central2').auth.user().onCreate(async (user: any) => {
   const userRef = db.collection('users').doc(user.uid);
   await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
-  const walletRef = db.doc(`users/${user.uid}/wallet`);
-  await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  // wallet is a single document under the user → fix doc() path
+  // Firestore requires even number of components → add fixed docId "main"
+  const walletRef = db.collection('users').doc(user.uid).collection('wallet').doc('main');
+  await walletRef.set(
+    { coins: 50, updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
   // Bonus Engine – optional signup bonus
   const rulesSnap = await db.doc('system_configs/bonus_rules').get();
   if (rulesSnap.exists) {
@@ -92,13 +97,17 @@ export const coin_trx = onCall(async (request) => {
     // Transaction: wallet + ledger (SoT)
     await db.runTransaction(async (tx) => {
       const userRef = db.collection('users').doc(userId);
-      const walletRef = db.doc(`users/${userId}/wallet`);
+      const walletRef = db.collection('users').doc(userId).collection('wallet').doc('main');
       const walletSnap = await tx.get(walletRef);
       const before = (walletSnap.data()?.coins as number) ?? 0;
       const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
       after = before + delta;
 
-      tx.set(walletRef, { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+      tx.set(
+        walletRef,
+        { coins: FieldValue.increment(delta), updatedAt: FieldValue.serverTimestamp() },
+        { merge: true }
+      );
       tx.set(
         ledgerRef,
         {
