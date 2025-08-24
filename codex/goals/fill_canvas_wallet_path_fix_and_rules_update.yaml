@@ -1,0 +1,134 @@
+meta:
+  canvas: canvases/wallet_path_fix_and_rules_update.md
+  priority: P0
+
+steps:
+  - patch_file:
+      target: cloud_functions/coin_trx.logic.ts
+      patch: |
+        --- a/cloud_functions/coin_trx.logic.ts
+        +++ b/cloud_functions/coin_trx.logic.ts
+        @@ -13,7 +13,7 @@
+         export const onUserCreate = functions.region('europe-central2').auth.user().onCreate(async (user: any) => {
+           const userRef = db.collection('users').doc(user.uid);
+           await userRef.set({ createdAt: FieldValue.serverTimestamp() }, { merge: true });
+        -  const walletRef = db.doc(`users/${user.uid}/wallet`);
+        +  const walletRef = db.collection('users').doc(user.uid).collection('wallet').doc('main');
+           await walletRef.set({ coins: 50, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+           // Bonus Engine – optional signup bonus
+           const rulesSnap = await db.doc('system_configs/bonus_rules').get();
+        @@ -92,7 +92,7 @@
+             // Transaction: wallet + ledger (SoT)
+             await db.runTransaction(async (tx) => {
+               const userRef = db.collection('users').doc(userId);
+        -      const walletRef = db.doc(`users/${userId}/wallet`);
+        +      const walletRef = db.collection('users').doc(userId).collection('wallet').doc('main');
+               const walletSnap = await tx.get(walletRef);
+               const before = (walletSnap.data()?.coins as number) ?? 0;
+               const delta = type === 'debit' ? -Math.abs(amount) : Math.abs(amount);
+  - patch_file:
+      target: cloud_functions/src/services/CoinService.ts
+      patch: |
+        --- a/cloud_functions/src/services/CoinService.ts
+        +++ b/cloud_functions/src/services/CoinService.ts
+        @@ -33,7 +33,7 @@
+             t?: Transaction,
+             before?: number,
+           ) {
+        -    const walletRef = db.doc(`users/${uid}/wallet`);
+        +    const walletRef = db.collection('users').doc(uid).collection('wallet').doc('main');
+             if (t) {
+               const ledgerRef = db.collection('users').doc(uid).collection('ledger').doc(refId);
+               // Idempotency: skip if ledger entry already exists
+  - patch_file:
+      target: cloud_functions/src/bonus_claim.ts
+      patch: |
+        --- a/cloud_functions/src/bonus_claim.ts
+        +++ b/cloud_functions/src/bonus_claim.ts
+        @@ -32,7 +32,7 @@
+           const refId = `bonus:daily:${todayKey}`;
+         
+           const bonusStateRef = db.doc(`users/${uid}/bonus_state`);
+        -  const walletRef = db.doc(`users/${uid}/wallet`);
+        +  const walletRef = db.collection('users').doc(uid).collection('wallet').doc('main');
+         
+           await db.runTransaction(async (t) => {
+             const [stateDoc, walletDoc] = await Promise.all([t.get(bonusStateRef), t.get(walletRef)]);
+  - patch_file:
+      target: cloud_functions/admin_coin_ops.ts
+      patch: |
+        --- a/cloud_functions/admin_coin_ops.ts
+        +++ b/cloud_functions/admin_coin_ops.ts
+        @@ -21,7 +21,7 @@
+         
+           const svc = new CoinService();
+           if (operation === 'reset') {
+        -    const walletSnap = await db.doc(`users/${userId}/wallet`).get();
+        +    const walletSnap = await db.collection('users').doc(userId).collection('wallet').doc('main').get();
+             const current = (walletSnap.get('coins') as number) || 0;
+             if (current > 0) {
+               await svc.debit(userId, current, `admin:reset:${Date.now()}`);
+  - patch_file:
+      target: lib/services/stats_service.dart
+      patch: |
+        --- a/lib/services/stats_service.dart
+        +++ b/lib/services/stats_service.dart
+        @@ -32,7 +32,7 @@
+               for (final userDoc in userSnap.docs) {
+                 final data = userDoc.data();
+                 final uid = userDoc.id;
+        -        final walletSnap = await _db.doc('users/$uid/wallet').get();
+        +        final walletSnap = await _db.doc('users/$uid/wallet/main').get();
+                 final coins =
+                     (walletSnap.data()?['coins'] as int?) ??
+                     (data['coins'] as int? ?? 0);
+        @@ -119,7 +119,7 @@
+             if (!userDoc.exists) return null;
+             final userData = userDoc.data() ?? <String, dynamic>{};
+         
+        -    final walletSnap = await _db.doc('users/$uid/wallet').get();
+        +    final walletSnap = await _db.doc('users/$uid/wallet/main').get();
+             final coins =
+                 (walletSnap.data()?['coins'] as int?)
+  - patch_file:
+      target: cloud_functions/firestore.rules
+      patch: |
+        --- a/cloud_functions/firestore.rules
+        +++ b/cloud_functions/firestore.rules
+        @@ -154,7 +154,7 @@
+             }
+         
+             /* --- NEW: user-centric wallet & ledger (SoT) --- */
+        -    match /users/{uid}/wallet {
+        +    match /users/{uid}/wallet/{docId} {
+               allow read: if isOwner(uid);
+               allow write: if false; // Only via CF (Admin SDK)
+             }
+  - patch_file:
+      target: firebase.rules
+      patch: |
+        --- a/firebase.rules
+        +++ b/firebase.rules
+        @@ -111,7 +111,7 @@
+             }
+         
+             /* --- NEW: user-centric wallet & ledger (SoT) --- */
+        -    match /users/{uid}/wallet {
+        +    match /users/{uid}/wallet/{docId} {
+               allow read: if isOwner(uid);
+               allow write: if false; // Only via CF (Admin SDK)
+             }
+  - run: |
+      set -euo pipefail
+      echo "— Clean CF build artifacts —"
+      pushd cloud_functions
+      rm -rf lib
+      npm ci
+      npm run build
+      popd
+  - run: |
+      set -euo pipefail
+      echo "— Grep verification —"
+      ! grep -R "\`users/\${.*}/wallet\`" cloud_functions || (echo "Found stale template-string wallet doc paths"; exit 1)
+      ! grep -R "doc('users/\$uid/wallet')" lib/ || (echo "Found stale client wallet doc paths"; exit 1)
+      echo "All wallet references migrated to users/{uid}/wallet/main"
