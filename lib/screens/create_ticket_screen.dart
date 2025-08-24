@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../providers/bet_slip_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/providers/bet_slip_provider.dart';
+import 'package:tippmixapp/routes/app_route.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import '../providers/auth_provider.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {
   const CreateTicketScreen({super.key});
@@ -60,16 +62,18 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         return;
       }
       await BetSlipService.submitTicket(tips: tips, stake: stake.toInt());
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
-      if (mounted) {
-        ref.read(betSlipProvider.notifier).clearSlip();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.ticket_submit_success)));
-        Navigator.of(context).pop();
-      }
+      // Ürítsük a szelvényt sikeres beküldés után
+      ref.read(betSlipProvider.notifier).clearSlip();
+      // Diszkrét visszajelzés a meglévő kulccsal
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.ticket_submit_success)),
+      );
+      // routing_integrity: név alapú visszanavigálás a Fogadások képernyőre
+      context.goNamed(AppRoute.bets.name);
     } on FirebaseException catch (e) {
       setState(() {
         _isLoading = false;
