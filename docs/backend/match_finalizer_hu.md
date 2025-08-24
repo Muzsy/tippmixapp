@@ -1,4 +1,4 @@
-version: "2025-10-10"
+version: "2025-10-15"
 last_updated_by: codex-bot
 depends_on: []
 
@@ -20,6 +20,6 @@ Háttérfolyamat, amely a `result-check` Pub/Sub üzeneteket dolgozza fel. Felad
 Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
 A `firebase-functions` v2 `onMessagePublished` triggert használja, így nem szükséges a régi `GCLOUD_PROJECT` környezeti változó.
-A belépési pont típusos `CloudEvent<MessagePublishedData>` eseményt kap, `hasMsg` és attribútumkulcsok naplózásával. Üres esemény esetén `match_finalizer.no_message` figyelmeztetést ír és visszatér.
+A belépési pont típusos `CloudEvent<MessagePublishedData>` eseményt kap, `hasMsg`, `hasData` és attribútumkulcsok naplózásával. Üres esemény esetén `match_finalizer.no_message` figyelmeztetést ír és visszatér.
 Az `API_FOOTBALL_KEY` titok a Secret Managerből `defineSecret` segítségével kerül be és `process.env.API_FOOTBALL_KEY` néven érhető el.
 `retry: true` engedélyezve van, és strukturált logolást használ a `firebase-functions/logger`.
