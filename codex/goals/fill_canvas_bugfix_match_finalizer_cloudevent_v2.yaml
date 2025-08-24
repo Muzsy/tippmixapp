@@ -1,0 +1,115 @@
+# Codex canvas goal – bugfix_match_finalizer_cloudevent_v2
+# Hivatkozás: lásd a "bugfix_match_finalizer_cloudevent_v2 – Codex vászon" dokumentumot
+
+steps:
+  - name: CloudEvent-kompatibilis wrapper az index.ts-ben
+    description: |
+      Átállítjuk a `onMessagePublished` callbacket CloudEvent típusra, védő logokkal és guarddal.
+      A wrapper PubSubMessage-re képezi le az üzenetet, és meghívja a meglévő `src/match_finalizer.ts` logikát.
+    outputs:
+      - type: diff
+        path: cloud_functions/index.ts
+        content: |
+          --- a/cloud_functions/index.ts
+          +++ b/cloud_functions/index.ts
+          @@
+           import './global';
+           import { onMessagePublished } from 'firebase-functions/v2/pubsub';
+          +import type { CloudEvent } from 'firebase-functions/v2';
+          +import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
+           import { API_FOOTBALL_KEY } from './global';
+           import * as logger from 'firebase-functions/logger';
+           import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
+          @@
+          -// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
+          -export const match_finalizer = onMessagePublished(
+          -  { topic: 'result-check', secrets: [API_FOOTBALL_KEY], retry: true },
+          -  async (message, context) => {
+          -    // korábbi, Gen1-szerű interfész – ez okozza a CloudEvent adapter hibát
+          -    return matchFinalizerHandler(message);
+          -  }
+          -);
+          +// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
+          +export const match_finalizer = onMessagePublished(
+          +  { topic: 'result-check', secrets: [API_FOOTBALL_KEY], retry: true },
+          +  async (event: CloudEvent<MessagePublishedData>) => {
+          +    const hasMsg = !!event?.data?.message;
+          +    logger.info('match_finalizer.start', {
+          +      hasMsg,
+          +      hasData: !!event?.data?.message?.data,
+          +      attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+          +    });
+          +    if (!hasMsg) {
+          +      logger.warn('match_finalizer.no_message');
+          +      return;
+          +    }
+          +    const msg = {
+          +      data: event.data.message?.data,
+          +      attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
+          +    };
+          +    try {
+          +      const result = await matchFinalizerHandler(msg as any);
+          +      logger.info('match_finalizer.done', { result });
+          +    } catch (e: any) {
+          +      logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
+          +      throw e;
+          +    }
+          +  }
+          +);
+
+  - name: (Opció) engines mező hozzáadása a package.json-hoz
+    description: A Node.js 20 környezet kényszerítése a buildkörnyezetben.
+    outputs:
+      - type: diff
+        path: cloud_functions/package.json
+        content: |
+          --- a/cloud_functions/package.json
+          +++ b/cloud_functions/package.json
+          @@
+           {
+          +  "engines": {
+          +    "node": ">=20"
+          +  },
+             "main": "lib/index.js",
+             "name": "cloud_functions",
+             "private": true,
+             "scripts": {
+               "build": "tsc",
+               "ci:lint": "npm run lint",
+               "ci:test": "npm test",
+               "e2e": "MODE=dev USE_MOCK_SCORES=true jest --config jest-e2e.config.js",
+               "gcp-build": "npm run build",
+               "lint": "tsc --noEmit",
+               "migrate:user-schema": "ts-node scripts/migrateUserSchema.ts",
+               "test": "jest"
+             }
+           }
+
+  - name: Build és célzott redeploy
+    description: Frissítjük a build artifaktot és újrakötjük a triggert.
+    outputs:
+      - type: bash
+        content: |
+          cd cloud_functions
+          npm ci
+          npm run build
+          gcloud functions deploy match_finalizer \
+            --gen2 \
+            --region=europe-central2 \
+            --runtime=nodejs20 \
+            --trigger-topic=result-check \
+            --entry-point=match_finalizer \
+            --project=tippmix-dev \
+            --quiet
+
+  - name: Füstteszt + log ellenőrzés
+    description: Publikálunk egy üzenetet és megnézzük a friss futás logját közvetlenül CLI-ből.
+    outputs:
+      - type: bash
+        content: |
+          gcloud pubsub topics publish projects/tippmix-dev/topics/result-check \
+            --message='{"job":"final-sweep"}' \
+            --project=tippmix-dev
+
+          gcloud functions logs read match_finalizer \
+            --gen2 --region=europe-central2 --limit=50
