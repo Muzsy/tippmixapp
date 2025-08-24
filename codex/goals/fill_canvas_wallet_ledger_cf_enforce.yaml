@@ -1,0 +1,69 @@
+meta:
+  canvas: wallet_ledger_cf_enforce.md
+  priority: P0
+
+steps:
+  # 1) BetSlipService -> mindig CoinService.live(...)
+  - patch_file:
+      target: lib/services/bet_slip_service.dart
+      patch: |
+        @@
+-     final cs =
+-         coinService ??
+-         CoinService(firestore: firestore ?? FirebaseFirestore.instance);
++     final cs = coinService ??
++         CoinService.live(
++           firestore: firestore ?? FirebaseFirestore.instance,
++         );
+
+  # 2) CoinService fallback útvonalak igazítása a SoT-hoz
+  - patch_file:
+      target: lib/services/coin_service.dart
+      patch: |
+        @@
+-   Future<void> _applyLedger({
++   Future<void> _applyLedger({
+          required int amount,
+          required String type,
+          required String reason,
+          required String transactionId,
+        }) async {
+          final uid = _fa.currentUser?.uid;
+          if (uid == null) {
+            throw FirebaseAuthException(code: 'unauthenticated', message: 'User not logged in');
+          }
+-         final walletRef = _fs.collection('wallets').doc(uid);
+-         final ledgerRef = walletRef.collection('ledger').doc(transactionId);
++         // User-centrikus SoT: users/{uid}/wallet (doc 'main') + users/{uid}/ledger/{transactionId}
++         final walletRef = _fs
++             .collection('users')
++             .doc(uid)
++             .collection('wallet')
++             .doc('main');
++         final ledgerRef = _fs
++             .collection('users')
++             .doc(uid)
++             .collection('ledger')
++             .doc(transactionId);
+          await _wrapper.run((tx) async {
+            final ledgerSnap = await tx.get(ledgerRef);
+            if (ledgerSnap.exists) return;
+            final delta = type == 'debit' ? -amount : amount;
+            tx.update(walletRef, {'coins': FieldValue.increment(delta)});
+            tx.set(ledgerRef, {
+              'amount': amount,
+              'type': type,
+              'reason': reason,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          });
+        }
+
+  # 3) Gyors ellenőrzés: statikus kódvizsgálat
+  - run: flutter analyze
+
+  # 4) Gyors futtatás: unit/widget tesztek
+  - run: flutter test
+
+  # 5) Megjegyzés – hogy mit javítottunk (nyomtatás logba a Codex konzolra)
+  - run: echo "Enforce Cloud Functions coin_trx + align fallback to users/{uid}/wallet(main)+ledger"
