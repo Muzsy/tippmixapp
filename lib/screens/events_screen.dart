@@ -11,6 +11,7 @@ import '../models/tip_model.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/event_bet_card.dart';
 import '../services/api_football_service.dart';
+import 'package:tippmixapp/routes/app_route.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;
@@ -274,9 +275,7 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
               heroTag: 'createTicket',
               tooltip: loc.go_to_create_ticket,
               child: const Icon(Icons.check),
-              onPressed: () {
-                GoRouter.of(context).push('/create-ticket');
-              },
+              onPressed: () => context.pushNamed(AppRoute.createTicket.name),
             ),
           if (hasTips) const SizedBox(height: 12),
           FloatingActionButton(
