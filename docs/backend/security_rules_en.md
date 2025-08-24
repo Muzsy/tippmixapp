@@ -10,7 +10,7 @@ This document defines the security model and Firestore access rules for TippmixA
 - Prevent manipulation of TippCoin or tickets
 - Ensure data integrity during bet placement
 - Leaderboard requires read-only access to all `users/{uid}` docs for signed-in users
-- TippCoin balances stored in `users/{uid}/wallet`; legacy `wallets/*` and `coin_logs/*` paths removed
+- TippCoin balances stored in `users/{uid}/wallet/main`; legacy `wallets/*` and `coin_logs/*` paths removed
 
 ---
 
@@ -20,7 +20,7 @@ This document defines the security model and Firestore access rules for TippmixA
 users/{uid}
   badges/{badgeId}
   settings/{settingId}
-  wallet
+  wallet/{walletId}
   ledger/{entryId}
   tickets/{ticketId}
   bonus_state
@@ -46,8 +46,8 @@ service cloud.firestore {
     }
 
     // user-centric wallet & ledger (SoT)
-    match /users/{userId}/wallet {
-      allow read: if request.auth != null && request.auth.uid == userId;
+    match /users/{userId}/wallet/{walletId} {
+      allow read: if request.auth != null && request.auth.uid == userId && walletId == 'main';
       allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {

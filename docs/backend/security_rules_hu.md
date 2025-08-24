@@ -10,7 +10,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 - Ne lehessen manipulálni TippCoin vagy szelvény adatokat
 - Fogadásoknál biztosítani kell a konzisztens adatbevitelt
 - A ranglista miatt minden hitelesített felhasználó olvashatja mások `users/{uid}` dokumentumát
-- A TippCoin egyenlegek a `users/{uid}/wallet` alatt tárolódnak; a `wallets/*` és `coin_logs/*` útvonalak kivezetve
+- A TippCoin egyenlegek a `users/{uid}/wallet/main` alatt tárolódnak; a `wallets/*` és `coin_logs/*` útvonalak kivezetve
 
 ---
 
@@ -20,7 +20,7 @@ Ez a dokumentum rögzíti a TippmixApp Firestore adatbázisra vonatkozó jogosul
 users/{uid}
   badges/{badgeId}
   settings/{settingId}
-  wallet
+  wallet/{walletId}
   ledger/{entryId}
   tickets/{ticketId}
   bonus_state
@@ -46,8 +46,8 @@ service cloud.firestore {
     }
 
     // user-centrikus wallet és ledger (SoT)
-    match /users/{userId}/wallet {
-      allow read: if request.auth != null && request.auth.uid == userId;
+    match /users/{userId}/wallet/{walletId} {
+      allow read: if request.auth != null && request.auth.uid == userId && walletId == 'main';
       allow write: if false;
     }
     match /users/{userId}/ledger/{entryId} {

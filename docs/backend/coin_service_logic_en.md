@@ -18,7 +18,7 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On registration
 
-- Cloud Function seeds `users/{uid}/wallet` with **50** coins (user doc has no `coins` field)
+- Cloud Function seeds `users/{uid}/wallet/main` with **50** coins (user doc has no `coins` field)
 
 ### On placing a ticket
 
@@ -27,7 +27,7 @@ TippCoin is used as a betting stake and gamification reward.
 - It then calls the `coin_trx` Cloud Function with
   `{ amount: stake, type: 'debit', reason: 'bet', transactionId: ticketId }`.
 - The Cloud Function deducts the balance in
-  `users/{uid}/wallet.coins` and appends a ledger entry
+  `users/{uid}/wallet/main.coins` and appends a ledger entry
   `users/{uid}/ledger/{ticketId}` atomically.
 - If the function call fails, the client deletes the created ticket
   (compensation) and rethrows the error.
@@ -38,7 +38,7 @@ This keeps the client free of any direct wallet writes.
 
 - `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
   - checks `users/{uid}/ledger/{ticketId}` and exits if already exists (idempotent); in this case the wallet increment is skipped.
-  - increments `users/{uid}/wallet.coins` with `FieldValue.increment`;
+  - increments `users/{uid}/wallet/main.coins` with `FieldValue.increment`;
   - writes ledger entry `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
 - `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
 
@@ -54,7 +54,7 @@ This keeps the client free of any direct wallet writes.
 ## 🧾 Technical Plan
 
 - TippCoin changes must be done server-side via Cloud Functions.
-- Client code never modifies `users/{uid}/wallet` or `users/{uid}/ledger` directly.
+- Client code never modifies `users/{uid}/wallet/main` or `users/{uid}/ledger` directly.
 - Each transaction is logged in the ledger with an idempotent `refId`.
 - Composite Firestore index: `collectionGroup('ledger')` on `(type ASC, createdAt DESC)`.
 
@@ -70,7 +70,7 @@ TippCoinLog {
 - Wallet structure:
 
   ```
-  users/{uid}/wallet
+  users/{uid}/wallet/main
     coins: number
     updatedAt: timestamp
   users/{uid}/ledger/{ticketId}
@@ -91,7 +91,7 @@ TippCoinLog {
 
 - `CoinService.debitCoin` and `creditCoin` only invoke `coin_trx`; all wallet updates happen server-side.
 - `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
-- Wallet balance stored at `users/{uid}/wallet.coins` is treated as source of truth and updated by Cloud Functions.
+- Wallet balance stored at `users/{uid}/wallet/main.coins` is treated as source of truth and updated by Cloud Functions.
 - `coin_logs` collection removed; per-user ledger is the sole transaction log.
 - Signup bonus and daily bonus claims are governed by `system_configs/bonus_rules`.
 
@@ -106,7 +106,7 @@ TippCoinLog {
 ## 📘 Changelog
 
 - 2025-08-20: Documented dual-write to user-centric wallet & ledger and registration seeding.
-- 2025-08-20: Updated to single SoT (`users/{uid}/wallet` + `users/{uid}/ledger`) and removed legacy writes.
+- 2025-08-20: Updated to single SoT (`users/{uid}/wallet/main` + `users/{uid}/ledger`) and removed legacy writes.
 - 2025-08-20: Removed client-side wallet writes; `coin_trx` handles all balance changes.
 - 2025-08-21: Added daily bonus credit via CoinService with deterministic `refId`.
 - 2025-08-22: Introduced ledger `checksum` field and callable `claim_daily_bonus`; signup bonus handled on user creation.
