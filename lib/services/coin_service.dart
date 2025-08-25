@@ -188,9 +188,24 @@ class CoinService {
     required String reason,
     required String transactionId,
   }) async {
-    final uid = _fa.currentUser!.uid;
-    final walletRef = _fs.collection('wallets').doc(uid);
-    final ledgerRef = walletRef.collection('ledger').doc(transactionId);
+    final uid = _fa.currentUser?.uid;
+    if (uid == null) {
+      throw FirebaseAuthException(
+        code: 'unauthenticated',
+        message: 'User not logged in',
+      );
+    }
+    // User-centrikus SoT: users/{uid}/wallet (doc 'main') + users/{uid}/ledger/{transactionId}
+    final walletRef = _fs
+        .collection('users')
+        .doc(uid)
+        .collection('wallet')
+        .doc('main');
+    final ledgerRef = _fs
+        .collection('users')
+        .doc(uid)
+        .collection('ledger')
+        .doc(transactionId);
     await _wrapper.run((tx) async {
       final ledgerSnap = await tx.get(ledgerRef);
       if (ledgerSnap.exists) return;

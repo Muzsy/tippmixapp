@@ -92,6 +92,7 @@ TippCoinLog {
 
 - A `CoinService.debitCoin` és `creditCoin` csak a `coin_trx` függvényt hívja; minden wallet módosítás szerveroldalon zajlik.
 - A `CoinService.debitAndCreateTicket()` létrehozza a szelvényt, majd `coin_trx` segítségével vonja le a tétet.
+- Ha a `coin_trx` nem elérhető (pl. lokális tesztek), egy fallback tranzakció a `users/{uid}/wallet/main` és `users/{uid}/ledger/{transactionId}` útvonalakat használja, hogy az állapot konzisztens maradjon.
 - A wallet egyenleg forrása a `users/{uid}/wallet/main.coins`, melyet Cloud Function frissít.
 - A `coin_logs` gyűjtemény teljesen kivezetésre került, a ledger az egyetlen napló.
 - A regisztrációs és napi bónusz igénylését a `system_configs/bonus_rules` szabályozza.

@@ -91,6 +91,7 @@ TippCoinLog {
 
 - `CoinService.debitCoin` and `creditCoin` only invoke `coin_trx`; all wallet updates happen server-side.
 - `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
+- If `coin_trx` is unavailable (e.g., local tests), a fallback writes to `users/{uid}/wallet/main` and `users/{uid}/ledger/{transactionId}` so paths stay consistent.
 - Wallet balance stored at `users/{uid}/wallet/main.coins` is treated as source of truth and updated by Cloud Functions.
 - `coin_logs` collection removed; per-user ledger is the sole transaction log.
 - Signup bonus and daily bonus claims are governed by `system_configs/bonus_rules`.

@@ -79,7 +79,7 @@ class BetSlipService {
     // 4️⃣ TippCoin levonás
     final cs =
         coinService ??
-        CoinService(firestore: firestore ?? FirebaseFirestore.instance);
+        CoinService.live(firestore: firestore ?? FirebaseFirestore.instance);
     await cs.debitAndCreateTicket(stake: stake, ticketData: ticket.toJson());
 
     if (kDebugMode) {
