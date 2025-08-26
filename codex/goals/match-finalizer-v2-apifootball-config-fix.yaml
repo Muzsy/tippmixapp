@@ -1,0 +1,83 @@
+version: 1
+id: match-finalizer-v2-apifootball-config-fix
+summary: >-
+  Távolítsuk el a v1-es functions.config() használatát az ApiFootballResultProviderből,
+  és adjuk át a Secret Managerből/ENV-ből érkező API_FOOTBALL_KEY-t a match_finalizer-ben.
+references:
+  - canvas: canvases/match-finalizer-v2-apifootball-config-fix.md
+    note: Kiegészítő háttér, elfogadási kritériumok és tesztlépések.
+
+steps:
+  - name: Remove v1 functions.config() import and switch to ENV in provider
+    description: >-
+      Az ApiFootballResultProvider ne importálja a firebase-functions csomagot,
+      és a konstruktor alapértéke csak process.env-ből olvasson.
+    changes:
+      - file: cloud_functions/src/services/ApiFootballResultProvider.ts
+        diff: |
+          --- a/cloud_functions/src/services/ApiFootballResultProvider.ts
+          +++ b/cloud_functions/src/services/ApiFootballResultProvider.ts
+          @@
+- import * as functions from 'firebase-functions';
++ // v2 környezetben ne használjunk v1-es config API-t; Secret/ENV használata
++
+          @@
+- export class ApiFootballResultProvider {
+-   private readonly baseUrl = 'https://v3.football.api-sports.io';
+-   constructor(
+-     apiKey: string = (process.env.API_FOOTBALL_KEY || functions.config().apifootball?.key) ?? ''
+-   ) {
+-     this.apiKey = apiKey;
+-   }
++ export class ApiFootballResultProvider {
++   private readonly baseUrl = 'https://v3.football.api-sports.io';
++   constructor(apiKey: string = process.env.API_FOOTBALL_KEY ?? '') {
++     this.apiKey = apiKey;
++   }
+ 
+  - name: Pass Secret Manager key to provider in match_finalizer
+    description: >-
+      A match_finalizer modul a global.ts-ben definiált API_FOOTBALL_KEY paramétert adja át a providernek,
+      fallback-ként pedig az ENV-t használja.
+    changes:
+      - file: cloud_functions/src/match_finalizer.ts
+        diff: |
+          --- a/cloud_functions/src/match_finalizer.ts
+          +++ b/cloud_functions/src/match_finalizer.ts
+          @@
+   import { CoinService } from "./services/CoinService";
+   import { getEvaluator, NormalizedResult } from "./evaluators";
++  import { API_FOOTBALL_KEY } from "../global";
+ 
+-  const provider = new ApiFootballResultProvider();
++  const provider = new ApiFootballResultProvider(
++    API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || ''
++  );
+ 
+  - name: Optional cleanup of legacy runtime config file
+    description: >-
+      A v2-ben nincs szükség .runtimeconfig.json-ra; ha jelen van, törölhető.
+    changes:
+      - file: cloud_functions/.runtimeconfig.json
+        delete: true
+
+post_steps:
+  - name: Build & Deploy Gen2 with Pub/Sub trigger
+    shell: |
+      cd cloud_functions
+      npm ci || npm i
+      npm run build
+      gcloud functions deploy match_finalizer \
+        --gen2 --region=europe-central2 --runtime=nodejs20 \
+        --trigger-topic=result-check \
+        --entry-point=match_finalizer \
+        --service-account=match-finalizer@tippmix-dev.iam.gserviceaccount.com \
+        --set-env-vars RESULT_TOPIC=result-check,DLQ_TOPIC=result-check-dlq,LOG_EXECUTION_ID=true \
+        --quiet
+  - name: Publish test message & check logs
+    shell: |
+      gcloud pubsub topics publish projects/tippmix-dev/topics/result-check \
+        --message='{"job":"final-sweep","test":true}'
+      gcloud functions logs read match_finalizer \
+        --region=europe-central2 --gen2 --limit=50 \
+        --start-time="$(date -u -d '15 minutes ago' +%Y-%m-%dT%H:%M:%SZ)"
