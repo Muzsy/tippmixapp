@@ -14,7 +14,7 @@ const provider = new ApiFootballResultProvider();
 
 const pubsub = new PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";
-const DLQ_TOPIC = process.env.DLQ_TOPIC || "match_finalizer-dlq";
+const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
 const BATCH_SIZE = Number(process.env.FINALIZER_BATCH_SIZE || 200);
 const MAX_BATCHES = Number(process.env.FINALIZER_MAX_BATCHES || 3);
 
