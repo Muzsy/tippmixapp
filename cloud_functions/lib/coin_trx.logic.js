@@ -58,7 +58,9 @@ exports.onUserCreate = functions.region('europe-central2').auth.user().onCreate(
         const rules = rulesSnap.data();
         const signup = rules?.signup;
         if (signup?.enabled === true) {
-            const bonusStateRef = firebase_1.db.doc(`users/${user.uid}/bonus_state`);
+            const bonusStateRef = firebase_1.db
+                .collection('users').doc(user.uid)
+                .collection('bonus_state').doc('state');
             await firebase_1.db.runTransaction(async (t) => {
                 const st = await t.get(bonusStateRef);
                 const already = st.exists && st.get('signupClaimed') === true;

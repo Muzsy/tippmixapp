@@ -42,10 +42,11 @@ const firebase_1 = require("./lib/firebase");
 const pubsub_1 = require("@google-cloud/pubsub");
 const CoinService_1 = require("./services/CoinService");
 const evaluators_1 = require("./evaluators");
-const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider();
+const global_1 = require("../global");
+const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider(global_1.API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || '');
 const pubsub = new pubsub_1.PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";
-const DLQ_TOPIC = process.env.DLQ_TOPIC || "match_finalizer-dlq";
+const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
 const BATCH_SIZE = Number(process.env.FINALIZER_BATCH_SIZE || 200);
 const MAX_BATCHES = Number(process.env.FINALIZER_MAX_BATCHES || 3);
 // After computing tip results for a ticket
