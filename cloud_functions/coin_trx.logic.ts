@@ -26,7 +26,9 @@ export const onUserCreate = functions.region('europe-central2').auth.user().onCr
     const rules: any = rulesSnap.data();
     const signup = rules?.signup;
     if (signup?.enabled === true) {
-      const bonusStateRef = db.doc(`users/${user.uid}/bonus_state`);
+      const bonusStateRef = db
+        .collection('users').doc(user.uid)
+        .collection('bonus_state').doc('state');
       await db.runTransaction(async (t) => {
         const st = await t.get(bonusStateRef);
         const already = st.exists && st.get('signupClaimed') === true;
