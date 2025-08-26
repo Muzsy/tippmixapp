@@ -9,8 +9,11 @@ import { db } from "./lib/firebase";
 import { PubSub } from "@google-cloud/pubsub";
 import { CoinService } from "./services/CoinService";
 import { getEvaluator, NormalizedResult } from "./evaluators";
+import { API_FOOTBALL_KEY } from "../global";
 
-const provider = new ApiFootballResultProvider();
+const provider = new ApiFootballResultProvider(
+  API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || ''
+);
 
 const pubsub = new PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";

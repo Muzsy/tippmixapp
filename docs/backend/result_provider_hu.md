@@ -6,6 +6,8 @@ Az API-Football fixtures végpontját használó adapter. Prod módban élő HTT
 - Eseményazonosítókat 40-es csomagokra osztja.
 - `MODE=dev` esetén mock üzemmódra vált.
 - Hibát dob, ha hiányzik az `API_FOOTBALL_KEY` vagy a válasz nem 200-as.
+- Az `API_FOOTBALL_KEY` a Secret Manager bindingon vagy környezeti változón keresztül érkezik;
+  a v1 `functions.config()` már nem kerül felhasználásra.
 - `FT/AET/PEN` státuszokat lezártnak tekinti és visszaadja a `winner` mezőt (hazai/idegen/döntetlen).
 - `findFixtureIdByMeta(eventName,startTime)` segédfüggvény a `fixtureId` feloldására csapatnevek és kezdési idő alapján, ha csak metaadat áll rendelkezésre. A `GET /fixtures?date=YYYY-MM-DD&search=<team>` végpontot hívja meg mindkét csapatnévre, és kis/nagybetű-független név/idő egyezés alapján választja ki a megfelelő meccset.
 
