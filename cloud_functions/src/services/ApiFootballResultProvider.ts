@@ -1,6 +1,6 @@
 // Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
-import * as functions from 'firebase-functions';
+// v2 environment should avoid v1 firebase-functions config API
 
 export interface ScoreResult {
   id: string;
@@ -16,11 +16,7 @@ export class ApiFootballResultProvider {
   private readonly baseUrl = 'https://v3.football.api-sports.io';
   private readonly apiKey: string;
 
-  constructor(
-    apiKey =
-      (process.env.API_FOOTBALL_KEY || functions.config().apifootball?.key) ??
-      '',
-  ) {
+  constructor(apiKey: string = process.env.API_FOOTBALL_KEY ?? '') {
     this.apiKey = apiKey;
   }
 
@@ -88,8 +84,7 @@ export async function findFixtureIdByMeta(params: {
     .filter(Boolean);
   if (!home || !away) return null;
   const date = (params.startTime || '').slice(0, 10); // YYYY-MM-DD
-  const apiKey =
-    (process.env.API_FOOTBALL_KEY || functions.config().apifootball?.key) ?? '';
+  const apiKey = process.env.API_FOOTBALL_KEY ?? '';
   if (!apiKey || !date) return null;
 
   const base = 'https://v3.football.api-sports.io';
