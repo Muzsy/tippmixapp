@@ -1,6 +1,6 @@
 // Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
-// v2 environment should avoid v1 firebase-functions config API
+// v2 alatt ne használj functions.config()-ot; Secret/ENV használata
 
 export interface ScoreResult {
   id: string;

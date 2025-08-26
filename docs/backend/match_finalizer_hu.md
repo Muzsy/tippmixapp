@@ -21,5 +21,5 @@ Ez a dokumentum a TypeScript vázat írja le, immár atomikus kifizetéssel.
 **Futtatókörnyezet**: Node.js 20, 2. generációs Cloud Functions.
 A `firebase-functions` v2 `onMessagePublished` triggert használja, így nem szükséges a régi `GCLOUD_PROJECT` környezeti változó.
 A belépési pont típusos `CloudEvent<MessagePublishedData>` eseményt kap, `hasMsg`, `hasData` és attribútumkulcsok naplózásával. Üres esemény esetén `match_finalizer.no_message` figyelmeztetést ír és visszatér.
-Az `API_FOOTBALL_KEY` titok a Secret Managerből `defineSecret` segítségével kerül be és `process.env.API_FOOTBALL_KEY` néven érhető el.
+Az `API_FOOTBALL_KEY` titok a Secret Managerből `defineSecret` segítségével kerül átadásra az `ApiFootballResultProvider` számára (fallback: `process.env.API_FOOTBALL_KEY`); a régi `functions.config()` fallback megszűnt.
 `retry: true` engedélyezve van, és strukturált logolást használ a `firebase-functions/logger`.
