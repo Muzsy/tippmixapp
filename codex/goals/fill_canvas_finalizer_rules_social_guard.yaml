@@ -1,0 +1,122 @@
+meta:
+canvas: canvases/fixes/finalizer\_rules\_social\_guard.md
+priority: P1
+
+steps:
+
+* name: Secret kiolvasás és provider példányosítás mozgatása handler scope‑ba
+  description: Távolítsd el a modul-szintű provider példányt, és példányosíts az exportált handler elején. Így a Secret a futási környezetben olvasódik ki.
+  outputs: \[patch]
+  patch\_file:
+  target: cloud\_functions/src/match\_finalizer.ts
+  patch: |
+  @@
+  -import { API\_FOOTBALL\_KEY } from "../global";
+  \-
+  -const provider = new ApiFootballResultProvider(
+  \-  API\_FOOTBALL\_KEY.value() || process.env.API\_FOOTBALL\_KEY || ''
+  -);
+  +import { API\_FOOTBALL\_KEY } from "../global";
+  @@
+  export const match\_finalizer = async (
+  message: PubSubMessage,
+  ): Promise<"OK" | "RETRY" | "DLQ"> => {
+  \+  // Provider példányosítás a handler scope‑ban – Secret olvasás futásidőben
+  \+  const provider = new ApiFootballResultProvider(
+  \+    API\_FOOTBALL\_KEY.value() || process.env.API\_FOOTBALL\_KEY || ''
+  \+  );
+  const attempt = Number((message?.attributes?.attempt as string) || "0");
+
+* name: Pub/Sub trigger egyszerűsítése (options‑objektum → topic‑string)
+  description: Az onMessagePublished első paraméterét állítsd át egyszerű topic‑stringre. A régió és a secretek a global.ts‑ben vannak megadva.
+  outputs: \[patch]
+  patch\_file:
+  target: cloud\_functions/index.ts
+  patch: |
+  @@
+  -export const match\_finalizer = onMessagePublished({ topic: 'result-check', secrets: \[API\_FOOTBALL\_KEY], retry: true }, async (event) => {
+  +export const match\_finalizer = onMessagePublished('result-check', async (event) => {
+
+* name: Firestore rules – friendRequests ág engedélyezése
+  description: A kliens a relations/{uid}/friendRequests/{requestId} útvonalra ír/olvas; egészítsd ki a szabályokat kontrollált hozzáféréssel.
+  outputs: \[patch]
+  patch\_file:
+  target: cloud\_functions/firestore.rules
+  patch: |
+  @@
+  match /relations/{uid} {
+  match /followers/{followerUid} {
+  allow create, delete: if signedIn() && request.auth.uid == followerUid;
+  allow read: if true;
+  allow update: if false;
+  }
+
+  ```
+     match /following/{targetUid} {
+       allow create, delete: if signedIn() && request.auth.uid == uid;
+       allow read: if true;
+       allow update: if false;
+     }
+  +
+  +  // Friend requests (kliens által használt útvonal)
+  +  match /friendRequests/{requestId} {
+  +    // Létrehozás: a kérés feladója hozhat létre bejegyzést
+  +    allow create: if signedIn() && request.auth.uid == request.resource.data.fromUid;
+  +    // Olvasás: a cél user vagy a feladó olvashat
+  +    allow read: if isOwner(uid) || (signedIn() && request.auth.uid == request.resource.data.fromUid);
+  +    // Módosítás: a cél user jelölheti accepted=true‑re
+  +    allow update: if signedIn() && isOwner(uid);
+  +    // Törlés tiltva
+  +    allow delete: if false;
+  +  }
+   }
+  ```
+
+* name: admin\_coin\_ops exportálása index‑ből
+  description: Exportold az admin callable‑t, hogy fejlesztői környezetben hívható legyen (pl. emulátor). Production használatát külön role‑check védi a kódban.
+  outputs: \[patch]
+  patch\_file:
+  target: cloud\_functions/index.ts
+  patch: |
+  @@
+  export { daily\_bonus } from './src/daily\_bonus';
+  export { claim\_daily\_bonus } from './src/bonus\_claim';
+  +export { admin\_coin\_ops } from './admin\_coin\_ops';
+
+* name: SocialService auth‑guard a Flutter oldalon
+  description: Cseréld a veszélyes currentUser! használatot guardolt getterre, hogy auth nélkül ne dőljön el futásidőben.
+  outputs: \[patch]
+  patch\_file:
+  target: lib/services/social\_service.dart
+  patch: |
+  @@
+
+* String get \_uid => \_auth.currentUser!.uid;
+
+- String get \_uid {
+- final user = \_auth.currentUser;
+- if (user == null) {
+- ```
+   throw FirebaseAuthException(
+  ```
+- ```
+     code: 'not-authenticated',
+  ```
+- ```
+     message: 'User must be signed in',
+  ```
+- ```
+   );
+  ```
+- }
+- return user.uid;
+- }
+
+* name: Ellenőrző futások
+  description: Lint és tesztek futtatása mindkét komponensben.
+  outputs: \[logs]
+  run: |
+  npm -C cloud\_functions ci --no-audit --no-fund
+  npm -C cloud\_functions run lint
+  npm -C cloud\_functions test --silent
+  flutter analyze
