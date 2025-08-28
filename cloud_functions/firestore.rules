@@ -121,6 +121,18 @@ service cloud.firestore {
         allow read: if true;
         allow update: if false;
       }
+
+      // Friend requests (kliens által használt útvonal)
+      match /friendRequests/{requestId} {
+        // Létrehozás: a kérés feladója hozhat létre bejegyzést
+        allow create: if signedIn() && request.auth.uid == request.resource.data.fromUid;
+        // Olvasás: a cél user vagy a feladó olvashat
+        allow read: if isOwner(uid) || (signedIn() && request.auth.uid == request.resource.data.fromUid);
+        // Módosítás: a cél user jelölheti accepted=true-re
+        allow update: if signedIn() && isOwner(uid);
+        // Törlés tiltva
+        allow delete: if false;
+      }
     }
 
     /* ——— badgesProgress ——— */

@@ -11,10 +11,6 @@ import { CoinService } from "./services/CoinService";
 import { getEvaluator, NormalizedResult } from "./evaluators";
 import { API_FOOTBALL_KEY } from "../global";
 
-const provider = new ApiFootballResultProvider(
-  API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || ''
-);
-
 const pubsub = new PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";
 const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
@@ -64,6 +60,10 @@ type JobType = "kickoff-tracker" | "result-poller" | "final-sweep";
 export const match_finalizer = async (
   message: PubSubMessage,
 ): Promise<"OK" | "RETRY" | "DLQ"> => {
+  // Provider példányosítás a handler scope‑ban – Secret olvasás futásidőben
+  const provider = new ApiFootballResultProvider(
+    API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || ''
+  );
   const attempt = Number((message?.attributes?.attempt as string) || "0");
   logger.info("match_finalizer.handle", {
     hasData: !!message?.data,

@@ -11,7 +11,16 @@ class SocialService {
     : _firestore = firestore ?? FirebaseFirestore.instance,
       _auth = auth ?? FirebaseAuth.instance;
 
-  String get _uid => _auth.currentUser!.uid;
+  String get _uid {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'not-authenticated',
+        message: 'User must be signed in',
+      );
+    }
+    return user.uid;
+  }
 
   Future<void> followUser(String targetUid) async {
     final ref = _firestore
