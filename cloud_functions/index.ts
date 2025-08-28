@@ -2,7 +2,6 @@ import './global';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import type { CloudEvent } from 'firebase-functions/v2';
 import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
-import { API_FOOTBALL_KEY } from './global';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
 
@@ -12,12 +11,12 @@ export { onUserCreate, coin_trx } from './coin_trx.logic';
 export { onFriendRequestAccepted } from './friend_request';
 export { daily_bonus } from './src/daily_bonus';
 export { claim_daily_bonus } from './src/bonus_claim';
+export { admin_coin_ops } from './admin_coin_ops';
 
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 
 // Gen2 Pub/Sub trigger (topic: result-check, region via global options)
-export const match_finalizer = onMessagePublished(
-  { topic: 'result-check', secrets: [API_FOOTBALL_KEY], retry: true },
+export const match_finalizer = onMessagePublished('result-check',
   async (event: CloudEvent<MessagePublishedData>) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
     const hasMsg = !!event?.data?.message;
