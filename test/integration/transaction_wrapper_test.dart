@@ -62,7 +62,7 @@ void main() {
 
     test('TW-01 successful transaction first try', () async {
       final firestore = StubFirestore();
-      await firestore.collection('wallets').doc('u1').set({'coins': 100});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -72,14 +72,14 @@ void main() {
 
       await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't1');
 
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 80);
       verify(() => logger.info('[TransactionWrapper] attempt 1')).called(1);
     });
 
     test('TW-02 retry aborted then success', () async {
       final firestore = StubFirestore(['aborted']);
-      await firestore.collection('wallets').doc('u1').set({'coins': 100});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -89,7 +89,7 @@ void main() {
 
       await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't2');
 
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 80);
       expect(firestore.attempts, 2);
     });
@@ -99,7 +99,7 @@ void main() {
         'deadline-exceeded',
         'deadline-exceeded',
       ]);
-      await firestore.collection('wallets').doc('u1').set({'coins': 100});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -109,14 +109,14 @@ void main() {
 
       await service.debitCoin(amount: 20, reason: 'bet', transactionId: 't3');
 
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 80);
       expect(firestore.attempts, 3);
     });
 
     test('TW-04 max retry exceeded', () async {
       final firestore = StubFirestore(['aborted', 'aborted', 'aborted']);
-      await firestore.collection('wallets').doc('u1').set({'coins': 100});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -128,13 +128,13 @@ void main() {
         () => service.debitCoin(amount: 20, reason: 'bet', transactionId: 't4'),
         throwsA(isA<TooManyAttemptsException>()),
       );
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 100);
     });
 
     test('TW-05 concurrent debits', () async {
       final firestore = StubFirestore();
-      await firestore.collection('wallets').doc('u1').set({'coins': 200});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 200});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -147,13 +147,13 @@ void main() {
         service.debitCoin(amount: 50, reason: 'bet', transactionId: 't5b'),
       ]);
 
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 100);
     });
 
     test('TW-06 concurrent debit and credit', () async {
       final firestore = StubFirestore();
-      await firestore.collection('wallets').doc('u1').set({'coins': 100});
+      await firestore.collection('users').doc('u1').collection('wallet').doc('main').set({'coins': 100});
       final service = CoinService(
         firestore: firestore,
         auth: auth,
@@ -166,7 +166,7 @@ void main() {
         service.creditCoin(amount: 30, reason: 'bonus', transactionId: 't6b'),
       ]);
 
-      final snap = await firestore.collection('wallets').doc('u1').get();
+      final snap = await firestore.collection('users').doc('u1').collection('wallet').doc('main').get();
       expect(snap.data()!['coins'], 90);
     });
   });

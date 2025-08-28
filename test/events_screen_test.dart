@@ -139,6 +139,7 @@ void main() {
         ),
         GoRoute(
           path: '/create-ticket',
+          name: 'createTicket',
           builder: (context, state) => const Scaffold(body: Text('create')),
         ),
       ],

@@ -6,9 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:tippmixapp/main.dart' as app;
 import 'package:tippmixapp/router.dart';
-import 'package:tippmixapp/screens/register_wizard.dart';
 import 'package:tippmixapp/screens/register_step1_form.dart';
-import 'package:tippmixapp/bootstrap.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
@@ -37,7 +35,6 @@ void main() {
           await tester.pump(const Duration(milliseconds: 200));
         }
         expect(find.byType(RegisterStep1Form), findsOneWidget);
-        final step1 = find.byType(RegisterStep1Form);
         // Focus fields explicitly before typing to ensure EditableText exists
         await tester.tap(find.byKey(const Key('emailField')));
         await tester.pump(const Duration(milliseconds: 200));
