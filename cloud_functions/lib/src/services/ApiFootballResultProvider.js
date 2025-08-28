@@ -1,7 +1,7 @@
 "use strict";
 // Lightweight API-Football provider
 // Node 18+ global fetch; no extra deps required
-// v2 environment should avoid v1 firebase-functions config API
+// v2 alatt ne használj functions.config()-ot; Secret/ENV használata
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiFootballResultProvider = void 0;
 exports.findFixtureIdByMeta = findFixtureIdByMeta;
