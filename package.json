@@ -5,6 +5,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
+    "@firebase/rules-unit-testing": "^5.0.0",
     "firebase": "^12.0.0",
     "firebase-tools": "^14.9.0",
     "mocha": "^10.0.0",
@@ -16,6 +17,6 @@
     "build-fx": "npm run build --prefix cloud_functions",
     "test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\"",
     "test:rules:coverage": "nyc --reporter=lcov npm run test:rules:run && npx coverage-badge --input coverage/coverage-final.json --output coverage/security_rules_badge.svg",
-    "test:rules:run": "mocha --experimental-modules \"test/security_rules.test.mjs\""
+    "test:rules:run": "mocha --timeout 15000 --experimental-modules \"test/security_rules.test.mjs\""
   }
 }

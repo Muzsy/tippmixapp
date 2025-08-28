@@ -51,12 +51,12 @@ class MyBottomNavigationBar extends StatelessWidget {
           tooltip: loc.bottom_nav_feed,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.sports_soccer),
+          icon: const Icon(Icons.sports_soccer, key: Key('nav_bets')),
           label: '',
           tooltip: loc.bets_title,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.receipt_long),
+          icon: const Icon(Icons.receipt_long, key: Key('nav_my_tickets')),
           label: '',
           tooltip: loc.myTickets,
         ),

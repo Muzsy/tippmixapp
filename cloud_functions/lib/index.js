@@ -33,10 +33,9 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
-const pubsub_1 = require("firebase-functions/v2/pubsub");
-const global_1 = require("./global");
+const eventarc_1 = require("firebase-functions/v2/eventarc");
 const logger = __importStar(require("firebase-functions/logger"));
 const match_finalizer_1 = require("./src/match_finalizer");
 var coin_trx_logic_1 = require("./coin_trx.logic");
@@ -50,9 +49,12 @@ var daily_bonus_1 = require("./src/daily_bonus");
 Object.defineProperty(exports, "daily_bonus", { enumerable: true, get: function () { return daily_bonus_1.daily_bonus; } });
 var bonus_claim_1 = require("./src/bonus_claim");
 Object.defineProperty(exports, "claim_daily_bonus", { enumerable: true, get: function () { return bonus_claim_1.claim_daily_bonus; } });
+var admin_coin_ops_1 = require("./admin_coin_ops");
+Object.defineProperty(exports, "admin_coin_ops", { enumerable: true, get: function () { return admin_coin_ops_1.admin_coin_ops; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
-// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
-exports.match_finalizer = (0, pubsub_1.onMessagePublished)({ topic: 'result-check', secrets: [global_1.API_FOOTBALL_KEY], retry: true }, async (event) => {
+// Gen2 Pub/Sub trigger (topic set by deploy), handle raw CloudEvent to avoid
+// v2 pubsub wrapper constructing Message on undefined event.data.
+exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.pubsub.topic.v1.messagePublished', async (event) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
     const hasMsg = !!event?.data?.message;
     logger.info('match_finalizer.start', {

@@ -26,17 +26,6 @@ import 'router.dart';
 /// development build, an assertion will be thrown to remind the
 /// developer to supply it.
 Future<void> main() async {
-  // Show any uncaught Flutter errors as a red screen with the exception.
-  ErrorWidget.builder = (details) => Material(
-    color: Colors.red,
-    child: Center(
-      child: Text(
-        details.exceptionAsString(),
-        style: const TextStyle(color: Colors.white),
-      ),
-    ),
-  );
-
   // Load environment variables from a .env file (if present).
   await dotenv.load();
   await bootstrap();

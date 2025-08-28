@@ -38,15 +38,14 @@ const seed = async (path, data) =>
   });
 
 describe('Firestore security rules', () => {
-  // SR‑01 — user can create own coin_log
-  it('SR-01 coin_logs create saját uid OK', async () => {
+  // SR‑01 — user can create public_feed post as self
+  it('SR-01 public_feed create saját uid OK', async () => {
     const db = authed('user1');
     await assertSucceeds(
-      setDoc(doc(db, 'coin_logs/log1'), {
+      setDoc(doc(db, 'public_feed/post1'), {
         userId: 'user1',
-        amount: 50,
+        text: 'hello',
         createdAt: serverTimestamp(),
-        type: 'bet',
       })
     );
   });
@@ -64,10 +63,9 @@ describe('Firestore security rules', () => {
     );
   });
 
-  // SR‑03 — user can read own coin_log
-  it('SR-03 coin_logs read saját uid OK', async () => {
-    await seed('coin_logs/id1', {
-      userId: 'user1',
+  // SR‑03 — user can read own ledger entry
+  it('SR-03 ledger read saját uid OK', async () => {
+    await seed('users/user1/ledger/id1', {
       amount: 10,
       createdAt: serverTimestamp(),
       type: 'deposit',
@@ -75,7 +73,7 @@ describe('Firestore security rules', () => {
     await new Promise((r) => setTimeout(r, 500));
 
     const db = authed('user1');
-    await assertSucceeds(getDoc(doc(db, 'coin_logs/id1')));
+    await assertSucceeds(getDoc(doc(db, 'users/user1/ledger/id1')));
   });
 
   // SR‑04 — user cannot read others' coin_log
@@ -172,14 +170,14 @@ describe('Firestore security rules', () => {
     await assertSucceeds(
       setDoc(doc(db, `tickets/${id}`), {
         id,
-        userId: 'user1',
+        ownerId: 'user1',
         tips: [],
         stake: 5,
         totalOdd: 2.4,
         potentialWin: 12,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        status: 'open',
+        status: 'pending',
       })
     );
   });

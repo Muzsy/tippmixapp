@@ -43,6 +43,7 @@ class _RegisterWizardState extends ConsumerState<RegisterWizard> {
         registerPageControllerProvider.overrideWithValue(_pageController),
       ],
       child: Scaffold(
+        key: const Key('registerPage'),
         appBar: AppBar(title: Text(loc.register_tab)),
         body: PageView(
           controller: _pageController,

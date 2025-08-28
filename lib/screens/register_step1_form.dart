@@ -183,6 +183,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
         child: Column(
           children: [
             TextFormField(
+              key: const Key('emailField'),
               controller: _emailCtrl,
               decoration: InputDecoration(
                 labelText: loc.email_hint,
@@ -196,6 +197,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              key: const Key('passwordField'),
               controller: _passCtrl,
               decoration: InputDecoration(
                 labelText: loc.password_hint,
@@ -216,6 +218,7 @@ class _RegisterStep1FormState extends ConsumerState<RegisterStep1Form> {
             PasswordStrengthIndicator(password: _passCtrl.text),
             const SizedBox(height: 16),
             ElevatedButton(
+              key: const Key('continueStep1'),
               onPressed: isValid ? _continue : null,
               child: Text(loc.continue_button),
             ),

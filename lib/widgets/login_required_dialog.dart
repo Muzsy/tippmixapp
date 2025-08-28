@@ -12,11 +12,13 @@ class LoginRequiredDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return AlertDialog(
+      key: const Key('loginDialog'),
       semanticLabel: loc.login_required_title,
       title: Text(loc.login_required_title),
       content: Text(loc.login_required_message),
       actions: [
         TextButton(
+          key: const Key('loginDialogCancel'),
           onPressed: () => Navigator.of(context).pop(),
           child: Text(loc.dialog_cancel),
         ),

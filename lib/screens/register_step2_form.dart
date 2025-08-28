@@ -161,6 +161,7 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
                   child: Text(loc.back_button),
                 ),
                 ElevatedButton(
+                  key: const Key('continueStep2'),
                   onPressed: _onNextPressed,
                   child: Text(loc.continue_button),
                 ),

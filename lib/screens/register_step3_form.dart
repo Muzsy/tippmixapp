@@ -129,6 +129,7 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
             children: [
               TextButton(onPressed: _skip, child: Text(loc.register_skip)),
               ElevatedButton(
+                key: const Key('finishButton'),
                 onPressed: _finish,
                 child: Text(loc.register_finish),
               ),

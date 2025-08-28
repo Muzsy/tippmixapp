@@ -1,7 +1,6 @@
 import './global';
-import { onMessagePublished } from 'firebase-functions/v2/pubsub';
+import { onCustomEventPublished } from 'firebase-functions/v2/eventarc';
 import type { CloudEvent } from 'firebase-functions/v2';
-import type { MessagePublishedData } from 'firebase-functions/v2/pubsub';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
 
@@ -15,23 +14,25 @@ export { admin_coin_ops } from './admin_coin_ops';
 
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 
-// Gen2 Pub/Sub trigger (topic: result-check, region via global options)
-export const match_finalizer = onMessagePublished('result-check',
-  async (event: CloudEvent<MessagePublishedData>) => {
+// Gen2 Pub/Sub trigger (topic set by deploy), handle raw CloudEvent to avoid
+// v2 pubsub wrapper constructing Message on undefined event.data.
+export const match_finalizer = onCustomEventPublished(
+  'google.cloud.pubsub.topic.v1.messagePublished',
+  async (event: CloudEvent<any>) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
-    const hasMsg = !!event?.data?.message;
+    const hasMsg = !!(event as any)?.data?.message;
     logger.info('match_finalizer.start', {
       hasMsg,
-      hasData: !!event?.data?.message?.data,
-      attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+      hasData: !!(event as any)?.data?.message?.data,
+      attrKeys: Object.keys((event as any)?.data?.message?.attributes ?? {}),
     });
     if (!hasMsg) {
       logger.warn('match_finalizer.no_message');
       return;
     }
     const msg = {
-      data: event.data.message?.data,
-      attributes: event.data.message?.attributes as { [key: string]: string } | undefined,
+      data: (event as any).data.message?.data,
+      attributes: (event as any).data.message?.attributes as { [key: string]: string } | undefined,
     };
     try {
       const result = await matchFinalizerHandler(msg as any);

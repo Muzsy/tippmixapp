@@ -43,7 +43,6 @@ const pubsub_1 = require("@google-cloud/pubsub");
 const CoinService_1 = require("./services/CoinService");
 const evaluators_1 = require("./evaluators");
 const global_1 = require("../global");
-const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider(global_1.API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || '');
 const pubsub = new pubsub_1.PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";
 const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
@@ -80,6 +79,8 @@ async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
     });
 }
 const match_finalizer = async (message) => {
+    // Provider példányosítás a handler scope‑ban – Secret olvasás futásidőben
+    const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider(global_1.API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || '');
     const attempt = Number(message?.attributes?.attempt || "0");
     logger.info("match_finalizer.handle", {
         hasData: !!message?.data,

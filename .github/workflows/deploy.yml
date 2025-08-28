@@ -102,3 +102,59 @@ jobs:
           terraform init -backend=false
           terraform validate
           terraform plan -lock=false -input=false -no-color
+
+  smoke-messageid-guard:
+    name: Post-deploy smoke – messageId guard
+    runs-on: ubuntu-latest
+    needs: deploy-functions
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine MODE (branch)
+        run: |
+          BR="${GITHUB_REF##*/}"
+          if [ "$BR" = "main" ]; then TARGET="prod"; else TARGET="dev"; fi
+          echo "MODE=$TARGET" >> $GITHUB_ENV
+          echo "MODE=$TARGET"
+
+      - name: Set up Node.js 20 (for function build in smoke script)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: cloud_functions/package-lock.json
+
+      - name: Google Auth (ADC)
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 470.0.0'
+
+      - name: Set gcloud project
+        run: |
+          if [ "$MODE" = "prod" ]; then
+            gcloud config set core/project tippmix-prod
+            echo "PROJECT_ID=tippmix-prod" >> $GITHUB_ENV
+          else
+            gcloud config set core/project tippmix-dev
+            echo "PROJECT_ID=tippmix-dev" >> $GITHUB_ENV
+          fi
+          gcloud auth list
+
+      - name: Run deploy + smoke (gcloud deploy path)
+        env:
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          REGION: europe-central2
+          FUNCTION_NAME: match_finalizer
+          TOPIC: projects/${{ env.PROJECT_ID }}/topics/result-check
+          SERVICE_ACCOUNT: match-finalizer@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+          DEPLOYER: gcloud
+          MAX_ATTEMPTS: 2
+        run: |
+          chmod +x scripts/deploy_and_smoke_messageid_guard.sh
+          ./scripts/deploy_and_smoke_messageid_guard.sh
