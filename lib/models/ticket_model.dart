@@ -26,10 +26,10 @@ class Ticket {
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
-    DateTime _parseDate(dynamic v) {
+    DateTime parseDate(dynamic v) {
       if (v == null) return DateTime.now();
       if (v is DateTime) return v;
-      final ts = (v is dynamic && v is! String && v is! DateTime && v.toDate is Function)
+      final ts = (v is! String && v is! DateTime && (v as dynamic).toDate is Function)
           ? v.toDate()
           : null;
       if (ts is DateTime) return ts;
@@ -40,8 +40,8 @@ class Ticket {
       return DateTime.now();
     }
 
-    String _statusRaw = (json['status'] as String? ?? 'pending').toLowerCase();
-    if (_statusRaw == 'void') _statusRaw = 'voided';
+    String statusRaw = (json['status'] as String? ?? 'pending').toLowerCase();
+    if (statusRaw == 'void') statusRaw = 'voided';
 
     final tipsRaw = (json['tips'] as List<dynamic>?) ?? const [];
 
@@ -59,10 +59,10 @@ class Ticket {
       stake: stake,
       totalOdd: totalOdd,
       potentialWin: potentialWin,
-      createdAt: _parseDate(json['createdAt']),
-      updatedAt: _parseDate(json['updatedAt'] ?? json['processedAt']),
+      createdAt: parseDate(json['createdAt']),
+      updatedAt: parseDate(json['updatedAt'] ?? json['processedAt']),
       status: TicketStatus.values.firstWhere(
-        (e) => e.name == _statusRaw,
+        (e) => e.name == statusRaw,
         orElse: () => TicketStatus.pending,
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'dart:typed_data';
+// 'Uint8List' and 'ByteData' are available via flutter/services.dart in this test context
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';

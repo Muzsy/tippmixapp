@@ -17,6 +17,7 @@ llama_index/
 infra/.terraform/
 cloud_functions/.runtimeconfig.json
 cloud_functions/.env.*
+tmp/
 
 
 
