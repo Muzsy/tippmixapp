@@ -3,6 +3,7 @@
 // If the user is not signed in a short call-to-action is shown instead.
 import 'package:flutter/material.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 /// Header section of the profile screen.
@@ -52,11 +53,23 @@ class ProfileHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  (user!.displayName?.isNotEmpty ?? false)
-                      ? user!.displayName!
-                      : (user!.email ?? loc.profile_guest),
-                  style: Theme.of(context).textTheme.titleLarge,
+                // Prefer nickname from Firestore as primary display
+                StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user!.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    final data = snapshot.data?.data();
+                    final nickname = (data?['nickname'] as String?)?.trim();
+                    final fallback = (user!.displayName?.isNotEmpty ?? false)
+                        ? user!.displayName!
+                        : (user!.email ?? loc.profile_guest);
+                    final display = (nickname != null && nickname.isNotEmpty)
+                        ? nickname
+                        : fallback;
+                    return Text(display, style: Theme.of(context).textTheme.titleLarge);
+                  },
                 ),
                 const SizedBox(height: 4),
                 Text(

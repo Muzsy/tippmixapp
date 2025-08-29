@@ -79,7 +79,9 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
   }
 
   String? _validateNick(String? value) {
-    if (value == null || value.isEmpty) return null;
+    if (value == null || value.trim().isEmpty) {
+      return AppLocalizations.of(context)!.auth_error_invalid_nickname;
+    }
     if (value.length < 3 || value.length > 20) {
       return AppLocalizations.of(context)!.auth_error_invalid_nickname;
     }

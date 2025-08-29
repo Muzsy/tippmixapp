@@ -12,6 +12,9 @@ class ProfileSummary extends ConsumerWidget {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
     final stats = ref.watch(userStatsProvider).asData?.value;
+    final display = (stats?.displayName.isNotEmpty ?? false)
+        ? stats!.displayName
+        : (user?.displayName ?? loc.profile_guest);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -19,19 +22,14 @@ class ProfileSummary extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            child: Text(
-              user?.displayName.isNotEmpty == true ? user!.displayName[0] : '?',
-            ),
+            child: Text(display.isNotEmpty ? display[0] : '?'),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  user?.displayName ?? loc.profile_guest,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text(display, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
                 Text('${loc.home_coin}: ${stats?.coins ?? 0}'),
               ],
