@@ -10,8 +10,13 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;
   final UserService service;
-  EditProfileScreen({super.key, this.initial, UserService? service})
-    : service = service ?? UserService();
+  final Future<bool> Function(String nickname)? checkNicknameUnique;
+  EditProfileScreen({
+    super.key,
+    this.initial,
+    UserService? service,
+    this.checkNicknameUnique,
+  }) : service = service ?? UserService();
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -66,10 +71,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Nickname egyediség ellenőrzése (ha változott)
     final newNick = _nickController.text.trim();
     if (newNick.isNotEmpty && newNick != (widget.initial?.nickname ?? '')) {
-      final unique = await ProfileService.isNicknameUnique(
-        newNick,
-        firestore: FirebaseFirestore.instance,
-      );
+      final unique = await (widget.checkNicknameUnique != null
+          ? widget.checkNicknameUnique!(newNick)
+          : ProfileService.isNicknameUnique(
+              newNick,
+              firestore: FirebaseFirestore.instance,
+            ));
       if (!unique) {
         setState(() {
           _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
