@@ -21,13 +21,28 @@ export const match_finalizer = onCustomEventPublished(
   async (event: CloudEvent<any>) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
     const hasMsg = !!(event as any)?.data?.message;
+    let eventType: string | undefined;
+    try {
+      const raw = (event as any)?.data?.message?.data as string | undefined;
+      if (raw) {
+        const jsonStr = Buffer.from(raw, 'base64').toString('utf8');
+        const parsed = JSON.parse(jsonStr);
+        if (parsed && typeof parsed === 'object' && parsed.type === 'diag-check') {
+          eventType = 'diag-check';
+        }
+      }
+    } catch (_) {
+      // ignore parse errors – not a fatal condition for logging
+    }
     logger.info('match_finalizer.start', {
       hasMsg,
       hasData: !!(event as any)?.data?.message?.data,
       attrKeys: Object.keys((event as any)?.data?.message?.attributes ?? {}),
+      ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
-      logger.warn('match_finalizer.no_message');
+      // INFO szintre állítva – nem tekintjük hibának a hiányzó üzenetet
+      logger.info('match_finalizer.no_message');
       return;
     }
     const msg = {

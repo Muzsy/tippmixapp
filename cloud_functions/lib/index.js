@@ -57,13 +57,29 @@ Object.defineProperty(exports, "admin_coin_ops", { enumerable: true, get: functi
 exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.pubsub.topic.v1.messagePublished', async (event) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
     const hasMsg = !!event?.data?.message;
+    let eventType;
+    try {
+        const raw = event?.data?.message?.data;
+        if (raw) {
+            const jsonStr = Buffer.from(raw, 'base64').toString('utf8');
+            const parsed = JSON.parse(jsonStr);
+            if (parsed && typeof parsed === 'object' && parsed.type === 'diag-check') {
+                eventType = 'diag-check';
+            }
+        }
+    }
+    catch (_) {
+        // ignore parse errors – not a fatal condition for logging
+    }
     logger.info('match_finalizer.start', {
         hasMsg,
         hasData: !!event?.data?.message?.data,
         attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+        ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
-        logger.warn('match_finalizer.no_message');
+        // INFO szintre állítva – nem tekintjük hibának a hiányzó üzenetet
+        logger.info('match_finalizer.no_message');
         return;
     }
     const msg = {
