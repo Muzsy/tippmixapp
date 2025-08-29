@@ -212,6 +212,7 @@ class AuthService {
     }
   }
 
+
   // Kijelentkezés
   Future<void> signOut() async {
     await _firebaseAuth.signOut();

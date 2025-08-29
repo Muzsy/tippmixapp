@@ -66,6 +66,8 @@ class MockAuthService implements AuthService {
   @override
   Future<bool> validateNicknameUnique(String nickname) async => nicknameUnique;
 
+  // reserveNickname removed from AuthService interface – no-op here
+
   @override
   Future<User?> signInWithGoogle() async => null;
 

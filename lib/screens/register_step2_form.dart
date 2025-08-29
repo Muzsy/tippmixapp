@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
-import '../providers/auth_provider.dart';
 import '../providers/register_state_notifier.dart';
 
 class RegisterStep2Form extends ConsumerStatefulWidget {
@@ -59,12 +59,21 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
     }
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
-      final auth = ref.read(authServiceProvider);
-      final unique = await auth.validateNicknameUnique(_nickCtrl.text);
-      if (!unique) {
-        setState(() {
-          _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
-        });
+      try {
+        final functions = FirebaseFunctions.instanceFor(region: 'europe-central2');
+        final callable = functions.httpsCallable('reserve_nickname');
+        await callable.call({'nickname': _nickCtrl.text});
+      } on FirebaseFunctionsException catch (e) {
+        if (e.code == 'already-exists') {
+          setState(() {
+            _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
+          });
+          return;
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.unknown_error_try_again)),
+        );
         return;
       }
       ref
