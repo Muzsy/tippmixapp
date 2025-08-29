@@ -1,0 +1,29 @@
+title: Case-insensitive unique nicknames migration
+owners:
+  - apps
+  - backend
+severity: medium
+phases:
+  - name: prepare
+    steps:
+      - Add nicknameNormalized to user schema (optional read)
+      - Add usernames/{norm} reservation model in backend
+      - Ship security rules additions (guarded by feature flag if needed)
+  - name: backfill
+    steps:
+      - Script: populate nicknameNormalized for all users
+      - Script: create usernames/{norm} docs; report conflicts
+  - name: cutover
+    steps:
+      - App: validate nickname via usernames/{norm}
+      - App: write nickname + nicknameNormalized + reservation atomically
+      - Queries: prefer nicknameNormalized for search/filter
+  - name: cleanup
+    steps:
+      - Remove legacy case-sensitive uniqueness checks
+      - Keep backfill idempotent for re-runs
+ci:
+  - Add rules tests for usernames and users alignment
+  - Add unit tests for normalizer
+rollbacks:
+  - Feature-flag off reservation path; fallback to previous check
