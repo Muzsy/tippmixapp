@@ -33,9 +33,10 @@ class ApiFootballResultProvider {
             const statusShort = item?.fixture?.status?.short ?? 'UNK';
             const goalsHome = item?.goals?.home ?? null;
             const goalsAway = item?.goals?.away ?? null;
-            // Treat FT/AET/PEN as completed
-            const completedShort = ['FT', 'AET', 'PEN'];
+            // Treat FT/AET/PEN/AWD/WO as completed
+            const completedShort = ['FT', 'AET', 'PEN', 'AWD', 'WO'];
             const completed = completedShort.includes(statusShort);
+            const canceled = ['CANC', 'ABD'].includes((statusShort || '').toUpperCase());
             const homeName = item?.teams?.home?.name;
             const awayName = item?.teams?.away?.name;
             const winner = completed && goalsHome !== null && goalsAway !== null
@@ -55,6 +56,8 @@ class ApiFootballResultProvider {
                 home_team: homeName,
                 away_team: awayName,
                 winner,
+                canceled,
+                status: statusShort,
             });
         }
         return results;
@@ -62,13 +65,30 @@ class ApiFootballResultProvider {
 }
 exports.ApiFootballResultProvider = ApiFootballResultProvider;
 async function findFixtureIdByMeta(params) {
-    const [home, away] = (params.eventName || '')
+    const [home, away] = (String(params.eventName || '') || '')
         .split(' - ')
         .map((s) => s?.trim())
         .filter(Boolean);
     if (!home || !away)
         return null;
-    const date = (params.startTime || '').slice(0, 10); // YYYY-MM-DD
+    let iso;
+    const st = params.startTime;
+    try {
+        if (!st)
+            iso = undefined;
+        else if (typeof st === 'string')
+            iso = st;
+        else if (st instanceof Date)
+            iso = st.toISOString();
+        else if (typeof st.toDate === 'function')
+            iso = st.toDate().toISOString();
+        else if (typeof st.seconds === 'number')
+            iso = new Date(st.seconds * 1000).toISOString();
+    }
+    catch {
+        iso = undefined;
+    }
+    const date = (iso || '').slice(0, 10); // YYYY-MM-DD
     const apiKey = process.env.API_FOOTBALL_KEY ?? '';
     if (!apiKey || !date)
         return null;

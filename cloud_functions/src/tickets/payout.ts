@@ -24,3 +24,15 @@ export function calcTicketPayout(stake: number, tips: Tip[]): number {
   // Round to 2 decimals for coin representation (adjust if integer coins)
   return Math.round(payout * 100) / 100;
 }
+
+export function deriveTicketStatus(
+  tips: Tip[],
+  payout: number,
+): 'won' | 'lost' | 'void' {
+  // Any lost leg -> ticket lost
+  if (tips.some(t => t.result === 'lost')) return 'lost';
+  // If at least one leg is won -> ticket won
+  if (tips.some(t => t.result === 'won')) return 'won';
+  // Otherwise, all legs are void (since pending handled earlier) -> void
+  return 'void';
+}

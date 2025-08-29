@@ -1,4 +1,4 @@
-import { calcTicketPayout } from '../src/tickets/payout';
+import { calcTicketPayout, deriveTicketStatus } from '../src/tickets/payout';
 
 describe('payout calculator', () => {
   test('all won multiplies odds', () => {
@@ -20,5 +20,33 @@ describe('payout calculator', () => {
       { market: '1X2', selection: 'HOME', result: 'lost', oddsSnapshot: 2.0 },
     ]);
     expect(p).toBe(0);
+  });
+
+  test('status: any lost -> lost', () => {
+    const tips = [
+      { market: '1X2', selection: 'HOME', result: 'lost', oddsSnapshot: 2.0 },
+      { market: 'OU', selection: 'OVER_2_5', result: 'void', oddsSnapshot: 1.9 },
+    ] as const;
+    const payout = calcTicketPayout(100, tips as any);
+    expect(deriveTicketStatus(tips as any, payout)).toBe('lost');
+  });
+
+  test('status: some won -> won', () => {
+    const tips = [
+      { market: '1X2', selection: 'HOME', result: 'won', oddsSnapshot: 1.8 },
+      { market: 'OU', selection: 'OVER_2_5', result: 'void', oddsSnapshot: 1.9 },
+    ] as const;
+    const payout = calcTicketPayout(100, tips as any);
+    expect(deriveTicketStatus(tips as any, payout)).toBe('won');
+  });
+
+  test('status: all void -> void', () => {
+    const tips = [
+      { market: '1X2', selection: 'HOME', result: 'void', oddsSnapshot: 1.8 },
+      { market: 'OU', selection: 'OVER_2_5', result: 'void', oddsSnapshot: 1.9 },
+    ] as const;
+    const payout = calcTicketPayout(100, tips as any);
+    expect(payout).toBeCloseTo(100, 2);
+    expect(deriveTicketStatus(tips as any, payout)).toBe('void');
   });
 });

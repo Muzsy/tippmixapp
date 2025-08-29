@@ -56,10 +56,25 @@ Object.defineProperty(exports, "admin_coin_ops", { enumerable: true, get: functi
 // v2 pubsub wrapper constructing Message on undefined event.data.
 exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.pubsub.topic.v1.messagePublished', async (event) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
-    const hasMsg = !!event?.data?.message;
+    const ev = event;
+    let dataB64 = ev?.data?.message?.data;
+    let attrs = ev?.data?.message?.attributes;
+    // Eventarc CUSTOM_PUBSUB eset: data.data / data.attributes
+    if (!dataB64 && ev?.data?.data)
+        dataB64 = ev.data.data;
+    if (!attrs && ev?.data?.attributes)
+        attrs = ev.data.attributes;
+    // Ha továbbra sincs dataB64, próbáljuk az egész data objektumot JSON-ként base64-elni
+    if (!dataB64 && ev?.data) {
+        try {
+            dataB64 = Buffer.from(JSON.stringify(ev.data), 'utf8').toString('base64');
+        }
+        catch (_) { }
+    }
+    const hasMsg = !!dataB64;
     let eventType;
     try {
-        const raw = event?.data?.message?.data;
+        const raw = dataB64;
         if (raw) {
             const jsonStr = Buffer.from(raw, 'base64').toString('utf8');
             const parsed = JSON.parse(jsonStr);
@@ -73,8 +88,8 @@ exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.p
     }
     logger.info('match_finalizer.start', {
         hasMsg,
-        hasData: !!event?.data?.message?.data,
-        attrKeys: Object.keys(event?.data?.message?.attributes ?? {}),
+        hasData: !!dataB64,
+        attrKeys: Object.keys(attrs ?? {}),
         ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
@@ -82,10 +97,7 @@ exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.p
         logger.info('match_finalizer.no_message');
         return;
     }
-    const msg = {
-        data: event.data.message?.data,
-        attributes: event.data.message?.attributes,
-    };
+    const msg = { data: dataB64, attributes: attrs };
     try {
         const result = await (0, match_finalizer_1.match_finalizer)(msg);
         logger.info('match_finalizer.done', { result });

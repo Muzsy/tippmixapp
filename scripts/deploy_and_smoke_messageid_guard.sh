@@ -17,6 +17,8 @@ DEPLOYER="${DEPLOYER:-firebase}"   # firebase | gcloud
 # Secret Manager binding (for gcloud deploy). Default to project-level secret latest version.
 SECRET_API_FOOTBALL_KEY="${SECRET_API_FOOTBALL_KEY:-projects/${PROJECT_ID}/secrets/API_FOOTBALL_KEY:latest}"
 MAX_ATTEMPTS="${MAX_ATTEMPTS:-3}"
+CF_ENV_VARS="${CF_ENV_VARS:-}"
+CF_REMOVE_ENV_VARS="${CF_REMOVE_ENV_VARS:-}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CF_DIR="${ROOT_DIR}/cloud_functions"
@@ -60,6 +62,12 @@ while (( attempt <= MAX_ATTEMPTS )); do
           --set-secrets="API_FOOTBALL_KEY=${SECRET_API_FOOTBALL_KEY}")
     if [[ -n "${SERVICE_ACCOUNT}" ]]; then
       ARGS+=(--service-account="${SERVICE_ACCOUNT}")
+    fi
+    if [[ -n "${CF_ENV_VARS}" ]]; then
+      ARGS+=(--set-env-vars="${CF_ENV_VARS}")
+    fi
+    if [[ -n "${CF_REMOVE_ENV_VARS}" ]]; then
+      ARGS+=(--remove-env-vars="${CF_REMOVE_ENV_VARS}")
     fi
     gcloud "${ARGS[@]}"
     popd >/dev/null

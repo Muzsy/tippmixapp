@@ -49,10 +49,10 @@ const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
 const BATCH_SIZE = Number(process.env.FINALIZER_BATCH_SIZE || 200);
 const MAX_BATCHES = Number(process.env.FINALIZER_MAX_BATCHES || 3);
 // After computing tip results for a ticket
-async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
+async function finalizeTicketAtomic(ticketRef, ticketData) {
     const db = (0, firestore_1.getFirestore)();
     await db.runTransaction(async (tx) => {
-        const [tSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
+        const tSnap = await tx.get(ticketRef);
         const t = tSnap.data();
         if (!t)
             throw new Error("Ticket not found");
@@ -65,15 +65,16 @@ async function finalizeTicketAtomic(ticketRef, userRef, ticketData) {
             result: x.result,
             oddsSnapshot: x.oddsSnapshot,
         }));
-        // If any pending remain, do nothing
+        // Early-finalize to 'lost' if any leg is lost (final outcome)
+        if (tips.some((x) => x.result === "lost")) {
+            tx.update(ticketRef, { status: "lost", payout: 0, processedAt: new Date(), tips });
+            return;
+        }
+        // Otherwise wait until no pending legs remain
         if (tips.some((x) => x.result === "pending"))
             return;
         const payout = (0, payout_1.calcTicketPayout)(ticketData.stake, tips);
-        const status = tips.some((x) => x.result === "lost")
-            ? "lost"
-            : payout > 0
-                ? "won"
-                : "void";
+        const status = (0, payout_1.deriveTicketStatus)(tips, payout);
         // users.balance helyett csak a ticket mezői frissülnek; pénzügy a CoinService-ben
         tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
     });
@@ -97,13 +98,21 @@ const match_finalizer = async (message) => {
         let anyProcessed = false;
         let morePossible = false;
         while (batches < MAX_BATCHES) {
-            let q = firebase_1.db
-                .collectionGroup("tickets")
-                .where("status", "==", "pending")
-                .orderBy("__name__")
-                .limit(BATCH_SIZE);
-            if (lastDoc) {
-                q = q.startAfter(lastDoc);
+            const filterUid = process.env.FILTER_UID;
+            let q;
+            if (filterUid) {
+                q = firebase_1.db
+                    .collection('users')
+                    .doc(String(filterUid))
+                    .collection('tickets')
+                    .where('status', '==', 'pending')
+                    .limit(BATCH_SIZE);
+            }
+            else {
+                q = firebase_1.db
+                    .collectionGroup("tickets")
+                    .where("status", "==", "pending")
+                    .limit(BATCH_SIZE);
             }
             const ticketsSnap = await q.get();
             if (ticketsSnap.empty) {
@@ -223,7 +232,7 @@ const match_finalizer = async (message) => {
                     }
                 }
                 const uid = snap.get("userId") || snap.ref.parent?.parent?.id;
-                await finalizeTicketAtomic(snap.ref, firebase_1.db.collection("users").doc(String(uid)), { stake: snap.get("stake"), tips: tipResults });
+                await finalizeTicketAtomic(snap.ref, { stake: snap.get("stake"), tips: tipResults });
                 if (pendingTipUpdates.length) {
                     const updates = {};
                     for (const u of pendingTipUpdates) {
@@ -250,7 +259,8 @@ const match_finalizer = async (message) => {
                 }
             } // for ticketsSnap.docs
             // end of batch processing for this page
-            lastDoc = ticketsSnap.docs[ticketsSnap.docs.length - 1];
+            // No explicit pagination cursor to avoid composite index requirement
+            lastDoc = undefined;
             batches += 1;
         } // while
         if (morePossible) {

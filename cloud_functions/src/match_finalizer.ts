@@ -2,8 +2,8 @@ import {
   ApiFootballResultProvider,
   findFixtureIdByMeta,
 } from "./services/ApiFootballResultProvider";
-import { calcTicketPayout } from "./tickets/payout";
-import { getFirestore } from "firebase-admin/firestore";
+import { calcTicketPayout, deriveTicketStatus } from "./tickets/payout";
+import { getFirestore, FieldPath } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import { db } from "./lib/firebase";
 import { PubSub } from "@google-cloud/pubsub";
@@ -20,12 +20,11 @@ const MAX_BATCHES = Number(process.env.FINALIZER_MAX_BATCHES || 3);
 // After computing tip results for a ticket
 async function finalizeTicketAtomic(
   ticketRef: FirebaseFirestore.DocumentReference,
-  userRef: FirebaseFirestore.DocumentReference,
   ticketData: any,
 ) {
   const db = getFirestore();
   await db.runTransaction(async (tx) => {
-    const [tSnap] = await Promise.all([tx.get(ticketRef), tx.get(userRef)]);
+    const tSnap = await tx.get(ticketRef);
     const t = tSnap.data();
     if (!t) throw new Error("Ticket not found");
     if (t.processedAt) {
@@ -37,14 +36,15 @@ async function finalizeTicketAtomic(
       result: x.result,
       oddsSnapshot: x.oddsSnapshot,
     }));
-    // If any pending remain, do nothing
+    // Early-finalize to 'lost' if any leg is lost (final outcome)
+    if (tips.some((x: any) => x.result === "lost")) {
+      tx.update(ticketRef, { status: "lost", payout: 0, processedAt: new Date(), tips });
+      return;
+    }
+    // Otherwise wait until no pending legs remain
     if (tips.some((x: any) => x.result === "pending")) return;
     const payout = calcTicketPayout(ticketData.stake, tips);
-    const status = tips.some((x: any) => x.result === "lost")
-      ? "lost"
-      : payout > 0
-        ? "won"
-        : "void";
+    const status = deriveTicketStatus(tips as any, payout);
     // users.balance helyett csak a ticket mezői frissülnek; pénzügy a CoinService-ben
     tx.update(ticketRef, { status, payout, processedAt: new Date(), tips });
   });
@@ -85,16 +85,20 @@ export const match_finalizer = async (
     let morePossible = false;
 
     while (batches < MAX_BATCHES) {
-      let q = db
-        .collectionGroup("tickets")
-        .where("status", "==", "pending")
-        .orderBy("__name__")
-        .limit(
-          BATCH_SIZE,
-        ) as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
-
-      if (lastDoc) {
-        q = q.startAfter(lastDoc);
+      const filterUid = process.env.FILTER_UID;
+      let q: FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
+      if (filterUid) {
+        q = db
+          .collection('users')
+          .doc(String(filterUid))
+          .collection('tickets')
+          .where('status', '==', 'pending')
+          .limit(BATCH_SIZE) as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
+      } else {
+        q = db
+          .collectionGroup("tickets")
+          .where("status", "==", "pending")
+          .limit(BATCH_SIZE) as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
       }
       const ticketsSnap = await q.get();
       if (ticketsSnap.empty) {
@@ -224,11 +228,7 @@ export const match_finalizer = async (
         }
 
         const uid = snap.get("userId") || snap.ref.parent?.parent?.id;
-        await finalizeTicketAtomic(
-          snap.ref,
-          db.collection("users").doc(String(uid)),
-          { stake: snap.get("stake"), tips: tipResults },
-        );
+        await finalizeTicketAtomic(snap.ref, { stake: snap.get("stake"), tips: tipResults });
         if (pendingTipUpdates.length) {
           const updates: any = {};
           for (const u of pendingTipUpdates) {
@@ -255,7 +255,8 @@ export const match_finalizer = async (
       } // for ticketsSnap.docs
 
       // end of batch processing for this page
-      lastDoc = ticketsSnap.docs[ticketsSnap.docs.length - 1];
+      // No explicit pagination cursor to avoid composite index requirement
+      lastDoc = undefined;
       batches += 1;
     } // while
 

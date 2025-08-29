@@ -1,6 +1,5 @@
 import './global';
 import { onCustomEventPublished } from 'firebase-functions/v2/eventarc';
-import type { CloudEvent } from 'firebase-functions/v2';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
 
@@ -18,12 +17,24 @@ export { admin_coin_ops } from './admin_coin_ops';
 // v2 pubsub wrapper constructing Message on undefined event.data.
 export const match_finalizer = onCustomEventPublished(
   'google.cloud.pubsub.topic.v1.messagePublished',
-  async (event: CloudEvent<any>) => {
+  async (event) => {
     // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
-    const hasMsg = !!(event as any)?.data?.message;
+    const ev: any = event as any;
+    let dataB64: string | undefined = ev?.data?.message?.data as string | undefined;
+    let attrs: { [key: string]: string } | undefined = ev?.data?.message?.attributes as any;
+    // Eventarc CUSTOM_PUBSUB eset: data.data / data.attributes
+    if (!dataB64 && ev?.data?.data) dataB64 = ev.data.data as string;
+    if (!attrs && ev?.data?.attributes) attrs = ev.data.attributes as any;
+    // Ha továbbra sincs dataB64, próbáljuk az egész data objektumot JSON-ként base64-elni
+    if (!dataB64 && ev?.data) {
+      try {
+        dataB64 = Buffer.from(JSON.stringify(ev.data), 'utf8').toString('base64');
+      } catch (_) {}
+    }
+    const hasMsg = !!dataB64;
     let eventType: string | undefined;
     try {
-      const raw = (event as any)?.data?.message?.data as string | undefined;
+      const raw = dataB64;
       if (raw) {
         const jsonStr = Buffer.from(raw, 'base64').toString('utf8');
         const parsed = JSON.parse(jsonStr);
@@ -36,8 +47,8 @@ export const match_finalizer = onCustomEventPublished(
     }
     logger.info('match_finalizer.start', {
       hasMsg,
-      hasData: !!(event as any)?.data?.message?.data,
-      attrKeys: Object.keys((event as any)?.data?.message?.attributes ?? {}),
+      hasData: !!dataB64,
+      attrKeys: Object.keys(attrs ?? {}),
       ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
@@ -45,10 +56,7 @@ export const match_finalizer = onCustomEventPublished(
       logger.info('match_finalizer.no_message');
       return;
     }
-    const msg = {
-      data: (event as any).data.message?.data,
-      attributes: (event as any).data.message?.attributes as { [key: string]: string } | undefined,
-    };
+    const msg = { data: dataB64, attributes: attrs };
     try {
       const result = await matchFinalizerHandler(msg as any);
       logger.info('match_finalizer.done', { result });

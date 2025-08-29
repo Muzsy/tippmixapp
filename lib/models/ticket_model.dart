@@ -26,19 +26,43 @@ class Ticket {
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
+    DateTime _parseDate(dynamic v) {
+      if (v == null) return DateTime.now();
+      if (v is DateTime) return v;
+      final ts = (v is dynamic && v is! String && v is! DateTime && v.toDate is Function)
+          ? v.toDate()
+          : null;
+      if (ts is DateTime) return ts;
+      if (v is String) {
+        final d = DateTime.tryParse(v);
+        if (d != null) return d;
+      }
+      return DateTime.now();
+    }
+
+    String _statusRaw = (json['status'] as String? ?? 'pending').toLowerCase();
+    if (_statusRaw == 'void') _statusRaw = 'voided';
+
+    final tipsRaw = (json['tips'] as List<dynamic>?) ?? const [];
+
+    final stake = (json['stake'] as num?)?.toDouble() ?? 0.0;
+    final totalOdd = (json['totalOdd'] as num?)?.toDouble() ?? 1.0;
+    final potentialWin = (json['potentialWin'] as num?)?.toDouble() ?? (stake * totalOdd);
+
     return Ticket(
-      id: json['id'] as String,
-      userId: json['userId'] as String? ?? '',
-      tips: (json['tips'] as List<dynamic>)
-          .map((e) => TipModel.fromJson(e as Map<String, dynamic>))
+      id: (json['id'] ?? json['ticketId'] ?? '').toString(),
+      userId: (json['userId'] ?? '').toString(),
+      tips: tipsRaw
+          .whereType<Map<String, dynamic>>()
+          .map((e) => TipModel.fromJson(e))
           .toList(),
-      stake: (json['stake'] as num).toDouble(),
-      totalOdd: (json['totalOdd'] as num).toDouble(),
-      potentialWin: (json['potentialWin'] as num).toDouble(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      stake: stake,
+      totalOdd: totalOdd,
+      potentialWin: potentialWin,
+      createdAt: _parseDate(json['createdAt']),
+      updatedAt: _parseDate(json['updatedAt'] ?? json['processedAt']),
       status: TicketStatus.values.firstWhere(
-        (e) => e.name == (json['status'] as String? ?? 'pending'),
+        (e) => e.name == _statusRaw,
         orElse: () => TicketStatus.pending,
       ),
     );

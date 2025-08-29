@@ -1,0 +1,54 @@
+
+createdAt "2025-08-29T19:26:34.268205"
+(string)
+id "2pEEqMzCsBfkrv4jWx3YP5yDb0F2_1756488394268"
+(string)
+potentialWin 21.060000000000002
+(number)
+stake 2
+(number)
+status "pending"
+(string)
+tips
+(array)
+0
+(map)
+bookmakerId 8
+(number)
+eventId "1343769"
+(string)
+eventName "Vänersborgs FK – Herrestads"
+(string)
+marketKey "h2h"
+(string)
+odds 3.9
+(number)
+outcome "Vänersborgs FK"
+(string)
+sportKey "soccer"
+(string)
+startTime "2025-08-29T17:30:00.000Z"
+(string)
+1
+(map)
+bookmakerId 8
+(number)
+eventId "1344493"
+(string)
+eventName "Landvetter IS – Astrio"
+(string)
+marketKey "h2h"
+(string)
+odds 2.7
+(number)
+outcome "Landvetter IS"
+(string)
+sportKey "soccer"
+(string)
+startTime "2025-08-29T17:30:00.000Z"
+(string)
+totalOdd 10.530000000000001
+(number)
+updatedAt "2025-08-29T19:26:34.268205"
+(string)
+userId "2pEEqMzCsBfkrv4jWx3YP5yDb0F2" 
