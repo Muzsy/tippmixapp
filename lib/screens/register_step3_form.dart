@@ -11,6 +11,7 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 import '../routes/app_route.dart';
 import '../services/storage_service.dart';
+import '../utils/image_resizer.dart';
 
 class RegisterStep3Form extends ConsumerStatefulWidget {
   const RegisterStep3Form({super.key});
@@ -62,12 +63,17 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
     if (picked == null) return;
     var file = File(picked.path);
     file = await _cropSquare(file);
+    // Downscale if needed to fit under 2MB
     if (await file.length() > 2 * 1024 * 1024) {
+      file = await ImageResizer.downscalePng(file, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
+    }
+    if (await file.length() > 2 * 1024 * 1024) {
+      // As a last resort, inform user but still allow smaller attempt
       if (!mounted) return;
       final loc = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.register_avatar_too_large)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.register_avatar_too_large)),
+      );
       return;
     }
     setState(() => _image = file);

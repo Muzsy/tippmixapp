@@ -274,20 +274,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 final data = snapshot.data?.data() ?? const <String, dynamic>{};
                 final nameVal = (data['displayName'] as String?)?.trim();
                 final nickVal = (data['nickname'] as String?)?.trim();
-                final name = (nameVal != null && nameVal.isNotEmpty)
-                    ? nameVal
-                    : displayName;
-                final nickname = (nickVal != null && nickVal.isNotEmpty)
-                    ? nickVal
-                    : displayName;
+                final name = (nameVal != null && nameVal.isNotEmpty) ? nameVal : displayName;
+                final nickname = (nickVal != null && nickVal.isNotEmpty) ? nickVal : displayName;
+                final same = name.trim().toLowerCase() == nickname.trim().toLowerCase();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${loc.profile_name}: $name',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
+                    if (!same && name.isNotEmpty) ...[
+                      Text(
+                        '${loc.profile_name}: $name',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     Text(
                       '${loc.profile_nickname}: $nickname',
                       style: const TextStyle(fontSize: 16),
@@ -297,15 +296,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               },
             )
           else ...[
-            Text(
-              '${loc.profile_name}: $displayName',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${loc.profile_nickname}: $displayName',
-              style: const TextStyle(fontSize: 16),
-            ),
+            // When Firestore not available, avoid duplication if both fallback are equal
+            Text('${loc.profile_nickname}: $displayName', style: const TextStyle(fontSize: 16)),
           ],
           const SizedBox(height: 8),
           Text(

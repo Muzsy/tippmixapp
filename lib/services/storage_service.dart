@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../utils/image_resizer.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,6 +17,10 @@ class StorageService {
     final uid = _auth.currentUser?.uid;
     if (uid == null) {
       throw StateError('No user');
+    }
+    // Ensure file is under ~2MB to satisfy storage rules/limits
+    if (await image.length() > 2 * 1024 * 1024) {
+      image = await ImageResizer.downscalePng(image, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
     }
     final ref = _storage.ref().child('avatars/$uid.jpg');
     final task = ref.putFile(image);

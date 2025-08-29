@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import '../utils/image_resizer.dart';
 import '../models/user_model.dart';
 
 class ProfileService {
@@ -127,6 +128,10 @@ class ProfileService {
     required dynamic connectivity,
   }) async {
     try {
+      // Downscale client-side if necessary to avoid >2MB uploads
+      if (await file.length() > 2 * 1024 * 1024) {
+        file = await ImageResizer.downscalePng(file, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
+      }
       final ref = storage.ref().child('avatars/$uid');
       final task = ref.putFile(file);
       try {
