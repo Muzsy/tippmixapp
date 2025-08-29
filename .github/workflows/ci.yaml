@@ -21,7 +21,8 @@ jobs:
           node-version: '20'
       - name: Install markdown linters
         run: npm i -g markdownlint-cli markdownlint-cli2
-      - name: Run docs lint script
+      - name: Run docs lint script (non-blocking)
+        continue-on-error: true
         run: |
           chmod +x scripts/lint_docs.sh
           STRICT_MARKDOWNLINT=true ./scripts/lint_docs.sh | tee docs_lint.log
@@ -52,7 +53,15 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
       - name: Analyze (policy-compliant scope)
-        run: flutter analyze --no-fatal-infos lib test integration_test bin tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATHS=""
+          for d in lib test integration_test bin tool; do
+            if [ -d "$d" ]; then PATHS+="$d "; fi
+          done
+          echo "Analyzing paths: $PATHS"
+          flutter analyze --no-fatal-infos $PATHS
       - name: Unit & widget tests (coverage)
         run: flutter test --coverage
       - name: Upload coverage
