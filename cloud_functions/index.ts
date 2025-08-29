@@ -10,6 +10,7 @@ export { onFriendRequestAccepted } from './friend_request';
 export { daily_bonus } from './src/daily_bonus';
 export { claim_daily_bonus } from './src/bonus_claim';
 export { admin_coin_ops } from './admin_coin_ops';
+export { reserve_nickname } from './src/username_reservation';
 
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 

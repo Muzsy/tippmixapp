@@ -88,7 +88,16 @@ service cloud.firestore {
       allow create: if signedIn() && request.auth.uid == userId;
       // Ranglistához minden hitelesített user olvashatja
       allow read:   if signedIn();
-      allow update: if isOwner(userId);
+      // When updating nicknameNormalized, enforce that reservation exists and belongs to user
+      allow update: if isOwner(userId)
+        && (
+          request.resource.data.nicknameNormalized == resource.data.nicknameNormalized
+          || (
+            request.resource.data.nicknameNormalized is string
+            && exists(/databases/$(database)/documents/usernames/$(request.resource.data.nicknameNormalized))
+            && get(/databases/$(database)/documents/usernames/$(request.resource.data.nicknameNormalized)).data.ownerUid == request.auth.uid
+          )
+        );
       allow delete: if false;
 
       /* ——— subcollection: notifications ——— */
@@ -149,6 +158,17 @@ service cloud.firestore {
 
     /* --- NEW: user-centric wallet & ledger (SoT) --- */
     match /users/{uid}/wallet/{docId} {
+    /* --- usernames reservation (case-insensitive nickname uniqueness) --- */
+    match /usernames/{norm} {
+      // Anyone can check availability
+      allow read: if true;
+      // Create only if not existing and caller owns the reservation
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && !exists(/databases/$(database)/documents/usernames/$(norm));
+      // Update/Delete only by owner
+      allow update, delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+    }
       allow read: if isOwner(uid);
       allow write: if false; // Only via CF (Admin SDK)
     }
