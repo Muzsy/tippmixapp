@@ -76,13 +76,10 @@ jobs:
           fi
           gcloud auth list
 
-      - name: Firebase deploy – Firestore rules
+      - name: Firebase deploy – Firestore rules (dev only)
+        if: env.MODE == 'dev'
         run: |
-          if [ "$MODE" = "prod" ]; then
-            PROJECT_ID="tippmix-prod"
-          else
-            PROJECT_ID="tippmix-dev"
-          fi
+          PROJECT_ID="tippmix-dev"
           firebase deploy --only firestore:rules --project "$PROJECT_ID" --non-interactive
 
       - name: Firebase deploy (dev/main)
