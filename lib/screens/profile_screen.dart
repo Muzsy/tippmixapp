@@ -263,10 +263,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             },
           ),
           const SizedBox(height: 8),
-          Text(
-            '${loc.profile_nickname}: $displayName',
-            style: const TextStyle(fontSize: 16),
-          ),
+          // Név + Becenév megjelenítése Firestore-ból, fallback auth displayName-re
+          if (Firebase.apps.isNotEmpty)
+            StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                final data = snapshot.data?.data() ?? const <String, dynamic>{};
+                final nameVal = (data['displayName'] as String?)?.trim();
+                final nickVal = (data['nickname'] as String?)?.trim();
+                final name = (nameVal != null && nameVal.isNotEmpty)
+                    ? nameVal
+                    : displayName;
+                final nickname = (nickVal != null && nickVal.isNotEmpty)
+                    ? nickVal
+                    : displayName;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${loc.profile_name}: $name',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${loc.profile_nickname}: $nickname',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                );
+              },
+            )
+          else ...[
+            Text(
+              '${loc.profile_name}: $displayName',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${loc.profile_nickname}: $displayName',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
           const SizedBox(height: 8),
           Text(
             '${loc.profile_email}: $email',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../services/profile_service.dart';
 import '../../services/user_service.dart';
 import '../../validators/display_name_validator.dart';
 import '../../widgets/avatar_picker.dart';
@@ -18,13 +20,29 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _nickController;
   late final TextEditingController _bioController;
   String? _team;
   DateTime? _dob;
   String? _avatar;
   bool _saving = false;
+  String? _initialNickname;
 
   final _nameValidator = DisplayNameValidator();
+  String? _nickError;
+
+  String? _validateNick(BuildContext context, String? value) {
+    if (value == null || value.isEmpty) return null;
+    // Ha nem változott az eredetihez képest, ne bukjon validációval
+    if (_initialNickname != null && value.trim() == _initialNickname) {
+      return null;
+    }
+    if (value.length < 3 || value.length > 20) {
+      return AppLocalizations.of(context)!.auth_error_invalid_nickname;
+    }
+    if (_nickError != null) return _nickError;
+    return null;
+  }
 
   @override
   void initState() {
@@ -32,6 +50,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(
       text: widget.initial?.displayName ?? '',
     );
+    _nickController = TextEditingController(
+      text: widget.initial?.nickname ?? '',
+    );
+    _initialNickname = widget.initial?.nickname ?? '';
     _bioController = TextEditingController(text: widget.initial?.bio ?? '');
     _team = widget.initial?.favouriteTeam;
     _dob = widget.initial?.dateOfBirth;
@@ -41,9 +63,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
+    // Nickname egyediség ellenőrzése (ha változott)
+    final newNick = _nickController.text.trim();
+    if (newNick.isNotEmpty && newNick != (widget.initial?.nickname ?? '')) {
+      final unique = await ProfileService.isNicknameUnique(
+        newNick,
+        firestore: FirebaseFirestore.instance,
+      );
+      if (!unique) {
+        setState(() {
+          _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
+          _saving = false;
+        });
+        _formKey.currentState!.validate();
+        return;
+      }
+    }
+
     final changes =
         <String, dynamic>{
           'displayName': _nameController.text.trim(),
+          'nickname': _nickController.text.trim(),
           'bio': _bioController.text.trim(),
           'favouriteTeam': _team,
           'dateOfBirth': _dob?.toIso8601String(),
@@ -79,6 +119,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               controller: _nameController,
               decoration: InputDecoration(labelText: loc.name_hint),
               validator: (v) => _nameValidator.validate(v ?? ''),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _nickController,
+              decoration: InputDecoration(
+                labelText: loc.profile_nickname,
+                errorText: _nickError,
+              ),
+              onChanged: (_) => setState(() => _nickError = null),
+              validator: (v) => _validateNick(context, v),
             ),
             const SizedBox(height: 16),
             TextFormField(
