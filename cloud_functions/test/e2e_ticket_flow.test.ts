@@ -1,46 +1,95 @@
-import * as firebase from "@firebase/rules-unit-testing";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { jest } from "@jest/globals";
+/** @jest-environment node */
+import { initializeApp, getApps } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { match_finalizer } from '../src/match_finalizer';
 
-const PROJECT_ID = "demo-project";
-const UID = "user_e2e";
-const FIXTURE_ID_WIN = "123456";    // 2-1 → home win
-const FIXTURE_ID_VOID = "223344";   // 0-0 → void
+// A jest.setup.ts már mockolja az ApiFootballResultProvider-t, ami a
+// cloud_functions/mock_apifootball/fixtures_sample.json-t olvassa.
 
-describe.skip("E2E: create → finalize → payout", () => {
-  let app: any;
+const PROJECT_ID = 'demo-project';
+const UID = 'user_e2e';
+const TICKET_ID = 'ticket_e2e_1';
+
+// Ezek a fixture ID-k benne vannak a fixtures_sample.json-ben
+const FIXTURE_ID_WIN = '123456';   // Home 2-1 Away  → HOME nyer
+const FIXTURE_ID_VOID = '223344';  // 0-0 → void/döntetlen
+
+//
+
+const RUN_E2E = process.env.RUN_E2E_EMULATOR === '1';
+
+describe('E2E | create → finalize → payout (idempotens)', () => {
+  const envBackup = { ...process.env };
+
   beforeAll(async () => {
-    process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || "localhost:8080";
-    process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-    app = initializeApp({ projectId: PROJECT_ID });
+    // Emulátorok
+    process.env.GCLOUD_PROJECT = PROJECT_ID;
+    process.env.GOOGLE_CLOUD_PROJECT = PROJECT_ID;
+    // Bizonyos környezetekben az ADC felülírhatja az emulátort – töröljük a hitelesítési fájl útvonalát
+    delete (process.env as any).GOOGLE_APPLICATION_CREDENTIALS;
+    process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || 'localhost:8080';
+    process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
+
+    // App init → admin.firestore() (idempotens)
+    if (getApps().length === 0) {
+      initializeApp({ projectId: PROJECT_ID });
+    }
     const db = getFirestore();
-    await db.collection("users").doc(UID).set({ balance: 10000 });
+
+    // Kezdeti wallet
+    await db.collection('users').doc(UID).collection('wallet').doc('main').set({
+      coins: 10_000,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    // Pending ticket két tippel (egy nyerő + egy void)
+    await db.collection('users').doc(UID).collection('tickets').doc(TICKET_ID).set({
+      status: 'pending',
+      stake: 1500,
+      createdAt: FieldValue.serverTimestamp(),
+      tips: [
+        // marketKey: '1X2' az értékelőben 'H2H'-re normalizálódik; outcome szöveges választás
+        { eventId: FIXTURE_ID_WIN, marketKey: '1X2', outcome: 'Home', odds: 1.8, result: 'pending' },
+        { eventId: FIXTURE_ID_VOID, marketKey: '1X2', outcome: 'Draw', odds: 3.1, result: 'pending' },
+      ],
+    });
   });
 
   afterAll(async () => {
-    await (firebase as any).clearFirestoreData({ projectId: PROJECT_ID });
+    process.env = envBackup;
   });
 
-  it("creates ticket, finalizes once, idempotent on second finalize", async () => {
-    // 1) create ticket via callable
-    // NOTE: a valós callable export nevét a projektnek megfelelően állítsd be
-    // Itt feltételezzük: functions index exportálja `createTicket`
+  (RUN_E2E ? it : it.skip)('finalizes once, credits wallet; second run is idempotent', async () => {
+    const db = getFirestore();
+    const walletRef = db.collection('users').doc(UID).collection('wallet').doc('main');
+    const ticketRef = db.collection('users').doc(UID).collection('tickets').doc(TICKET_ID);
 
-    const stake = 1500;
-    const tips = [
-      { fixtureId: FIXTURE_ID_WIN, market: "1X2", selection: "HOME", oddsSnapshot: 1.80, kickoff: Date.now() + 60_000 },
-      { fixtureId: FIXTURE_ID_VOID, market: "1X2", selection: "DRAW", oddsSnapshot: 3.10, kickoff: Date.now() + 60_000 }
-    ];
+    const before = (await walletRef.get()).data()?.coins ?? 0;
 
-    // A callable meghívása itt pszeudókód, mert emulátoros Functions kliens projekt‑specifikus.
-    // A Codex futásban a projekt saját helperét kell használni (ld. README / index.ts exportok).
+    // 1) Finalizer első futás
+    await match_finalizer({
+      data: Buffer.from(JSON.stringify({ job: 'final-sweep' })).toString('base64'),
+      attributes: { attempt: '0' },
+    } as any);
 
-    // 2) run match_finalizer (once)
-    // 3) assert: ticket.status/payout, users.balance increased by payout
-    // 4) run match_finalizer (second time) → no changes (idempotent)
+    // Ellenőrzés: ticket státusz/payout
+    const t1 = (await ticketRef.get()).data();
+    expect(t1).toBeTruthy();
+    expect(['won', 'lost', 'void']).toContain(t1!.status);
+    // A mock adatokkal a HOME nyer, a másik tipp void → payout > 0
+    expect(t1!.payout).toBeGreaterThan(0);
 
-    expect(true).toBe(true);
+    // Wallet nőtt?
+    const mid = (await walletRef.get()).data()?.coins ?? 0;
+    expect(mid).toBeGreaterThan(before);
+
+    // 2) Finalizer második futás (idempotencia: ledger refId = ticketId)
+    await match_finalizer({
+      data: Buffer.from(JSON.stringify({ job: 'final-sweep' })).toString('base64'),
+      attributes: { attempt: '1' },
+    } as any);
+
+    const after = (await walletRef.get()).data()?.coins ?? 0;
+    expect(after).toBe(mid); // nem nő tovább
   });
 });
