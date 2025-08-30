@@ -13,11 +13,22 @@ class ProfileService {
     String nickname, {
     required FirebaseFirestore firestore,
   }) async {
-    final query = await firestore
-        .collection('users')
-        .where('nickname', isEqualTo: nickname)
-        .get();
-    return query.docs.isEmpty;
+    String _normalize(String input) {
+      final s = input.trim().toLowerCase();
+      const map = {
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ö': 'o', 'ő': 'o',
+        'ú': 'u', 'ü': 'u', 'ű': 'u', 'ä': 'a', 'ß': 'ss',
+      };
+      final buf = StringBuffer();
+      for (final ch in s.split('')) {
+        buf.write(map[ch] ?? ch);
+      }
+      return buf.toString().replaceAll(RegExp(r"\s+"), ' ');
+    }
+
+    final norm = _normalize(nickname);
+    final doc = await firestore.collection('usernames').doc(norm).get();
+    return !doc.exists;
   }
 
   static Future<void> createUserProfile(UserModel user) async {
@@ -132,8 +143,13 @@ class ProfileService {
       if (await file.length() > 2 * 1024 * 1024) {
         file = await ImageResizer.downscalePng(file, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
       }
-      final ref = storage.ref().child('avatars/$uid');
-      final task = ref.putFile(file);
+      final lower = file.path.toLowerCase();
+      final isPng = lower.endsWith('.png');
+      final contentType = isPng ? 'image/png' : 'image/jpeg';
+      final ext = isPng ? 'png' : 'jpg';
+      // Upload path must follow storage rules: users/{uid}/avatar.{ext}
+      final ref = storage.ref().child('users/$uid/avatar.$ext');
+      final task = ref.putFile(file, SettableMetadata(contentType: contentType));
       try {
         await task;
       } on TypeError {

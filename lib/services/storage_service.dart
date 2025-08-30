@@ -22,8 +22,13 @@ class StorageService {
     if (await image.length() > 2 * 1024 * 1024) {
       image = await ImageResizer.downscalePng(image, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
     }
-    final ref = _storage.ref().child('avatars/$uid.jpg');
-    final task = ref.putFile(image);
+    final lower = image.path.toLowerCase();
+    final isPng = lower.endsWith('.png');
+    final contentType = isPng ? 'image/png' : 'image/jpeg';
+    final ext = isPng ? 'png' : 'jpg';
+    // Upload path must follow storage rules: users/{uid}/avatar.{ext}
+    final ref = _storage.ref().child('users/$uid/avatar.$ext');
+    final task = ref.putFile(image, SettableMetadata(contentType: contentType));
     try {
       await task;
     } on TypeError {
