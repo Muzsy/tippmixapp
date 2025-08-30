@@ -1,4 +1,5 @@
 import 'tip_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum TicketStatus { pending, won, lost, voided }
 
@@ -65,6 +66,23 @@ class Ticket {
         (e) => e.name == statusRaw,
         orElse: () => TicketStatus.pending,
       ),
+    );
+  }
+
+  factory Ticket.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data() ?? <String, dynamic>{};
+    final t = Ticket.fromJson(data);
+    // Biztosítsuk, hogy az id a doc.id legyen
+    return Ticket(
+      id: doc.id,
+      userId: t.userId,
+      tips: t.tips,
+      stake: t.stake,
+      totalOdd: t.totalOdd,
+      potentialWin: t.potentialWin,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      status: t.status,
     );
   }
 

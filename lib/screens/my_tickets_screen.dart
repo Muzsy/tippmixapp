@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 
@@ -21,7 +22,7 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
       .collection('tickets')
       .orderBy('createdAt', descending: true)
       .snapshots()
-      .map((snap) => snap.docs.map((d) => Ticket.fromJson(d.data())).toList());
+      .map((snap) => snap.docs.map((d) => Ticket.fromFirestore(d)).toList());
 });
 
 class MyTicketsScreen extends ConsumerWidget {
@@ -65,7 +66,24 @@ class MyTicketsScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(e.toString(), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref.refresh(ticketsProvider.future);
+                  },
+                  child: Text(loc.events_screen_refresh),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
