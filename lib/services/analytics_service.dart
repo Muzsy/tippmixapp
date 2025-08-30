@@ -163,6 +163,38 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  // --- Ticket details grouping telemetry ----------------------------------
+
+  Future<void> logTicketDetailsGroupExpanded({
+    required String group, // won|lost|pending
+    required int count,
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'ticket_details_group_expanded',
+        parameters: {
+          'group': TelemetrySanitizer.normalizeStatus(group),
+          'count': TelemetrySanitizer.safeCount(count),
+        },
+      );
+    } catch (_) {}
+  }
+
+  Future<void> logTicketDetailsItemViewed({
+    required String eventId,
+    required String outcome,
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'ticket_details_item_viewed',
+        parameters: {
+          'eventId': TelemetrySanitizer.normalizeTicketId(eventId),
+          'outcome': outcome,
+        },
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/ticket_model.dart';
-import '../models/tip_model.dart';
+// duplicate import removed
+import '../services/analytics_service.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'ticket_status_chip.dart';
+import 'tip_status_chip.dart';
+import '../models/tip_model.dart';
 
 class TicketDetailsDialog extends StatelessWidget {
   final Ticket ticket;
@@ -26,6 +29,65 @@ class TicketDetailsDialog extends StatelessWidget {
     final earliestTipStart = tips.isEmpty
         ? null
         : tips.map((t) => t.startTime).reduce((a, b) => a.isBefore(b) ? a : b);
+    List<TipModel> _sorted(List<TipModel> list) {
+      final copy = [...list];
+      copy.sort((a, b) => a.startTime.compareTo(b.startTime));
+      return copy;
+    }
+
+    final analyticsService = AnalyticsService();
+    final won = _sorted(tips.where((t) => t.status == TipStatus.won).toList());
+    final lost = _sorted(tips.where((t) => t.status == TipStatus.lost).toList());
+    final pending = _sorted(tips.where((t) => t.status == TipStatus.pending).toList());
+
+    Widget _section(String title, List<TipModel> items) {
+      if (items.isEmpty) return const SizedBox.shrink();
+      return Semantics(
+        header: true,
+        child: ExpansionTile(
+          title: Text('$title (${items.length})'),
+          onExpansionChanged: (expanded) {
+            if (expanded) {
+              // ignore: unawaited_futures
+              analyticsService.logTicketDetailsGroupExpanded(
+                group: title.toLowerCase(),
+                count: items.length,
+              );
+            }
+          },
+          children: [
+            ...items.map((tip) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(tip.eventName),
+                      subtitle: Text('${tip.outcome} • ${tip.marketKey}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TipStatusChip(status: tip.status),
+                          const SizedBox(width: 8),
+                          Text('x${tip.odds.toStringAsFixed(2)}'),
+                        ],
+                      ),
+                      onTap: () {
+                        // ignore: unawaited_futures
+                        analyticsService.logTicketDetailsItemViewed(
+                          eventId: tip.eventId,
+                          outcome: tip.outcome,
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
+                  ],
+                )),
+          ],
+        ),
+      );
+    }
+
     return AlertDialog(
       title: Text(loc.ticket_details_title),
       content: SingleChildScrollView(
@@ -88,19 +150,9 @@ class TicketDetailsDialog extends StatelessWidget {
             if (tips.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Divider(),
-              ...tips.map((tip) => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(tip.eventName),
-                    subtitle: Text('${tip.outcome} • ${tip.marketKey}'),
-                    trailing: Text('x${tip.odds.toStringAsFixed(2)}'),
-                  ),
-                  const Divider(height: 1),
-                ],
-              )),
+              _section(loc.ticket_status_won, won),
+              _section(loc.ticket_status_lost, lost),
+              _section(loc.ticket_status_pending, pending),
             ],
           ],
         ),

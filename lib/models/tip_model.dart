@@ -1,4 +1,6 @@
 /// Felhasználói tipp egy adott esemény kimenetelére, odds-al.
+enum TipStatus { won, lost, pending }
+
 class TipModel {
   final String eventId;
   final String eventName;
@@ -9,6 +11,7 @@ class TipModel {
   final String marketKey; // pl. "h2h"
   final String outcome; // pl. "Arsenal"
   final double odds; // pl. 2.15
+  final TipStatus status;
 
   // + egyedi azonosító, user id, tét összege, stb. ha kell!
 
@@ -22,6 +25,7 @@ class TipModel {
     required this.marketKey,
     required this.outcome,
     required this.odds,
+    this.status = TipStatus.pending,
   });
 
   factory TipModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +63,13 @@ class TipModel {
     String asString(dynamic v, {String fallback = ''}) =>
         v == null ? fallback : v.toString();
 
+    String parseStatus(dynamic v) {
+      final raw = (v ?? 'pending').toString().toLowerCase();
+      if (raw == 'win' || raw == 'won') return 'won';
+      if (raw == 'lose' || raw == 'lost') return 'lost';
+      return 'pending';
+    }
+
     return TipModel(
       eventId: asString(json['eventId'] ?? json['id']),
       eventName: asString(json['eventName'] ?? json['name']),
@@ -69,6 +80,10 @@ class TipModel {
       marketKey: asString(json['marketKey'] ?? 'h2h'),
       outcome: asString(json['outcome']),
       odds: parseDouble(json['odds']),
+      status: TipStatus.values.firstWhere(
+        (e) => e.name == parseStatus(json['status']),
+        orElse: () => TipStatus.pending,
+      ),
     );
   }
 
@@ -82,5 +97,6 @@ class TipModel {
     'marketKey': marketKey,
     'outcome': outcome,
     'odds': odds,
+    'status': status.name,
   };
 }

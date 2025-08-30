@@ -1,0 +1,31 @@
+title: "MyTickets – TicketDetails tippek státusz szerinti csoportosítása"
+context:
+  module: my_tickets
+  screen: TicketDetailsDialog
+goal:
+  - Group tips by status (won, lost, pending) with ExpansionTile sections
+  - Add TipModel.status and map from Firestore JSON
+  - Show per-item row: event, outcome•market, xODDS, mini status chip
+  - Add i18n keys for section titles and empty state (hu/en/de)
+  - Add telemetry for expand/item view
+files:
+  outputs:
+    - lib/models/tip_model.dart
+    - lib/widgets/tip_status_chip.dart
+    - lib/widgets/ticket_details_dialog.dart
+    - lib/services/analytics_service.dart
+    - lib/l10n/app_hu.arb
+    - lib/l10n/app_en.arb
+    - lib/l10n/app_de.arb
+    - test/widgets/ticket_details_grouping_test.dart
+steps:
+  - Add TipStatus enum and status field to TipModel with fromJson mapping
+  - Implement TipStatusChip using colorScheme container tones
+  - Update dialog to group/sort tips and render ExpansionTiles with counts
+  - Wire telemetry on expand and (optional) item tap
+  - Add i18n keys to hu/en/de ARBs
+  - Add widget tests for 3 grouping variants
+DoD:
+  - Analyzer green and tests for new files pass
+  - HU/EN/DE keys exist and are used where needed
+
