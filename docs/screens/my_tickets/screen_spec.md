@@ -50,9 +50,9 @@
   * Navigáció: `lib/widgets/app_drawer.dart`, `lib/widgets/my_bottom_navigation_bar.dart`.
 * **Állapotok**:
 
-  * [x] **Loading** — jelenleg kör progress; skeleton még nincs.
-  * [ ] **Empty** — szöveg megvan; elsődleges gomb „Szelvény készítése” hiányzik.
-  * [ ] **Error** — egységes hiba‑komponens és „Próbáld újra” gomb hiányzik.
+  * [x] **Loading** — skeleton lista: `MyTicketsSkeleton`.
+  * [x] **Empty** — szöveg + elsődleges gomb „Szelvény készítése”.
+  * [x] **Error** — egységes hiba‑komponens: `ErrorWithRetry` („Refresh” gomb).
   * [x] **Data** — lista szelvénykártyákkal, részletező megnyitással.
 * **Interakciók**: tap a kártyán → részletező (dialog/screen); pull‑to‑refresh (ha van); overflow (⋮) menü előkészítés a jövőbeli akciókhoz (megosztás/másolat/törlés – üzleti döntéstől függően).
 * **Accessibility (A11y)**:
@@ -100,7 +100,7 @@
 
 ## 🚀 Teljesítmény & skálázás
 
-* **Lista stratégia**: alapértelmezett limit + lapozás/infinite scroll nagy elemszámnál; stream throttling, minimal summary a listában (részletek a részletezőben).
+* **Lista stratégia**: alapértelmezett limit + lapozás/infinite scroll nagy elemszámnál; stream throttling, minimal summary a listában (részletek a részletezőben). Skeleton betöltés alatt.
 * **Cache**: rövid életű mem‑cache/riverpod cache; szükség esetén query‑cache stratégia.
 
 ---
@@ -108,8 +108,8 @@
 ## 🧪 Tesztelés (követelmények)
 
 * **Unit**: `Ticket` szerializáció (`fromFirestore`) – TERV; `TicketService.watchUserTickets()` – N/A (jelenleg képernyő szintű stream).
-* **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh; dialógus megnyitása tap‑re; üres állapot CTA jelenléte; hibaállapot üzenet + Retry gomb.
-  - TERV: loading skeleton és egységes hiba‑komponens tesztje; CTA navigáció GoRouter-rel integrációs tesztben.
+* **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh; dialógus megnyitása tap‑re; üres állapot CTA jelenléte; hibaállapot üzenet + Retry gomb; loading skeleton jelenléte.
+  - TERV: CTA navigáció GoRouter-rel integrációs tesztben.
 * **Integration**: navigáció drawer/bottom‑nav; deep link `ticketId` (ha bevezetjük a külön screen‑t).
 * **Rules tesztek**: pozitív/negatív utak (saját vs. idegen user; tiltott mező felülírása).
 * **Elfogadási kritériumok**:
@@ -134,7 +134,7 @@
 * [x] UI váz (lista + komponensek alapjai)
 * [x] Adat stream / betöltés (alap működik)
 * [x] Üres állapot + CTA
-* [ ] Hibaállapot + Retry (egységes komponensre váltás, skeleton hiányzik)
+* [x] Hibaállapot + Retry (egységes komponensre váltás, skeleton kész)
 * [x] Részletező (bővítve; külön képernyő opcionális)
 * [x] Navigációs pontok (drawer/bottom‑nav)
 * [ ] Telemetria eventek (rögzítés és ellenőrzés)
