@@ -63,10 +63,25 @@ class TipModel {
     String asString(dynamic v, {String fallback = ''}) =>
         v == null ? fallback : v.toString();
 
-    String parseStatus(dynamic v) {
-      final raw = (v ?? 'pending').toString().toLowerCase();
-      if (raw == 'win' || raw == 'won') return 'won';
-      if (raw == 'lose' || raw == 'lost') return 'lost';
+    String parseStatusFrom(Map<String, dynamic> j) {
+      // Primary explicit fields
+      final primary = j['status'] ?? j['result'];
+      if (primary != null) {
+        final raw = primary.toString().toLowerCase();
+        if (raw == 'win' || raw == 'won') return 'won';
+        if (raw == 'lose' || raw == 'lost') return 'lost';
+        if (raw == 'void' || raw == 'voided' || raw == 'cancelled') return 'pending';
+        if (raw == 'pending' || raw == 'open' || raw == 'in_progress') return 'pending';
+      }
+      // Boolean combos
+      final wonBool = (j['won'] == true) || (j['isWon'] == true);
+      final lostBool = (j['lost'] == true) || (j['isLost'] == true);
+      if (wonBool) return 'won';
+      if (lostBool) return 'lost';
+      final settled = j['settled'];
+      if (settled is bool) {
+        return settled ? 'lost' : 'pending';
+      }
       return 'pending';
     }
 
@@ -81,7 +96,7 @@ class TipModel {
       outcome: asString(json['outcome']),
       odds: parseDouble(json['odds']),
       status: TipStatus.values.firstWhere(
-        (e) => e.name == parseStatus(json['status']),
+        (e) => e.name == parseStatusFrom(json),
         orElse: () => TipStatus.pending,
       ),
     );

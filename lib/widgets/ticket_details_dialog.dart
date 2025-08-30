@@ -40,12 +40,54 @@ class TicketDetailsDialog extends StatelessWidget {
     final lost = _sorted(tips.where((t) => t.status == TipStatus.lost).toList());
     final pending = _sorted(tips.where((t) => t.status == TipStatus.pending).toList());
 
+    Widget _row(TipModel tip) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              title: Text(tip.eventName),
+              subtitle: Text('${tip.outcome} • ${tip.marketKey}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TipStatusChip(status: tip.status),
+                  const SizedBox(width: 8),
+                  Text('x${tip.odds.toStringAsFixed(2)}'),
+                ],
+              ),
+              onTap: () {
+                // ignore: unawaited_futures
+                analyticsService.logTicketDetailsItemViewed(
+                  eventId: tip.eventId,
+                  outcome: tip.outcome,
+                );
+              },
+            ),
+            const Divider(height: 1),
+          ],
+        );
+
     Widget _section(String title, List<TipModel> items) {
       if (items.isEmpty) return const SizedBox.shrink();
+      final header = Text('$title (${items.length})');
+      if (items.length < 2) {
+        return Semantics(
+          header: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              header,
+              const SizedBox(height: 4),
+              _row(items.first),
+            ],
+          ),
+        );
+      }
       return Semantics(
         header: true,
         child: ExpansionTile(
-          title: Text('$title (${items.length})'),
+          title: header,
           onExpansionChanged: (expanded) {
             if (expanded) {
               // ignore: unawaited_futures
@@ -56,33 +98,7 @@ class TicketDetailsDialog extends StatelessWidget {
             }
           },
           children: [
-            ...items.map((tip) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(tip.eventName),
-                      subtitle: Text('${tip.outcome} • ${tip.marketKey}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TipStatusChip(status: tip.status),
-                          const SizedBox(width: 8),
-                          Text('x${tip.odds.toStringAsFixed(2)}'),
-                        ],
-                      ),
-                      onTap: () {
-                        // ignore: unawaited_futures
-                        analyticsService.logTicketDetailsItemViewed(
-                          eventId: tip.eventId,
-                          outcome: tip.outcome,
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                  ],
-                )),
+            ...items.map(_row),
           ],
         ),
       );
