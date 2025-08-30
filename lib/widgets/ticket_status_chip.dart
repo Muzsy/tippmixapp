@@ -11,27 +11,52 @@ class TicketStatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    late final Color color;
+    final scheme = Theme.of(context).colorScheme;
+
+    late final Color bg;
+    late final Color fg;
     late final String label;
 
     switch (status) {
       case TicketStatus.won:
-        color = Theme.of(context).colorScheme.secondary;
+        bg = scheme.primaryContainer;
+        fg = scheme.onPrimaryContainer;
         label = loc.ticket_status_won;
         break;
       case TicketStatus.lost:
-        color = Theme.of(context).colorScheme.error;
+        bg = scheme.errorContainer;
+        fg = scheme.onErrorContainer;
         label = loc.ticket_status_lost;
         break;
       case TicketStatus.pending:
-        color = Theme.of(context).colorScheme.outlineVariant;
+        bg = scheme.secondaryContainer;
+        fg = scheme.onSecondaryContainer;
         label = loc.ticket_status_pending;
         break;
       case TicketStatus.voided:
-        color = Theme.of(context).colorScheme.outlineVariant;
+        bg = scheme.surfaceVariant;
+        fg = scheme.onSurfaceVariant;
         label = loc.ticket_status_void;
+        break;
     }
 
-    return Chip(backgroundColor: color, label: Text(label));
+    return Semantics(
+      label: label,
+      button: true,
+      child: Container
+        (
+        constraints: const BoxConstraints(minHeight: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(color: fg),
+        ),
+      ),
+    );
   }
 }

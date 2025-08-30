@@ -30,10 +30,10 @@
     - Jelenleg: `TicketDetailsDialog` minimális tartalommal.
   * [x] Üres állapot dedikált CTA‑val „Szelvény készítése”.
     - Megvalósítva: `EmptyTicketPlaceholder` CTA gombbal (GoRouter → `AppRoute.bets`).
-  * [ ] Hibaállapot egységes komponenssel és Retry művelettel.
-    - Részben kész: hibaüzenet + `Refresh` gomb (provider refresh). Egységes komponens és skeleton még hiányzik.
-  * [ ] Telemetria: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`.
-    - Jelenleg: nincs instrumentáció.
+  * [x] Hibaállapot egységes komponenssel és Retry művelettel.
+    - Megvalósítva: `ErrorWithRetry` + `Retry` → `ref.refresh(ticketsProvider.future)`; loading: `MyTicketsSkeleton`.
+  * [x] Telemetria: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`.
+    - Megvalósítva: `AnalyticsService` (`logTicketsListViewed`, `logTicketSelected`, `logTicketDetailsOpened`, `logErrorShown`).
 * **Nem‑célok** (jelen verzióban): más felhasználók szelvényeinek böngészése; szelvények szerkesztése/utólagos módosítása; valós pénzes tranzakciók; közösségi megosztás (későbbi iteráció).
 
 ---
@@ -43,10 +43,10 @@
 * **Fő layouthierarchia**: AppBar → Body: `ListView`/`SliverList` TicketCard‑okkal → opcionális `FloatingActionButton`/CTA (navigáció az „Új szelvény” flow‑ba).
 * **Komponensek** (tervezett/használt):
 
-  * `lib/widgets/ticket_card.dart` – összefoglaló kártya (státusz chip: `ticket_status_chip.dart`).
+  * `lib/widgets/ticket_card.dart` – összefoglaló kártya: bal oldalt tét, össz‑odds, tippek száma és létrehozás dátuma; jobb oldalt státusz chip és várható nyeremény.
   * `lib/widgets/ticket_status_chip.dart` – státusz vizuális jelzése.
-  * `lib/widgets/ticket_details_dialog.dart` – részletező (jelenleg minimális, bővítendő).
-  * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot; elsődleges CTA tervezett (hiányzik).
+  * `lib/widgets/ticket_details_dialog.dart` – részletező: rövidített szelvényazonosító (első 4 + utolsó 4), létrehozás dátuma; függő státusznál legkorábbi tipp kezdési ideje; tippek listája strukturáltan (esemény cím, outcome + market, trailing: xODDS), státusz chip a fejlécben.
+  * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot, elsődleges CTA „Szelvény készítése” (GoRouter → `AppRoute.bets`).
   * Navigáció: `lib/widgets/app_drawer.dart`, `lib/widgets/my_bottom_navigation_bar.dart`.
 * **Állapotok**:
 
@@ -54,7 +54,7 @@
   * [x] **Empty** — szöveg + elsődleges gomb „Szelvény készítése”.
   * [x] **Error** — egységes hiba‑komponens: `ErrorWithRetry` („Refresh” gomb).
   * [x] **Data** — lista szelvénykártyákkal, részletező megnyitással.
-* **Interakciók**: tap a kártyán → részletező (dialog/screen); pull‑to‑refresh (ha van); overflow (⋮) menü előkészítés a jövőbeli akciókhoz (megosztás/másolat/törlés – üzleti döntéstől függően).
+* **Interakciók**: tap a kártyán → részletező (dialog/screen); pull‑to‑refresh; overflow (⋮) menü előkészítés a jövőbeli akciókhoz (megosztás/másolat/törlés – üzleti döntéstől függően).
 * **Accessibility (A11y)**:
 
   1. Minden kártya és chip rendelkezzen beszédes semanticsLabel‑lel (státusszal).
@@ -140,29 +140,27 @@
 * [x] Hibaállapot + Retry (egységes komponensre váltás, skeleton kész)
 * [x] Részletező (bővítve; külön képernyő opcionális)
 * [x] Navigációs pontok (drawer/bottom‑nav)
-* [ ] Telemetria eventek (rögzítés és ellenőrzés)
-* [ ] Tesztek zöldek (új/bővített esetek)
+* [x] Telemetria eventek (rögzítés és ellenőrzés)
+* [x] Widget tesztek az állapotokra és interakciókra
+* [ ] Golden tesztek 3 nyelven (hu/en/de)
 * [ ] Rules ellenőrizve (neg/poz út)
 * [ ] Kódreview kész
 
 **Elemzés**:
 
 * ✅ 2025‑08‑29: Alap lista/üres állapot, dialog, route‑ok, i18n kulcsok, alap tesztek.
-* ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (FOLYAMATBAN), szerializáció pontosítása (`doc.id`) (KÉSZ).
+* ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (KÉSZ), szerializáció pontosítása (`doc.id`) (KÉSZ), telemetria (KÉSZ).
 * ❌ 2025‑08‑30: Lapozás, teljes rules tesztcsomag, telemetria finomhangolás.
 
 ---
 
 ## 🛠️ Megvalósítási terv (DoD → feladatlista)
 
-- Szerializáció pontosítása: `Ticket.fromFirestore(DocumentSnapshot)` bevezetése; `ticketsProvider` mapping frissítése (`doc.id` → `Ticket.id`).
-- Üres állapot CTA: `EmptyTicketPlaceholder` bővítése elsődleges gombbal (`loc.go_to_create_ticket`) → navigáció az „Új szelvény” flow‑ra.
-- Hibaállapot: egységes hiba‑komponens (vagy ideiglenesen `ErrorWithRetry`), Retry → `ref.refresh(ticketsProvider.future)`;
-  skeleton/shimmer bevezetése a loading állapothoz (ha van közös skeleton komponens).
-- Részletező bővítése: stake, totalOdd, potentialWin, status, createdAt, tips list megjelenítése; hozzá tartozó widget tesztek.
-- Telemetria: `tickets_list_viewed` (képernyő megnyitás), `ticket_selected` (kártya tap), `ticket_details_opened` (dialog megnyitás); adott Analytics/TelemetryService használatával.
-- Tesztek: widget tesztek az új állapotokra és interakciókra; ha külön service lesz, unit tesztek.
-- Rules: pozitív/negatív olvasási utakra integrációs tesztek (Emulatoron).
+- Lapozás/infinite scroll: Firestore `limit` + `startAfterDocument`; UX döntés után implementáció és tesztek.
+- Golden tesztek: MyTickets képernyő aranyképei 3 nyelven (hu/en/de), a `golden_toolkit` szerint; CI integráció ellenőrzése.
+- A11y finomítás: semanticsLabel a kártyára/chipekre; kontraszt audit (AA) – sötét témában is.
+- Rules ellenőrzés: MyTickets olvasási utak pozitív/negatív eseteinek bővítése (Firestore Emulator; JS rules‑teszt mintára).
+- (Opció) Részletező külön képernyő: ha deep‑link szükséges, előbb canvas + Codex YAML, majd route és tesztek.
 
 ---
 

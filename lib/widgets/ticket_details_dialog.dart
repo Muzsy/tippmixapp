@@ -19,6 +19,13 @@ class TicketDetailsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final dateFmt = DateFormat.yMd().add_Hm();
+    String shortId(String id) {
+      if (id.length <= 8) return id;
+      return '${id.substring(0, 4)}…${id.substring(id.length - 4)}';
+    }
+    final earliestTipStart = tips.isEmpty
+        ? null
+        : tips.map((t) => t.startTime).reduce((a, b) => a.isBefore(b) ? a : b);
     return AlertDialog(
       title: Text(loc.ticket_details_title),
       content: SingleChildScrollView(
@@ -26,12 +33,15 @@ class TicketDetailsDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text('${loc.ticket_id}: '),
-                Flexible(child: Text(ticket.id, overflow: TextOverflow.ellipsis)),
-              ],
-            ),
+            Row(children: [
+              Text('${loc.ticket_id}: '),
+              Flexible(
+                child: Text(
+                  shortId(ticket.id),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ]),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -54,12 +64,17 @@ class TicketDetailsDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
+            Row(children: [
+              Text('${loc.filtersDate}: '),
+              Text(dateFmt.format(ticket.createdAt)),
+            ]),
+            if (ticket.status == TicketStatus.pending && earliestTipStart != null) ...[
+              const SizedBox(height: 8),
+              Row(children: [
                 Text('${loc.filtersDate}: '),
-                Text(dateFmt.format(ticket.createdAt)),
-              ],
-            ),
+                Text(dateFmt.format(earliestTipStart)),
+              ]),
+            ],
             const SizedBox(height: 8),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,17 +89,18 @@ class TicketDetailsDialog extends StatelessWidget {
               const SizedBox(height: 8),
               const Divider(),
               ...tips.map((tip) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(tip.eventName),
-                        subtitle: Text('${loc.odds_label}: ${tip.odds}'),
-                      ),
-                      const Divider(height: 1),
-                    ],
-                  )),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(tip.eventName),
+                    subtitle: Text('${tip.outcome} • ${tip.marketKey}'),
+                    trailing: Text('x${tip.odds.toStringAsFixed(2)}'),
+                  ),
+                  const Divider(height: 1),
+                ],
+              )),
             ],
           ],
         ),
