@@ -993,6 +993,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get total_odds_label => 'Total odds';
 
   @override
+  String get ticket_details_section_won => 'Won tips';
+
+  @override
+  String get ticket_details_section_lost => 'Lost tips';
+
+  @override
+  String get ticket_details_section_pending => 'Pending tips';
+
+  @override
+  String get ticket_details_no_items => 'No tips to display';
+
+  @override
   String get unfollow => 'Unfollow';
 
   @override

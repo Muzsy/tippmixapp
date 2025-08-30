@@ -150,9 +150,9 @@ class TicketDetailsDialog extends StatelessWidget {
             if (tips.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Divider(),
-              _section(loc.ticket_status_won, won),
-              _section(loc.ticket_status_lost, lost),
-              _section(loc.ticket_status_pending, pending),
+              _section(loc.ticket_details_section_won, won),
+              _section(loc.ticket_details_section_lost, lost),
+              _section(loc.ticket_details_section_pending, pending),
             ],
           ],
         ),

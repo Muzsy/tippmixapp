@@ -2014,6 +2014,30 @@ abstract class AppLocalizations {
   /// **'Total odds'**
   String get total_odds_label;
 
+  /// No description provided for @ticket_details_section_won.
+  ///
+  /// In en, this message translates to:
+  /// **'Won tips'**
+  String get ticket_details_section_won;
+
+  /// No description provided for @ticket_details_section_lost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost tips'**
+  String get ticket_details_section_lost;
+
+  /// No description provided for @ticket_details_section_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending tips'**
+  String get ticket_details_section_pending;
+
+  /// No description provided for @ticket_details_no_items.
+  ///
+  /// In en, this message translates to:
+  /// **'No tips to display'**
+  String get ticket_details_no_items;
+
   /// No description provided for @unfollow.
   ///
   /// In en, this message translates to:

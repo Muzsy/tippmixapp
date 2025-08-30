@@ -1004,6 +1004,18 @@ class AppLocalizationsHu extends AppLocalizations {
   String get total_odds_label => 'Össz odds';
 
   @override
+  String get ticket_details_section_won => 'Nyertes tippek';
+
+  @override
+  String get ticket_details_section_lost => 'Vesztes tippek';
+
+  @override
+  String get ticket_details_section_pending => 'Függőben lévő tippek';
+
+  @override
+  String get ticket_details_no_items => 'Nincs megjeleníthető tipp';
+
+  @override
   String get unfollow => 'Követve';
 
   @override

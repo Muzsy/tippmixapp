@@ -63,11 +63,11 @@ void main() {
       tip('c', TipStatus.won, DateTime(2025, 1, 3)),
     ];
     await _pump(tester, tips);
-    expect(find.textContaining('Won ('), findsOneWidget);
-    expect(find.textContaining('Lost ('), findsOneWidget);
+    expect(find.textContaining('Won tips ('), findsOneWidget);
+    expect(find.textContaining('Lost tips ('), findsOneWidget);
 
     // Expand won
-    await tester.tap(find.textContaining('Won ('));
+    await tester.tap(find.textContaining('Won tips ('));
     await tester.pumpAndSettle();
     // Two won items
     expect(find.text('Match a'), findsOneWidget);
@@ -79,9 +79,9 @@ void main() {
       tip('a', TipStatus.won, DateTime(2025, 1, 1)),
     ];
     await _pump(tester, tips);
-    expect(find.textContaining('Won ('), findsOneWidget);
-    expect(find.textContaining('Lost ('), findsNothing);
-    expect(find.textContaining('Pending ('), findsNothing);
+    expect(find.textContaining('Won tips ('), findsOneWidget);
+    expect(find.textContaining('Lost tips ('), findsNothing);
+    expect(find.textContaining('Pending tips ('), findsNothing);
   });
 
   testWidgets('pending group visible when pending exists', (tester) async {
@@ -89,6 +89,6 @@ void main() {
       tip('p', TipStatus.pending, DateTime(2025, 1, 1)),
     ];
     await _pump(tester, tips);
-    expect(find.textContaining('Pending ('), findsOneWidget);
+    expect(find.textContaining('Pending tips ('), findsOneWidget);
   });
 }

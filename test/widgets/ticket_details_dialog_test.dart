@@ -104,7 +104,7 @@ void main() {
   testWidgets('dialog lists tips with event name and odds', (tester) async {
     await _pumpDialog(tester);
     // Expand Pending group (sample tips default to pending)
-    await tester.tap(find.textContaining('Pending ('));
+    await tester.tap(find.textContaining('Pending tips ('));
     await tester.pumpAndSettle();
 
     // Event names rendered
