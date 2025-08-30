@@ -23,6 +23,7 @@ void main() {
     late FakeFirebaseFirestore firestore;
     late FakeCache<UserModel> cache;
 
+    late File tempFile;
     setUp(() {
       storage = MockFirebaseStorage();
       reference = MockReference();
@@ -31,10 +32,18 @@ void main() {
       cache = FakeCache<UserModel>();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any())).thenAnswer((_) => task);
+      when(() => reference.putFile(any(), any())).thenAnswer((_) => task);
       when(
         () => reference.getDownloadURL(),
       ).thenAnswer((_) async => 'http://download');
+      // create a small temp PNG file that exists on disk
+      tempFile = File('${Directory.systemTemp.createTempSync().path}/a.png')
+        ..writeAsBytesSync(const [
+          0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A,0x00,0x00,0x00,0x0D,0x49,0x48,0x44,0x52,
+          0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x01,0x08,0x06,0x00,0x00,0x00,0x1F,0x15,0xC4,
+          0x89,0x00,0x00,0x00,0x0A,0x49,0x44,0x41,0x54,0x78,0x9C,0x63,0x00,0x01,0x00,0x00,
+          0x05,0x00,0x01,0x0D,0x0A,0x2D,0xB4,0x00,0x00,0x00,0x00,0x49,0x45,0x4E,0x44,0xAE
+        ]);
     });
 
     test('uploads file and updates profile', () async {
@@ -47,7 +56,7 @@ void main() {
         'isPrivate': false,
         'fieldVisibility': {},
       });
-      final file = File('avatar.png');
+      final file = tempFile;
       final url = await ProfileService.uploadAvatar(
         uid: 'u1',
         file: file,
@@ -59,6 +68,8 @@ void main() {
       expect(url, 'http://download');
       final doc = await firestore.collection('users').doc('u1').get();
       expect(doc.data()?['avatarUrl'], 'http://download');
+      // cleanup temp file
+      try { await file.parent.delete(recursive: true); } catch (_) {}
     });
   });
 }

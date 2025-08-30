@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
 const eventarc_1 = require("firebase-functions/v2/eventarc");
 const logger = __importStar(require("firebase-functions/logger"));
@@ -51,6 +51,8 @@ var bonus_claim_1 = require("./src/bonus_claim");
 Object.defineProperty(exports, "claim_daily_bonus", { enumerable: true, get: function () { return bonus_claim_1.claim_daily_bonus; } });
 var admin_coin_ops_1 = require("./admin_coin_ops");
 Object.defineProperty(exports, "admin_coin_ops", { enumerable: true, get: function () { return admin_coin_ops_1.admin_coin_ops; } });
+var username_reservation_1 = require("./src/username_reservation");
+Object.defineProperty(exports, "reserve_nickname", { enumerable: true, get: function () { return username_reservation_1.reserve_nickname; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 // Gen2 Pub/Sub trigger (topic set by deploy), handle raw CloudEvent to avoid
 // v2 pubsub wrapper constructing Message on undefined event.data.

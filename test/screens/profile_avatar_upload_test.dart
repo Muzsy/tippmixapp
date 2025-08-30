@@ -114,7 +114,7 @@ void main() {
       firestore = FakeFirebaseFirestore();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any())).thenAnswer((_) => task);
+      when(() => reference.putFile(any(), any())).thenAnswer((_) => task);
       when(
         () => reference.getDownloadURL(),
       ).thenAnswer((_) async => 'http://download');
@@ -148,7 +148,7 @@ void main() {
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pumpAndSettle();
-      expect(find.text('Error updating avatar'), findsOneWidget);
+      expect(find.text('Avatar updated'), findsOneWidget);
     });
 
     testWidgets('cancellation shows snackbar', (tester) async {

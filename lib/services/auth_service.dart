@@ -192,18 +192,31 @@ class AuthService {
   }
 
   Future<bool> validateNicknameUnique(String nickname) async {
+    String _normalize(String input) {
+      final s = input.trim().toLowerCase();
+      const map = {
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ö': 'o', 'ő': 'o',
+        'ú': 'u', 'ü': 'u', 'ű': 'u', 'ä': 'a', 'ß': 'ss',
+      };
+      final buf = StringBuffer();
+      for (final ch in s.split('')) {
+        buf.write(map[ch] ?? ch);
+      }
+      return buf.toString().replaceAll(RegExp(r"\s+"), ' ');
+    }
+
     try {
-      final snap = await FirebaseFirestore.instance
-          .collection('profiles')
-          .where('nickname', isEqualTo: nickname)
-          .limit(1)
-          .get();
-      return snap.docs.isEmpty;
+      final norm = _normalize(nickname);
+      final doc = await FirebaseFirestore.instance
+          .collection('usernames')
+          .doc(norm)
+          .get(const GetOptions(source: Source.serverAndCache));
+      return !doc.exists;
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         debugPrint('[NICK_CHECK] FirebaseException ${e.code} – assume unique');
       }
-      return true; // offline → fail-open
+      return true; // offline/permission → fail-open
     } on TimeoutException {
       if (kDebugMode) {
         debugPrint('[NICK_CHECK] timeout – assume unique');

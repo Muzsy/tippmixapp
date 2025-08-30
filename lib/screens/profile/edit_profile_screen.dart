@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/profile_service.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../../services/user_service.dart';
 import '../../validators/display_name_validator.dart';
 import '../../widgets/avatar_picker.dart';
@@ -11,11 +10,13 @@ class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;
   final UserService service;
   final Future<bool> Function(String nickname)? checkNicknameUnique;
+  final FirebaseFunctions? functions;
   EditProfileScreen({
     super.key,
     this.initial,
     UserService? service,
     this.checkNicknameUnique,
+    this.functions,
   }) : service = service ?? UserService();
 
   @override
@@ -71,18 +72,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Nickname egyediség ellenőrzése (ha változott)
     final newNick = _nickController.text.trim();
     if (newNick.isNotEmpty && newNick != (widget.initial?.nickname ?? '')) {
-      final unique = await (widget.checkNicknameUnique != null
-          ? widget.checkNicknameUnique!(newNick)
-          : ProfileService.isNicknameUnique(
-              newNick,
-              firestore: FirebaseFirestore.instance,
-            ));
-      if (!unique) {
-        setState(() {
-          _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
-          _saving = false;
-        });
-        _formKey.currentState!.validate();
+      try {
+        final functions = widget.functions ??
+            FirebaseFunctions.instanceFor(region: 'europe-central2');
+        final callable = functions.httpsCallable('reserve_nickname');
+        await callable.call(<String, dynamic>{'nickname': newNick});
+      } on FirebaseFunctionsException catch (e) {
+        if (e.code == 'already-exists') {
+          setState(() {
+            _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
+            _saving = false;
+          });
+          _formKey.currentState!.validate();
+          return;
+        }
+        // Egyéb CF hiba: felhasználóbarát üzenet és megszakítás
+        setState(() => _saving = false);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.unknown_error_try_again,
+            ),
+          ),
+        );
         return;
       }
     }
