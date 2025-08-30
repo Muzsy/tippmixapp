@@ -111,6 +111,7 @@
 * **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh; dialógus megnyitása tap‑re; üres állapot CTA jelenléte; hibaállapot üzenet + Retry gomb; loading skeleton jelenléte.
   - TERV: CTA navigáció GoRouter-rel integrációs tesztben.
 * **Integration**: navigáció drawer/bottom‑nav; deep link `ticketId` (ha bevezetjük a külön screen‑t).
+  - Elkészült: CTA navigáció `MyTickets → Bets` (fájl: `integration_test/my_tickets_empty_cta_navigation_test.dart`).
 * **Rules tesztek**: pozitív/negatív utak (saját vs. idegen user; tiltott mező felülírása).
 * **Elfogadási kritériumok**:
 
