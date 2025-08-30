@@ -1,3 +1,20 @@
+muszy@muszy-linux:~/projects/tippmixapp$ flutter run
+Launching lib/main.dart on BLA L09 in debug mode...
+🔥 DEBUG TOKEN in Gradle: EC9FFC80-7B6B-4356-9657-22DFE453B575
+Running Gradle task 'assembleDebug'...                              8,0s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+Installing build/app/outputs/flutter-apk/app-debug.apk...           5,7s
+I/flutter (22839): [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(94)] Using the Impeller rendering backend (OpenGLES).
+W/libEGL  (22839): EGLNativeWindowType 0x7cd6bff010 disconnect failed
+D/mali_winsys(22839): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000
+I/Choreographer(22839): Skipped 92 frames!  The application may be doing too much work on its main thread.
+D/DecorView(22839): showOrHideHighlightView: hasFocus=true; winMode=1; isMrgNull=true
+W/InputMethodManager(22839): startInputReason = 1
+W/HwRemoteInputMethodManager(22839): isCasting false because IHwDistributedWindowManager is invalid.
+W/InputMethodManager(22839): startInputReason = 5
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+Syncing files to device BLA L09...                                 179ms
+
 Flutter run key commands.
 r Hot reload. 🔥🔥🔥
 R Hot restart.
@@ -6,407 +23,395 @@ d Detach (terminate "flutter run" but leave application running).
 c Clear the screen
 q Quit (terminate the application on the device).
 
-A Dart VM Service on BLA L09 is available at: http://127.0.0.1:36685/CutMysAxfdE=/
-W/libEGL  (13824): EGLNativeWindowType 0x7c7a76b010 disconnect failed
-D/mali_winsys(13824): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000
-I/Choreographer(13824): Skipped 87 frames!  The application may be doing too much work on its main thread.
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
-D/DecorView(13824): showOrHideHighlightView: hasFocus=true; winMode=1; isMrgNull=true
-W/InputMethodManager(13824): startInputReason = 1
-W/HwRemoteInputMethodManager(13824): isCasting false because IHwDistributedWindowManager is invalid.
-W/InputMethodManager(13824): startInputReason = 5
+A Dart VM Service on BLA L09 is available at: http://127.0.0.1:39709/1OBnqFSUVrM=/
 The Flutter DevTools debugger and profiler on BLA L09 is available at:
-http://127.0.0.1:9101?uri=http://127.0.0.1:36685/CutMysAxfdE=/
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Llibcore/io/Memory;->pokeByte(JB)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Llibcore/io/Memory;->peekByte(J)B (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-I/chatty  (13824): uid=10768(com.example.tippmixapp) pool-8-thread-4 identical 3 lines
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-D/FRCPlugin(13824): Sending fetchTimeout: 60
-I/flutter (13824): ⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN compile-time value missing – folytatom futást (env változó még tartalmazhat tokent).
-D/NetworkSecurityConfig(13824): No Network Security Config specified, using platform default
-I/flutter (13824): [APP_CHECK] startup getToken FAILED – ignore (unknown)
-W/Gralloc3(13824): mapper 3.x is not supported
-I/Choreographer(13824): Skipped 86 frames!  The application may be doing too much work on its main thread.
-W/System  (13824): Ignoring header X-Firebase-Locale because its value was null.
-I/HwViewRootImpl(13824): removeInvalidNode jank list is null
-D/AwareBitmapCacher(13824): handleInit switch not opened pid=13824
-W/DynamiteModule(13824): Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.
-D/HwCustConnectivityManagerImpl(13824): isBlockNetworkRequestByNonAis, INVALID_SUBSCRIPTION_ID
-I/ConnectivityManager(13824): requestNetwork and the calling app is: com.example.tippmixapp
-I/DynamiteModule(13824): Considering local module com.google.android.gms.providerinstaller.dynamite:0 and remote module com.google.android.gms.providerinstaller.dynamite:0
-W/ProviderInstaller(13824): Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.
-D/ApplicationLoaders(13824): createClassLoader zip: /system/framework/org.apache.http.legacy.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
-I/mple.tippmixap(13824): The ClassLoaderContext is a special shared library.
-W/LocalRequestInterceptor(13824): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Too many attempts.
-D/ApplicationLoaders(13824): createClassLoader zip: /system/framework/com.android.media.remotedisplay.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
-I/mple.tippmixap(13824): The ClassLoaderContext is a special shared library.
-I/DecorView[](13824): pkgName:com.example.tippmixapp old windowMode:1 new windoMode:1, isFixedSize:false
-D/ApplicationLoaders(13824): createClassLoader zip: /system/framework/com.android.location.provider.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
-I/mple.tippmixap(13824): The ClassLoaderContext is a special shared library.
-D/ApplicationLoaders(13824): createClassLoader zip: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: [dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/org.apache.http.legacy.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]], dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.media.remotedisplay.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]], dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]]]
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapInt(Ljava/lang/Object;JII)Z (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObjectVolatile(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObjectVolatile(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapLong(Ljava/lang/Object;JJJ)Z (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-E/GoogleApiManager(13824): Failed to get service from broker. 
-E/GoogleApiManager(13824): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
-E/GoogleApiManager(13824):      at android.os.Parcel.createException(Parcel.java:2090)
-E/GoogleApiManager(13824):      at android.os.Parcel.readException(Parcel.java:2058)
-E/GoogleApiManager(13824):      at android.os.Parcel.readException(Parcel.java:2006)
-E/GoogleApiManager(13824):      at azgp.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
-E/GoogleApiManager(13824):      at azew.z(:com.google.android.gms@253334013@25.33.34 (100400-799229637):150)
-E/GoogleApiManager(13824):      at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):42)
-E/GoogleApiManager(13824):      at android.os.Handler.handleCallback(Handler.java:900)
-E/GoogleApiManager(13824):      at android.os.Handler.dispatchMessage(Handler.java:103)
-E/GoogleApiManager(13824):      at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-E/GoogleApiManager(13824):      at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
-E/GoogleApiManager(13824):      at android.os.Looper.loop(Looper.java:219)
-E/GoogleApiManager(13824):      at android.os.HandlerThread.run(HandlerThread.java:67)
-W/FlagRegistrar(13824): Failed to register com.google.android.gms.providerinstaller#com.example.tippmixapp
-W/FlagRegistrar(13824): enzh: 17: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
-W/FlagRegistrar(13824):         at enzj.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):13)
-W/FlagRegistrar(13824):         at fiox.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):3)
-W/FlagRegistrar(13824):         at fioz.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):130)
-W/FlagRegistrar(13824):         at firg.execute(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-W/FlagRegistrar(13824):         at fiph.f(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-W/FlagRegistrar(13824):         at fiph.m(:com.google.android.gms@253334013@25.33.34 (100400-799229637):99)
-W/FlagRegistrar(13824):         at fiph.r(:com.google.android.gms@253334013@25.33.34 (100400-799229637):17)
-W/FlagRegistrar(13824):         at eglc.hF(:com.google.android.gms@253334013@25.33.34 (100400-799229637):35)
-W/FlagRegistrar(13824):         at dwoc.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):12)
-W/FlagRegistrar(13824):         at firg.execute(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-W/FlagRegistrar(13824):         at dwod.b(:com.google.android.gms@253334013@25.33.34 (100400-799229637):18)
-W/FlagRegistrar(13824):         at dwos.b(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
-W/FlagRegistrar(13824):         at dwou.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):25)
-W/FlagRegistrar(13824):         at ayje.c(:com.google.android.gms@253334013@25.33.34 (100400-799229637):9)
-W/FlagRegistrar(13824):         at aylt.q(:com.google.android.gms@253334013@25.33.34 (100400-799229637):48)
-W/FlagRegistrar(13824):         at aylt.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):10)
-W/FlagRegistrar(13824):         at aylt.g(:com.google.android.gms@253334013@25.33.34 (100400-799229637):185)
-W/FlagRegistrar(13824):         at aylt.onConnectionFailed(:com.google.android.gms@253334013@25.33.34 (100400-799229637):2)
-W/FlagRegistrar(13824):         at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):70)
-W/FlagRegistrar(13824):         at android.os.Handler.handleCallback(Handler.java:900)
-W/FlagRegistrar(13824):         at android.os.Handler.dispatchMessage(Handler.java:103)
-W/FlagRegistrar(13824):         at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-W/FlagRegistrar(13824):         at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
-W/FlagRegistrar(13824):         at android.os.Looper.loop(Looper.java:219)
-W/FlagRegistrar(13824):         at android.os.HandlerThread.run(HandlerThread.java:67)
-W/FlagRegistrar(13824): Caused by: ayhm: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
-W/FlagRegistrar(13824):         at azei.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):15)
-W/FlagRegistrar(13824):         at ayjh.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-W/FlagRegistrar(13824):         at ayje.c(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
-W/FlagRegistrar(13824):         ... 11 more
-V/NativeCrypto(13824): Registering com/google/android/gms/org/conscrypt/NativeCrypto's 319 native methods...
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Llibcore/io/Memory;->pokeByte(JB)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Llibcore/io/Memory;->peekByte(J)B (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ljava/security/spec/ECParameterSpec;->getCurveName()Ljava/lang/String; (greylist, reflection, allowed)
-I/mple.tippmixap(13824): Waiting for a blocking GC ProfileSaver
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-I/ProviderInstaller(13824): Installed default security provider GmsCore_OpenSSL
-I/mple.tippmixap(13824): WaitForGcToComplete blocked ProfileSaver on ClassLinker for 41.081ms
-D/HwCustConnectivityManagerImpl(13824): isBlockNetworkRequestByNonAis, INVALID_SUBSCRIPTION_ID
-I/ConnectivityManager(13824): requestNetwork and the calling app is: com.example.tippmixapp
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-D/FirebaseAuth(13824): Notifying id token listeners about user ( 2pEEqMzCsBfkrv4jWx3YP5yDb0F2 ).
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden field Ljava/net/Socket;->impl:Ljava/net/SocketImpl; (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ldalvik/system/CloseGuard;->get()Ldalvik/system/CloseGuard; (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ldalvik/system/CloseGuard;->open(Ljava/lang/String;)V (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ljava/security/spec/ECParameterSpec;->setCurveName(Ljava/lang/String;)V (greylist, reflection, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ldalvik/system/BlockGuard;->getThreadPolicy()Ldalvik/system/BlockGuard$Policy; (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Ldalvik/system/BlockGuard$Policy;->onNetwork()V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-I/chatty  (13824): uid=10768(com.example.tippmixapp) FirestoreWorker identical 1 line
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-D/ProfileInstaller(13824): Installing profile for com.example.tippmixapp
-I/DecorView[](13824): pkgName:com.example.tippmixapp old windowMode:1 new windoMode:1, isFixedSize:false
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-I/chatty  (13824): uid=10768(com.example.tippmixapp) FirestoreWorker identical 1 line
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/System  (13824): Ignoring header If-None-Match because its value was null.
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-I/chatty  (13824): uid=10768(com.example.tippmixapp) FirestoreWorker identical 1 line
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-D/FirebaseAuth(13824): Notifying id token listeners about a sign-out event.
-D/FirebaseAuth(13824): Notifying auth state listeners about a sign-out event.
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-D/FRCPlugin(13824): Sending fetchTimeout: 60
-I/Hwaps   (13824): APS: EventAnalyzed: initAPS: version is 11.0.0.4
-D/Hwaps   (13824): Fpsrequest create,type:EXACTLY_IDENTIFY
-D/Hwaps   (13824): Fpsrequest create,type:EXACTLY_IDENTIFY
-D/Hwaps   (13824): Fpsrequest create,type:OPENGL_SETTING
-D/Hwaps   (13824): FpsController create
-D/Hwaps   (13824): APS: EventAnalyzed: reInitFpsPara :mBaseFps = 60; mMaxFps = 60
-W/Settings(13824): Setting device_provisioned has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
-V/HiTouch_HiTouchSensor(13824): User setup is finished.
-W/HwApsManager(13824): HwApsManagerService, registerCallback, start !
-D/Hwaps   (13824): APS: EventAnalyzed: registerCallbackInApsManagerService, mPkgName:com.example.tippmixapp; result = true
-V/AudioManager(13824): querySoundEffectsEnabled...
-D/FirebaseAuth(13824): Notifying id token listeners about a sign-out event.
-D/FirebaseAuth(13824): Notifying auth state listeners about a sign-out event.
-V/AudioManager(13824): querySoundEffectsEnabled...
-V/AudioManager(13824): querySoundEffectsEnabled...
-W/InputMethodManager(13824): startInputReason = 4
-W/HwRemoteInputMethodManager(13824): isCasting false because IHwDistributedWindowManager is invalid.
-I/InputMethodManager(13824): showSoftInput
-I/RmeSchedManager(13824): init Rme, version is: v1.0
-I/HwViewRootImpl(13824): removeInvalidNode all the node in jank list is out of time
-D/InputConnectionAdaptor(13824): The input method toggled cursor monitoring on
-I/RmeSchedManager(13824): init Rme, version is: v1.0
-I/RtgSchedEvent(13824): current pid:13824 AppType:-1
-E/GoogleApiManager(13824): Failed to get service from broker. 
-E/GoogleApiManager(13824): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
-E/GoogleApiManager(13824):      at android.os.Parcel.createException(Parcel.java:2090)
-E/GoogleApiManager(13824):      at android.os.Parcel.readException(Parcel.java:2058)
-E/GoogleApiManager(13824):      at android.os.Parcel.readException(Parcel.java:2006)
-E/GoogleApiManager(13824):      at azgp.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
-E/GoogleApiManager(13824):      at azew.z(:com.google.android.gms@253334013@25.33.34 (100400-799229637):150)
-E/GoogleApiManager(13824):      at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):42)
-E/GoogleApiManager(13824):      at android.os.Handler.handleCallback(Handler.java:900)
-E/GoogleApiManager(13824):      at android.os.Handler.dispatchMessage(Handler.java:103)
-E/GoogleApiManager(13824):      at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
-E/GoogleApiManager(13824):      at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
-E/GoogleApiManager(13824):      at android.os.Looper.loop(Looper.java:219)
-E/GoogleApiManager(13824):      at android.os.HandlerThread.run(HandlerThread.java:67)
-W/InputMethodManager(13824): startInputReason = 3
-W/HwRemoteInputMethodManager(13824): isCasting false because IHwDistributedWindowManager is invalid.
-I/InputMethodManager(13824): showSoftInput
-D/InputConnectionAdaptor(13824): The input method toggled cursor monitoring on
-D/InputConnectionAdaptor(13824): The input method toggled cursor monitoring off
-D/InputConnectionAdaptor(13824): The input method toggled cursor monitoring on
-V/AudioManager(13824): querySoundEffectsEnabled...
-I/FirebaseAuth(13824): Logging in as akos.muller@gmail.com with empty reCAPTCHA token
-W/System  (13824): Ignoring header X-Firebase-Locale because its value was null.
-W/LocalRequestInterceptor(13824): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Error returned from API. code: 403 body: App attestation failed.
-W/System  (13824): Ignoring header X-Firebase-Locale because its value was null.
-W/LocalRequestInterceptor(13824): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Too many attempts.
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-D/FirebaseAuth(13824): Notifying id token listeners about user ( 2pEEqMzCsBfkrv4jWx3YP5yDb0F2 ).
-D/FirebaseAuth(13824): Notifying auth state listeners about user ( 2pEEqMzCsBfkrv4jWx3YP5yDb0F2 ).
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-D/InputConnectionAdaptor(13824): The input method toggled cursor monitoring off
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-V/AudioManager(13824): querySoundEffectsEnabled...
-V/AudioManager(13824): querySoundEffectsEnabled...
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
-W/mple.tippmixap(13824): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
-V/AudioManager(13824): querySoundEffectsEnabled...
-D/DecorView(13824): showOrHideHighlightView: hasFocus=false; winMode=1; isMrgNull=true
-W/HwRemoteInputMethodManager(13824): isCasting false because IHwDistributedWindowManager is invalid.
-I/RmeSchedManager(13824): init Rme, version is: v1.0
-D/ZrHung.AppEyeUiProbe(13824): not watching, wait.
-W/libEGL  (13824): EGLNativeWindowType 0x7c7a76b010 disconnect failed
-W/libEGL  (13824): EGLNativeWindowType 0x7cdac28950 disconnect failed
-I/FA      (13824): Application backgrounded at: timestamp_millis: 1756541241718
-D/ActivityThread(13824): Won't deliver top position change in state=5
-D/ZrHung.AppEyeUiProbe(13824): restart watching
-D/mali_winsys(13824): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000
-D/mali_winsys(13824): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000
-W/libEGL  (13824): EGLNativeWindowType 0x7c3f326010 disconnect failed
-D/mali_winsys(13824): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000
-I/StubController(13824): system app validUid:10768, isFriend:true
-I/HwViewRootImpl(13824): removeInvalidNode all the node in jank list is out of time
-I/RmeSchedManager(13824): init Rme, version is: v1.0
-I/RtgSchedEvent(13824): current pid:13824 AppType:-1
-D/DecorView(13824): showOrHideHighlightView: hasFocus=true; winMode=1; isMrgNull=true
-W/InputMethodManager(13824): startInputReason = 1
-W/HwRemoteInputMethodManager(13824): isCasting false because IHwDistributedWindowManager is invalid.
-D/HwGalleryCacheManagerImpl(13824): mIsEffect:false
-W/StorageUtil(13824): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Error returned from API. code: 403 body: App attestation failed.
-E/StorageException(13824): StorageException has occurred.
-E/StorageException(13824): User does not have permission to access this object.
-E/StorageException(13824):  Code: -13021 HttpResult: 403
-E/StorageException(13824): The server has terminated the upload session
-E/StorageException(13824): java.io.IOException: The server has terminated the upload session
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.serverStateValid(UploadTask.java:359)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.shouldContinue(UploadTask.java:325)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.run(UploadTask.java:246)
-E/StorageException(13824):      at com.google.firebase.storage.StorageTask.lambda$getRunnable$7$com-google-firebase-storage-StorageTask(StorageTask.java:1078)
-E/StorageException(13824):      at com.google.firebase.storage.StorageTask$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at com.google.firebase.concurrent.LimitedConcurrencyExecutor.lambda$decorate$0$com-google-firebase-concurrent-LimitedConcurrencyExecutor(LimitedConcurrencyExecutor.java:65)
-E/StorageException(13824):      at com.google.firebase.concurrent.LimitedConcurrencyExecutor$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
-E/StorageException(13824):      at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
-E/StorageException(13824):      at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
-E/StorageException(13824):      at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at java.lang.Thread.run(Thread.java:929)
-E/StorageException(13824): Caused by: java.io.IOException: {  "error": {    "code": 403,    "message": "Permission denied."  }}
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.parseResponse(NetworkRequest.java:415)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.parseErrorResponse(NetworkRequest.java:432)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.processResponseStream(NetworkRequest.java:423)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.performRequest(NetworkRequest.java:265)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.performRequest(NetworkRequest.java:282)
-E/StorageException(13824):      at com.google.firebase.storage.internal.ExponentialBackoffSender.sendWithExponentialBackoff(ExponentialBackoffSender.java:76)
-E/StorageException(13824):      at com.google.firebase.storage.internal.ExponentialBackoffSender.sendWithExponentialBackoff(ExponentialBackoffSender.java:68)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.sendWithRetry(UploadTask.java:527)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.beginResumableUpload(UploadTask.java:293)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.run(UploadTask.java:241)
-E/StorageException(13824):      ... 9 more
-E/StorageException(13824): StorageException has occurred.
-E/StorageException(13824): User does not have permission to access this object.
-E/StorageException(13824):  Code: -13021 HttpResult: 403
-E/StorageException(13824): The server has terminated the upload session
-E/StorageException(13824): java.io.IOException: The server has terminated the upload session
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.serverStateValid(UploadTask.java:359)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.shouldContinue(UploadTask.java:325)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.run(UploadTask.java:246)
-E/StorageException(13824):      at com.google.firebase.storage.StorageTask.lambda$getRunnable$7$com-google-firebase-storage-StorageTask(StorageTask.java:1078)
-E/StorageException(13824):      at com.google.firebase.storage.StorageTask$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at com.google.firebase.concurrent.LimitedConcurrencyExecutor.lambda$decorate$0$com-google-firebase-concurrent-LimitedConcurrencyExecutor(LimitedConcurrencyExecutor.java:65)
-E/StorageException(13824):      at com.google.firebase.concurrent.LimitedConcurrencyExecutor$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
-E/StorageException(13824):      at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
-E/StorageException(13824):      at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
-E/StorageException(13824):      at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
-E/StorageException(13824):      at java.lang.Thread.run(Thread.java:929)
-E/StorageException(13824): Caused by: java.io.IOException: {  "error": {    "code": 403,    "message": "Permission denied."  }}
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.parseResponse(NetworkRequest.java:415)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.parseErrorResponse(NetworkRequest.java:432)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.processResponseStream(NetworkRequest.java:423)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.performRequest(NetworkRequest.java:265)
-E/StorageException(13824):      at com.google.firebase.storage.network.NetworkRequest.performRequest(NetworkRequest.java:282)
-E/StorageException(13824):      at com.google.firebase.storage.internal.ExponentialBackoffSender.sendWithExponentialBackoff(ExponentialBackoffSender.java:76)
-E/StorageException(13824):      at com.google.firebase.storage.internal.ExponentialBackoffSender.sendWithExponentialBackoff(ExponentialBackoffSender.java:68)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.sendWithRetry(UploadTask.java:527)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.beginResumableUpload(UploadTask.java:293)
-E/StorageException(13824):      at com.google.firebase.storage.UploadTask.run(UploadTask.java:241)
-E/StorageException(13824):      ... 9 more
-E/StorageException(13824): StorageException has occurred.
-E/StorageException(13824): The operation was cancelled.
-E/StorageException(13824):  Code: -13040 HttpResult: 0
+http://127.0.0.1:9101?uri=http://127.0.0.1:39709/1OBnqFSUVrM=/
+D/FRCPlugin(22839): Sending fetchTimeout: 10
+I/flutter (22839): ⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN compile-time value missing – folytatom futást (env változó még tartalmazhat tokent).
+D/NetworkSecurityConfig(22839): No Network Security Config specified, using platform default
+D/SharedPreferencesImpl(22839): Time required to fsync /data/user/0/com.example.tippmixapp/shared_prefs/FirebaseHeartBeatW0RFRkFVTFRd+MTo5ODE0NTEyMjM5Nzc6YW5kcm9pZDozODI0Mzc3ZTdhM2E0NGI2NzcwYWI4.xml: [<1: 0, <2: 0, <4: 0, <8: 0, <16: 0, <32: 0, <64: 0, <128: 0, <256: 0, <512: 0, <1024: 0, <2048: 1, <4096: 0, <8192: 0, <16384: 0, >=16384: 0]
+D/AwareBitmapCacher(22839): handleInit switch not opened pid=22839
+I/flutter (22839): [APP_CHECK] startup getToken FAILED – ignore (unknown)
+W/Gralloc3(22839): mapper 3.x is not supported
+I/Choreographer(22839): Skipped 71 frames!  The application may be doing too much work on its main thread.
+I/DecorView[](22839): pkgName:com.example.tippmixapp old windowMode:1 new windoMode:1, isFixedSize:false
+I/HwViewRootImpl(22839): removeInvalidNode jank list is null
+D/ProfileInstaller(22839): Installing profile for com.example.tippmixapp
+D/FRCPlugin(22839): Sending fetchTimeout: 10
+I/DecorView[](22839): pkgName:com.example.tippmixapp old windowMode:1 new windoMode:1, isFixedSize:false
+W/System  (22839): Ignoring header If-None-Match because its value was null.
+D/FRCPlugin(22839): Sending fetchTimeout: 10
+I/Hwaps   (22839): APS: EventAnalyzed: initAPS: version is 11.0.0.4
+D/Hwaps   (22839): Fpsrequest create,type:EXACTLY_IDENTIFY
+D/Hwaps   (22839): Fpsrequest create,type:EXACTLY_IDENTIFY
+D/Hwaps   (22839): Fpsrequest create,type:OPENGL_SETTING
+D/Hwaps   (22839): FpsController create
+D/Hwaps   (22839): APS: EventAnalyzed: reInitFpsPara :mBaseFps = 60; mMaxFps = 60
+W/Settings(22839): Setting device_provisioned has moved from android.provider.Settings.Secure to android.provider.Settings.Global.
+V/HiTouch_HiTouchSensor(22839): User setup is finished.
+W/HwApsManager(22839): HwApsManagerService, registerCallback, start !
+D/Hwaps   (22839): APS: EventAnalyzed: registerCallbackInApsManagerService, mPkgName:com.example.tippmixapp; result = true
+W/InputMethodManager(22839): startInputReason = 4
+W/HwRemoteInputMethodManager(22839): isCasting false because IHwDistributedWindowManager is invalid.
+I/InputMethodManager(22839): showSoftInput
+I/RmeSchedManager(22839): init Rme, version is: v1.0
+I/HwViewRootImpl(22839): removeInvalidNode all the node in jank list is out of time
+D/InputConnectionAdaptor(22839): The input method toggled cursor monitoring on
+I/RmeSchedManager(22839): init Rme, version is: v1.0
+I/RtgSchedEvent(22839): current pid:22839 AppType:-1
+W/InputMethodManager(22839): startInputReason = 3
+W/HwRemoteInputMethodManager(22839): isCasting false because IHwDistributedWindowManager is invalid.
+I/InputMethodManager(22839): showSoftInput
+D/InputConnectionAdaptor(22839): The input method toggled cursor monitoring on
+D/InputConnectionAdaptor(22839): The input method toggled cursor monitoring off
+D/InputConnectionAdaptor(22839): The input method toggled cursor monitoring on
+V/AudioManager(22839): querySoundEffectsEnabled...
+I/FirebaseAuth(22839): Logging in as akos.muller@gmail.com with empty reCAPTCHA token
+W/System  (22839): Ignoring header X-Firebase-Locale because its value was null.
+W/LocalRequestInterceptor(22839): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Error returned from API. code: 403 body: App attestation failed.
+W/System  (22839): Ignoring header X-Firebase-Locale because its value was null.
+W/LocalRequestInterceptor(22839): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: Too many attempts.
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Llibcore/io/Memory;->pokeByte(JB)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Llibcore/io/Memory;->peekByte(J)B (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+I/chatty  (22839): uid=10779(com.example.tippmixapp) Firebase Blocki identical 3 lines
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+D/FirebaseAuth(22839): Notifying id token listeners about user ( 2pEEqMzCsBfkrv4jWx3YP5yDb0F2 ).
+D/FirebaseAuth(22839): Notifying auth state listeners about user ( 2pEEqMzCsBfkrv4jWx3YP5yDb0F2 ).
+W/DynamiteModule(22839): Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.
+I/DynamiteModule(22839): Considering local module com.google.android.gms.providerinstaller.dynamite:0 and remote module com.google.android.gms.providerinstaller.dynamite:0
+D/HwCustConnectivityManagerImpl(22839): isBlockNetworkRequestByNonAis, INVALID_SUBSCRIPTION_ID
+I/ConnectivityManager(22839): requestNetwork and the calling app is: com.example.tippmixapp
+W/ProviderInstaller(22839): Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.
+D/ApplicationLoaders(22839): createClassLoader zip: /system/framework/org.apache.http.legacy.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
+I/mple.tippmixap(22839): The ClassLoaderContext is a special shared library.
+D/ApplicationLoaders(22839): createClassLoader zip: /system/framework/com.android.media.remotedisplay.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
+I/mple.tippmixap(22839): The ClassLoaderContext is a special shared library.
+D/ApplicationLoaders(22839): createClassLoader zip: /system/framework/com.android.location.provider.jar librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: null
+I/mple.tippmixap(22839): The ClassLoaderContext is a special shared library.
+D/ApplicationLoaders(22839): createClassLoader zip: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk librarySearchPath: /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a:/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a libraryPermittedPath: /data/user/0/com.google.android.gms parent: java.lang.BootClassLoader@a1041a5 targetSdkVersion: 36 isBundled: false classLoaderName: null sharedLibraries: [dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/org.apache.http.legacy.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]], dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.media.remotedisplay.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]], dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar"],nativeLibraryDirectories=[/data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/lib/arm64, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/base.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.hu.apk!/lib/arm64-v8a, /data/app/com.google.android.gms-htZCWIgAYtnOa6i6EAs5wQ==/split_config.xxhdpi.apk!/lib/arm64-v8a, /system/lib64, /hw_product/lib64, /system/product/lib64, /prets/lib64]]]]
+D/InputConnectionAdaptor(22839): The input method toggled cursor monitoring off
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapInt(Ljava/lang/Object;JII)Z (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObjectVolatile(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapObject(Ljava/lang/Object;JLjava/lang/Object;Ljava/lang/Object;)Z (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->compareAndSwapLong(Ljava/lang/Object;JJJ)Z (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObjectVolatile(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+V/NativeCrypto(22839): Registering com/google/android/gms/org/conscrypt/NativeCrypto's 319 native methods...
+I/HwViewRootImpl(22839): removeInvalidNode all the node in jank list is out of time
+W/mple.tippmixap(22839): Accessing hidden method Ljava/security/spec/ECParameterSpec;->getCurveName()Ljava/lang/String; (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+E/GoogleApiManager(22839): Failed to get service from broker. 
+E/GoogleApiManager(22839): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
+E/GoogleApiManager(22839):      at android.os.Parcel.createException(Parcel.java:2090)
+E/GoogleApiManager(22839):      at android.os.Parcel.readException(Parcel.java:2058)
+E/GoogleApiManager(22839):      at android.os.Parcel.readException(Parcel.java:2006)
+E/GoogleApiManager(22839):      at azgp.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
+E/GoogleApiManager(22839):      at azew.z(:com.google.android.gms@253334013@25.33.34 (100400-799229637):150)
+E/GoogleApiManager(22839):      at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):42)
+E/GoogleApiManager(22839):      at android.os.Handler.handleCallback(Handler.java:900)
+E/GoogleApiManager(22839):      at android.os.Handler.dispatchMessage(Handler.java:103)
+E/GoogleApiManager(22839):      at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+E/GoogleApiManager(22839):      at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
+E/GoogleApiManager(22839):      at android.os.Looper.loop(Looper.java:219)
+E/GoogleApiManager(22839):      at android.os.HandlerThread.run(HandlerThread.java:67)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Llibcore/io/Memory;->pokeByte(JB)V (greylist, reflection, allowed)
+W/FlagRegistrar(22839): Failed to register com.google.android.gms.providerinstaller#com.example.tippmixapp
+W/FlagRegistrar(22839): enzh: 17: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
+W/FlagRegistrar(22839):         at enzj.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):13)
+W/FlagRegistrar(22839):         at fiox.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):3)
+W/FlagRegistrar(22839):         at fioz.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):130)
+W/FlagRegistrar(22839):         at firg.execute(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+W/FlagRegistrar(22839):         at fiph.f(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+W/FlagRegistrar(22839):         at fiph.m(:com.google.android.gms@253334013@25.33.34 (100400-799229637):99)
+W/FlagRegistrar(22839):         at fiph.r(:com.google.android.gms@253334013@25.33.34 (100400-799229637):17)
+W/FlagRegistrar(22839):         at eglc.hF(:com.google.android.gms@253334013@25.33.34 (100400-799229637):35)
+W/FlagRegistrar(22839):         at dwoc.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):12)
+W/FlagRegistrar(22839):         at firg.execute(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+W/FlagRegistrar(22839):         at dwod.b(:com.google.android.gms@253334013@25.33.34 (100400-799229637):18)
+W/FlagRegistrar(22839):         at dwos.b(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
+W/FlagRegistrar(22839):         at dwou.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):25)
+W/FlagRegistrar(22839):         at ayje.c(:com.google.android.gms@253334013@25.33.34 (100400-799229637):9)
+W/FlagRegistrar(22839):         at aylt.q(:com.google.android.gms@253334013@25.33.34 (100400-799229637):48)
+W/FlagRegistrar(22839):         at aylt.d(:com.google.android.gms@253334013@25.33.34 (100400-799229637):10)
+W/FlagRegistrar(22839):         at aylt.g(:com.google.android.gms@253334013@25.33.34 (100400-799229637):185)
+W/FlagRegistrar(22839):         at aylt.onConnectionFailed(:com.google.android.gms@253334013@25.33.34 (100400-799229637):2)
+W/FlagRegistrar(22839):         at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):70)
+W/FlagRegistrar(22839):         at android.os.Handler.handleCallback(Handler.java:900)
+W/FlagRegistrar(22839):         at android.os.Handler.dispatchMessage(Handler.java:103)
+W/FlagRegistrar(22839):         at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+W/FlagRegistrar(22839):         at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
+W/FlagRegistrar(22839):         at android.os.Looper.loop(Looper.java:219)
+W/FlagRegistrar(22839):         at android.os.HandlerThread.run(HandlerThread.java:67)
+W/FlagRegistrar(22839): Caused by: ayhm: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null}
+W/FlagRegistrar(22839):         at azei.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):15)
+W/FlagRegistrar(22839):         at ayjh.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+W/FlagRegistrar(22839):         at ayje.c(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
+W/FlagRegistrar(22839):         ... 11 more
+W/mple.tippmixap(22839): Accessing hidden method Llibcore/io/Memory;->peekByte(J)B (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, reflection, allowed)
+I/ProviderInstaller(22839): Installed default security provider GmsCore_OpenSSL
+D/HwCustConnectivityManagerImpl(22839): isBlockNetworkRequestByNonAis, INVALID_SUBSCRIPTION_ID
+I/ConnectivityManager(22839): requestNetwork and the calling app is: com.example.tippmixapp
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden field Ljava/net/Socket;->impl:Ljava/net/SocketImpl; (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Ldalvik/system/CloseGuard;->get()Ldalvik/system/CloseGuard; (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Ldalvik/system/CloseGuard;->open(Ljava/lang/String;)V (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Ljava/security/spec/ECParameterSpec;->setCurveName(Ljava/lang/String;)V (greylist, reflection, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Ldalvik/system/BlockGuard;->getThreadPolicy()Ldalvik/system/BlockGuard$Policy; (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Ldalvik/system/BlockGuard$Policy;->onNetwork()V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putObject(Ljava/lang/Object;JLjava/lang/Object;)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putLong(Ljava/lang/Object;JJ)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+V/AudioManager(22839): querySoundEffectsEnabled...
+V/AudioManager(22839): querySoundEffectsEnabled...
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getLong(Ljava/lang/Object;J)J (greylist,core-platform-api, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getInt(Ljava/lang/Object;J)I (greylist, linking, allowed)
+
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateNotifierListenerError was thrown building MyTicketsScreen(dirty, dependencies:
+[UncontrolledProviderScope, _LocalizationsScope-[GlobalKey#90c9c]], state: _ConsumerState#de47b):
+At least listener of the StateNotifier Instance of 'StateController<bool>' threw an exception
+when the notifier tried to update its state.
+
+The exceptions thrown are:
+
+Tried to modify a provider while the widget tree was building.
+If you are encountering this error, chances are you tried to modify a provider
+in a widget life-cycle, such as but not limited to:
+- build
+- initState
+- dispose
+- didUpdateWidget
+- didChangeDependencies
+
+Modifying a provider inside those life-cycles is not allowed, as it could
+lead to an inconsistent UI state. For example, two widgets could listen to the
+same provider, but incorrectly receive different states.
+
+
+To fix this problem, you have one of two solutions:
+- (preferred) Move the logic for modifying your provider outside of a widget
+  life-cycle. For example, maybe you could update your provider inside a button's
+  onPressed instead.
+
+- Delay your modification, such as by encapsulating the modification
+  in a `Future(() {...})`.
+  This will perform your update after the widget tree is done building.
+#0      _UncontrolledProviderScopeElement._debugCanModifyProviders
+(package:flutter_riverpod/src/framework.dart:349:7)
+#1      ProviderElementBase._notifyListeners.<anonymous closure>
+(package:riverpod/src/framework/element.dart:488:34)
+#2      ProviderElementBase._notifyListeners (package:riverpod/src/framework/element.dart:490:8)
+#3      ProviderElementBase.setState (package:riverpod/src/framework/element.dart:140:7)
+#4      StateProviderElement.create.<anonymous closure>
+(package:riverpod/src/state_provider/base.dart:149:9)
+#5      StateNotifier.state= (package:state_notifier/state_notifier.dart:227:31)
+#6      StateController.state= (package:riverpod/src/state_controller.dart:15:31)
+#7      MyTicketsScreen.build.<anonymous closure>
+(package:tippmixapp/screens/my_tickets_screen.dart:51:58)
+#8      AsyncValueX.when (package:riverpod/src/common.dart:742:16)
+#9      MyTicketsScreen.build (package:tippmixapp/screens/my_tickets_screen.dart:47:30)
+#10     _ConsumerState.build (package:flutter_riverpod/src/consumer.dart:476:19)
+#11     StatefulElement.build (package:flutter/src/widgets/framework.dart:5823:27)
+#12     ConsumerStatefulElement.build (package:flutter_riverpod/src/consumer.dart:539:20)
+#13     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5715:15)
+#14     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5874:11)
+#15     Element.rebuild (package:flutter/src/widgets/framework.dart:5427:7)
+#16     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2694:15)
+#17     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+#18     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+#19     WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:1240:21)
+#20     RendererBinding._handlePersistentFrameCallback
+(package:flutter/src/rendering/binding.dart:495:5)
+#21     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1438:15)
+#22     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1351:9)
+#23     SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1204:5)
+#24     _invoke (dart:ui/hooks.dart:331:13)
+#25     PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:444:5)
+#26     _drawFrame (dart:ui/hooks.dart:303:31)
+
+The relevant error-causing widget was:
+  MyTicketsScreen MyTicketsScreen:file:///home/muszy/projects/tippmixapp/lib/router.dart:123:45
+
+When the exception was thrown, this was the stack:
+#0      StateNotifier.state= (package:state_notifier/state_notifier.dart:240:7)
+#1      StateController.state= (package:riverpod/src/state_controller.dart:15:31)
+#2      MyTicketsScreen.build.<anonymous closure> (package:tippmixapp/screens/my_tickets_screen.dart:51:58)
+#3      AsyncValueX.when (package:riverpod/src/common.dart:742:16)
+#4      MyTicketsScreen.build (package:tippmixapp/screens/my_tickets_screen.dart:47:30)
+#5      _ConsumerState.build (package:flutter_riverpod/src/consumer.dart:476:19)
+#6      StatefulElement.build (package:flutter/src/widgets/framework.dart:5823:27)
+#7      ConsumerStatefulElement.build (package:flutter_riverpod/src/consumer.dart:539:20)
+#8      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5715:15)
+#9      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5874:11)
+#10     Element.rebuild (package:flutter/src/widgets/framework.dart:5427:7)
+#11     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2694:15)
+#12     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+#13     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+#14     WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:1240:21)
+#15     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#16     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1438:15)
+#17     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1351:9)
+#18     SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1204:5)
+#19     _invoke (dart:ui/hooks.dart:331:13)
+#20     PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:444:5)
+#21     _drawFrame (dart:ui/hooks.dart:303:31)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+E/flutter (22839): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: Tried to modify a provider while the widget tree was building.
+E/flutter (22839): If you are encountering this error, chances are you tried to modify a provider
+E/flutter (22839): in a widget life-cycle, such as but not limited to:
+E/flutter (22839): - build
+E/flutter (22839): - initState
+E/flutter (22839): - dispose
+E/flutter (22839): - didUpdateWidget
+E/flutter (22839): - didChangeDependencies
+E/flutter (22839): 
+E/flutter (22839): Modifying a provider inside those life-cycles is not allowed, as it could
+E/flutter (22839): lead to an inconsistent UI state. For example, two widgets could listen to the
+E/flutter (22839): same provider, but incorrectly receive different states.
+E/flutter (22839): 
+E/flutter (22839): 
+E/flutter (22839): To fix this problem, you have one of two solutions:
+E/flutter (22839): - (preferred) Move the logic for modifying your provider outside of a widget
+E/flutter (22839):   life-cycle. For example, maybe you could update your provider inside a button's
+E/flutter (22839):   onPressed instead.
+E/flutter (22839): 
+E/flutter (22839): - Delay your modification, such as by encapsulating the modification
+E/flutter (22839):   in a `Future(() {...})`.
+E/flutter (22839):   This will perform your update after the widget tree is done building.
+E/flutter (22839): #0      _UncontrolledProviderScopeElement._debugCanModifyProviders (package:flutter_riverpod/src/framework.dart:349:7)
+E/flutter (22839): #1      ProviderElementBase._notifyListeners.<anonymous closure> (package:riverpod/src/framework/element.dart:488:34)
+E/flutter (22839): #2      ProviderElementBase._notifyListeners (package:riverpod/src/framework/element.dart:490:8)
+E/flutter (22839): #3      ProviderElementBase.setState (package:riverpod/src/framework/element.dart:140:7)
+E/flutter (22839): #4      StateProviderElement.create.<anonymous closure> (package:riverpod/src/state_provider/base.dart:149:9)
+E/flutter (22839): #5      StateNotifier.state= (package:state_notifier/state_notifier.dart:227:31)
+E/flutter (22839): #6      StateController.state= (package:riverpod/src/state_controller.dart:15:31)
+E/flutter (22839): #7      MyTicketsScreen.build.<anonymous closure> (package:tippmixapp/screens/my_tickets_screen.dart:51:58)
+E/flutter (22839): #8      AsyncValueX.when (package:riverpod/src/common.dart:742:16)
+E/flutter (22839): #9      MyTicketsScreen.build (package:tippmixapp/screens/my_tickets_screen.dart:47:30)
+E/flutter (22839): #10     _ConsumerState.build (package:flutter_riverpod/src/consumer.dart:476:19)
+E/flutter (22839): #11     StatefulElement.build (package:flutter/src/widgets/framework.dart:5823:27)
+E/flutter (22839): #12     ConsumerStatefulElement.build (package:flutter_riverpod/src/consumer.dart:539:20)
+E/flutter (22839): #13     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5715:15)
+E/flutter (22839): #14     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5874:11)
+E/flutter (22839): #15     Element.rebuild (package:flutter/src/widgets/framework.dart:5427:7)
+E/flutter (22839): #16     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2694:15)
+E/flutter (22839): #17     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+E/flutter (22839): #18     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+E/flutter (22839): #19     WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:1240:21)
+E/flutter (22839): #20     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+E/flutter (22839): #21     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1438:15)
+E/flutter (22839): #22     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1351:9)
+E/flutter (22839): #23     SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1204:5)
+E/flutter (22839): #24     _invoke (dart:ui/hooks.dart:331:13)
+E/flutter (22839): #25     PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:444:5)
+E/flutter (22839): #26     _drawFrame (dart:ui/hooks.dart:303:31)
+E/flutter (22839): 
+E/GoogleApiManager(22839): Failed to get service from broker. 
+E/GoogleApiManager(22839): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
+E/GoogleApiManager(22839):      at android.os.Parcel.createException(Parcel.java:2090)
+E/GoogleApiManager(22839):      at android.os.Parcel.readException(Parcel.java:2058)
+E/GoogleApiManager(22839):      at android.os.Parcel.readException(Parcel.java:2006)
+E/GoogleApiManager(22839):      at azgp.a(:com.google.android.gms@253334013@25.33.34 (100400-799229637):36)
+E/GoogleApiManager(22839):      at azew.z(:com.google.android.gms@253334013@25.33.34 (100400-799229637):150)
+E/GoogleApiManager(22839):      at aylv.run(:com.google.android.gms@253334013@25.33.34 (100400-799229637):42)
+E/GoogleApiManager(22839):      at android.os.Handler.handleCallback(Handler.java:900)
+E/GoogleApiManager(22839):      at android.os.Handler.dispatchMessage(Handler.java:103)
+E/GoogleApiManager(22839):      at cind.lX(:com.google.android.gms@253334013@25.33.34 (100400-799229637):1)
+E/GoogleApiManager(22839):      at cind.dispatchMessage(:com.google.android.gms@253334013@25.33.34 (100400-799229637):5)
+E/GoogleApiManager(22839):      at android.os.Looper.loop(Looper.java:219)
+E/GoogleApiManager(22839):      at android.os.HandlerThread.run(HandlerThread.java:67)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->putInt(Ljava/lang/Object;JI)V (greylist, linking, allowed)
+W/mple.tippmixap(22839): Accessing hidden method Lsun/misc/Unsafe;->getObject(Ljava/lang/Object;J)Ljava/lang/Object; (greylist, linking, allowed)
