@@ -12,7 +12,7 @@
 * **Állapot**: `IN PROGRESS`
 * **Prioritás**: `P1` (Sprint 1 fókusz)
 * **Kockázat**: `MEDIUM`
-* **Utolsó frissítés**: 2025‑08‑30
+* **Utolsó frissítés**: 2025‑08‑30 (audit + szinkron a kóddal)
 
 ---
 
@@ -20,14 +20,20 @@
 
 * **Felhasználói cél**: A bejelentkezett felhasználó korábban létrehozott szelvényeinek áttekintése, állapotuk megtekintése, részletek megnyitása; üres állapotban irány a szelvénykészítéshez.
 * **Üzleti cél**: Retenció növelése (visszatérés a korábbi szelvényekhez), konverzió terelése az „Új szelvény” flow-ba; alap a későbbi közösségi/gamifikációs funkciókhoz.
-* **Kötelező funkciók**:
+* **Kötelező funkciók** (aktuális állapot → terv):
 
-  * [ ] Firestore stream a bejelentkezett user `tickets` kollekciójára (descending `createdAt`).
-  * [ ] Listaelemek: TicketCard + státusz chip.
-  * [ ] Tétel-tap → részletek megnyitása (dialog vagy külön képernyő).
+  * [x] Firestore stream a bejelentkezett user `tickets` kollekciójára (descending `createdAt`).
+    - Jelenleg: `ticketsProvider` Firestore stream + `fromJson(d.data())`.
+  * [x] Listaelemek: TicketCard + státusz chip.
+    - Jelenleg: `TicketCard` + `TicketStatusChip` működik.
+  * [x] Tétel‑tap → részletek megnyitása (dialog vagy külön képernyő).
+    - Jelenleg: `TicketDetailsDialog` minimális tartalommal.
   * [ ] Üres állapot dedikált CTA‑val „Szelvény készítése”.
+    - Jelenleg: csak üzenet (`EmptyTicketPlaceholder`), CTA hiányzik.
   * [ ] Hibaállapot egységes komponenssel és Retry művelettel.
+    - Jelenleg: sima `Text(e.toString())`, Retry gomb nincs; pull‑to‑refresh van.
   * [ ] Telemetria: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`.
+    - Jelenleg: nincs instrumentáció.
 * **Nem‑célok** (jelen verzióban): más felhasználók szelvényeinek böngészése; szelvények szerkesztése/utólagos módosítása; valós pénzes tranzakciók; közösségi megosztás (későbbi iteráció).
 
 ---
@@ -40,14 +46,14 @@
   * `lib/widgets/ticket_card.dart` – összefoglaló kártya (státusz chip: `ticket_status_chip.dart`).
   * `lib/widgets/ticket_status_chip.dart` – státusz vizuális jelzése.
   * `lib/widgets/ticket_details_dialog.dart` – részletező (jelenleg minimális, bővítendő).
-  * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot + elsődleges CTA.
+  * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot; elsődleges CTA tervezett (hiányzik).
   * Navigáció: `lib/widgets/app_drawer.dart`, `lib/widgets/my_bottom_navigation_bar.dart`.
 * **Állapotok**:
 
-  * [ ] **Loading** — lista váz/skeleton; stream csatlakozás alatt.
-  * [ ] **Empty** — illusztráció + szöveg + elsődleges gomb „Szelvény készítése”.
-  * [ ] **Error** — egységes hiba‑komponens, „Próbáld újra” gombbal.
-  * [ ] **Data** — lapozható lista szelvénykártyákkal, részletező megnyitással.
+  * [x] **Loading** — jelenleg kör progress; skeleton még nincs.
+  * [ ] **Empty** — szöveg megvan; elsődleges gomb „Szelvény készítése” hiányzik.
+  * [ ] **Error** — egységes hiba‑komponens és „Próbáld újra” gomb hiányzik.
+  * [x] **Data** — lista szelvénykártyákkal, részletező megnyitással.
 * **Interakciók**: tap a kártyán → részletező (dialog/screen); pull‑to‑refresh (ha van); overflow (⋮) menü előkészítés a jövőbeli akciókhoz (megosztás/másolat/törlés – üzleti döntéstől függően).
 * **Accessibility (A11y)**:
 
@@ -70,7 +76,8 @@
 
 * **Modellek**: `Ticket` (kulcsmezők: `id` \[= Firestore `doc.id`], `status` \[enum: `TicketStatus`], `stake`, `totalOdd`, `potentialWin`, `createdAt`, `updatedAt`, `tips:[...]` – tipp bontások: esemény/market/választás/odds/státusz).
 * **Adatforrás**: Firestore path: `users/{uid}/tickets`; alap rendezés: `createdAt` desc; lapozás: `limit` + `startAfterDocument` (tervezett, nagy elemszámnál).
-* **Szerializáció**: jelenleg `fromJson`/`toJson` többféle kulcsnév‑fallbackkel; **ajánlott**: `Ticket.fromFirestore(DocumentSnapshot)` használata és a `doc.id` kötelező hozzárendelése a `Ticket.id`‑hez; dátumkezelés: `Timestamp` ↔ `DateTime` konverzió, zóna‑független megjelenítés.
+* **Szerializáció**: jelenleg `fromJson(d.data())` többféle kulcsnév‑fallbackkel; a `Ticket.id` forrása jellemzően a dokumentumban tárolt `id` mező (app által írt), a `doc.id` nincs kötelezően hozzárendelve.
+  - **Ajánlott**: `Ticket.fromFirestore(DocumentSnapshot)` + `doc.id` → `Ticket.id`; dátum: `Timestamp` ↔ `DateTime` konverzió.
 * **Idempotencia / konzisztencia**: egységesített mezőnév‑séma; `id` mindig `doc.id`; read‑only mezők felülírásának tiltása rules‑ban.
 * **Migrációs jegyzet**: régi mezőnevek (`created_at`/`ticketId`) fallbackként még támogatottak, de a standard séma bevezetése után fokozatosan kivezetendők.
 
@@ -100,17 +107,18 @@
 
 ## 🧪 Tesztelés (követelmények)
 
-* **Unit**: `Ticket` szerializáció (`fromFirestore`); `TicketService.watchUserTickets()`.
-* **Widget**: loading/empty/error/data állapotok; i18n kulcsok; interakciók (tap → részletező, Retry működés); üres állapot CTA navigációja.
+* **Unit**: `Ticket` szerializáció (`fromFirestore`) – TERV; `TicketService.watchUserTickets()` – N/A (jelenleg képernyő szintű stream).
+* **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh (ld. `test/screens/my_tickets_screen_test.dart`).
+  - TERV: loading/empty/error állapotok kiterjesztett tesztje; interakciók (tap → részletező, Retry működés); üres állapot CTA navigációja.
 * **Integration**: navigáció drawer/bottom‑nav; deep link `ticketId` (ha bevezetjük a külön screen‑t).
 * **Rules tesztek**: pozitív/negatív utak (saját vs. idegen user; tiltott mező felülírása).
 * **Elfogadási kritériumok**:
 
-  * [ ] AC1 — Minden listaelem rendelkezik nem üres `id`‑val, amely megegyezik a Firestore `doc.id`‑vel.
-  * [ ] AC2 — A részletező a fő kulcsmezőket és a tippek részleteit megjeleníti (stake, totalOdd, potentialWin, status, createdAt, tips...).
-  * [ ] AC3 — Üres állapotban elsődleges gombbal elérhető a „Szelvény készítése” képernyő.
-  * [ ] AC4 — Hiba esetén egységes hiba‑UI és Retry; betöltéskor skeleton/shimmer látszik.
-  * [ ] AC5 — Rules tesztek: idegen user adatai nem olvashatók.
+  * [ ] AC1 — Minden listaelem rendelkezik nem üres `id`‑val, amely megegyezik a Firestore `doc.id`‑vel. (Jelenleg: `id` mező a dokumentumból, `doc.id` nem kötelező.)
+  * [ ] AC2 — A részletező a fő kulcsmezőket és a tippek részleteit megjeleníti (stake, totalOdd, potentialWin, status, createdAt, tips...). (Jelenleg minimális tartalom.)
+  * [ ] AC3 — Üres állapotban elsődleges gombbal elérhető a „Szelvény készítése” képernyő. (Jelenleg nincs CTA.)
+  * [ ] AC4 — Hiba esetén egységes hiba‑UI és Retry; betöltéskor skeleton/shimmer látszik. (Jelenleg Text + nincs Retry; skeleton nincs.)
+  * [ ] AC5 — Rules tesztek: idegen user adatai nem olvashatók. (Nincs teszt lefedettség.)
 
 ---
 
@@ -137,8 +145,21 @@
 **Elemzés**:
 
 * ✅ 2025‑08‑29: Alap lista/üres állapot, dialog, route‑ok, i18n kulcsok, alap tesztek.
-* ⏳ 2025‑08‑30: Részletező bővítés, CTA bevezetése, hiba/loader egységesítés, service réteg absztrakció.
+* ⏳ 2025‑08‑30: Részletező bővítése, üres állapot CTA, hiba/loader egységesítése, szerializáció pontosítása (`doc.id`).
 * ❌ 2025‑08‑30: Lapozás, teljes rules tesztcsomag, telemetria finomhangolás.
+
+---
+
+## 🛠️ Megvalósítási terv (DoD → feladatlista)
+
+- Szerializáció pontosítása: `Ticket.fromFirestore(DocumentSnapshot)` bevezetése; `ticketsProvider` mapping frissítése (`doc.id` → `Ticket.id`).
+- Üres állapot CTA: `EmptyTicketPlaceholder` bővítése elsődleges gombbal (`loc.go_to_create_ticket`) → navigáció az „Új szelvény” flow‑ra.
+- Hibaállapot: egységes hiba‑komponens (vagy ideiglenesen `ErrorWithRetry`), Retry → `ref.refresh(ticketsProvider.future)`;
+  skeleton/shimmer bevezetése a loading állapothoz (ha van közös skeleton komponens).
+- Részletező bővítése: stake, totalOdd, potentialWin, status, createdAt, tips list megjelenítése; hozzá tartozó widget tesztek.
+- Telemetria: `tickets_list_viewed` (képernyő megnyitás), `ticket_selected` (kártya tap), `ticket_details_opened` (dialog megnyitás); adott Analytics/TelemetryService használatával.
+- Tesztek: widget tesztek az új állapotokra és interakciókra; ha külön service lesz, unit tesztek.
+- Rules: pozitív/negatív olvasási utakra integrációs tesztek (Emulatoron).
 
 ---
 
@@ -163,7 +184,7 @@
 
 ## 📝 Változásnapló (Changelog)
 
-* 2025‑08‑30: Első verzió a rendelkezésre álló jelentések és audit alapján.
+* 2025‑08‑30: Első verzió + audit szerinti frissítés (aktuális kódállapot szinkronizálva; megvalósítási terv hozzáadva).
 
 ---
 
