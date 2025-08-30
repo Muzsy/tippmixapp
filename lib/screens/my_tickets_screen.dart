@@ -129,8 +129,8 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
           final combined = [...tickets, ..._extra];
           return RefreshIndicator(
             onRefresh: () async {
-              // ignore: unused_result
-              await ref.refresh(ticketsProvider.future);
+              // Recreate base stream to fetch fresh first page
+              ref.invalidate(ticketsProvider);
               if (mounted) {
                 setState(() {
                   _extra.clear();
@@ -142,6 +142,7 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
                 ? ListView(children: const [EmptyTicketPlaceholder()])
                 : ListView.builder(
                     controller: _controller,
+                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: combined.length + (_loadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (_loadingMore && index == combined.length) {
@@ -192,15 +193,14 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
             message: e.toString(),
             retryLabel: loc.events_screen_refresh,
             onRetry: () async {
-              // ignore: unused_result
-              await ref.refresh(ticketsProvider.future);
+              ref.invalidate(ticketsProvider);
             },
           );
         },
       );
     }
 
-    if (!showAppBar) return content;
+    if (!widget.showAppBar) return content;
     if (Scaffold.maybeOf(context) != null) {
       return content;
     }

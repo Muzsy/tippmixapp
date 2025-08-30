@@ -88,8 +88,8 @@ void main() {
     expect(find.textContaining('Total odds:'), findsOneWidget);
     expect(find.textContaining('Potential win:'), findsOneWidget);
 
-    // Date label
-    expect(find.textContaining('Date:'), findsOneWidget);
+    // Date labels: createdAt and (pending) earliest tip start
+    expect(find.textContaining('Date:'), findsNWidgets(2));
 
     // Tips count label
     expect(find.textContaining('Tips:'), findsOneWidget);
@@ -108,9 +108,9 @@ void main() {
     expect(find.text('Team A – Team B'), findsOneWidget);
     expect(find.text('Team C – Team D'), findsOneWidget);
 
-    // Odds labels rendered in EN locale
-    expect(find.textContaining('Odds: 1.7'), findsOneWidget);
-    expect(find.textContaining('Odds: 2.05'), findsOneWidget);
+    // Odds rendered with trailing multiplier format: x1.70, x2.05
+    expect(find.textContaining('x1.70'), findsOneWidget);
+    expect(find.textContaining('x2.05'), findsOneWidget);
 
     // Close the dialog
     await tester.tap(find.text('OK'));

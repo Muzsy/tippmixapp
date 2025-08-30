@@ -5,7 +5,7 @@ class MyTicketsSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = Theme.of(context).colorScheme.surfaceVariant;
+    final baseColor = Theme.of(context).colorScheme.surfaceContainerHighest;
     return ListView.builder(
       itemCount: 6,
       itemBuilder: (context, index) => Card(
@@ -26,4 +26,3 @@ class MyTicketsSkeleton extends StatelessWidget {
     );
   }
 }
-

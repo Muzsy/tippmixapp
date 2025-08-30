@@ -34,8 +34,8 @@ class TicketStatusChip extends StatelessWidget {
         label = loc.ticket_status_pending;
         break;
       case TicketStatus.voided:
-        bg = scheme.surfaceVariant;
-        fg = scheme.onSurfaceVariant;
+        bg = scheme.surfaceContainerHighest;
+        fg = scheme.onSurface;
         label = loc.ticket_status_void;
         break;
     }
