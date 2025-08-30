@@ -24,17 +24,53 @@ class TipModel {
     required this.odds,
   });
 
-  factory TipModel.fromJson(Map<String, dynamic> json) => TipModel(
-    eventId: json['eventId'] as String,
-    eventName: json['eventName'] as String,
-    startTime: DateTime.parse(json['startTime']),
-    sportKey: json['sportKey'] as String,
-    bookmakerId: json['bookmakerId'] as int?,
-    bookmaker: json['bookmaker'] as String?,
-    marketKey: json['marketKey'] as String,
-    outcome: json['outcome'] as String,
-    odds: (json['odds'] as num).toDouble(),
-  );
+  factory TipModel.fromJson(Map<String, dynamic> json) {
+    DateTime parseDate(dynamic v) {
+      if (v == null) return DateTime.now();
+      if (v is DateTime) return v;
+      try {
+        final ts = (v is! String && v is! DateTime && (v as dynamic).toDate is Function)
+            ? v.toDate()
+            : null;
+        if (ts is DateTime) return ts;
+      } catch (_) {}
+      if (v is String) {
+        final d = DateTime.tryParse(v);
+        if (d != null) return d;
+      }
+      return DateTime.now();
+    }
+
+    double parseDouble(dynamic v, {double fallback = 1.0}) {
+      if (v == null) return fallback;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v) ?? fallback;
+      return fallback;
+    }
+
+    int? parseInt(dynamic v) {
+      if (v == null) return null;
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v);
+      return null;
+    }
+
+    String asString(dynamic v, {String fallback = ''}) =>
+        v == null ? fallback : v.toString();
+
+    return TipModel(
+      eventId: asString(json['eventId'] ?? json['id']),
+      eventName: asString(json['eventName'] ?? json['name']),
+      startTime: parseDate(json['startTime'] ?? json['commenceTime']),
+      sportKey: asString(json['sportKey']),
+      bookmakerId: parseInt(json['bookmakerId']),
+      bookmaker: json['bookmaker'] == null ? null : asString(json['bookmaker']),
+      marketKey: asString(json['marketKey'] ?? 'h2h'),
+      outcome: asString(json['outcome']),
+      odds: parseDouble(json['odds']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'eventId': eventId,
