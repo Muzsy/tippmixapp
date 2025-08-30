@@ -34,6 +34,13 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 | Security Rules & Access Control | `security_rules_en.md`             | `security_rules_hu.md`             |
 | CI/CD Pipeline                  | `github_actions_pipeline_en.md`    | `github_actions_pipeline_hu.md`    |
 
+## 🧩 Képernyő‑alapú dokumentáció
+
+- Irányelvek: `guidelines/screen_based_doc_system.md`
+- Útmutató: `guidelines/new_screen_howto.md`
+- Képernyő specifikációk: `screens/<screen_name>/screen_spec.md`
+- Sablonok: `templates/` (`screen_spec_template.md`, `acceptance_template.md`, `test_plan_template.md`)
+
 ## 📌 Notes / Megjegyzések
 
 - All future documents must follow the naming: `[topic]_en.md` and `[topic]_hu.md`

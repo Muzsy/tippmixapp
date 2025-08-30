@@ -72,6 +72,14 @@ TippCoin virtuális gazdaságot, valós idejű API-Football-integrációt, Fireb
 A `docs/` alatti fájlok részletes áttekintést adnak az alkalmazás működéséről.
 Csak az angol fájlokat (`*_en.md`) használja a Codex.
 
+### 🧩 Képernyő‑alapú dokumentációs rendszer
+
+- Irányelvek: `docs/guidelines/screen_based_doc_system.md`
+- Új képernyő doksi létrehozása: `docs/guidelines/new_screen_howto.md`
+- Képernyő specifikációk: `docs/screens/<screen_name>/screen_spec.md`
+- Sablonok: `docs/templates/` (`screen_spec_template.md`, `acceptance_template.md`, `test_plan_template.md`)
+- PR szabály: képernyőváltozás esetén a kapcsolódó `screen_spec.md` frissítése és a `qa/acceptance.md`, `qa/test-plan.md` első verzióinak létrehozása kötelező.
+
 ### 🔨 Backend logika
 
 - `docs/backend/data_model_en.md`

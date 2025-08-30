@@ -72,6 +72,14 @@ It features a virtual coin economy, real-time odds from [API-Football](https://w
 The following files under `docs/` provide detailed insights into the application design.
 Only the English versions (`*_en.md`) are used by Codex agents.
 
+### 🧩 Screen-based Documentation
+
+- Guidelines: `docs/guidelines/screen_based_doc_system.md`
+- How-to (create a new screen doc): `docs/guidelines/new_screen_howto.md`
+- Screen specs live under: `docs/screens/<screen_name>/screen_spec.md`
+- Templates: `docs/templates/` (`screen_spec_template.md`, `acceptance_template.md`, `test_plan_template.md`)
+- PR rule: any screen change must update its `screen_spec.md` and include initial `qa/acceptance.md` and `qa/test-plan.md` under the screen folder.
+
 ### 🔨 Backend Logic
 
 - `docs/backend/data_model_en.md`
