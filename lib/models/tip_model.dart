@@ -52,6 +52,23 @@ class TipModel {
       return fallback;
     }
 
+    double parseOdds(Map<String, dynamic> j) {
+      // Try common keys from various providers
+      final candidates = [
+        j['odds'],
+        j['odd'],
+        j['price'],
+        j['decimal'],
+        j['decimalOdds'],
+        j['o'],
+      ];
+      for (final c in candidates) {
+        final v = parseDouble(c, fallback: double.nan);
+        if (!v.isNaN && v > 0) return v;
+      }
+      return 1.0;
+    }
+
     int? parseInt(dynamic v) {
       if (v == null) return null;
       if (v is int) return v;
@@ -94,7 +111,7 @@ class TipModel {
       bookmaker: json['bookmaker'] == null ? null : asString(json['bookmaker']),
       marketKey: asString(json['marketKey'] ?? 'h2h'),
       outcome: asString(json['outcome']),
-      odds: parseDouble(json['odds']),
+      odds: parseOdds(json),
       status: TipStatus.values.firstWhere(
         (e) => e.name == parseStatusFrom(json),
         orElse: () => TipStatus.pending,
