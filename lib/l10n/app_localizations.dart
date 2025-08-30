@@ -2013,6 +2013,13 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total odds'**
   String get total_odds_label;
+  
+  String get ticket_friendly_id;
+  String get ticket_meta_created;
+  String get ticket_meta_updated;
+  String get ticket_potential_win;
+  String get ticket_total_odd;
+  String get ticket_stake;
 
   /// No description provided for @ticket_details_section_won.
   ///

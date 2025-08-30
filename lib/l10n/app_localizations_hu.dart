@@ -1004,6 +1004,24 @@ class AppLocalizationsHu extends AppLocalizations {
   String get total_odds_label => 'Össz odds';
 
   @override
+  String get ticket_friendly_id => 'Szelvény #{}';
+
+  @override
+  String get ticket_meta_created => 'Létrehozva';
+
+  @override
+  String get ticket_meta_updated => 'Frissítve';
+
+  @override
+  String get ticket_potential_win => 'Várható nyeremény';
+
+  @override
+  String get ticket_total_odd => 'Össz odds';
+
+  @override
+  String get ticket_stake => 'Tét';
+
+  @override
   String get ticket_details_section_won => 'Nyertes tippek';
 
   @override

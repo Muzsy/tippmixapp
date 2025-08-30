@@ -195,6 +195,34 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  Future<void> logTicketsListChipTapped(String status) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'tickets_list_chip_tapped',
+        parameters: {
+          'status': TelemetrySanitizer.normalizeStatus(status),
+        },
+      );
+    } catch (_) {}
+  }
+
+  Future<void> logTicketDetailsGroupToggled({
+    required String group,
+    required bool expanded,
+    required int count,
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'ticket_details_group_toggled',
+        parameters: {
+          'group': TelemetrySanitizer.normalizeStatus(group),
+          'expanded': expanded,
+          'count': TelemetrySanitizer.safeCount(count),
+        },
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());

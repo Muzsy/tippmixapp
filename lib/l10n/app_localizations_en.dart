@@ -993,6 +993,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get total_odds_label => 'Total odds';
 
   @override
+  String get ticket_friendly_id => 'Ticket #{}';
+
+  @override
+  String get ticket_meta_created => 'Created';
+
+  @override
+  String get ticket_meta_updated => 'Updated';
+
+  @override
+  String get ticket_potential_win => 'Potential win';
+
+  @override
+  String get ticket_total_odd => 'Total odds';
+
+  @override
+  String get ticket_stake => 'Stake';
+
+  @override
   String get ticket_details_section_won => 'Won tips';
 
   @override

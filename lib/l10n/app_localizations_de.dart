@@ -1006,6 +1006,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get total_odds_label => 'Gesamtquote';
 
   @override
+  String get ticket_friendly_id => 'Wettschein #{}';
+
+  @override
+  String get ticket_meta_created => 'Erstellt';
+
+  @override
+  String get ticket_meta_updated => 'Aktualisiert';
+
+  @override
+  String get ticket_potential_win => 'Möglicher Gewinn';
+
+  @override
+  String get ticket_total_odd => 'Gesamtquote';
+
+  @override
+  String get ticket_stake => 'Einsatz';
+
+  @override
   String get ticket_details_section_won => 'Gewonnene Tipps';
 
   @override

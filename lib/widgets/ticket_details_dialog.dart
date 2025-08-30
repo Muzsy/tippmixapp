@@ -96,6 +96,12 @@ class TicketDetailsDialog extends StatelessWidget {
                 count: items.length,
               );
             }
+            // ignore: unawaited_futures
+            analyticsService.logTicketDetailsGroupToggled(
+              group: title.toLowerCase(),
+              expanded: expanded,
+              count: items.length,
+            );
           },
           children: [
             ...items.map(_row),
