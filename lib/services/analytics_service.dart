@@ -78,6 +78,49 @@ class AnalyticsService {
       await _analytics?.logEvent(name: 'reg_password_pwned');
     } catch (_) {}
   }
+
+  // --- Tickets (MyTickets) telemetry --------------------------------------
+
+  Future<void> logTicketsListViewed(int count) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'tickets_list_viewed',
+        parameters: {'count': count},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> logTicketSelected(String ticketId) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'ticket_selected',
+        parameters: {'ticketId': ticketId},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> logTicketDetailsOpened({
+    required String ticketId,
+    required int tips,
+    required String status,
+    required num stake,
+    required num totalOdd,
+    required num potentialWin,
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'ticket_details_opened',
+        parameters: {
+          'ticketId': ticketId,
+          'tips': tips,
+          'status': status,
+          'stake': stake,
+          'totalOdd': totalOdd,
+          'potentialWin': potentialWin,
+        },
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());

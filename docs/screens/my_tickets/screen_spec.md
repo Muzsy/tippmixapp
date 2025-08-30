@@ -94,6 +94,7 @@
 ## 📊 Telemetria & mérőszámok
 
 * **Eventek**: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`, `ticket_action_copy/share/delete` (ha aktiválva), `error_shown`.
+  - Implementált: `tickets_list_viewed` (lista megnyitáskor egyszer), `ticket_selected` (kártya tap), `ticket_details_opened` (részletező megnyitás). Lász: `AnalyticsService` és `MyTicketsScreen`.
 * **Funnel**: lista megnyitás → tétel megnyitás → (akció/konverzió) vagy „Szelvény készítése” CTA kattintás.
 
 ---

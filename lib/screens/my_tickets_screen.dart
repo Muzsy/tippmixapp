@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 
@@ -12,6 +11,7 @@ import '../widgets/empty_ticket_placeholder.dart';
 import '../widgets/ticket_details_dialog.dart';
 import '../widgets/error_with_retry.dart';
 import '../widgets/my_tickets_skeleton.dart';
+import '../services/analytics_service.dart';
 
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -26,6 +26,8 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
       .snapshots()
       .map((snap) => snap.docs.map((d) => Ticket.fromFirestore(d)).toList());
 });
+
+final _listViewedLoggedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class MyTicketsScreen extends ConsumerWidget {
   final bool showAppBar;
@@ -44,9 +46,17 @@ class MyTicketsScreen extends ConsumerWidget {
     } else {
       content = ticketsAsync.when(
         data: (tickets) {
+          final logged = ref.read(_listViewedLoggedProvider);
+          if (!logged) {
+            ref.read(_listViewedLoggedProvider.notifier).state = true;
+            // Fire and forget telemetry for list view
+            // ignore: unawaited_futures
+            ref.read(analyticsServiceProvider).logTicketsListViewed(tickets.length);
+          }
           return RefreshIndicator(
             onRefresh: () async {
-              final _ = await ref.refresh(ticketsProvider.future);
+              // ignore: unused_result
+              await ref.refresh(ticketsProvider.future);
             },
             child: tickets.isEmpty
                 ? ListView(children: const [EmptyTicketPlaceholder()])
@@ -55,11 +65,24 @@ class MyTicketsScreen extends ConsumerWidget {
                     itemBuilder: (context, index) => TicketCard(
                       ticket: tickets[index],
                       onTap: () async {
+                        final t = tickets[index];
+                        // Telemetry: selected + details opened
+                        // ignore: unawaited_futures
+                        ref.read(analyticsServiceProvider).logTicketSelected(t.id);
+                        // ignore: unawaited_futures
+                        ref.read(analyticsServiceProvider).logTicketDetailsOpened(
+                              ticketId: t.id,
+                              tips: t.tips.length,
+                              status: t.status.name,
+                              stake: t.stake,
+                              totalOdd: t.totalOdd,
+                              potentialWin: t.potentialWin,
+                            );
                         await showDialog(
                           context: context,
                           builder: (_) => TicketDetailsDialog(
-                            ticket: tickets[index],
-                            tips: tickets[index].tips,
+                            ticket: t,
+                            tips: t.tips,
                           ),
                         );
                       },
@@ -72,6 +95,7 @@ class MyTicketsScreen extends ConsumerWidget {
           message: e.toString(),
           retryLabel: loc.events_screen_refresh,
           onRetry: () async {
+            // ignore: unused_result
             await ref.refresh(ticketsProvider.future);
           },
         ),
