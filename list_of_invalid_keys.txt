@@ -1,5 +1,0 @@
-profile.avatar_gallery
-profile.upload_photo
-profile.reset_avatar
-profile.choose_avatar
-profile.crop_image

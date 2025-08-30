@@ -160,4 +160,55 @@ void main() {
 
     expect(calls, 2);
   });
+
+  testWidgets('tap on ticket opens details dialog', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith(
+          (ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
+        tickets: ticketsProvider.overrideWith(
+          (ref) => Stream.value(sampleTickets),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Tap first ticket card
+    await tester.tap(find.byType(TicketCard).first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ticket Details'), findsOneWidget);
+  });
+
+  testWidgets('empty state shows CTA button', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith(
+          (ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
+        tickets: ticketsProvider.overrideWith((ref) => Stream.value(const <Ticket>[])),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Submit Ticket'), findsOneWidget);
+  });
+
+  testWidgets('error state shows message and Retry button', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith(
+          (ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
+        tickets: ticketsProvider.overrideWith(
+          (ref) => Stream<List<Ticket>>.error(Exception('boom')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('boom'), findsOneWidget);
+    expect(find.text('Refresh'), findsOneWidget);
+  });
 }

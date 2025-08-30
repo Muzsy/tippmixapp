@@ -73,21 +73,18 @@ class TicketDetailsDialog extends StatelessWidget {
             if (tips.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Divider(),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: tips.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (context, index) {
-                  final tip = tips[index];
-                  return ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(tip.eventName),
-                    subtitle: Text('${loc.odds_label}: ${tip.odds}'),
-                  );
-                },
-              ),
+              ...tips.map((tip) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(tip.eventName),
+                        subtitle: Text('${loc.odds_label}: ${tip.odds}'),
+                      ),
+                      const Divider(height: 1),
+                    ],
+                  )),
             ],
           ],
         ),
