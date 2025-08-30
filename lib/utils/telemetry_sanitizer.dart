@@ -35,5 +35,21 @@ class TelemetrySanitizer {
     final str = v.toStringAsFixed(precision);
     return num.parse(str);
   }
-}
 
+  static String normalizeScreenId(String? id) {
+    var v = (id ?? '').trim().toLowerCase();
+    if (v.isEmpty) return 'unknown';
+    v = v.replaceAll(_allowed, '-');
+    if (v.length > 32) v = v.substring(0, 32);
+    return v;
+  }
+
+  static String normalizeErrorMessage(String? message) {
+    var m = (message ?? '').trim();
+    if (m.isEmpty) return 'n/a';
+    // collapse whitespace and remove newlines
+    m = m.replaceAll(RegExp(r"\s+"), ' ');
+    if (m.length > 120) m = m.substring(0, 120);
+    return m;
+  }
+}

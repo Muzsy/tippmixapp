@@ -91,14 +91,23 @@ class MyTicketsScreen extends ConsumerWidget {
           );
         },
         loading: () => const MyTicketsSkeleton(),
-        error: (e, _) => ErrorWithRetry(
-          message: e.toString(),
-          retryLabel: loc.events_screen_refresh,
-          onRetry: () async {
-            // ignore: unused_result
-            await ref.refresh(ticketsProvider.future);
-          },
-        ),
+        error: (e, _) {
+          // fire-and-forget error telemetry
+          // ignore: unawaited_futures
+          ref.read(analyticsServiceProvider).logErrorShown(
+                screen: 'my_tickets',
+                code: e.runtimeType.toString(),
+                message: e.toString(),
+              );
+          return ErrorWithRetry(
+            message: e.toString(),
+            retryLabel: loc.events_screen_refresh,
+            onRetry: () async {
+              // ignore: unused_result
+              await ref.refresh(ticketsProvider.future);
+            },
+          );
+        },
       );
     }
 

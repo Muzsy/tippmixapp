@@ -126,6 +126,26 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  // --- Error telemetry -----------------------------------------------------
+
+  Future<void> logErrorShown({
+    required String screen,
+    required String code,
+    String? message,
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'error_shown',
+        parameters: {
+          'screen': TelemetrySanitizer.normalizeScreenId(screen),
+          'code': TelemetrySanitizer.normalizeTicketId(code), // reuse simple sanitizer
+          if (message != null)
+            'message': TelemetrySanitizer.normalizeErrorMessage(message),
+        },
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());
