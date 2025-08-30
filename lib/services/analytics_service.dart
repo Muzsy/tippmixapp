@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../utils/telemetry_sanitizer.dart';
 
 /// Thin wrapper over [FirebaseAnalytics] to record login A/B events.
 class AnalyticsService {
@@ -85,7 +86,9 @@ class AnalyticsService {
     try {
       await _analytics?.logEvent(
         name: 'tickets_list_viewed',
-        parameters: {'count': count},
+        parameters: {
+          'count': TelemetrySanitizer.safeCount(count),
+        },
       );
     } catch (_) {}
   }
@@ -94,7 +97,9 @@ class AnalyticsService {
     try {
       await _analytics?.logEvent(
         name: 'ticket_selected',
-        parameters: {'ticketId': ticketId},
+        parameters: {
+          'ticketId': TelemetrySanitizer.normalizeTicketId(ticketId),
+        },
       );
     } catch (_) {}
   }
@@ -111,12 +116,12 @@ class AnalyticsService {
       await _analytics?.logEvent(
         name: 'ticket_details_opened',
         parameters: {
-          'ticketId': ticketId,
-          'tips': tips,
-          'status': status,
-          'stake': stake,
-          'totalOdd': totalOdd,
-          'potentialWin': potentialWin,
+          'ticketId': TelemetrySanitizer.normalizeTicketId(ticketId),
+          'tips': TelemetrySanitizer.safeCount(tips),
+          'status': TelemetrySanitizer.normalizeStatus(status),
+          'stake': TelemetrySanitizer.safeAmount(stake, min: 0, max: 1e8, precision: 0),
+          'totalOdd': TelemetrySanitizer.safeAmount(totalOdd, min: 0, max: 1e4, precision: 2),
+          'potentialWin': TelemetrySanitizer.safeAmount(potentialWin, min: 0, max: 1e10, precision: 0),
         },
       );
     } catch (_) {}
