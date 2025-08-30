@@ -45,20 +45,24 @@ WalletModel {
 
 ## 🎯 TipModel
 
-Represents a single selected outcome (market bet).
+Represents a single selected outcome (market bet) inside a Ticket.
 
 ```dart
 TipModel {
-  String matchId;
-  String event;
-  String market;
-  String outcome;
-  double odds;
+  String eventId;      // provider event id
+  String eventName;    // human readable (e.g. "Team A – Team B")
+  DateTime startTime;  // match commence time
+  String sportKey;     // e.g. "soccer"
+  String marketKey;    // e.g. "h2h"
+  String outcome;      // selected outcome label
+  double odds;         // original decimal odds
+  TipStatus status;    // won | lost | pending
 }
 ```
 
-- Attached to a ticket (not stored standalone)
-- Odds refreshed on submit via API-Football
+- Odds parsing is resilient across providers: accepts `odds`, `odd`, `price`, `decimal`, `decimalOdds`, `o`.
+- Status mapping accepts multiple aliases: `status`/`result` (win/won, lose/lost, pending/open), or booleans `won|isWon`, `lost|isLost`, or `settled`.
+- Not stored standalone; serialized as part of the `Ticket` document.
 
 ## 🎟️ TicketModel
 
@@ -66,18 +70,21 @@ Represents a full bet slip with 1+ tips.
 
 ```dart
 TicketModel {
-  String ticketId;
+  String ticketId;          // Firestore doc.id
   String userId;
-  List<TipModel> tips;
+  List<TipModel> tips;      // 1..n tips
   int stake;
+  double totalOdd;          // aggregate odds
   double potentialWin;
-  String status; // pending, won, lost
+  String status;            // pending | won | lost | voided
   Timestamp createdAt;
+  Timestamp updatedAt;
 }
 ```
 
 - Stored under `users/{userId}/tickets/{ticketId}`
-- Status updated after match finalization
+- Status updated after match finalization by backend job (see match_finalizer)
+- Client uses `doc.id` as canonical `ticketId` during de/serialization
 
 ## 🎁 Bonus rules & state
 
@@ -119,3 +126,4 @@ BonusState {
 - 2025-08-20: Documented dual-write wallet/ledger paths and onCreate seeding.
 - 2025-08-22: Added BonusRules and BonusState models for Bonus Engine.
 - 2025-08-23: Removed legacy `wallets/{userId}` path from WalletModel.
+- 2025-08-30: Updated TipModel and TicketModel to current fields (status enum, robust odds parsing, totals, updatedAt).

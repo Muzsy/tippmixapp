@@ -45,7 +45,7 @@
 
   * `lib/widgets/ticket_card.dart` – összefoglaló kártya: bal oldalt tét, össz‑odds, tippek száma és létrehozás dátuma; jobb oldalt státusz chip és várható nyeremény.
   * `lib/widgets/ticket_status_chip.dart` – státusz vizuális jelzése.
-  * `lib/widgets/ticket_details_dialog.dart` – részletező: rövidített szelvényazonosító (első 4 + utolsó 4), létrehozás dátuma; függő státusznál legkorábbi tipp kezdési ideje; tippek listája strukturáltan (esemény cím, outcome + market, trailing: xODDS), státusz chip a fejlécben.
+* `lib/widgets/ticket_details_dialog.dart` – részletező: rövidített szelvényazonosító (első 4 + utolsó 4), létrehozás dátuma; függő státusznál legkorábbi tipp kezdési ideje; tippek státusz szerinti csoportosítása (Nyertes/Vesztes/Függőben) szekciókba, címkék: `loc.ticket_details_section_*` + darabszám. Szekció össze/kinyitás csak 2+ elemnél; 1 elemnél sima fejléc + sor. Sor tartalma: esemény cím, `outcome • market`, trailing: mini státusz‑chip + `xODDS`.
   * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot, elsődleges CTA „Szelvény készítése” (GoRouter → `AppRoute.bets`).
   * Navigáció: `lib/widgets/app_drawer.dart`, `lib/widgets/my_bottom_navigation_bar.dart`.
 * **Állapotok**:
@@ -60,6 +60,7 @@
   1. Minden kártya és chip rendelkezzen beszédes semanticsLabel‑lel (státusszal).
   2. Tap target ≥ 48×48 dp; fókusz‑állapot jelölése.
   3. Kontraszt a státusz chipeknél min. WCAG AA; TalkBack/VoiceOver felolvassa a szelvény azonosítót és fő metrikákat.
+  4. Szekciófejlécek heading szereppel; sorok beszédes semantics.
 
 ---
 
@@ -74,7 +75,9 @@
 
 ## 🗃️ Adatmodell & források
 
-* **Modellek**: `Ticket` (kulcsmezők: `id` \[= Firestore `doc.id`], `status` \[enum: `TicketStatus`], `stake`, `totalOdd`, `potentialWin`, `createdAt`, `updatedAt`, `tips:[...]` – tipp bontások: esemény/market/választás/odds/státusz).
+* **Modellek**:
+  * `Ticket`: `id` (= `doc.id`), `status: TicketStatus` (pending|won|lost|voided), `stake`, `totalOdd`, `potentialWin`, `createdAt`, `updatedAt`, `tips:[TipModel]`.
+  * `TipModel`: `eventId`, `eventName`, `startTime`, `sportKey`, `marketKey`, `outcome`, `odds` (több kulcsból mappelve: `odds|odd|price|decimal|decimalOdds|o`), `status: TipStatus` (won|lost|pending).
 * **Adatforrás**: Firestore path: `users/{uid}/tickets`; alap rendezés: `createdAt` desc; lapozás: első oldal `limit=20` stream, majd `startAfter(createdAt)` lekérések görgetéskor.
 * **Szerializáció**: jelenleg `fromJson(d.data())` többféle kulcsnév‑fallbackkel; a `Ticket.id` forrása jellemzően a dokumentumban tárolt `id` mező (app által írt), a `doc.id` nincs kötelezően hozzárendelve.
   - **Ajánlott**: `Ticket.fromFirestore(DocumentSnapshot)` + `doc.id` → `Ticket.id`; dátum: `Timestamp` ↔ `DateTime` konverzió.
@@ -139,6 +142,7 @@
 * [x] Üres állapot + CTA
 * [x] Hibaállapot + Retry (egységes komponensre váltás, skeleton kész)
 * [x] Részletező (bővítve; külön képernyő opcionális)
+* [x] Részletező – tippek csoportosítása (won/lost/pending), szekció feltételek (2+) beépítve
 * [x] Navigációs pontok (drawer/bottom‑nav)
 * [x] Telemetria eventek (rögzítés és ellenőrzés)
 * [x] Widget tesztek az állapotokra és interakciókra
@@ -149,7 +153,7 @@
 **Elemzés**:
 
 * ✅ 2025‑08‑29: Alap lista/üres állapot, dialog, route‑ok, i18n kulcsok, alap tesztek.
-* ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (KÉSZ), szerializáció pontosítása (`doc.id`) (KÉSZ), telemetria (KÉSZ).
+* ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (KÉSZ), szerializáció pontosítása (`doc.id`) (KÉSZ), telemetria (KÉSZ), tippek csoportosítása (KÉSZ).
 * ❌ 2025‑08‑30: Teljes rules tesztcsomag, telemetria finomhangolás.
 
 ---
@@ -157,7 +161,7 @@
 ## 🛠️ Megvalósítási terv (DoD → feladatlista)
 
 - Lapozás/infinite scroll: elkészült – finomhangolás: tie‑breaker `id` bevezetése a lekérdezésben, ha szükséges.
-- Golden tesztek: MyTickets képernyő aranyképei 3 nyelven (hu/en/de), a `golden_toolkit` szerint; CI integráció ellenőrzése.
+- Golden tesztek: MyTickets képernyő és TicketDetails dialógus aranyképei 3 nyelven (hu/en/de), a `golden_toolkit` szerint; CI integráció ellenőrzése.
 - A11y finomítás: semanticsLabel a kártyára/chipekre; kontraszt audit (AA) – sötét témában is.
 - Rules ellenőrzés: MyTickets olvasási utak pozitív/negatív eseteinek bővítése (Firestore Emulator; JS rules‑teszt mintára).
 - (Opció) Részletező külön képernyő: ha deep‑link szükséges, előbb canvas + Codex YAML, majd route és tesztek.
@@ -186,6 +190,7 @@
 ## 📝 Változásnapló (Changelog)
 
 * 2025‑08‑30: Első verzió + audit szerinti frissítés (aktuális kódállapot szinkronizálva; megvalósítási terv hozzáadva).
+* 2025‑08‑30: Dialógus – tippek státusz szerinti szekciók, 2+ elemnél ExpansionTile; odds forráskulcsok bővítése.
 
 ---
 
