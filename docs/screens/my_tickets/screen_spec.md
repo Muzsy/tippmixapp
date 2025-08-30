@@ -28,10 +28,10 @@
     - Jelenleg: `TicketCard` + `TicketStatusChip` működik.
   * [x] Tétel‑tap → részletek megnyitása (dialog vagy külön képernyő).
     - Jelenleg: `TicketDetailsDialog` minimális tartalommal.
-  * [ ] Üres állapot dedikált CTA‑val „Szelvény készítése”.
-    - Jelenleg: csak üzenet (`EmptyTicketPlaceholder`), CTA hiányzik.
+  * [x] Üres állapot dedikált CTA‑val „Szelvény készítése”.
+    - Megvalósítva: `EmptyTicketPlaceholder` CTA gombbal (GoRouter → `AppRoute.bets`).
   * [ ] Hibaállapot egységes komponenssel és Retry művelettel.
-    - Jelenleg: sima `Text(e.toString())`, Retry gomb nincs; pull‑to‑refresh van.
+    - Részben kész: hibaüzenet + `Refresh` gomb (provider refresh). Egységes komponens és skeleton még hiányzik.
   * [ ] Telemetria: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`.
     - Jelenleg: nincs instrumentáció.
 * **Nem‑célok** (jelen verzióban): más felhasználók szelvényeinek böngészése; szelvények szerkesztése/utólagos módosítása; valós pénzes tranzakciók; közösségi megosztás (későbbi iteráció).
@@ -108,16 +108,16 @@
 ## 🧪 Tesztelés (követelmények)
 
 * **Unit**: `Ticket` szerializáció (`fromFirestore`) – TERV; `TicketService.watchUserTickets()` – N/A (jelenleg képernyő szintű stream).
-* **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh (ld. `test/screens/my_tickets_screen_test.dart`).
-  - TERV: loading/empty/error állapotok kiterjesztett tesztje; interakciók (tap → részletező, Retry működés); üres állapot CTA navigációja.
+* **Widget**: létező: bejelentkezett/ki‑jelentkezett állapot, lista megjelenés, pull‑to‑refresh; dialógus megnyitása tap‑re; üres állapot CTA jelenléte; hibaállapot üzenet + Retry gomb.
+  - TERV: loading skeleton és egységes hiba‑komponens tesztje; CTA navigáció GoRouter-rel integrációs tesztben.
 * **Integration**: navigáció drawer/bottom‑nav; deep link `ticketId` (ha bevezetjük a külön screen‑t).
 * **Rules tesztek**: pozitív/negatív utak (saját vs. idegen user; tiltott mező felülírása).
 * **Elfogadási kritériumok**:
 
   * [ ] AC1 — Minden listaelem rendelkezik nem üres `id`‑val, amely megegyezik a Firestore `doc.id`‑vel. (Jelenleg: `id` mező a dokumentumból, `doc.id` nem kötelező.)
-  * [ ] AC2 — A részletező a fő kulcsmezőket és a tippek részleteit megjeleníti (stake, totalOdd, potentialWin, status, createdAt, tips...). (Jelenleg minimális tartalom.)
-  * [ ] AC3 — Üres állapotban elsődleges gombbal elérhető a „Szelvény készítése” képernyő. (Jelenleg nincs CTA.)
-  * [ ] AC4 — Hiba esetén egységes hiba‑UI és Retry; betöltéskor skeleton/shimmer látszik. (Jelenleg Text + nincs Retry; skeleton nincs.)
+  * [x] AC2 — A részletező a fő kulcsmezőket és a tippek részleteit megjeleníti (stake, totalOdd, potentialWin, status, createdAt, tips...).
+  * [x] AC3 — Üres állapotban elsődleges gombbal elérhető a „Szelvény készítése” képernyő.
+  * [ ] AC4 — Hiba esetén egységes hiba‑UI és Retry; betöltéskor skeleton/shimmer látszik. (Részben kész: Retry gomb megvan; skeleton és egységes komponens hiányzik.)
   * [ ] AC5 — Rules tesztek: idegen user adatai nem olvashatók. (Nincs teszt lefedettség.)
 
 ---
@@ -133,9 +133,9 @@
 
 * [x] UI váz (lista + komponensek alapjai)
 * [x] Adat stream / betöltés (alap működik)
-* [ ] Üres állapot + CTA (CTA bevezetendő)
-* [ ] Hibaállapot + Retry (egységes komponensre váltás)
-* [ ] Részletező (bővítendő; külön képernyő opcionális)
+* [x] Üres állapot + CTA
+* [ ] Hibaállapot + Retry (egységes komponensre váltás, skeleton hiányzik)
+* [x] Részletező (bővítve; külön képernyő opcionális)
 * [x] Navigációs pontok (drawer/bottom‑nav)
 * [ ] Telemetria eventek (rögzítés és ellenőrzés)
 * [ ] Tesztek zöldek (új/bővített esetek)
@@ -145,7 +145,7 @@
 **Elemzés**:
 
 * ✅ 2025‑08‑29: Alap lista/üres állapot, dialog, route‑ok, i18n kulcsok, alap tesztek.
-* ⏳ 2025‑08‑30: Részletező bővítése, üres állapot CTA, hiba/loader egységesítése, szerializáció pontosítása (`doc.id`).
+* ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (FOLYAMATBAN), szerializáció pontosítása (`doc.id`) (KÉSZ).
 * ❌ 2025‑08‑30: Lapozás, teljes rules tesztcsomag, telemetria finomhangolás.
 
 ---
