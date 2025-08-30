@@ -46,13 +46,16 @@ class MyTicketsScreen extends ConsumerWidget {
     } else {
       content = ticketsAsync.when(
         data: (tickets) {
-          final logged = ref.read(_listViewedLoggedProvider);
-          if (!logged) {
-            ref.read(_listViewedLoggedProvider.notifier).state = true;
-            // Fire and forget telemetry for list view
-            // ignore: unawaited_futures
-            ref.read(analyticsServiceProvider).logTicketsListViewed(tickets.length);
-          }
+          // Log list viewed once per screen lifecycle after build completes
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final logged = ref.read(_listViewedLoggedProvider);
+            if (!logged) {
+              ref.read(_listViewedLoggedProvider.notifier).state = true;
+              // fire-and-forget telemetry
+              // ignore: unawaited_futures
+              ref.read(analyticsServiceProvider).logTicketsListViewed(tickets.length);
+            }
+          });
           return RefreshIndicator(
             onRefresh: () async {
               // ignore: unused_result
