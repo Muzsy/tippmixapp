@@ -100,5 +100,20 @@ void main() {
 
     expect(find.text('Ticket Details'), findsNothing);
   });
-}
 
+  testWidgets('dialog lists tips with event name and odds', (tester) async {
+    await _pumpDialog(tester);
+
+    // Event names rendered
+    expect(find.text('Team A – Team B'), findsOneWidget);
+    expect(find.text('Team C – Team D'), findsOneWidget);
+
+    // Odds labels rendered in EN locale
+    expect(find.textContaining('Odds: 1.7'), findsOneWidget);
+    expect(find.textContaining('Odds: 2.05'), findsOneWidget);
+
+    // Close the dialog
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  });
+}

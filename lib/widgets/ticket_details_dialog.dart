@@ -21,55 +21,76 @@ class TicketDetailsDialog extends StatelessWidget {
     final dateFmt = DateFormat.yMd().add_Hm();
     return AlertDialog(
       title: Text(loc.ticket_details_title),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text('${loc.ticket_id}: '),
-              Flexible(child: Text(ticket.id, overflow: TextOverflow.ellipsis)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('${loc.ticket_id}: '),
+                Flexible(child: Text(ticket.id, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text('${loc.stakeHint}: '),
+                Text(ticket.stake.toStringAsFixed(0)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text('${loc.total_odds_label}: '),
+                Text(ticket.totalOdd.toStringAsFixed(2)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text('${loc.potential_win_label}: '),
+                Text(ticket.potentialWin.toStringAsFixed(2)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text('${loc.filtersDate}: '),
+                Text(dateFmt.format(ticket.createdAt)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('${loc.tips_label}: '),
+                Text('${tips.length}'),
+                const SizedBox(width: 8),
+                TicketStatusChip(status: ticket.status),
+              ],
+            ),
+            if (tips.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Divider(),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: tips.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final tip = tips[index];
+                  return ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(tip.eventName),
+                    subtitle: Text('${loc.odds_label}: ${tip.odds}'),
+                  );
+                },
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text('${loc.stakeHint}: '),
-              Text(ticket.stake.toStringAsFixed(0)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text('${loc.total_odds_label}: '),
-              Text(ticket.totalOdd.toStringAsFixed(2)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text('${loc.potential_win_label}: '),
-              Text(ticket.potentialWin.toStringAsFixed(2)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Text('${loc.filtersDate}: '),
-              Text(dateFmt.format(ticket.createdAt)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('${loc.tips_label}: '),
-              Text('${tips.length}'),
-              const SizedBox(width: 8),
-              TicketStatusChip(status: ticket.status),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(
