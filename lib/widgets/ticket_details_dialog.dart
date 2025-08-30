@@ -118,6 +118,13 @@ class TicketDetailsDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
+              Text(
+                loc.ticket_friendly_id.replaceFirst('{}', shortId(ticket.id)),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
               Text('${loc.ticket_id}: '),
               Flexible(
                 child: Text(
@@ -129,27 +136,27 @@ class TicketDetailsDialog extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Text('${loc.stakeHint}: '),
+                Text('${loc.ticket_stake}: '),
                 Text(ticket.stake.toStringAsFixed(0)),
               ],
             ),
             const SizedBox(height: 4),
             Row(
               children: [
-                Text('${loc.total_odds_label}: '),
+                Text('${loc.ticket_total_odd}: '),
                 Text(ticket.totalOdd.toStringAsFixed(2)),
               ],
             ),
             const SizedBox(height: 4),
             Row(
               children: [
-                Text('${loc.potential_win_label}: '),
+                Text('${loc.ticket_potential_win}: '),
                 Text(ticket.potentialWin.toStringAsFixed(2)),
               ],
             ),
             const SizedBox(height: 8),
             Row(children: [
-              Text('${loc.filtersDate}: '),
+              Text('${loc.ticket_meta_created}: '),
               Text(dateFmt.format(ticket.createdAt)),
             ]),
             if (ticket.status == TicketStatus.pending && earliestTipStart != null) ...[

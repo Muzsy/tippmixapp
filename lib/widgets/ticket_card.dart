@@ -74,7 +74,7 @@ class TicketCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(width: 4, height: double.infinity, color: _statusStripe(ticket.status)),
+              Container(key: const Key('ticket_status_stripe'), width: 4, height: double.infinity, color: _statusStripe(ticket.status)),
               const SizedBox(width: 12),
               Expanded(child: leftCol),
               const SizedBox(width: 12),

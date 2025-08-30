@@ -88,8 +88,8 @@ void main() {
     expect(find.textContaining('Total odds:'), findsOneWidget);
     expect(find.textContaining('Potential win:'), findsOneWidget);
 
-    // Date labels: createdAt and (pending) earliest tip start
-    expect(find.textContaining('Date:'), findsNWidgets(2));
+    // Created date label + (pending) earliest tip start
+    expect(find.textContaining('Created:'), findsOneWidget);
 
     // Tips count label
     expect(find.textContaining('Tips:'), findsOneWidget);
