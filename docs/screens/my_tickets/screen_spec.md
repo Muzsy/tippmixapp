@@ -75,7 +75,7 @@
 ## 🗃️ Adatmodell & források
 
 * **Modellek**: `Ticket` (kulcsmezők: `id` \[= Firestore `doc.id`], `status` \[enum: `TicketStatus`], `stake`, `totalOdd`, `potentialWin`, `createdAt`, `updatedAt`, `tips:[...]` – tipp bontások: esemény/market/választás/odds/státusz).
-* **Adatforrás**: Firestore path: `users/{uid}/tickets`; alap rendezés: `createdAt` desc; lapozás: `limit` + `startAfterDocument` (tervezett, nagy elemszámnál).
+* **Adatforrás**: Firestore path: `users/{uid}/tickets`; alap rendezés: `createdAt` desc; lapozás: első oldal `limit=20` stream, majd `startAfter(createdAt)` lekérések görgetéskor.
 * **Szerializáció**: jelenleg `fromJson(d.data())` többféle kulcsnév‑fallbackkel; a `Ticket.id` forrása jellemzően a dokumentumban tárolt `id` mező (app által írt), a `doc.id` nincs kötelezően hozzárendelve.
   - **Ajánlott**: `Ticket.fromFirestore(DocumentSnapshot)` + `doc.id` → `Ticket.id`; dátum: `Timestamp` ↔ `DateTime` konverzió.
 * **Idempotencia / konzisztencia**: egységesített mezőnév‑séma; `id` mindig `doc.id`; read‑only mezők felülírásának tiltása rules‑ban.
@@ -150,13 +150,13 @@
 
 * ✅ 2025‑08‑29: Alap lista/üres állapot, dialog, route‑ok, i18n kulcsok, alap tesztek.
 * ⏳ 2025‑08‑30: Részletező bővítése (KÉSZ), üres állapot CTA (KÉSZ), hiba/loader egységesítése (KÉSZ), szerializáció pontosítása (`doc.id`) (KÉSZ), telemetria (KÉSZ).
-* ❌ 2025‑08‑30: Lapozás, teljes rules tesztcsomag, telemetria finomhangolás.
+* ❌ 2025‑08‑30: Teljes rules tesztcsomag, telemetria finomhangolás.
 
 ---
 
 ## 🛠️ Megvalósítási terv (DoD → feladatlista)
 
-- Lapozás/infinite scroll: Firestore `limit` + `startAfterDocument`; UX döntés után implementáció és tesztek.
+- Lapozás/infinite scroll: elkészült – finomhangolás: tie‑breaker `id` bevezetése a lekérdezésben, ha szükséges.
 - Golden tesztek: MyTickets képernyő aranyképei 3 nyelven (hu/en/de), a `golden_toolkit` szerint; CI integráció ellenőrzése.
 - A11y finomítás: semanticsLabel a kártyára/chipekre; kontraszt audit (AA) – sötét témában is.
 - Rules ellenőrzés: MyTickets olvasási utak pozitív/negatív eseteinek bővítése (Firestore Emulator; JS rules‑teszt mintára).

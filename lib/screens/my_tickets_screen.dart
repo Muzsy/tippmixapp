@@ -13,6 +13,8 @@ import '../widgets/error_with_retry.dart';
 import '../widgets/my_tickets_skeleton.dart';
 import '../services/analytics_service.dart';
 
+const _pageSize = 20;
+
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid == null) {
@@ -23,19 +25,87 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
       .doc(uid)
       .collection('tickets')
       .orderBy('createdAt', descending: true)
+      .limit(_pageSize)
       .snapshots()
       .map((snap) => snap.docs.map((d) => Ticket.fromFirestore(d)).toList());
 });
 
 final _listViewedLoggedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-class MyTicketsScreen extends ConsumerWidget {
+class MyTicketsScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
 
   const MyTicketsScreen({super.key, this.showAppBar = true});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyTicketsScreen> createState() => _MyTicketsScreenState();
+}
+
+class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
+  final _controller = ScrollController();
+  final List<Ticket> _extra = [];
+  bool _loadingMore = false;
+  bool _hasMore = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_hasMore || _loadingMore) return;
+    if (!_controller.hasClients) return;
+    final threshold = 200.0; // px from bottom
+    final max = _controller.position.maxScrollExtent;
+    final offset = _controller.offset;
+    if (max - offset <= threshold) {
+      // ignore: discarded_futures
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (_loadingMore) return;
+    setState(() => _loadingMore = true);
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      // Determine last createdAt from current list
+      final current = [...?_currentBase, ..._extra];
+      if (current.isEmpty) return;
+      final last = current.last.createdAt;
+      final query = FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('tickets')
+          .orderBy('createdAt', descending: true)
+          .startAfter([last])
+          .limit(_pageSize);
+      final snap = await query.get();
+      final more = snap.docs.map((d) => Ticket.fromFirestore(d)).toList();
+      if (more.isEmpty || more.length < _pageSize) {
+        _hasMore = false;
+      }
+      setState(() {
+        _extra.addAll(more);
+      });
+    } finally {
+      if (mounted) setState(() => _loadingMore = false);
+    }
+  }
+
+  List<Ticket>? get _currentBase => ref.read(ticketsProvider).maybeWhen(data: (v) => v, orElse: () => null);
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final ticketsAsync = ref.watch(ticketsProvider);
     final loc = AppLocalizations.of(context)!;
@@ -56,19 +126,34 @@ class MyTicketsScreen extends ConsumerWidget {
               ref.read(analyticsServiceProvider).logTicketsListViewed(tickets.length);
             }
           });
+          final combined = [...tickets, ..._extra];
           return RefreshIndicator(
             onRefresh: () async {
               // ignore: unused_result
               await ref.refresh(ticketsProvider.future);
+              if (mounted) {
+                setState(() {
+                  _extra.clear();
+                  _hasMore = true;
+                });
+              }
             },
-            child: tickets.isEmpty
+            child: combined.isEmpty
                 ? ListView(children: const [EmptyTicketPlaceholder()])
                 : ListView.builder(
-                    itemCount: tickets.length,
-                    itemBuilder: (context, index) => TicketCard(
-                      ticket: tickets[index],
+                    controller: _controller,
+                    itemCount: combined.length + (_loadingMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_loadingMore && index == combined.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      final t = combined[index];
+                      return TicketCard(
+                      ticket: t,
                       onTap: () async {
-                        final t = tickets[index];
                         // Telemetry: selected + details opened
                         // ignore: unawaited_futures
                         ref.read(analyticsServiceProvider).logTicketSelected(t.id);
@@ -89,7 +174,8 @@ class MyTicketsScreen extends ConsumerWidget {
                           ),
                         );
                       },
-                    ),
+                    );
+                    },
                   ),
           );
         },
