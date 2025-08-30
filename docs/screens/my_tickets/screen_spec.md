@@ -94,7 +94,7 @@
 ## 📊 Telemetria & mérőszámok
 
 * **Eventek**: `tickets_list_viewed`, `ticket_selected`, `ticket_details_opened`, `ticket_action_copy/share/delete` (ha aktiválva), `error_shown`.
-  - Implementált: `tickets_list_viewed` (lista megnyitáskor egyszer), `ticket_selected` (kártya tap), `ticket_details_opened` (részletező megnyitás), `error_shown` (hibaállapot megjelenítésekor).
+  - Implementált: `tickets_list_viewed` (lista megnyitáskor egyszer), `ticket_selected` (kártya tap), `ticket_details_opened` (részletező megnyitás), `error_shown` (hibaállapot megjelenítésekor), `tickets_empty_cta_clicked` (üres állapot CTA gomb megnyomása).
   - Paraméterek: ticketId (normalizált, max 64), status (enum: pending/won/lost/voided), count/tips (clamp), stake/totalOdd/potentialWin (clamp+round), screen (normalizált), message (rövidített, max 120 char).
 * **Funnel**: lista megnyitás → tétel megnyitás → (akció/konverzió) vagy „Szelvény készítése” CTA kattintás.
 

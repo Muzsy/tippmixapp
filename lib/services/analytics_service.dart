@@ -146,6 +146,23 @@ class AnalyticsService {
       );
     } catch (_) {}
   }
+
+  // --- CTA telemetry -------------------------------------------------------
+
+  Future<void> logTicketsEmptyCtaClicked({
+    String screen = 'my_tickets',
+    String destination = 'bets',
+  }) async {
+    try {
+      await _analytics?.logEvent(
+        name: 'tickets_empty_cta_clicked',
+        parameters: {
+          'screen': TelemetrySanitizer.normalizeScreenId(screen),
+          'dest': TelemetrySanitizer.normalizeScreenId(destination),
+        },
+      );
+    } catch (_) {}
+  }
 }
 
 final analyticsServiceProvider = Provider((ref) => AnalyticsService());
