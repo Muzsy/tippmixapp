@@ -16,11 +16,17 @@ class SplashController extends StateNotifier<AsyncValue<AppRoute>> {
 
   Future<void> _init() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
-    unawaited(
-      Future.microtask(() async {
+    unawaited(Future(() async {
+      try {
+        await remoteConfig.setConfigSettings(RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 10),
+          minimumFetchInterval: const Duration(minutes: 5),
+        ));
         await remoteConfig.fetchAndActivate();
-      }),
-    );
+      } catch (_) {
+        // Remote Config fetch shouldn't block app start/login
+      }
+    }));
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
