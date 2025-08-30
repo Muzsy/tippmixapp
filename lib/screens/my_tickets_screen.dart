@@ -10,6 +10,8 @@ import '../providers/auth_provider.dart';
 import '../widgets/ticket_card.dart';
 import '../widgets/empty_ticket_placeholder.dart';
 import '../widgets/ticket_details_dialog.dart';
+import '../widgets/error_with_retry.dart';
+import '../widgets/my_tickets_skeleton.dart';
 
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -65,24 +67,13 @@ class MyTicketsScreen extends ConsumerWidget {
                   ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(e.toString(), textAlign: TextAlign.center),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.refresh(ticketsProvider.future);
-                  },
-                  child: Text(loc.events_screen_refresh),
-                ),
-              ],
-            ),
-          ),
+        loading: () => const MyTicketsSkeleton(),
+        error: (e, _) => ErrorWithRetry(
+          message: e.toString(),
+          retryLabel: loc.events_screen_refresh,
+          onRetry: () async {
+            await ref.refresh(ticketsProvider.future);
+          },
         ),
       );
     }

@@ -211,4 +211,25 @@ void main() {
     expect(find.textContaining('boom'), findsOneWidget);
     expect(find.text('Refresh'), findsOneWidget);
   });
+
+  testWidgets('loading state shows skeleton list', (tester) async {
+    // Create a stream controller that doesn't emit immediately to keep loading state
+    final controller = StreamController<List<Ticket>>();
+
+    await tester.pumpWidget(
+      _buildApp(
+        auth: authProvider.overrideWith(
+          (ref) => FakeAuthNotifier(User(id: 'u1', email: 'e', displayName: 'Me')),
+        ),
+        tickets: ticketsProvider.overrideWith((ref) => controller.stream),
+      ),
+    );
+
+    // Initially loading: skeleton should be visible
+    await tester.pump();
+    expect(find.byType(ListView), findsOneWidget);
+
+    // Clean up
+    await controller.close();
+  });
 }
