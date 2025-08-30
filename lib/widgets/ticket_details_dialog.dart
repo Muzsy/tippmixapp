@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/ticket_model.dart';
 import '../models/tip_model.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'ticket_status_chip.dart';
 
 class TicketDetailsDialog extends StatelessWidget {
   final Ticket ticket;
@@ -16,9 +18,59 @@ class TicketDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final dateFmt = DateFormat.yMd().add_Hm();
     return AlertDialog(
-      title: Text('${loc.ticket_id} ${ticket.id}'),
-      content: Text('${loc.tips_label}: ${tips.length}'),
+      title: Text(loc.ticket_details_title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('${loc.ticket_id}: '),
+              Flexible(child: Text(ticket.id, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text('${loc.stakeHint}: '),
+              Text(ticket.stake.toStringAsFixed(0)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text('${loc.total_odds_label}: '),
+              Text(ticket.totalOdd.toStringAsFixed(2)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text('${loc.potential_win_label}: '),
+              Text(ticket.potentialWin.toStringAsFixed(2)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text('${loc.filtersDate}: '),
+              Text(dateFmt.format(ticket.createdAt)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('${loc.tips_label}: '),
+              Text('${tips.length}'),
+              const SizedBox(width: 8),
+              TicketStatusChip(status: ticket.status),
+            ],
+          ),
+        ],
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
