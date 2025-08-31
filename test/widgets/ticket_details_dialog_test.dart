@@ -77,28 +77,26 @@ void main() {
   testWidgets('dialog shows core fields and labels', (tester) async {
     await _pumpDialog(tester);
 
-    // Title
-    expect(find.text('Ticket Details'), findsOneWidget);
+    final ctx = tester.element(find.byType(AlertDialog));
+    final loc = AppLocalizations.of(ctx)!;
 
-    // Ticket id label
-    expect(find.textContaining('Ticket:'), findsOneWidget);
+    // Title localized
+    expect(find.text(loc.ticket_details_title), findsOneWidget);
 
-    // Stake, Total odds, Potential win
-    expect(find.textContaining('Stake:'), findsOneWidget);
-    expect(find.textContaining('Total odds:'), findsOneWidget);
-    expect(find.textContaining('Potential win:'), findsOneWidget);
-
-    // Created date label + (pending) earliest tip start
-    expect(find.textContaining('Created:'), findsOneWidget);
+    // Meta labels localized
+    expect(find.textContaining(loc.ticket_stake), findsWidgets);
+    expect(find.textContaining(loc.ticket_total_odd), findsWidgets);
+    expect(find.textContaining(loc.ticket_potential_win), findsWidgets);
+    expect(find.textContaining(loc.ticket_meta_created), findsWidgets);
 
     // Tips count label
-    expect(find.textContaining('Tips:'), findsOneWidget);
+    expect(find.textContaining(loc.tips_label), findsWidgets);
 
     // Close the dialog
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ticket Details'), findsNothing);
+    expect(find.text(loc.ticket_details_title), findsNothing);
   });
 
   testWidgets('dialog lists tips with event name and odds', (tester) async {

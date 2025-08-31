@@ -1,26 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/ticket_model.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/models/user.dart' as app;
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/providers/bet_slip_provider.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
 import 'package:tippmixapp/widgets/empty_ticket_placeholder.dart';
 
-// We manipulate auth state in tests via ProviderScope.containerOf(context)
-// to avoid wiring a custom notifier/provider type.
+// We avoid real Firebase by injecting a fake AuthService that exposes
+// a controllable auth state stream without platform channels.
+class _FakeAuthService implements AuthService {
+  _FakeAuthService(this._controller);
+  final StreamController<app.User?> _controller;
+  @override
+  Stream<app.User?> authStateChanges() => _controller.stream;
+  @override
+  Future<app.User?> signInWithEmail(String email, String password) async => null;
+  @override
+  Future<app.User?> signInWithGoogle() async => null;
+  @override
+  Future<app.User?> signInWithApple() async => null;
+  @override
+  Future<app.User?> signInWithFacebook() async => null;
+  @override
+  Future<app.User?> registerWithEmail(String email, String password) async => null;
+  @override
+  Future<bool> validateEmailUnique(String email) async => true;
+  @override
+  Future<bool> validateNicknameUnique(String nickname) async => true;
+  @override
+  Future<void> signOut() async {}
+  @override
+  Future<void> sendEmailVerification() async {}
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {}
+  @override
+  Future<bool> pollEmailVerification({Duration timeout = const Duration(minutes: 3), Duration interval = const Duration(seconds: 5)}) async => true;
+  @override
+  bool get isEmailVerified => true;
+  @override
+  app.User? get currentUser => null;
+}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('MyTicketsScreen', () {
     testWidgets('shows empty placeholder when user is null', (tester) async {
+      final authCtrl = StreamController<app.User?>();
       await tester.pumpWidget(
         ProviderScope(
-          overrides: const [],
+          overrides: [
+            authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
+          ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
@@ -60,9 +99,13 @@ void main() {
       // Override ticketsProvider to avoid real Firestore
       final ticketsOverride = ticketsProvider.overrideWith((ref) => Stream.value([t]));
 
+      final authCtrl = StreamController<app.User?>();
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [ticketsOverride],
+          overrides: [
+            ticketsOverride,
+            authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
+          ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
@@ -71,11 +114,8 @@ void main() {
         ),
       );
 
-      // After mounting, update auth state directly via container
-      final ctx = tester.element(find.byType(MyTicketsScreen));
-      final container = ProviderScope.containerOf(ctx);
-      container.read(authProvider.notifier).state =
-          AuthState(user: app.User(id: 'u1', email: 'x@y', displayName: 'X'));
+      // After mounting, push a user into the fake auth stream
+      authCtrl.add(app.User(id: 'u1', email: 'x@y', displayName: 'X'));
 
       await tester.pumpAndSettle();
 
