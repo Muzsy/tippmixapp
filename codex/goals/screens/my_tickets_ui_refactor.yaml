@@ -1,0 +1,72 @@
+
+# Codex YAML – végrehajtási célok
+
+> Fájlnév javaslat: `codex/goals/screens/my_tickets_ui_refactor.yaml`
+
+```yaml
+version: 1
+name: MyTickets UI Refactor
+about: "Státusz-chipek egységesítése, TicketCard információ-bővítés, részletező dialógus csoportosítás – Material3/FlexColorScheme szerint."
+references:
+  - canvas: "MyTickets UI Refactor – Spec + Codex YAML"
+steps:
+  - name: Státusz-chip színezés és méretezés Material3 szerint
+    description: |
+      A TicketStatusChip a Theme.of(context).colorScheme *Container/onContainer* párosait használja.
+      Egységes magasság (≥32dp), 12–16dp vízszintes padding, 8dp kerekítés. Opcionális kis ikon variáns.
+    outputs:
+      - Frissített: lib/widgets/ticket_status_chip.dart
+      - Golden: test/golden/ticket_status_chip_light.png
+      - Golden: test/golden/ticket_status_chip_dark.png
+
+  - name: TicketCard információ-architektúra frissítése
+    description: |
+      Kétoszlopos layout bevezetése. Bal oldali meta (Tét • Össz. odds • Tippek; alatta Dátum),
+      jobb oldalon nagy "Várható nyeremény" és státusz-chip. Bal szélen 2–4dp státusz-sáv.
+      Számformátum HU-lokalizációval, fix 2 tizedes.
+    outputs:
+      - Frissített: lib/widgets/ticket_card.dart
+      - Teszt: test/widget/ticket_card_layout_test.dart
+
+  - name: Részletező dialógus – csoportosított tipplista
+    description: |
+      A tippeket status szerint csoportosítjuk (won/lost/pending) és összecsukható szekciókban listázzuk.
+      A fejlécben felhasználóbarát ticket ID (pl. "Szelvény #4755"), a nyers doc.id másolható menüből.
+      Az "Odds: 1.0" fallback eltávolítása/korrekt megjelenítés.
+    outputs:
+      - Frissített: lib/widgets/ticket_details_dialog.dart
+      - Teszt: test/widget/ticket_details_grouping_test.dart
+      - Golden: test/golden/ticket_details_light.png
+      - Golden: test/golden/ticket_details_dark.png
+
+  - name: Lokalizációs kulcsok felvétele és HU/EN fordítások
+    description: |
+      Új i18n kulcsok hozzáadása: ticket_status_won/lost/pending, ticket_friendly_id,
+      ticket_details.section_won/.section_lost/.section_pending, ticket_meta_created/updated,
+      ticket_potential_win, ticket_total_odd, ticket_stake.
+    outputs:
+      - Frissített: lib/l10n/intl_*.arb (HU/EN)
+      - Teszt: test/i18n/my_tickets_keys_exist_test.dart
+
+  - name: Telemetria bővítés
+    description: |
+      Eventek: tickets_list_chip_tapped (status), ticket_details_group_toggled (group, expanded, count),
+      ticket_details_item_viewed (eventId/outcome). Rögzítsük az AnalyticsService-ben.
+    outputs:
+      - Frissített: lib/services/analytics_service.dart
+      - Teszt: test/unit/analytics_my_tickets_test.dart
+
+  - name: Golden és widget tesztek futtatása
+    description: |
+      Futtasd: `flutter analyze`, `flutter test`. Golden képek frissítése szükség esetén, CI-ben is.
+    outputs:
+      - Log: build/my_tickets_ui_refactor_test_output.txt
+```
+
+```
+
+---
+
+## 🧾 Megjegyzések
+- A fenti fájl‑útvonalak a jelenlegi dokumentáció alapján készültek; a tényleges repóhoz igazítsa a Codex futtatáskor.
+

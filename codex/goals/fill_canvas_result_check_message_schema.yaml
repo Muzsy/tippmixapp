@@ -1,0 +1,19 @@
+goal: "Result-check message schema: per-fixture finalize payload"
+owner: platform
+source_docs:
+  - codex/MD/match_finalizer_scaling_tasks.md
+  - docs/backend/data_model_en.md
+acceptance:
+  - Upstream publishes {type: "finalize", fixtureId: "<id>"} to topic RESULT_CHECK
+  - match_finalizer parses fixtureId and runs fixture-mode path
+  - DLQ/retry preserved; attempt attribute incremented
+  - Backward compatibility: legacy job-mode still works
+steps:
+  - Define topic name(s) in env (RESULT_TOPIC, DLQ_TOPIC)
+  - Update upstream producer to emit one message per finished fixture
+  - Document example payloads and attributes in docs/backend/data_model_en.md
+  - Add integration note in cloud_functions README (optional)
+out_of_scope:
+  - Producer service deployment (handled in upstream repo)
+tracking:
+  pr_labels: ["pubsub", "schema", "finalizer"]

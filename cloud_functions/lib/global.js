@@ -6,4 +6,13 @@ const params_1 = require("firebase-functions/params");
 // Secret from Secret Manager (Console → Secret Manager → API_FOOTBALL_KEY)
 exports.API_FOOTBALL_KEY = (0, params_1.defineSecret)('API_FOOTBALL_KEY');
 // Global options for all v2 functions – region + secret binding
-(0, options_1.setGlobalOptions)({ region: 'europe-central2', secrets: [exports.API_FOOTBALL_KEY] });
+(0, options_1.setGlobalOptions)({
+    region: 'europe-central2',
+    secrets: [exports.API_FOOTBALL_KEY],
+    // Scaling knobs – align with scaling guide
+    concurrency: 15,
+    minInstances: 1,
+    maxInstances: 30,
+    cpu: 1,
+    memory: '1GiB',
+});

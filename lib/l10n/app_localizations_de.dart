@@ -181,6 +181,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get copy_success => 'Schein kopiert!';
 
   @override
+  String get copy_id => 'ID kopieren';
+
+  @override
   String countdown_to_kickoff(Object time) {
     return 'Anstoß in $time';
   }
@@ -1006,7 +1009,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get total_odds_label => 'Gesamtquote';
 
   @override
-  String get ticket_friendly_id => 'Wettschein #{}';
+  String get ticket_details_section_won => 'Gewonnene Tipps';
+
+  @override
+  String get ticket_details_section_lost => 'Verlorene Tipps';
+
+  @override
+  String get ticket_details_section_pending => 'Ausstehende Tipps';
+
+  @override
+  String get ticket_details_no_items => 'Keine Tipps anzuzeigen';
+
+  @override
+  String get ticket_friendly_id => 'Wettschein';
 
   @override
   String get ticket_meta_created => 'Erstellt';
@@ -1022,18 +1037,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ticket_stake => 'Einsatz';
-
-  @override
-  String get ticket_details_section_won => 'Gewonnene Tipps';
-
-  @override
-  String get ticket_details_section_lost => 'Verlorene Tipps';
-
-  @override
-  String get ticket_details_section_pending => 'Ausstehende Tipps';
-
-  @override
-  String get ticket_details_no_items => 'Keine Tipps anzuzeigen';
 
   @override
   String get unfollow => 'Entfolgen';

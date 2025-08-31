@@ -5,4 +5,13 @@ import { defineSecret } from 'firebase-functions/params';
 export const API_FOOTBALL_KEY = defineSecret('API_FOOTBALL_KEY');
 
 // Global options for all v2 functions – region + secret binding
-setGlobalOptions({ region: 'europe-central2', secrets: [API_FOOTBALL_KEY] });
+setGlobalOptions({
+  region: 'europe-central2',
+  secrets: [API_FOOTBALL_KEY],
+  // Scaling knobs – align with scaling guide
+  concurrency: 15,
+  minInstances: 1,
+  maxInstances: 30,
+  cpu: 1,
+  memory: '1GiB',
+});

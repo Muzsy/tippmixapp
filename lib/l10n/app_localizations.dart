@@ -430,6 +430,12 @@ abstract class AppLocalizations {
   /// **'Ticket copied!'**
   String get copy_success;
 
+  /// No description provided for @copy_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy ID'**
+  String get copy_id;
+
   /// No description provided for @countdown_to_kickoff.
   ///
   /// In en, this message translates to:
@@ -2013,13 +2019,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total odds'**
   String get total_odds_label;
-  
-  String get ticket_friendly_id;
-  String get ticket_meta_created;
-  String get ticket_meta_updated;
-  String get ticket_potential_win;
-  String get ticket_total_odd;
-  String get ticket_stake;
 
   /// No description provided for @ticket_details_section_won.
   ///
@@ -2044,6 +2043,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No tips to display'**
   String get ticket_details_no_items;
+
+  /// No description provided for @ticket_friendly_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get ticket_friendly_id;
+
+  /// No description provided for @ticket_meta_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get ticket_meta_created;
+
+  /// No description provided for @ticket_meta_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get ticket_meta_updated;
+
+  /// No description provided for @ticket_potential_win.
+  ///
+  /// In en, this message translates to:
+  /// **'Potential win'**
+  String get ticket_potential_win;
+
+  /// No description provided for @ticket_total_odd.
+  ///
+  /// In en, this message translates to:
+  /// **'Total odds'**
+  String get ticket_total_odd;
+
+  /// No description provided for @ticket_stake.
+  ///
+  /// In en, this message translates to:
+  /// **'Stake'**
+  String get ticket_stake;
 
   /// No description provided for @unfollow.
   ///

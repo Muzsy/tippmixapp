@@ -180,6 +180,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get copy_success => 'Szelvény másolva!';
 
   @override
+  String get copy_id => 'ID másolása';
+
+  @override
   String countdown_to_kickoff(Object time) {
     return 'Kezdésig: $time';
   }
@@ -1004,7 +1007,19 @@ class AppLocalizationsHu extends AppLocalizations {
   String get total_odds_label => 'Össz odds';
 
   @override
-  String get ticket_friendly_id => 'Szelvény #{}';
+  String get ticket_details_section_won => 'Nyertes tippek';
+
+  @override
+  String get ticket_details_section_lost => 'Vesztes tippek';
+
+  @override
+  String get ticket_details_section_pending => 'Függőben lévő tippek';
+
+  @override
+  String get ticket_details_no_items => 'Nincs megjeleníthető tipp';
+
+  @override
+  String get ticket_friendly_id => 'Szelvény';
 
   @override
   String get ticket_meta_created => 'Létrehozva';
@@ -1020,18 +1035,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get ticket_stake => 'Tét';
-
-  @override
-  String get ticket_details_section_won => 'Nyertes tippek';
-
-  @override
-  String get ticket_details_section_lost => 'Vesztes tippek';
-
-  @override
-  String get ticket_details_section_pending => 'Függőben lévő tippek';
-
-  @override
-  String get ticket_details_no_items => 'Nincs megjeleníthető tipp';
 
   @override
   String get unfollow => 'Követve';

@@ -89,14 +89,130 @@ const match_finalizer = async (message) => {
         attrKeys: Object.keys(message.attributes || {}),
     });
     let job;
+    let fixtureIdFromMsg;
     try {
         const payloadStr = Buffer.from(message.data || "", "base64").toString("utf8");
-        ({ job } = JSON.parse(payloadStr));
+        const parsed = JSON.parse(payloadStr);
+        job = parsed.job;
+        if ((parsed.type === 'finalize' || !parsed.type) && parsed.fixtureId != null) {
+            fixtureIdFromMsg = String(parsed.fixtureId);
+        }
         // Batch pagination over pending tickets
         let lastDoc = undefined;
         let batches = 0;
         let anyProcessed = false;
         let morePossible = false;
+        // If fixtureId is provided, process only that fixture's pending tips via index
+        if (fixtureIdFromMsg) {
+            const fid = fixtureIdFromMsg;
+            const idxSnap = await firebase_1.db
+                .collection('fixtures').doc(fid)
+                .collection('ticketTips')
+                .where('status', '==', 'pending')
+                .limit(BATCH_SIZE)
+                .get();
+            if (idxSnap.empty) {
+                logger.info('match_finalizer.no_pending_fixture', { fixtureId: fid });
+                return 'OK';
+            }
+            const ticketRefs = [];
+            const pairs = [];
+            idxSnap.docs.forEach((d) => {
+                const userId = String(d.get('userId'));
+                const ticketId = String(d.get('ticketId'));
+                const tipIndex = Number(d.get('tipIndex')) || 0;
+                const tRef = firebase_1.db.collection('users').doc(userId).collection('tickets').doc(ticketId);
+                ticketRefs.push(tRef);
+                pairs.push({ userId, ticketId, tipIndex, idxRef: d.ref });
+            });
+            const ticketSnaps = await (0, firestore_1.getFirestore)().getAll(...ticketRefs);
+            // Fetch only the given fixtureId
+            let providerResultsArr;
+            try {
+                providerResultsArr = await provider.getScores([fid]);
+            }
+            catch (err) {
+                logger.error('match_finalizer.result_provider_error', { error: err });
+                throw err;
+            }
+            const providerResults = {};
+            for (const r of providerResultsArr)
+                providerResults[r.id] = r;
+            const results = {};
+            for (const [eid, r] of Object.entries(providerResults)) {
+                results[eid] = {
+                    completed: !!r.completed,
+                    scores: r.scores,
+                    home_team: r.home_team,
+                    away_team: r.away_team,
+                    winner: r.winner,
+                };
+            }
+            const voidSet = new Set(Object.entries(providerResults)
+                .filter(([_, r]) => r?.canceled === true || r?.status === 'canceled')
+                .map(([eid]) => eid));
+            // Batch index status updates together
+            const batch = (0, firestore_1.getFirestore)().batch();
+            for (let i = 0; i < ticketSnaps.length; i++) {
+                const snap = ticketSnaps[i];
+                if (!snap?.exists)
+                    continue;
+                const tipsRaw = snap.get('tips') || [];
+                if (!tipsRaw.length)
+                    continue;
+                const tipResults = [];
+                for (let ti = 0; ti < tipsRaw.length; ti++) {
+                    const t = tipsRaw[ti];
+                    const pick = (t?.outcome ?? '').trim();
+                    const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
+                    const evaluator = (0, evaluators_1.getEvaluator)(String(marketKey));
+                    const evKey = String(t?.eventId ?? t?.fixtureId ?? '');
+                    const normRes = evKey === fid ? results[fid] : undefined;
+                    if (!normRes || !evaluator) {
+                        tipResults.push({
+                            ...t,
+                            market: String(marketKey).toUpperCase(),
+                            selection: pick,
+                            result: t?.result ?? 'pending',
+                            oddsSnapshot: t?.odds ?? t?.oddsSnapshot,
+                        });
+                        continue;
+                    }
+                    const tipInput = {
+                        marketKey: String(marketKey),
+                        selection: pick,
+                        odds: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
+                    };
+                    let result = evaluator.evaluate(tipInput, normRes);
+                    if (voidSet.has(fid))
+                        result = 'void';
+                    tipResults.push({
+                        ...t,
+                        market: String(marketKey).toUpperCase(),
+                        selection: pick,
+                        result,
+                        oddsSnapshot: tipInput.odds,
+                    });
+                }
+                await finalizeTicketAtomic(snap.ref, { stake: snap.get('stake'), tips: tipResults });
+                // sync index doc status for this pair (batched)
+                const pair = pairs[i];
+                const idx = pair?.tipIndex ?? 0;
+                const newStatus = tipResults[idx]?.result ?? 'pending';
+                batch.set(pair.idxRef, { status: newStatus, updatedAt: new Date() }, { merge: true });
+            }
+            await batch.commit();
+            // If we hit the page size, re-enqueue to continue processing this fixture
+            if (idxSnap.size >= BATCH_SIZE) {
+                await pubsub.topic(RESULT_TOPIC).publishMessage({
+                    data: Buffer.from(JSON.stringify({ type: 'finalize', fixtureId: fid })),
+                    attributes: { attempt: '0' },
+                });
+                logger.info('match_finalizer.enqueue_next_fixture_page', { fixtureId: fid });
+            }
+            logger.info('match_finalizer.finalize_done_fixture', { fixtureId: fid, count: ticketSnaps.length });
+            return 'OK';
+        }
         while (batches < MAX_BATCHES) {
             const filterUid = process.env.FILTER_UID;
             let q;

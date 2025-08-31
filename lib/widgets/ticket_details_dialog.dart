@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import '../models/ticket_model.dart';
 // duplicate import removed
 import '../services/analytics_service.dart';
@@ -111,7 +112,37 @@ class TicketDetailsDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      title: Text(loc.ticket_details_title),
+      title: Row(
+        children: [
+          Expanded(child: Text(loc.ticket_details_title)),
+          PopupMenuButton<String>(
+            tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+            onSelected: (value) async {
+              if (value == 'copy_id') {
+                await Clipboard.setData(ClipboardData(text: ticket.id));
+                // Reuse existing localized success message
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.copy_success)),
+                  );
+                }
+              }
+            },
+            itemBuilder: (ctx) => [
+              PopupMenuItem<String>(
+                value: 'copy_id',
+                child: Row(
+                  children: [
+                    const Icon(Icons.copy, size: 18),
+                    const SizedBox(width: 8),
+                    Text(loc.copy_id),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -119,46 +150,38 @@ class TicketDetailsDialog extends StatelessWidget {
           children: [
             Row(children: [
               Text(
-                loc.ticket_friendly_id.replaceFirst('{}', shortId(ticket.id)),
+                '${loc.ticket_id} #${shortId(ticket.id)}',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ]),
             const SizedBox(height: 8),
-            Row(children: [
-              Text('${loc.ticket_id}: '),
-              Flexible(
-                child: Text(
-                  shortId(ticket.id),
-                  overflow: TextOverflow.ellipsis,
+            // Meta summary row (responsive wrap)
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: [
+                _MetaItem(
+                  label: loc.ticket_id,
+                  value: shortId(ticket.id),
                 ),
-              ),
-            ]),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Text('${loc.ticket_stake}: '),
-                Text(ticket.stake.toStringAsFixed(0)),
+                _MetaItem(
+                  label: loc.ticket_stake,
+                  value: ticket.stake.toStringAsFixed(0),
+                ),
+                _MetaItem(
+                  label: loc.ticket_total_odd,
+                  value: ticket.totalOdd.toStringAsFixed(2),
+                ),
+                _MetaItem(
+                  label: loc.ticket_potential_win,
+                  value: ticket.potentialWin.toStringAsFixed(2),
+                ),
+                _MetaItem(
+                  label: loc.ticket_meta_created,
+                  value: dateFmt.format(ticket.createdAt),
+                ),
               ],
             ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Text('${loc.ticket_total_odd}: '),
-                Text(ticket.totalOdd.toStringAsFixed(2)),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Text('${loc.ticket_potential_win}: '),
-                Text(ticket.potentialWin.toStringAsFixed(2)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(children: [
-              Text('${loc.ticket_meta_created}: '),
-              Text(dateFmt.format(ticket.createdAt)),
-            ]),
             if (ticket.status == TicketStatus.pending && earliestTipStart != null) ...[
               const SizedBox(height: 8),
               Row(children: [
@@ -192,6 +215,29 @@ class TicketDetailsDialog extends StatelessWidget {
           child: Text(loc.ok),
         ),
       ],
+    );
+  }
+}
+
+class _MetaItem extends StatelessWidget {
+  final String label;
+  final String value;
+  const _MetaItem({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: textTheme.labelSmall),
+          const SizedBox(height: 2),
+          Text(value, style: textTheme.bodyMedium),
+        ],
+      ),
     );
   }
 }

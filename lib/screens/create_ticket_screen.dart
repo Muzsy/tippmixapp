@@ -161,11 +161,21 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             ),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${loc.total_odds_label}: $totalOdd'),
-                Text(
-                  '${loc.potential_win_label}: ${potentialWin.toStringAsFixed(2)} Ft',
+                Expanded(
+                  child: Text(
+                    '${loc.total_odds_label}: $totalOdd',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(
+                    '${loc.potential_win_label}: ${potentialWin.toStringAsFixed(2)} Ft',
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
                 ),
               ],
             ),

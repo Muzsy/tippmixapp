@@ -1,0 +1,26 @@
+goal: "Introduce fixture-index subcollection and integrate with match_finalizer"
+owner: backend
+source_docs:
+  - codex/MD/match_finalizer_scaling_tasks.md
+  - docs/backend/data_model_en.md
+  - docs/backend/security_rules_en.md
+acceptance:
+  - Fixture-scoped finalize uses fixtures/<id>/ticketTips index
+  - Pub/Sub message with fixtureId processes only related tickets
+  - Index entries upsert on ticket create/update (status sync)
+  - No new hard-coded strings; l10n untouched
+  - CI green: flutter analyze (lib test integration_test bin tool) + CF TypeScript build
+steps:
+  - Add Firestore trigger to upsert fixtures/<fid>/ticketTips
+  - Add index doc schema: {userId,ticketId,tipIndex,status,eventId,fixtureId}
+  - Extend match_finalizer to accept {type: "finalize", fixtureId}
+  - Fixture-mode: query fixtures/<fid>/ticketTips where status==pending limit N
+  - Batch fetch tickets and evaluate only the provided fixture
+  - Update index doc status after evaluation
+  - Keep legacy batch mode as fallback when no fixtureId
+  - Add docs note in data_model_en.md (non-breaking)
+out_of_scope:
+  - Full backfill of historical tickets (follow-up job)
+  - Nightly sweep/Dataflow
+tracking:
+  pr_labels: ["finalizer", "scaling", "firestore-index"]

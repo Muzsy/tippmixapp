@@ -33,9 +33,9 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
-const eventarc_1 = require("firebase-functions/v2/eventarc");
+const pubsub_1 = require("firebase-functions/v2/pubsub");
 const logger = __importStar(require("firebase-functions/logger"));
 const match_finalizer_1 = require("./src/match_finalizer");
 var coin_trx_logic_1 = require("./coin_trx.logic");
@@ -53,41 +53,29 @@ var admin_coin_ops_1 = require("./admin_coin_ops");
 Object.defineProperty(exports, "admin_coin_ops", { enumerable: true, get: function () { return admin_coin_ops_1.admin_coin_ops; } });
 var username_reservation_1 = require("./src/username_reservation");
 Object.defineProperty(exports, "reserve_nickname", { enumerable: true, get: function () { return username_reservation_1.reserve_nickname; } });
+var fixtures_index_1 = require("./fixtures_index");
+Object.defineProperty(exports, "onTicketWritten_indexFixture", { enumerable: true, get: function () { return fixtures_index_1.onTicketWritten_indexFixture; } });
+var backfill_fixture_index_1 = require("./backfill_fixture_index");
+Object.defineProperty(exports, "backfill_fixture_index", { enumerable: true, get: function () { return backfill_fixture_index_1.backfill_fixture_index; } });
+var finalize_publish_1 = require("./src/finalize_publish");
+Object.defineProperty(exports, "finalize_publish", { enumerable: true, get: function () { return finalize_publish_1.finalize_publish; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
-// Gen2 Pub/Sub trigger (topic set by deploy), handle raw CloudEvent to avoid
-// v2 pubsub wrapper constructing Message on undefined event.data.
-exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.pubsub.topic.v1.messagePublished', async (event) => {
-    // Védő log + guard, hogy üres event esetén is értelmezhető legyen a viselkedés
-    const ev = event;
-    let dataB64 = ev?.data?.message?.data;
-    let attrs = ev?.data?.message?.attributes;
-    // Eventarc CUSTOM_PUBSUB eset: data.data / data.attributes
-    if (!dataB64 && ev?.data?.data)
-        dataB64 = ev.data.data;
-    if (!attrs && ev?.data?.attributes)
-        attrs = ev.data.attributes;
-    // Ha továbbra sincs dataB64, próbáljuk az egész data objektumot JSON-ként base64-elni
-    if (!dataB64 && ev?.data) {
-        try {
-            dataB64 = Buffer.from(JSON.stringify(ev.data), 'utf8').toString('base64');
-        }
-        catch (_) { }
-    }
+// Gen2 Pub/Sub trigger – topic: result-check
+exports.match_finalizer = (0, pubsub_1.onMessagePublished)('result-check', async (event) => {
+    const dataB64 = event.data.message?.data;
+    const attrs = event.data.message?.attributes || undefined;
     const hasMsg = !!dataB64;
     let eventType;
     try {
-        const raw = dataB64;
-        if (raw) {
-            const jsonStr = Buffer.from(raw, 'base64').toString('utf8');
+        if (dataB64) {
+            const jsonStr = Buffer.from(dataB64, 'base64').toString('utf8');
             const parsed = JSON.parse(jsonStr);
             if (parsed && typeof parsed === 'object' && parsed.type === 'diag-check') {
                 eventType = 'diag-check';
             }
         }
     }
-    catch (_) {
-        // ignore parse errors – not a fatal condition for logging
-    }
+    catch (_) { }
     logger.info('match_finalizer.start', {
         hasMsg,
         hasData: !!dataB64,
@@ -95,7 +83,6 @@ exports.match_finalizer = (0, eventarc_1.onCustomEventPublished)('google.cloud.p
         ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
-        // INFO szintre állítva – nem tekintjük hibának a hiányzó üzenetet
         logger.info('match_finalizer.no_message');
         return;
     }

@@ -1,0 +1,22 @@
+{
+  "displayName": "DLQ spike: match_finalizer.sent_to_dlq > 0",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "DLQ count > 0 in 5m",
+      "conditionThreshold": {
+        "filter": "metric.type=\"logging.googleapis.com/user/mf_sent_to_dlq_count\" resource.type=\"cloud_run_revision\"",
+        "comparison": "COMPARISON_GT",
+        "thresholdValue": 0,
+        "duration": "300s",
+        "trigger": { "count": 1 },
+        "aggregations": [
+          { "alignmentPeriod": "60s", "perSeriesAligner": "ALIGN_DELTA" }
+        ]
+      }
+    }
+  ],
+  "notificationChannels": [],
+  "enabled": true
+}
+
