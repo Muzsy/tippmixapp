@@ -71,15 +71,21 @@ class TicketCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(key: const Key('ticket_status_stripe'), width: 4, height: double.infinity, color: _statusStripe(ticket.status)),
-              const SizedBox(width: 12),
-              Expanded(child: leftCol),
-              const SizedBox(width: 12),
-              rightCol,
-            ],
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  key: const Key('ticket_status_stripe'),
+                  width: 4,
+                  color: _statusStripe(ticket.status),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: leftCol),
+                const SizedBox(width: 12),
+                rightCol,
+              ],
+            ),
           ),
         ),
       ),
