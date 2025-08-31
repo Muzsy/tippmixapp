@@ -24,7 +24,7 @@ class TicketCard extends StatelessWidget {
       ..minimumFractionDigits = 0
       ..maximumFractionDigits = 0;
 
-    Color _statusStripe(TicketStatus s) {
+    Color statusStripe(TicketStatus s) {
       final scheme = Theme.of(context).colorScheme;
       switch (s) {
         case TicketStatus.won:
@@ -78,7 +78,7 @@ class TicketCard extends StatelessWidget {
                 Container(
                   key: const Key('ticket_status_stripe'),
                   width: 4,
-                  color: _statusStripe(ticket.status),
+                  color: statusStripe(ticket.status),
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: leftCol),

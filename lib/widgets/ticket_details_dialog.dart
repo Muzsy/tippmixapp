@@ -30,18 +30,18 @@ class TicketDetailsDialog extends StatelessWidget {
     final earliestTipStart = tips.isEmpty
         ? null
         : tips.map((t) => t.startTime).reduce((a, b) => a.isBefore(b) ? a : b);
-    List<TipModel> _sorted(List<TipModel> list) {
+    List<TipModel> sorted(List<TipModel> list) {
       final copy = [...list];
       copy.sort((a, b) => a.startTime.compareTo(b.startTime));
       return copy;
     }
 
     final analyticsService = AnalyticsService();
-    final won = _sorted(tips.where((t) => t.status == TipStatus.won).toList());
-    final lost = _sorted(tips.where((t) => t.status == TipStatus.lost).toList());
-    final pending = _sorted(tips.where((t) => t.status == TipStatus.pending).toList());
+    final won = sorted(tips.where((t) => t.status == TipStatus.won).toList());
+    final lost = sorted(tips.where((t) => t.status == TipStatus.lost).toList());
+    final pending = sorted(tips.where((t) => t.status == TipStatus.pending).toList());
 
-    Widget _row(TipModel tip) => Column(
+    Widget rowWidget(TipModel tip) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
@@ -69,7 +69,7 @@ class TicketDetailsDialog extends StatelessWidget {
           ],
         );
 
-    Widget _section(String title, List<TipModel> items) {
+    Widget section(String title, List<TipModel> items) {
       if (items.isEmpty) return const SizedBox.shrink();
       final header = Text('$title (${items.length})');
       if (items.length < 2) {
@@ -80,7 +80,7 @@ class TicketDetailsDialog extends StatelessWidget {
             children: [
               header,
               const SizedBox(height: 4),
-              _row(items.first),
+              rowWidget(items.first),
             ],
           ),
         );
@@ -105,7 +105,7 @@ class TicketDetailsDialog extends StatelessWidget {
             );
           },
           children: [
-            ...items.map(_row),
+            ...items.map(rowWidget),
           ],
         ),
       );
@@ -202,9 +202,9 @@ class TicketDetailsDialog extends StatelessWidget {
             if (tips.isNotEmpty) ...[
               const SizedBox(height: 8),
               const Divider(),
-              _section(loc.ticket_details_section_won, won),
-              _section(loc.ticket_details_section_lost, lost),
-              _section(loc.ticket_details_section_pending, pending),
+              section(loc.ticket_details_section_won, won),
+              section(loc.ticket_details_section_lost, lost),
+              section(loc.ticket_details_section_pending, pending),
             ],
           ],
         ),

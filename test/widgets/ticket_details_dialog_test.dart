@@ -8,7 +8,7 @@ import 'package:tippmixapp/widgets/ticket_details_dialog.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Ticket _sampleTicket() => Ticket(
+  Ticket sampleTicket() => Ticket(
         id: 't1',
         userId: 'u1',
         tips: const [],
@@ -20,7 +20,7 @@ void main() {
         status: TicketStatus.pending,
       );
 
-  List<TipModel> _sampleTips() => [
+  List<TipModel> sampleTips() => [
         TipModel(
           eventId: 'e1',
           eventName: 'Team A – Team B',
@@ -41,7 +41,7 @@ void main() {
         ),
       ];
 
-  Future<void> _pumpDialog(WidgetTester tester) async {
+  Future<void> pumpDialog(WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -56,8 +56,8 @@ void main() {
                     showDialog(
                       context: context,
                       builder: (_) => TicketDetailsDialog(
-                        ticket: _sampleTicket(),
-                        tips: _sampleTips(),
+                        ticket: sampleTicket(),
+                        tips: sampleTips(),
                       ),
                     );
                   },
@@ -75,7 +75,7 @@ void main() {
   }
 
   testWidgets('dialog shows core fields and labels', (tester) async {
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
 
     final ctx = tester.element(find.byType(AlertDialog));
     final loc = AppLocalizations.of(ctx)!;
@@ -100,7 +100,7 @@ void main() {
   });
 
   testWidgets('dialog lists tips with event name and odds', (tester) async {
-    await _pumpDialog(tester);
+    await pumpDialog(tester);
     // Expand Pending group (sample tips default to pending)
     await tester.tap(find.textContaining('Pending tips ('));
     await tester.pumpAndSettle();

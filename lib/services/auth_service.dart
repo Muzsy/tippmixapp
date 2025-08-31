@@ -192,7 +192,7 @@ class AuthService {
   }
 
   Future<bool> validateNicknameUnique(String nickname) async {
-    String _normalize(String input) {
+    String normalize(String input) {
       final s = input.trim().toLowerCase();
       const map = {
         'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ö': 'o', 'ő': 'o',
@@ -206,7 +206,7 @@ class AuthService {
     }
 
     try {
-      final norm = _normalize(nickname);
+      final norm = normalize(nickname);
       final doc = await FirebaseFirestore.instance
           .collection('usernames')
           .doc(norm)

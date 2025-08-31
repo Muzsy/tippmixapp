@@ -13,7 +13,7 @@ class ProfileService {
     String nickname, {
     required FirebaseFirestore firestore,
   }) async {
-    String _normalize(String input) {
+    String normalize(String input) {
       final s = input.trim().toLowerCase();
       const map = {
         'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ö': 'o', 'ő': 'o',
@@ -26,7 +26,7 @@ class ProfileService {
       return buf.toString().replaceAll(RegExp(r"\s+"), ' ');
     }
 
-    final norm = _normalize(nickname);
+    final norm = normalize(nickname);
     final doc = await firestore.collection('usernames').doc(norm).get();
     return !doc.exists;
   }
