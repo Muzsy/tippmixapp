@@ -10,27 +10,17 @@ import 'package:tippmixapp/providers/auth_provider.dart';
 import 'package:tippmixapp/providers/bet_slip_provider.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
 import 'package:tippmixapp/screens/my_tickets_screen.dart';
+import 'package:tippmixapp/widgets/empty_ticket_placeholder.dart';
 
-class _TestAuthNotifier extends StateNotifier<AuthState> {
-  _TestAuthNotifier(AuthState initial) : super(initial);
-  void setUser(app.User? u) => state = AuthState(user: u);
-}
+// We manipulate auth state in tests via ProviderScope.containerOf(context)
+// to avoid wiring a custom notifier/provider type.
 
 void main() {
   group('MyTicketsScreen', () {
     testWidgets('shows empty placeholder when user is null', (tester) async {
-      // Arrange
-      final auth = StateNotifierProvider<_TestAuthNotifier, AuthState>(
-        (ref) => _TestAuthNotifier(const AuthState(user: null)),
-      );
-
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            // Override the real authProvider with a test version
-            authProvider.overrideWithProvider(auth),
-            // No tickets since user is null; provider would return [] anyway
-          ],
+          overrides: const [],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
@@ -41,16 +31,11 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Assert: empty placeholder text visible
-      expect(find.textContaining('no tickets').or(find.textContaining('nincs szelvény')), findsWidgets);
+      // Assert: empty placeholder widget visible (independent of locale)
+      expect(find.byType(EmptyTicketPlaceholder), findsOneWidget);
     });
 
     testWidgets('shows tickets when user present and stream has items', (tester) async {
-      // Arrange auth with a user
-      final auth = StateNotifierProvider<_TestAuthNotifier, AuthState>(
-        (ref) => _TestAuthNotifier(AuthState(user: app.User(id: 'u1', email: 'x@y', displayName: 'X'))),
-      );
-
       final sampleTip = TipModel(
         eventId: 'e1',
         eventName: 'Team A vs Team B',
@@ -77,7 +62,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [authProvider.overrideWithProvider(auth), ticketsOverride],
+          overrides: [ticketsOverride],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
@@ -85,6 +70,12 @@ void main() {
           ),
         ),
       );
+
+      // After mounting, update auth state directly via container
+      final ctx = tester.element(find.byType(MyTicketsScreen));
+      final container = ProviderScope.containerOf(ctx);
+      container.read(authProvider.notifier).state =
+          AuthState(user: app.User(id: 'u1', email: 'x@y', displayName: 'X'));
 
       await tester.pumpAndSettle();
 
@@ -135,4 +126,3 @@ void main() {
     });
   });
 }
-
