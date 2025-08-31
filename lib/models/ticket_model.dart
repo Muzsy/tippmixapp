@@ -94,8 +94,9 @@ class Ticket {
       'stake': stake,
       'totalOdd': totalOdd,
       'potentialWin': potentialWin,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      // Store as Firestore Timestamp for proper ordering & cursors
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
       'status': status.name,
     };
   }

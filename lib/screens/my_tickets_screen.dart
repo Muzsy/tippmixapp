@@ -16,7 +16,8 @@ import '../services/analytics_service.dart';
 const _pageSize = 20;
 
 final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  // Depend on authProvider so changes in auth state refresh the stream
+  final uid = ref.watch(authProvider).user?.id;
   if (uid == null) {
     return Stream.value([]);
   }
@@ -76,7 +77,7 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     if (_loadingMore) return;
     setState(() => _loadingMore = true);
     try {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uid = ref.read(authProvider).user?.id;
       if (uid == null) return;
       // Determine last createdAt from current list
       final current = [...?_currentBase, ..._extra];
@@ -87,7 +88,7 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
           .doc(uid)
           .collection('tickets')
           .orderBy('createdAt', descending: true)
-          .startAfter([last])
+          .startAfter([Timestamp.fromDate(last)])
           .limit(_pageSize);
       final snap = await query.get();
       final more = snap.docs.map((d) => Ticket.fromFirestore(d)).toList();
