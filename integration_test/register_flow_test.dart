@@ -74,11 +74,11 @@ void main() {
 
   testWidgets('shows error for weak password', (tester) async {
     await tester.pumpWidget(
-      ProviderScope(
+      const ProviderScope(
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: const [Locale('hu'), Locale('en'), Locale('de')],
-          home: const Scaffold(body: RegisterStep1Form()),
+          supportedLocales: [Locale('hu'), Locale('en'), Locale('de')],
+          home: Scaffold(body: RegisterStep1Form()),
         ),
       ),
     );

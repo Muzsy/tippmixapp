@@ -60,10 +60,10 @@ void main() {
           overrides: [
             authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const MyTicketsScreen(showAppBar: true),
+            home: MyTicketsScreen(showAppBar: true),
           ),
         ),
       );
@@ -106,10 +106,10 @@ void main() {
             ticketsOverride,
             authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const MyTicketsScreen(showAppBar: true),
+            home: MyTicketsScreen(showAppBar: true),
           ),
         ),
       );
@@ -145,10 +145,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [betOverride],
-          child: MaterialApp(
+          child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const MediaQuery(
+            home: MediaQuery(
               data: MediaQueryData(size: Size(320, 640)),
               child: CreateTicketScreen(),
             ),

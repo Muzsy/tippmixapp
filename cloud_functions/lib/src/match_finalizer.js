@@ -163,6 +163,18 @@ const match_finalizer = async (message) => {
                 const tipResults = [];
                 for (let ti = 0; ti < tipsRaw.length; ti++) {
                     const t = tipsRaw[ti];
+                    // If tip already has a resolved result, keep it and do not override
+                    const existing = String(t?.result || '').toLowerCase();
+                    if (existing === 'won' || existing === 'lost' || existing === 'void') {
+                        tipResults.push({
+                            ...t,
+                            market: String(t?.marketKey ?? t?.market ?? 'h2h').toUpperCase(),
+                            selection: (t?.outcome ?? '').trim(),
+                            result: existing,
+                            oddsSnapshot: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
+                        });
+                        continue;
+                    }
                     const pick = (t?.outcome ?? '').trim();
                     const marketKey = t?.marketKey ?? t?.market ?? 'h2h';
                     const evaluator = (0, evaluators_1.getEvaluator)(String(marketKey));
@@ -194,11 +206,39 @@ const match_finalizer = async (message) => {
                         oddsSnapshot: tipInput.odds,
                     });
                 }
-                await finalizeTicketAtomic(snap.ref, { stake: snap.get('stake'), tips: tipResults });
-                // sync index doc status for this pair (batched)
+                // 1) Update the specific tip's result in the ticket doc (partial progress)
                 const pair = pairs[i];
                 const idx = pair?.tipIndex ?? 0;
                 const newStatus = tipResults[idx]?.result ?? 'pending';
+                try {
+                    // Firestore does not support indexed array element updates via dot-path; write the whole array
+                    const updatedTips = tipsRaw.map((orig, ti) => ti === idx
+                        ? { ...orig, result: newStatus, fixtureId: Number(fid) }
+                        : orig);
+                    await snap.ref.update({ tips: updatedTips });
+                }
+                catch (e) {
+                    logger.error('match_finalizer.partial_update_failed', { error: String(e), ticketId: snap.id, idx });
+                }
+                // 2) Decide if the ticket can be finalized now (any lost OR no pending)
+                const shouldFinalize = tipResults.some((t) => t.result === 'lost') ||
+                    !tipResults.some((t) => t.result === 'pending');
+                if (shouldFinalize) {
+                    await finalizeTicketAtomic(snap.ref, { stake: snap.get('stake'), tips: tipResults });
+                    // Wallet credit via CoinService (idempotent)
+                    const uid = snap.get('userId') || snap.ref.parent?.parent?.id;
+                    const payout = (0, payout_1.calcTicketPayout)(snap.get('stake'), tipResults);
+                    if (uid && payout > 0) {
+                        const coins = Math.round(payout);
+                        try {
+                            await new CoinService_1.CoinService().credit(String(uid), coins, snap.id);
+                        }
+                        catch (e) {
+                            logger.error('match_finalizer.wallet_credit_failed', { error: e, uid: String(uid), ticketId: snap.id });
+                        }
+                    }
+                }
+                // 3) sync index doc status for this pair (batched)
                 batch.set(pair.idxRef, { status: newStatus, updatedAt: new Date() }, { merge: true });
             }
             await batch.commit();
@@ -312,6 +352,18 @@ const match_finalizer = async (message) => {
                 const tipResults = [];
                 for (let ti = 0; ti < tipsRaw.length; ti++) {
                     const t = tipsRaw[ti];
+                    // Preserve already-resolved tips; do not re-evaluate
+                    const existing = String(t?.result || '').toLowerCase();
+                    if (existing === 'won' || existing === 'lost' || existing === 'void') {
+                        tipResults.push({
+                            ...t,
+                            market: String(t?.marketKey ?? t?.market ?? 'h2h').toUpperCase(),
+                            selection: (t?.outcome ?? '').trim(),
+                            result: existing,
+                            oddsSnapshot: Number(t?.odds ?? t?.oddsSnapshot ?? 1.0),
+                        });
+                        continue;
+                    }
                     const fid = fixtureMap[t.eventId];
                     const normRes = results[t.eventId] || (fid ? results[String(fid)] : undefined);
                     const pick = (t?.outcome ?? "").trim();
