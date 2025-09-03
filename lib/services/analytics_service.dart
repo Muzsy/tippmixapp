@@ -18,6 +18,13 @@ class AnalyticsService {
   final FirebaseAnalytics? _analytics;
   bool _exposedLogged = false;
 
+  Future<void> logEvent(String name,
+      {Map<String, Object>? parameters}) async {
+    try {
+      await _analytics?.logEvent(name: name, parameters: parameters);
+    } catch (_) {}
+  }
+
   Future<void> logLoginVariantExposed(String variant) async {
     if (_exposedLogged) return;
     _exposedLogged = true;

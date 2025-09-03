@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.force_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
 const pubsub_1 = require("firebase-functions/v2/pubsub");
 const logger = __importStar(require("firebase-functions/logger"));
@@ -59,6 +59,8 @@ var backfill_fixture_index_1 = require("./backfill_fixture_index");
 Object.defineProperty(exports, "backfill_fixture_index", { enumerable: true, get: function () { return backfill_fixture_index_1.backfill_fixture_index; } });
 var finalize_publish_1 = require("./src/finalize_publish");
 Object.defineProperty(exports, "finalize_publish", { enumerable: true, get: function () { return finalize_publish_1.finalize_publish; } });
+var force_finalizer_1 = require("./src/force_finalizer");
+Object.defineProperty(exports, "force_finalizer", { enumerable: true, get: function () { return force_finalizer_1.force_finalizer; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 // Gen2 Pub/Sub trigger – topic: result-check
 exports.match_finalizer = (0, pubsub_1.onMessagePublished)('result-check', async (event) => {
