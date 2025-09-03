@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
+import '../widgets/coin_badge.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../models/user.dart' as app_user;
 import 'package:flutter/services.dart';
@@ -218,20 +219,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: firebaseUser != null
-                ? () => _showAvatarGallery(firebaseUser)
-                : null,
-            child: CircleAvatar(
-              radius: 40,
-              backgroundImage:
-                  _avatarUrl != null && _avatarUrl!.startsWith('http')
-                  ? NetworkImage(_avatarUrl!) as ImageProvider
-                  : _avatarUrl != null
-                  ? AssetImage(_avatarUrl!)
-                  : null,
-              child: _avatarUrl == null ? const Icon(Icons.person) : null,
-            ),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: firebaseUser != null
+                    ? () => _showAvatarGallery(firebaseUser)
+                    : null,
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundImage:
+                      _avatarUrl != null && _avatarUrl!.startsWith('http')
+                      ? NetworkImage(_avatarUrl!) as ImageProvider
+                      : _avatarUrl != null
+                      ? AssetImage(_avatarUrl!)
+                      : null,
+                  child: _avatarUrl == null ? const Icon(Icons.person) : null,
+                ),
+              ),
+              const Spacer(),
+              StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .collection('wallet')
+                    .doc('main')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final data = snapshot.data?.data();
+                  final coins = data?['coins'] as int?;
+                  return CoinBadge(balance: coins);
+                },
+              ),
+            ],
           ),
           TextButton(
             onPressed: firebaseUser != null
@@ -274,9 +293,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 final data = snapshot.data?.data() ?? const <String, dynamic>{};
                 final nameVal = (data['displayName'] as String?)?.trim();
                 final nickVal = (data['nickname'] as String?)?.trim();
-                final name = (nameVal != null && nameVal.isNotEmpty) ? nameVal : displayName;
-                final nickname = (nickVal != null && nickVal.isNotEmpty) ? nickVal : displayName;
-                final same = name.trim().toLowerCase() == nickname.trim().toLowerCase();
+                final name = (nameVal != null && nameVal.isNotEmpty)
+                    ? nameVal
+                    : displayName;
+                final nickname = (nickVal != null && nickVal.isNotEmpty)
+                    ? nickVal
+                    : displayName;
+                final same =
+                    name.trim().toLowerCase() == nickname.trim().toLowerCase();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -297,7 +321,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             )
           else ...[
             // When Firestore not available, avoid duplication if both fallback are equal
-            Text('${loc.profile_nickname}: $displayName', style: const TextStyle(fontSize: 16)),
+            Text(
+              '${loc.profile_nickname}: $displayName',
+              style: const TextStyle(fontSize: 16),
+            ),
           ],
           const SizedBox(height: 8),
           Text(
