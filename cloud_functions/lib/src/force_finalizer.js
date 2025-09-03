@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.force_finalizer = void 0;
+require("../global");
+const https_1 = require("firebase-functions/v2/https");
+const pubsub_1 = require("@google-cloud/pubsub");
+const pubsub = new pubsub_1.PubSub();
+const RESULT_TOPIC = process.env.RESULT_TOPIC || 'result-check';
+exports.force_finalizer = (0, https_1.onCall)(async (request) => {
+    const ctx = request;
+    if (!ctx.auth)
+        throw new https_1.HttpsError('unauthenticated', 'Auth required');
+    const isAdmin = Boolean(ctx.auth.token?.admin);
+    const devOverride = Boolean(request.data?.devOverride);
+    const allowDev = process.env.ALLOW_DEV_FORCE_FINALIZER === 'true' && devOverride;
+    if (!isAdmin && !allowDev) {
+        throw new https_1.HttpsError('permission-denied', 'Admin only');
+    }
+    const payload = {
+        type: 'final-sweep',
+        requestedBy: ctx.auth.uid,
+        ts: Date.now(),
+    };
+    await pubsub.topic(RESULT_TOPIC).publishMessage({
+        data: Buffer.from(JSON.stringify(payload), 'utf8'),
+        attributes: { attempt: '0' },
+    });
+    return { status: 'OK' };
+});

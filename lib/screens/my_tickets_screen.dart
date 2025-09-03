@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
@@ -11,6 +12,8 @@ import '../widgets/ticket_details_dialog.dart';
 import '../widgets/error_with_retry.dart';
 import '../widgets/my_tickets_skeleton.dart';
 import '../services/analytics_service.dart';
+import '../services/finalizer_service.dart';
+import '../providers/admin_provider.dart';
 
 const _pageSize = 20;
 
@@ -46,6 +49,7 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
   final List<Ticket> _extra = [];
   bool _loadingMore = false;
   bool _hasMore = true;
+  bool _forcing = false;
 
   @override
   void initState() {
@@ -207,6 +211,48 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(loc.my_tickets_title)),
       body: content,
+      floatingActionButton: _buildForceFab(context, loc),
+    );
+  }
+
+  Widget? _buildForceFab(BuildContext context, AppLocalizations loc) {
+    final isAdmin = ref.watch(isAdminProvider);
+    if (!kDebugMode && !isAdmin) return null;
+    final scheme = Theme.of(context).colorScheme;
+    return FloatingActionButton(
+      backgroundColor: scheme.secondary,
+      foregroundColor: scheme.onSecondary,
+      onPressed: _forcing
+          ? null
+          : () async {
+              setState(() => _forcing = true);
+              final result = await FinalizerService.forceFinalizer();
+              if (!mounted) return;
+              final ok = result == 'OK';
+              // ignore: unawaited_futures
+              ref.read(analyticsServiceProvider).logEvent(
+                    'force_match_finalizer_tapped',
+                    parameters: {'result': ok ? 'success' : 'error'},
+                  );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text(ok ? loc.ok : loc.unknown_error_try_again),
+                ),
+              );
+              setState(() => _forcing = false);
+            },
+      child: _forcing
+          ? SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(scheme.onSecondary),
+              ),
+            )
+          : const Icon(Icons.bolt),
     );
   }
 }

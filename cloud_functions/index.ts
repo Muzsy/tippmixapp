@@ -14,6 +14,7 @@ export { reserve_nickname } from './src/username_reservation';
 export { onTicketWritten_indexFixture } from './fixtures_index';
 export { backfill_fixture_index } from './backfill_fixture_index';
 export { finalize_publish } from './src/finalize_publish';
+export { force_finalizer } from './src/force_finalizer';
 
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 
