@@ -1,0 +1,187 @@
+# /codex/goals/canvases/fill\_canvas\_forum\_mvp.yaml
+
+meta:
+canvas: forum\_mvp.md
+owner: TippmixApp
+priority: P0
+summary: "Fórum modul MVP implementáció Codex lépésekkel (adatmodell, CF, rules, UI, tesztek, L10n, CI)."
+
+steps:
+
+* name: Projektfeltérképezés és őrsínek
+  description: |
+  Derítsd fel a projekt gyökerét (Flutter app gyökér: `tippmixapp`), a router és bottom‑nav implementáció helyét, a Firestore rules és indexek fájlútvonalát, valamint a Firebase Functions monorepo helyét (pl. `functions/` vagy `cloud_functions/`).
+  Ellenőrizd az API‑Football kulcs kezelését (ENV/Secrets). Készíts rövid REPORT.md‑t a talált helyekkel és verziókkal.
+  outputs:
+
+  * docs/reports/forum\_mvp\_discovery\_REPORT.md
+
+* name: Fórum modul könyvtárstruktúra létrehozása
+  description: Hozd létre a `lib/features/forum/` modul alap mappáit (domain, data, presentation, widgets, providers, services) és egy minimal README‑t.
+  outputs:
+
+  * lib/features/forum/README.md
+
+* name: Firestore indexek – JSON kiegészítés
+  description: |
+  Egészítsd ki a Firestore index konfigurációt a következőkhöz: `posts` csoportos gyűjtemény – `threadId ASC, createdAt DESC`; `threads` – `fixtureId ASC, type ASC, createdAt DESC`.
+  Ha már létezik `firestore.indexes.json`, patcheld; ha nem, hozd létre.
+  A változtatás után futtasd: firebase firestore\:indexes\:diff (ha elérhető a projektben), majd dokumentáld a deploy lépést a REPORT‑ban.
+  outputs:
+
+  * firestore.indexes.json
+  * docs/reports/forum\_mvp\_indexes\_NOTES.md
+
+* name: Firestore Security Rules – MVP szint
+  description: |
+  Frissítsd/hozd létre a Rules‑t a fórum kollekciókhoz: `threads/*`, `threads/*/posts/*`, `votes/*`, `reports/*`.
+  Követelmények: írás csak auth; poszt `type` ∈ {tip, comment, system}; saját poszt update ≤ 15 perc; moderátor szerepkör képes thread lock/unlock és törlés műveletekre; votes – 1 user 1 post → 1 szavazat; reports – létrehozás usernek, olvasás csak modnak.
+  Írj rules‑emulator tesztet legalább 6 esetre (create/deny/update/lock/vote/report).
+  outputs:
+
+  * firestore.rules
+  * test/firebase/forum\_rules\_test.dart
+
+* name: Domain modellek (Dart) és mapper
+  description: |
+  Hozd létre a `Thread`, `Post`, `Vote`, `Report` osztályokat (immutable), `fromJson/toJson` mapperekkel és típusbiztos mezőkkel. `Post.type` legyen enum.
+  Készíts unit teszteket a mapperekre és a kötelező mezőkre.
+  outputs:
+
+  * lib/features/forum/domain/thread.dart
+  * lib/features/forum/domain/post.dart
+  * lib/features/forum/domain/vote.dart
+  * lib/features/forum/domain/report.dart
+  * test/features/forum/domain/model\_serialization\_test.dart
+
+* name: Data layer – Firestore repository
+  description: |
+  Implementáld a `ForumRepository` interfészt és `FirestoreForumRepository` megvalósítást: `getThreadsByFixture`, `getRecentThreads`, `getPostsByThread`, `addPost`, `voteOnPost`, `reportPost`.
+  Ügyelj az indexek optimális használatára és a paginációra (limit+startAfter). Készüljenek repo‑szintű tesztek emulatorral.
+  outputs:
+
+  * lib/features/forum/data/forum\_repository.dart
+  * lib/features/forum/data/firestore\_forum\_repository.dart
+  * test/features/forum/data/forum\_repository\_test.dart
+
+* name: API‑Football adapter a composerhez
+  description: |
+  Készíts egy adaptert a meglévő `ApiFootballService` fölé, amely piac/odd snapshotot szolgáltat a Composernek a kiválasztott fixture‑höz. A hívás cache‑elt, ne terhelje az API‑t.
+  Írj unit tesztet mockolt szolgáltatással.
+  outputs:
+
+  * lib/features/forum/services/market\_snapshot\_adapter.dart
+  * test/features/forum/services/market\_snapshot\_adapter\_test.dart
+
+* name: Állapotkezelés integráció
+  description: |
+  Detektáld a projektben használt állapotkezelőt (provider/riverpod/bloc), és ennek megfelelően hozd létre a forum állapotot (ThreadListState, ThreadDetailState, ComposerState). Készíts egyszerű notifier/cubit példányokat és wire‑old be őket.
+  outputs:
+
+  * lib/features/forum/providers/forum\_providers.dart
+
+* name: UI – ForumScreen és ThreadList
+  description: |
+  Hozd létre a `ForumScreen`-t (Scaffold, top filter sáv Liga/Fixture/Type – opcionálisan chips), és a végtelenített `ThreadList`-et üres állapottal és skeletonokkal. Készíts widget teszteket a lapozásra és az üres állapotra.
+  outputs:
+
+  * lib/features/forum/presentation/forum\_screen.dart
+  * lib/features/forum/widgets/thread\_list.dart
+  * test/features/forum/ui/thread\_list\_test.dart
+
+* name: UI – ThreadDetail és Tabs
+  description: |
+  Implementáld a `ThreadDetailScreen`‑t headerrel (fixture státusz + állás), TabBarView fülekkel: **Tippek**, **Kommentek**, **Szavazás**. A posztlista végtelenített, dátum szerint rendezett.
+  outputs:
+
+  * lib/features/forum/presentation/thread\_detail\_screen.dart
+  * lib/features/forum/widgets/post\_list.dart
+  * test/features/forum/ui/thread\_detail\_test.dart
+
+* name: UI – Composer (validációval)
+  description: |
+  Hozd létre a `composer.dart` komponenst: piac/odd kiválasztó (adapteren keresztül), kötelező indoklás (min 20 karakter), opcionális TippCoin‑stake. Hibák feliratozása i18n kulcsokkal. Írj widget tesztet a validációra.
+  outputs:
+
+  * lib/features/forum/widgets/composer.dart
+  * test/features/forum/ui/composer\_validation\_test.dart
+
+* name: Interakciók – Vote és Report
+  description: |
+  Adj `VoteBar` komponenst posztkártyákhoz (+1/‑1), és `ReportDialog`-ot indoklás előredefiniált okokkal. Biztosítsd a repo hívásokat és az egyszeres szavazást. Készíts widget teszteket.
+  outputs:
+
+  * lib/features/forum/widgets/vote\_bar.dart
+  * lib/features/forum/presentation/report\_dialog.dart
+  * test/features/forum/ui/vote\_and\_report\_test.dart
+
+* name: Navigáció – GoRouter és bottom‑nav integráció
+  description: |
+  Keresd meg a GoRouter definíciót és a bottom‑nav implementációt; add hozzá a Fórum útvonalat és tabot **feature flag** mögött (`forum_enabled=true`). Állapotmegőrzés visszalépésnél.
+  outputs:
+
+  * Patchelt router fájl (detektált útvonal)
+  * Patchelt bottom‑nav fájl (detektált útvonal)
+
+* name: Cloud Functions – fixture\_watcher
+  description: |
+  A meglévő Functions monorepóban (detektált: `functions/` vagy `cloud_functions/`) hozz létre `forum/fixture_watcher.ts`-t. Ütemezett futás (15 percenként): API‑Football fixtures lekérése (ma + T+1), `pre`/`live`/`post` thread létrehozása/állapotkezelése. Dokumentáld a környezeti változókat és a deploy parancsot.
+  outputs:
+
+  * functions/src/forum/fixture\_watcher.ts
+  * docs/reports/forum\_mvp\_functions\_NOTES.md
+
+* name: Cloud Functions – event\_ingestor
+  description: |
+  Hozz létre `forum/event_ingestor.ts`-t, amely gól/piros eseményeket szinkronizál system posztként az érintett threadbe. Gondoskodj a duplikáció‑védelemről (eventId idempotencia).
+  outputs:
+
+  * functions/src/forum/event\_ingestor.ts
+
+* name: L10n – ARB kulcsok
+  description: |
+  Vedd fel az új kulcsokat HU/EN/DE nyelven. Futtasd a generátort és javítsd a kulcsokra épülő UI‑t, hogy fordítás nélkül ne essen szét. Készíts golden snapshot teszteket fő képernyőkre.
+  outputs:
+
+  * lib/l10n/app\_hu.arb
+  * lib/l10n/app\_en.arb
+  * lib/l10n/app\_de.arb
+  * test/goldens/forum\_screens\_golden\_test.dart
+
+* name: FCM értesítések – topics és @mention
+  description: |
+  Készíts szolgáltatást a thread/fixture topic fel‑/leiratkozásra. Írj metódust @mention/reply célzott értesítés előkészítésére (küldés későbbi szerver oldali lépcső). Írj unit tesztet a topic‑nevekhez.
+  outputs:
+
+  * lib/features/forum/services/notification\_service.dart
+  * test/features/forum/services/notification\_service\_test.dart
+
+* name: CI integráció
+  description: |
+  Egészítsd ki a CI munkafolyamatot (detektált YAML) a `flutter analyze`, `flutter test --coverage` és (ha van Functions) `npm test` lépésekkel. Coverage riport mentése artifactként.
+  outputs:
+
+  * .github/workflows/\<detektált\_ci>.yaml
+
+* name: Dokumentáció frissítés
+  description: |
+  Hozz létre `docs/features/forum_mvp.md` összefoglalót (architektúra, adatmodell, CF, Rules, UI flow). Frissítsd a fő README\_HU.md‑t egy „Fórum (MVP)” szekcióval.
+  outputs:
+
+  * docs/features/forum\_mvp.md
+  * README\_HU.md
+
+* name: Opcionális refaktor – OddsApiProvider elnevezés
+  description: |
+  Ha a kódban maradt `OddsApiProvider` név, nevezd át `ApiFootballOddsProvider`-re, tartsd meg a publikus API‑t, és frissítsd az összes importot. Futtasd az elemzést és a teszteket.
+  outputs:
+
+  * Patchelt fájlok listája az import frissítésekkel
+
+* name: Elfogadási ellenőrzőlista
+  description: |
+  Futtasd végig: flutter analyze; flutter test; emulator‑teszt (poszt/vote/report); l10n generálás; navigáció és állapotmegőrzés; CI‑zöld. Készíts rövid release‑jegyzetet.
+  outputs:
+
+  * docs/reports/forum\_mvp\_acceptance\_CHECKLIST.md
+  * docs/reports/forum\_mvp\_RELEASE\_NOTES.md
