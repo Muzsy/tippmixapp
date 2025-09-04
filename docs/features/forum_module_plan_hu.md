@@ -53,6 +53,7 @@ threads/{threadId}/posts/{postId}
 - Alap spam szűrés (hossz, trágár szavak)
 - Felhasználói statisztika: posztok száma (badge alap)
 - Opcionális: kiemelt szálak, rögzített témák
+- MarketSnapshotAdapter cache-eli az ApiFootball odds pillanatképet a komponálóhoz
 
 ---
 
