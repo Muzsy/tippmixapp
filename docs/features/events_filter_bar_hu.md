@@ -12,4 +12,5 @@ Tapadós szűrősáv a Fogadások képernyő tetején, amellyel dátum, ország 
 
 - `flutter gen-l10n`
 - `flutter analyze lib test integration_test bin tool`
-- `flutter test --coverage`
+- `flutter test --concurrency=4`
+- Lefedettség külön fut (`flutter test --coverage`) CI-ben vagy manuálisan.

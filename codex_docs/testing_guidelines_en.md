@@ -57,13 +57,23 @@ test/
 
 1. `flutter pub get`
 2. `flutter analyze --fatal-infos`
-3. `flutter test --coverage`
-4. `dart run coverage:format_coverage` → fail if < 80 %
-5. `flutter_a11y --min-contrast 4.5`
-6. `flutter test --tags=golden` (renders & compares)
-7. `flutter drive --driver integration_test/driver.dart -d macos` (headless)
+3. `flutter test --concurrency=4`
+4. `flutter_a11y --min-contrast 4.5`
+5. `flutter test --tags=golden` (renders & compares)
+6. `flutter drive --driver integration_test/driver.dart -d macos` (headless)
 
 Any failure aborts the pipeline.
+
+### Coverage (CI or manual)
+
+The separate `coverage.yml` workflow — or a manual invocation — runs:
+
+```bash
+flutter test --coverage
+dart run coverage:format_coverage
+```
+
+It fails if line coverage drops below **80 %**.
 
 ---
 
@@ -76,12 +86,12 @@ Any failure aborts the pipeline.
 
 ## 6. Quick checklist before merging
 
-| ✅ Check                | Command                                               |
-| ---------------------- | ----------------------------------------------------- |
-| Tests pass locally     | `flutter test --coverage`                             |
-| Coverage ≥ 80 %        | `genhtml coverage/lcov.info --summary`                |
-| New golden approved    | `golden_toolkit --update-goldens` after design review |
-| Integration flow green | `flutter drive ...`                                   |
+| ✅ Check                   | Command                                                       |
+| ------------------------- | ------------------------------------------------------------- |
+| Tests pass locally        | `flutter test --concurrency=4`                                |
+| Coverage ≥ 80 % (CI/manual)| `flutter test --coverage` or check `coverage.yml` workflow    |
+| New golden approved       | `golden_toolkit --update-goldens` after design review         |
+| Integration flow green    | `flutter drive ...`                                           |
 
 ---
 

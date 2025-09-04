@@ -19,7 +19,9 @@ Ez a dokumentum összefoglalja a LoginRegisterScreen-hez kapcsolódó widget tes
 A teljes tesztcsomag a projekt gyökeréből indítható:
 
 ```bash
-flutter test --coverage
+flutter test --concurrency=4
+# Lefedettséghez futtasd külön:
+# flutter test --coverage
 ```
 
-A parancs lefuttatja az összes tesztet és frissíti a `coverage/` mappát. Sikertelen futtatás esetén ellenőrizd, hogy a Flutter környezet telepítve van-e.
+Ez lefuttatja az összes tesztet párhuzamosan. Ha lefedettségi riport kell, külön futtasd a fenti `flutter test --coverage` parancsot vagy hagyd a CI-re.

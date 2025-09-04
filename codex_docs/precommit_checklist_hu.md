@@ -1,6 +1,6 @@
 version: "2025-07-29"
-last\_updated\_by: docs-bot
-depends\_on: \[precommit\_checklist\_en.md]
+last_updated_by: docs-bot
+depends_on: [precommit_checklist_en.md]
 
 # ✅ Pre‑commit ellenőrző lista
 
@@ -21,17 +21,23 @@ depends\_on: \[precommit\_checklist\_en.md]
 
 ## 2. Mit csinál a script
 
-| Lépés                     | Eszköz                                   | Hibafeltétel                           |                       |
-| ------------------------- | ---------------------------------------- | -------------------------------------- | --------------------- |
-| **Dart formázás**         | `dart format --set-exit-if-changed`      | Bármely fájl módosul                   |                       |
-| **Statikus analízis**     | `flutter analyze --fatal-infos`          | Info szintű vagy súlyosabb hiba        |                       |
-| **Unit & widget tesztek** | `flutter test --coverage --concurrency=4`| Teszt hiba vagy lefedettség < **80 %** |                       |
-| **Markdown lint**         | `markdownlint '**/*.md'`                 | Stílushiba                             |                       |
-| **Fájlnév‑szabály**       | Bash regex \`^\[a-z0-9\_]+.(dart         | md)$\`                                 | Nem megfelelő fájlnév |
-| **PDF detektálás**        | \`git diff --name-only --cached          | grep '.pdf\$'\`                        | PDF stage‑elve        |
-| **Commit üzenet lint**    | Conventional Commits – `commitlint`      | Nem megfelelő üzenet                   |                       |
+| Lépés                     | Eszköz                                    | Hibafeltétel              |
+| ------------------------- | ----------------------------------------- | ------------------------- |
+| **Dart formázás**         | `dart format --set-exit-if-changed`       | Bármely fájl módosul      |
+| **Statikus analízis**     | `flutter analyze --fatal-infos`           | Info szintű vagy súlyosabb hiba |
+| **Unit & widget tesztek** | `flutter test --concurrency=4`            | Teszthiba                 |
+| **Markdown lint**         | `markdownlint '**/*.md'`                  | Stílushiba                |
+| **Fájlnév-szabály**       | Bash regex `^[a-z0-9_]+.(dart|md)$`       | Nem megfelelő fájlnév     |
+| **PDF detektálás**        | `git diff --name-only --cached | grep '.pdf$'` | PDF stage-elve       |
+| **Commit üzenet lint**    | Conventional Commits – `commitlint`       | Nem megfelelő üzenet      |
 
-> *Tipp*: `./scripts/precommit.sh --fix` automatikusan javítja a formázást és az import‑rendezést.
+### Opcionális lefedettség
+
+Csak igény szerint futtasd, vagy hagyd a `coverage.yml` workflow-ra:
+
+```bash
+flutter test --coverage
+```
 
 ---
 
@@ -54,7 +60,7 @@ BREAKING CHANGE: leírás (ha van)
 | Szenárió                               | Megengedett kihagyás                                               |
 | -------------------------------------- | ------------------------------------------------------------------ |
 | Vészhelyzeti hot‑fix prod crash esetén | `git commit --no‑verify` **egyszer**, majd follow‑up PR tesztekkel |
-| Auto‑generált kód (json\_serializable) | Külön `chore:` commit a script futtatása után                      |
+| Auto‑generált kód (json_serializable)  | Külön `chore:` commit a script futtatása után                      |
 
 Minden kihagyást a CI jelez, és Tech Lead jóváhagyást igényel.
 

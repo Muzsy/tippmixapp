@@ -28,7 +28,9 @@
 
 ```
 flutter analyze lib test integration_test bin tool
-flutter test --coverage
+flutter test --concurrency=4
+# Lefedettség (opcionális):
+# flutter test --coverage
 # Golden frissítés (szükség esetén):
 # flutter test --tags=golden --update-goldens
 ```

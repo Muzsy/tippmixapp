@@ -31,6 +31,8 @@
 
 ```
 flutter analyze lib test integration_test bin tool
-flutter test --coverage
+flutter test --concurrency=4
+# Coverage (optional):
+# flutter test --coverage
 ```
 

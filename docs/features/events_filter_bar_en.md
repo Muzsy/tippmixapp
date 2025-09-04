@@ -12,4 +12,5 @@ Adds a sticky filter bar to the Bets screen allowing filtering by date, country 
 
 - `flutter gen-l10n`
 - `flutter analyze lib test integration_test bin tool`
-- `flutter test --coverage`
+- `flutter test --concurrency=4`
+- Coverage via `flutter test --coverage` is handled separately (CI or manual).

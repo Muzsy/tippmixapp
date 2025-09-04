@@ -14,4 +14,5 @@ Ez a dokumentum leírja az opcionális ország/liga fejléc és csapat-/liga‑l
 ## Tesztelés
 
 - Widget tesztek ellenőrzik a fejlécet és a TeamBadge fallbacket.
-- A `flutter analyze` és a `flutter test --coverage` parancsoknak zölden kell futniuk.
+- A `flutter analyze` és a `flutter test --concurrency=4` parancsoknak zölden kell futniuk.
+- Lefedettség külön futtatásban (`flutter test --coverage`) készül CI-ben vagy manuálisan.
