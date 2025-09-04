@@ -1,0 +1,62 @@
+name: Coverage (full)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+  pull_request:
+    types: [labeled, synchronize, opened]
+
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-coverage')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Cache Pub & tool dirs
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Tests with coverage (xvfb)
+        run: |
+          sudo apt-get update && sudo apt-get install -y xvfb lcov
+          xvfb-run -a flutter test --coverage --concurrency 2 --reporter expanded
+
+      - name: Enforce coverage threshold (60%)
+        run: |
+          pct=$(lcov --list coverage/lcov.info | awk '/lines\.*:/{print $2}' | tail -1 | tr -d '%')
+          echo "Coverage: ${pct}%"
+          awk "BEGIN {exit !(${pct} < 60)}" && { echo "Coverage below threshold (60%)"; exit 1; } || true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov.info
+          path: coverage/lcov.info
+
+      # Opció: Codecov (ha van CODECOV_TOKEN)
+      # - name: Upload to Codecov
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     files: coverage/lcov.info
+      #     fail_ci_if_error: false

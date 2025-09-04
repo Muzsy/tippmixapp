@@ -1,4 +1,4 @@
-# Deprecated: Flutter tests are consolidated in CI workflow.
+# Deprecated: Flutter analyze/tests handled in CI; coverage elsewhere.
 name: deprecated-flutter-ci
 on:
   workflow_call:
@@ -6,4 +6,4 @@ jobs:
   noop:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Flutter analyze/tests moved to CI workflow."
+      - run: echo "Flutter analyze/tests live in 'CI', coverage lives in 'Coverage (full)'."

@@ -21,25 +21,31 @@ This document describes the CI/CD pipeline setup for TippmixApp using GitHub Act
 Main config files:
 
 ```
-.github/workflows/main.yaml      # CI for Flutter app
+.github/workflows/ci.yaml        # Fast CI for PRs (no coverage)
+.github/workflows/coverage.yml   # Full coverage (nightly/manual/label)
 .github/workflows/deploy.yml     # Backend infra + functions
 ```
 
-Basic steps:
+Fast CI (`ci.yaml`) provides quick feedback on pull requests:
 
 1. Checkout repo
-2. Set up Flutter
-3. Run `flutter pub get`
-4. Run `flutter analyze`
-5. Run `flutter test`
-6. Run markdown and link checks
+2. Set up Flutter (stable channel with cache)
+3. Cache pub packages and tool directories
+4. Run `flutter pub get`
+5. Run `flutter analyze --no-fatal-warnings`
+6. Run `flutter test --no-pub --concurrency 4 --exclude-tags slow`
+7. Run markdown and config lint jobs
+
+Coverage workflow (`coverage.yml`) runs nightly at 03:00, on manual trigger, or when a PR has the `full-coverage` label. It executes tests with `--coverage`, enforces a 60% threshold, and uploads `lcov.info` as an artifact.
+
+To request coverage on a PR, add the **`full-coverage`** label. Target runtimes: fast CI ≤8 min, coverage ≤40 min.
 
 ---
 
 ## 🧪 Quality Gates
 
-- All tests must pass (`flutter test`)
-- At least 80% coverage (TODO: add coverage check)
+ - All tests must pass (`flutter test`)
+ - Coverage workflow enforces a minimum 60% line coverage
 - No broken links in Markdown
 - No hardcoded secrets committed (use secret scanning)
 
