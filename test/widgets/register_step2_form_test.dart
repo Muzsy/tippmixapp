@@ -6,6 +6,37 @@ import 'package:tippmixapp/providers/register_state_notifier.dart';
 import 'package:tippmixapp/screens/register_wizard.dart';
 import '../mocks/mock_auth_service.dart';
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
+class _FakeCallableResult<T> implements HttpsCallableResult<T> {
+  @override
+  final T data;
+  _FakeCallableResult(this.data);
+}
+
+class _FakeCallable extends Fake implements HttpsCallable {
+  _FakeCallable({this.throwAlreadyExists = false});
+  final bool throwAlreadyExists;
+  @override
+  Future<HttpsCallableResult<T>> call<T>([dynamic parameters]) async {
+    if (throwAlreadyExists) {
+      throw FirebaseFunctionsException(
+        code: 'already-exists',
+        message: 'already-exists',
+        details: null,
+      );
+    }
+    return _FakeCallableResult<T>(null as T);
+  }
+}
+
+class _FakeFunctions extends Fake implements FirebaseFunctions {
+  _FakeFunctions(this.callable);
+  final HttpsCallable callable;
+  @override
+  HttpsCallable httpsCallable(String name, {HttpsCallableOptions? options}) =>
+      callable;
+}
 
 Future<void> _selectDate(WidgetTester tester) async {
   await tester.tap(find.byKey(const Key('birthDateField')));
@@ -23,11 +54,11 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [authServiceProvider.overrideWithValue(mockAuth)],
-        child: const MaterialApp(
+        child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: RegisterWizard(),
+          locale: const Locale('en'),
+          home: RegisterWizard(functions: _FakeFunctions(_FakeCallable())),
         ),
       ),
     );
@@ -56,11 +87,13 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [authServiceProvider.overrideWithValue(mockAuth)],
-        child: const MaterialApp(
+        child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: RegisterWizard(),
+          locale: const Locale('en'),
+          home: RegisterWizard(
+            functions: _FakeFunctions(_FakeCallable(throwAlreadyExists: true)),
+          ),
         ),
       ),
     );
@@ -90,11 +123,11 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [authServiceProvider.overrideWithValue(mockAuth)],
-        child: const MaterialApp(
+        child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: RegisterWizard(),
+          locale: const Locale('en'),
+          home: RegisterWizard(functions: _FakeFunctions(_FakeCallable())),
         ),
       ),
     );
