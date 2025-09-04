@@ -1,10 +1,12 @@
+@Skip('pending')
+// ignore: unnecessary_library_name
+library forum_rules_test;
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-@Skip('pending')
 void main() {
   late String rules;
   setUpAll(() async {
