@@ -1,4 +1,4 @@
-# Deprecated: E2E tests are part of the 'functions' job in CI.
+# Deprecated: E2E/slow tests handled elsewhere.
 name: deprecated-e2e
 on:
   workflow_call:
@@ -6,4 +6,4 @@ jobs:
   noop:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "E2E tests moved to CI workflow."
+      - run: echo "E2E/slow tests are handled by 'Coverage (full)' or a dedicated e2e workflow."

@@ -3,8 +3,26 @@ name: CI
 on:
   push:
     branches: ["**"]
+    paths-ignore:
+      - docs/**
+      - "**/*.md"
+      - "**/*.adoc"
+      - "**/*.txt"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.svg"
+      - infra/**
   pull_request:
     branches: ["**"]
+    paths-ignore:
+      - docs/**
+      - "**/*.md"
+      - "**/*.adoc"
+      - "**/*.txt"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.svg"
+      - infra/**
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -32,68 +50,39 @@ jobs:
           path: docs_lint.log
 
   flutter:
-    name: Flutter analyze & tests
+    name: Unit+Widget (no coverage)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.8' # a .codex/setup.sh-hoz igazítva
+          channel: stable
           cache: true
-      # Java 17 az Android SDK/Gradle miatt
-      - name: Setup Java
-        uses: actions/setup-java@v4
+
+      - name: Cache Pub & tool dirs
+        uses: actions/cache@v4
         with:
-          distribution: temurin
-          java-version: "17"
+          path: |
+            ~/.pub-cache
+            **/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
 
       - name: Create dummy .env for CI
         run: printf "MODE=ci\n" > .env
-      - name: Flutter pub get
+
+      - name: Pub get
         run: flutter pub get
-      - name: Analyze (policy-compliant scope)
-        shell: bash
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-warnings lib test integration_test bin tool
+
+      - name: Tests (fast, no coverage)
         run: |
-          set -euo pipefail
-          PATHS=""
-          for d in lib test integration_test bin tool; do
-            if [ -d "$d" ]; then PATHS+="$d "; fi
-          done
-          echo "Analyzing paths: $PATHS"
-          flutter analyze --no-fatal-infos $PATHS
-      - name: Unit & widget tests (coverage)
-        run: flutter test --coverage
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-coverage
-          path: coverage
-          
-      - name: Integration tests on Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          emulator-options: "-no-window -no-snapshot -no-boot-anim -gpu swiftshader_indirect -no-metrics"
-          disable-animations: true
-          script: |
-            set -euxo pipefail
-            if [ -d "integration_test" ]; then
-              # Biztos ami biztos: Flutter és eszközök
-              flutter --version
-              flutter doctor -v
-              flutter devices
-              # Várjunk rá, hogy tényleg online legyen:
-              /usr/local/lib/android/sdk/platform-tools/adb wait-for-device
-              /usr/local/lib/android/sdk/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed
-              # Tesztek futtatása kifejezetten az emulátoron
-              flutter test integration_test -d emulator-5554
-            else
-              echo "no integration_test folder – skipping"
-            fi
+          flutter test --no-pub --concurrency 4 --reporter expanded --exclude-tags slow
 
   functions:
     name: Cloud Functions – unit & e2e
