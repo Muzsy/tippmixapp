@@ -185,3 +185,15 @@ steps:
 
   * docs/reports/forum\_mvp\_acceptance\_CHECKLIST.md
   * docs/reports/forum\_mvp\_RELEASE\_NOTES.md
+
+* name: Forum – user-centrikus kiegészítések
+  description: |
+    Add per-user collections (relations/follows, notifications, optional prefs/stats), extend firebase.rules accordingly,
+    and add minimal indexes for notifications. Generate models and a short NOTES doc.
+  outputs:
+  - lib/features/forum/domain/user_follow.dart
+  - lib/features/forum/domain/user_notification.dart
+  - lib/features/forum/domain/user_forum_prefs.dart
+  - firebase.rules
+  - firestore.indexes.json
+  - docs/reports/forum_usercentric_NOTES.md
