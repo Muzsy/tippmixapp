@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/ticket_model.dart';
 import 'package:tippmixapp/models/tip_model.dart';
 import 'package:tippmixapp/models/user.dart' as app;
 import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tippmixapp/providers/onboarding_provider.dart'
+    show firebaseAuthProvider;
 import 'package:tippmixapp/services/auth_service.dart';
 import 'package:tippmixapp/providers/bet_slip_provider.dart';
 import 'package:tippmixapp/screens/create_ticket_screen.dart';
@@ -21,7 +25,8 @@ class _FakeAuthService implements AuthService {
   @override
   Stream<app.User?> authStateChanges() => _controller.stream;
   @override
-  Future<app.User?> signInWithEmail(String email, String password) async => null;
+  Future<app.User?> signInWithEmail(String email, String password) async =>
+      null;
   @override
   Future<app.User?> signInWithGoogle() async => null;
   @override
@@ -29,7 +34,8 @@ class _FakeAuthService implements AuthService {
   @override
   Future<app.User?> signInWithFacebook() async => null;
   @override
-  Future<app.User?> registerWithEmail(String email, String password) async => null;
+  Future<app.User?> registerWithEmail(String email, String password) async =>
+      null;
   @override
   Future<bool> validateEmailUnique(String email) async => true;
   @override
@@ -43,22 +49,33 @@ class _FakeAuthService implements AuthService {
   @override
   Future<void> confirmPasswordReset(String code, String newPassword) async {}
   @override
-  Future<bool> pollEmailVerification({Duration timeout = const Duration(minutes: 3), Duration interval = const Duration(seconds: 5)}) async => true;
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async => true;
   @override
   bool get isEmailVerified => true;
   @override
   app.User? get currentUser => null;
 }
 
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockUser extends Mock implements User {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('MyTicketsScreen', () {
     testWidgets('shows empty placeholder when user is null', (tester) async {
       final authCtrl = StreamController<app.User?>();
+      final mockAuth = MockFirebaseAuth();
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
+            authServiceProvider.overrideWith(
+              (ref) => _FakeAuthService(authCtrl),
+            ),
+            firebaseAuthProvider.overrideWithValue(mockAuth),
           ],
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -74,7 +91,9 @@ void main() {
       expect(find.byType(EmptyTicketPlaceholder), findsOneWidget);
     });
 
-    testWidgets('shows tickets when user present and stream has items', (tester) async {
+    testWidgets('shows tickets when user present and stream has items', (
+      tester,
+    ) async {
       final sampleTip = TipModel(
         eventId: 'e1',
         eventName: 'Team A vs Team B',
@@ -97,14 +116,23 @@ void main() {
       );
 
       // Override ticketsProvider to avoid real Firestore
-      final ticketsOverride = ticketsProvider.overrideWith((ref) => Stream.value([t]));
+      final ticketsOverride = ticketsProvider.overrideWith(
+        (ref) => Stream.value([t]),
+      );
 
       final authCtrl = StreamController<app.User?>();
+      final mockAuth = MockFirebaseAuth();
+      final mockUser = MockUser();
+      when(() => mockUser.uid).thenReturn('u1');
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             ticketsOverride,
-            authServiceProvider.overrideWith((ref) => _FakeAuthService(authCtrl)),
+            authServiceProvider.overrideWith(
+              (ref) => _FakeAuthService(authCtrl),
+            ),
+            firebaseAuthProvider.overrideWithValue(mockAuth),
           ],
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -125,7 +153,9 @@ void main() {
   });
 
   group('CreateTicketScreen layout', () {
-    testWidgets('does not overflow with long labels on small width', (tester) async {
+    testWidgets('does not overflow with long labels on small width', (
+      tester,
+    ) async {
       // Arrange a tip in the bet slip
       final tip = TipModel(
         eventId: 'e1',
@@ -162,7 +192,11 @@ void main() {
 
       // If there is any layout exception (e.g. overflow), Flutter will surface it here
       final ex = tester.takeException();
-      expect(ex, isNull, reason: 'CreateTicket layout should not overflow on small width');
+      expect(
+        ex,
+        isNull,
+        reason: 'CreateTicket layout should not overflow on small width',
+      );
     });
   });
 }
