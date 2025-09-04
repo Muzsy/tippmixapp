@@ -5,6 +5,7 @@ service cloud.firestore {
     /* ——— SEGÉDFÜGGVÉNYEK ——— */
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+    function isModerator()   { return request.auth != null && request.auth.token.moderator == true; }
     // ÚJ: kliens oldali ticket create ellenőrzéshez
     function isValidTicketCreate(data) {
       // Kötelező: ownerId == saját uid és kezdeti státusz 'pending'
@@ -72,33 +73,52 @@ service cloud.firestore {
     }
 
     /* ——— users collection ——— */
-    match /users/{userId} {
-      allow create: if signedIn() && request.auth.uid == userId;
-      // Ranglistához minden hitelesített user olvashatja
-      allow read:   if signedIn();
-      allow update: if isOwner(userId);
-      allow delete: if false;
+    match /users/{uid} {
+      // A user csak a saját ágát olvashatja/írhatja, kivéve admin/mod
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if isModerator();
 
-      /* ——— subcollection: notifications ——— */
-      match /notifications/{notifId} {
-        allow create: if false;
-        allow read:   if isOwner(userId);
-        allow update: if isOwner(userId) && request.resource.data.read == true;
-        allow delete: if false;
+      // Értesítések: /users/{uid}/notifications/{id}
+      match /notifications/{id} {
+        // Olvasás saját maga; írás CF vagy mod által – de engedjük a user-oldali read-flag frissítést
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow update: if request.auth != null && request.auth.uid == uid &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['read']);
+        allow create, delete: if isModerator();
       }
 
       /* ——— subcollection: friendRequests ——— */
       match /friendRequests/{requestId} {
         allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid;
-        allow read:   if signedIn() && (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
-        allow update: if signedIn() && request.resource.data.accepted == true && request.auth.uid == resource.data.toUid;
+        allow read: if signedIn() &&
+          (request.auth.uid == resource.data.fromUid || request.auth.uid == resource.data.toUid);
+        allow update: if signedIn() && request.resource.data.accepted == true &&
+          request.auth.uid == resource.data.toUid;
         allow delete: if false;
       }
 
       /* --- bonus state doc --- */
       match /bonus_state {
-        allow read: if isOwner(userId);
+        allow read: if request.auth != null && request.auth.uid == uid;
         allow write: if false;
+      }
+
+      // Követések: /users/{uid}/relations/follows/{targetId}
+      match /relations/{relDoc}/follows/{targetId} {
+        allow read, create, update, delete: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if isModerator();
+      }
+
+      // Opcionális beállítások: /users/{uid}/forum_prefs/{doc}
+      match /forum_prefs/{doc} {
+        allow read, create, update, delete: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if isModerator();
+      }
+
+      // Opcionális statisztika cache: /users/{uid}/forum_stats/{doc}
+      match /forum_stats/{doc} {
+        allow read, create, update, delete: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if isModerator();
       }
     }
 
