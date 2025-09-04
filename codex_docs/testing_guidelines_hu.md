@@ -57,13 +57,23 @@ test/
 
 1. `flutter pub get`
 2. `flutter analyze --fatal-infos`
-3. `flutter test --coverage`
-4. `dart run coverage:format_coverage` → fail, ha < 80 %
-5. `flutter_a11y --min-contrast 4.5`
-6. `flutter test --tags=golden` (renderel & összehasonlít)
-7. `flutter drive --driver integration_test/driver.dart -d macos` (headless)
+3. `flutter test --concurrency=4`
+4. `flutter_a11y --min-contrast 4.5`
+5. `flutter test --tags=golden` (renderel & összehasonlít)
+6. `flutter drive --driver integration_test/driver.dart -d macos` (headless)
 
 Bármely hiba megszakítja a pipeline-t.
+
+### Lefedettség (CI vagy manuális)
+
+A külön `coverage.yml` workflow – vagy manuális futtatás – a következőket hajtja végre:
+
+```bash
+flutter test --coverage
+dart run coverage:format_coverage
+```
+
+Hiba, ha a sorki lefedettség **80 %** alá esik.
 
 ---
 
@@ -76,12 +86,12 @@ Bármely hiba megszakítja a pipeline-t.
 
 ## 6. Gyors ellenőrző lista merge előtt
 
-| ✅ Ellenőrizd             | Parancs                                              |
-| ------------------------ | ---------------------------------------------------- |
-| Tesztek futnak lokálisan | `flutter test --coverage`                            |
-| Lefedettség ≥ 80 %       | `genhtml coverage/lcov.info --summary`               |
-| Új golden elfogadva      | `golden_toolkit --update-goldens` design review után |
-| Integrációs flow zöld    | `flutter drive ...`                                  |
+| ✅ Ellenőrizd                 | Parancs                                                     |
+| --------------------------- | ----------------------------------------------------------- |
+| Tesztek futnak lokálisan    | `flutter test --concurrency=4`                              |
+| Lefedettség ≥ 80 % (CI/manuális)| `flutter test --coverage` vagy a `coverage.yml` workflow outputja |
+| Új golden elfogadva         | `golden_toolkit --update-goldens` design review után       |
+| Integrációs flow zöld       | `flutter drive ...`                                        |
 
 ---
 

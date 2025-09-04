@@ -86,7 +86,8 @@ Codex **MUST NOT** create, modify or commit the following files:
 * **New service** → *unit test* in `test/services/`
 * **Localization** → update `hu`, `en`, `de` ARB files and extend `AppLocalizationsKey` enum
 * **Theme** → zero hard‑coded colours; linter rule `avoid-hard-coded-colors` passes
-* **CI pipeline** → `flutter analyze` + `flutter test --coverage` **all** steps green
+* **CI pipeline** → `flutter analyze` + `flutter test --concurrency=4` (unit + widget tests, cached & parallel) — no coverage
+* **Coverage** → run `flutter test --coverage` only in dedicated CI jobs or when explicitly requested
 
 ---
 

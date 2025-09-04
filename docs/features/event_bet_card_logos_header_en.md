@@ -14,4 +14,5 @@ This document describes the addition of optional country/league header and team/
 ## Testing
 
 - Widget tests verify header rendering and TeamBadge fallback.
-- `flutter analyze` and `flutter test --coverage` must pass.
+- `flutter analyze` and `flutter test --concurrency=4` must pass.
+- Coverage runs separately (`flutter test --coverage`) in CI or manually.
