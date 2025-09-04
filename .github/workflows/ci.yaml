@@ -14,15 +14,6 @@ on:
       - infra/**
   pull_request:
     branches: ["**"]
-    paths-ignore:
-      - docs/**
-      - "**/*.md"
-      - "**/*.adoc"
-      - "**/*.txt"
-      - "**/*.png"
-      - "**/*.jpg"
-      - "**/*.svg"
-      - infra/**
 
 concurrency:
   group: ci-${{ github.ref }}
