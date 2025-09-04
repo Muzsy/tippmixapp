@@ -6,7 +6,8 @@ import 'package:tippmixapp/l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 
 class RegisterStep2Form extends ConsumerStatefulWidget {
-  const RegisterStep2Form({super.key});
+  final FirebaseFunctions? functions;
+  const RegisterStep2Form({super.key, this.functions});
 
   @override
   ConsumerState<RegisterStep2Form> createState() => _RegisterStep2FormState();
@@ -60,19 +61,27 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
       try {
-        final functions = FirebaseFunctions.instanceFor(region: 'europe-central2');
+        final functions =
+            widget.functions ??
+            FirebaseFunctions.instanceFor(region: 'europe-central2');
         final callable = functions.httpsCallable('reserve_nickname');
         await callable.call({'nickname': _nickCtrl.text});
       } on FirebaseFunctionsException catch (e) {
         if (e.code == 'already-exists') {
           setState(() {
-            _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
+            _nickError = AppLocalizations.of(
+              context,
+            )!.auth_error_nickname_taken;
           });
           return;
         }
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.unknown_error_try_again)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.unknown_error_try_again,
+            ),
+          ),
         );
         return;
       }

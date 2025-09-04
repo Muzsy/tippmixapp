@@ -235,18 +235,15 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
           : () async {
               setState(() => _forcing = true);
               final result = await FinalizerService.forceFinalizer();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      result == 'OK'
-                          ? 'Kiértékelés elindítva'
-                          : 'Hiba: $result',
-                    ),
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    result == 'OK' ? 'Kiértékelés elindítva' : 'Hiba: $result',
                   ),
-                );
-                setState(() => _forcing = false);
-              }
+                ),
+              );
+              setState(() => _forcing = false);
             },
       icon: const Icon(Icons.bolt),
       label: Text(_forcing ? 'Fut…' : 'Kiértékelés'),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_core/firebase_core.dart';
 import 'dart:io';
 import '../utils/image_resizer.dart';
 import '../models/user_model.dart';
@@ -17,8 +18,17 @@ class ProfileService {
     String normalize(String input) {
       final s = input.trim().toLowerCase();
       const map = {
-        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ö': 'o', 'ő': 'o',
-        'ú': 'u', 'ü': 'u', 'ű': 'u', 'ä': 'a', 'ß': 'ss',
+        'á': 'a',
+        'é': 'e',
+        'í': 'i',
+        'ó': 'o',
+        'ö': 'o',
+        'ő': 'o',
+        'ú': 'u',
+        'ü': 'u',
+        'ű': 'u',
+        'ä': 'a',
+        'ß': 'ss',
       };
       final buf = StringBuffer();
       for (final ch in s.split('')) {
@@ -142,8 +152,7 @@ class ProfileService {
     try {
       final raw = await file.readAsBytes();
       final bytes = await ImageResizer.cropSquareResize256(raw);
-      final ref =
-          storage.ref().child('users/$uid/avatar/avatar_256.png');
+      final ref = storage.ref().child('users/$uid/avatar/avatar_256.png');
       final task = ref.putData(
         bytes,
         SettableMetadata(
@@ -152,7 +161,7 @@ class ProfileService {
         ),
       );
       try {
-        await task;
+        await task.whenComplete(() {});
       } on TypeError {
         // Ignore mock upload tasks that fail to implement Future
       }
@@ -164,9 +173,11 @@ class ProfileService {
         cache: cache,
         connectivity: connectivity,
       );
-      final current = firebase_auth.FirebaseAuth.instance.currentUser;
-      if (current != null && current.uid == uid) {
-        await current.updatePhotoURL(url);
+      if (Firebase.apps.isNotEmpty) {
+        final current = firebase_auth.FirebaseAuth.instance.currentUser;
+        if (current != null && current.uid == uid) {
+          await current.updatePhotoURL(url);
+        }
       }
       return url;
     } on FirebaseException catch (_) {

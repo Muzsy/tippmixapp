@@ -121,10 +121,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final picked = await imagePicker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
     final lower = picked.name.toLowerCase();
-    if (!(lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png'))) {
+    if (!(lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png'))) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
       return;
     }
     if (!mounted) return;
@@ -147,14 +150,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         );
         if (!mounted) return;
         setState(() => _avatarUrl = url);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
         await WidgetsBinding.instance.endOfFrame;
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
       }
     } finally {
       if (mounted) {
@@ -274,12 +279,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const Spacer(),
               StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(uid)
-                    .collection('wallet')
-                    .doc('main')
-                    .snapshots(),
+                stream: Firebase.apps.isNotEmpty
+                    ? FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .collection('wallet')
+                          .doc('main')
+                          .snapshots()
+                    : const Stream.empty(),
                 builder: (context, snapshot) {
                   final data = snapshot.data?.data();
                   final coins = data?['coins'] as int?;
