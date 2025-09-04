@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'dart:io';
 import '../utils/image_resizer.dart';
 import '../models/user_model.dart';
@@ -139,17 +140,17 @@ class ProfileService {
     required dynamic connectivity,
   }) async {
     try {
-      // Downscale client-side if necessary to avoid >2MB uploads
-      if (await file.length() > 2 * 1024 * 1024) {
-        file = await ImageResizer.downscalePng(file, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
-      }
-      final lower = file.path.toLowerCase();
-      final isPng = lower.endsWith('.png');
-      final contentType = isPng ? 'image/png' : 'image/jpeg';
-      final ext = isPng ? 'png' : 'jpg';
-      // Upload path must follow storage rules: users/{uid}/avatar.{ext}
-      final ref = storage.ref().child('users/$uid/avatar.$ext');
-      final task = ref.putFile(file, SettableMetadata(contentType: contentType));
+      final raw = await file.readAsBytes();
+      final bytes = await ImageResizer.cropSquareResize256(raw);
+      final ref =
+          storage.ref().child('users/$uid/avatar/avatar_256.png');
+      final task = ref.putData(
+        bytes,
+        SettableMetadata(
+          contentType: 'image/png',
+          cacheControl: 'public, max-age=86400',
+        ),
+      );
       try {
         await task;
       } on TypeError {
@@ -163,6 +164,10 @@ class ProfileService {
         cache: cache,
         connectivity: connectivity,
       );
+      final current = firebase_auth.FirebaseAuth.instance.currentUser;
+      if (current != null && current.uid == uid) {
+        await current.updatePhotoURL(url);
+      }
       return url;
     } on FirebaseException catch (_) {
       throw AvatarUploadFailure();

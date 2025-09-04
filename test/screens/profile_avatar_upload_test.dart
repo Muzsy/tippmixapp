@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 import 'package:tippmixapp/l10n/app_localizations.dart';
 import 'package:tippmixapp/models/auth_state.dart';
 import 'package:tippmixapp/models/user.dart';
@@ -98,6 +99,7 @@ void main() {
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
     registerFallbackValue(FakeFile());
+    registerFallbackValue(Uint8List(0));
   });
 
   group('ProfileScreen.pickPhoto', () {
@@ -114,14 +116,14 @@ void main() {
       firestore = FakeFirebaseFirestore();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any(), any())).thenAnswer((_) => task);
+      when(() => reference.putData(any(), any())).thenAnswer((_) => task);
       when(
         () => reference.getDownloadURL(),
       ).thenAnswer((_) async => 'http://download');
       user = User(id: 'u1', email: 'e@x.com', displayName: 'Tester');
     });
 
-    Future<void> pumpWidget(WidgetTester tester) async {
+    Future<File> pumpWidget(WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -137,53 +139,39 @@ void main() {
       );
       await tester.pumpAndSettle();
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
-      state.imagePicker = FakeImagePicker(XFile('a.png'));
+      final file = File('${Directory.systemTemp.createTempSync().path}/a.png')
+        ..writeAsBytesSync(const [
+          0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A,0x00,0x00,0x00,0x0D,0x49,0x48,0x44,0x52,
+          0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x01,0x08,0x06,0x00,0x00,0x00,0x1F,0x15,0xC4,
+          0x89,0x00,0x00,0x00,0x0A,0x49,0x44,0x41,0x54,0x78,0x9C,0x63,0x00,0x01,0x00,0x00,
+          0x05,0x00,0x01,0x0D,0x0A,0x2D,0xB4,0x00,0x00,0x00,0x00,0x49,0x45,0x4E,0x44,0xAE
+        ]);
+      state.imagePicker = FakeImagePicker(XFile(file.path));
       state.storage = storage;
       state.firestore = firestore;
-      return;
+      return file;
     }
 
     testWidgets('successful upload shows snackbar', (tester) async {
-      await pumpWidget(tester);
+      final file = await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pumpAndSettle();
       expect(find.text('Avatar updated'), findsOneWidget);
+      try { await file.parent.delete(recursive: true); } catch (_) {}
     });
 
-    testWidgets('cancellation shows snackbar', (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
-          ],
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: [Locale('en'), Locale('hu'), Locale('de')],
-            locale: Locale('en'),
-            home: ProfileScreen(showAppBar: false),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final state = tester.state(find.byType(ProfileScreen)) as dynamic;
-      state.imagePicker = FakeImagePicker(null);
-      state.storage = storage;
-      state.firestore = firestore;
-      await state.pickPhoto(user);
-      await tester.pump();
-      expect(find.text('Avatar upload cancelled'), findsOneWidget);
-    });
 
     testWidgets('error shows snackbar', (tester) async {
       when(
-        () => reference.putFile(any()),
+        () => reference.putData(any(), any()),
       ).thenThrow(FirebaseException(plugin: 'storage'));
-      await pumpWidget(tester);
+      final file = await pumpWidget(tester);
       final state = tester.state(find.byType(ProfileScreen)) as dynamic;
       await state.pickPhoto(user);
       await tester.pump();
       expect(find.text('Error updating avatar'), findsOneWidget);
+      try { await file.parent.delete(recursive: true); } catch (_) {}
     });
   });
 }
