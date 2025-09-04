@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 class ImageResizer {
@@ -47,5 +48,30 @@ class ImageResizer {
       // On any error, return original file to avoid blocking uploads
       return file;
     }
+  }
+
+  /// Crops the given [bytes] to a centered square and resizes it to 256×256.
+  ///
+  /// The output is encoded as PNG to avoid external dependencies. The
+  /// resulting byte list can be uploaded directly via `putData`.
+  static Future<Uint8List> cropSquareResize256(Uint8List bytes) async {
+    final codec = await ui.instantiateImageCodec(bytes);
+    final frame = await codec.getNextFrame();
+    final img = frame.image;
+    final size = math.min(img.width, img.height).toDouble();
+    final src = ui.Rect.fromLTWH(
+      ((img.width - size) / 2).toDouble(),
+      ((img.height - size) / 2).toDouble(),
+      size,
+      size,
+    );
+    const target = 256;
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+    final dst = ui.Rect.fromLTWH(0, 0, target.toDouble(), target.toDouble());
+    canvas.drawImageRect(img, src, dst, ui.Paint());
+    final outImg = await recorder.endRecording().toImage(target, target);
+    final data = await outImg.toByteData(format: ui.ImageByteFormat.png);
+    return data!.buffer.asUint8List();
   }
 }

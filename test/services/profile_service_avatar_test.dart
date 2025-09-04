@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -15,6 +16,7 @@ class MockUploadTask extends Mock implements UploadTask {}
 void main() {
   setUpAll(() {
     registerFallbackValue(File('fallback.png'));
+    registerFallbackValue(Uint8List(0));
   });
   group('ProfileService.uploadAvatar', () {
     late MockFirebaseStorage storage;
@@ -32,7 +34,7 @@ void main() {
       cache = FakeCache<UserModel>();
       when(() => storage.ref()).thenReturn(reference);
       when(() => reference.child(any())).thenReturn(reference);
-      when(() => reference.putFile(any(), any())).thenAnswer((_) => task);
+      when(() => reference.putData(any(), any())).thenAnswer((_) => task);
       when(
         () => reference.getDownloadURL(),
       ).thenAnswer((_) async => 'http://download');
@@ -68,6 +70,7 @@ void main() {
       expect(url, 'http://download');
       final doc = await firestore.collection('users').doc('u1').get();
       expect(doc.data()?['avatarUrl'], 'http://download');
+      verify(() => reference.child('users/u1/avatar/avatar_256.png')).called(1);
       // cleanup temp file
       try { await file.parent.delete(recursive: true); } catch (_) {}
     });

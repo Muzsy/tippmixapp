@@ -19,6 +19,41 @@ import '../services/profile_service.dart';
 import 'profile/partials/notification_prefs_section.dart';
 import '../services/user_service.dart';
 
+@visibleForTesting
+Widget buildAvatar(BuildContext context, String? photoUrl, String displayName) {
+  const size = 80.0;
+  final placeholder = Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
+      style: Theme.of(context).textTheme.titleLarge,
+    ),
+  );
+
+  if (photoUrl == null || photoUrl.isEmpty) {
+    return placeholder;
+  }
+
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Image(
+      image: photoUrl.startsWith('http')
+          ? NetworkImage(photoUrl)
+          : AssetImage(photoUrl) as ImageProvider,
+      width: size,
+      height: size,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => placeholder,
+    ),
+  );
+}
+
 class ProfileScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
 
@@ -84,13 +119,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _pickPhoto(dynamic user) async {
     final loc = AppLocalizations.of(context)!;
     final picked = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (picked == null) {
+    if (picked == null) return;
+    final lower = picked.name.toLowerCase();
+    if (!(lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png'))) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_cancelled)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
       return;
     }
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
     try {
       if (storage != null && firestore != null) {
         final url = await ProfileService.uploadAvatar(
@@ -105,16 +147,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         );
         if (!mounted) return;
         setState(() => _avatarUrl = url);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
         await WidgetsBinding.instance.endOfFrame;
       }
     } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(loc.profile_avatar_error)));
+      }
+    } finally {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
     }
   }
 
@@ -225,16 +270,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTap: firebaseUser != null
                     ? () => _showAvatarGallery(firebaseUser)
                     : null,
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      _avatarUrl != null && _avatarUrl!.startsWith('http')
-                      ? NetworkImage(_avatarUrl!) as ImageProvider
-                      : _avatarUrl != null
-                      ? AssetImage(_avatarUrl!)
-                      : null,
-                  child: _avatarUrl == null ? const Icon(Icons.person) : null,
-                ),
+                child: buildAvatar(context, _avatarUrl, displayName),
               ),
               const Spacer(),
               StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import '../utils/image_resizer.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -18,17 +19,17 @@ class StorageService {
     if (uid == null) {
       throw StateError('No user');
     }
-    // Ensure file is under ~2MB to satisfy storage rules/limits
-    if (await image.length() > 2 * 1024 * 1024) {
-      image = await ImageResizer.downscalePng(image, maxBytes: 2 * 1024 * 1024, initialMaxDimension: 1024);
-    }
-    final lower = image.path.toLowerCase();
-    final isPng = lower.endsWith('.png');
-    final contentType = isPng ? 'image/png' : 'image/jpeg';
-    final ext = isPng ? 'png' : 'jpg';
-    // Upload path must follow storage rules: users/{uid}/avatar.{ext}
-    final ref = _storage.ref().child('users/$uid/avatar.$ext');
-    final task = ref.putFile(image, SettableMetadata(contentType: contentType));
+    Uint8List bytes = await image.readAsBytes();
+    bytes = await ImageResizer.cropSquareResize256(bytes);
+    final ref =
+        _storage.ref().child('users/$uid/avatar/avatar_256.png');
+    final task = ref.putData(
+      bytes,
+      SettableMetadata(
+        contentType: 'image/png',
+        cacheControl: 'public, max-age=86400',
+      ),
+    );
     try {
       await task;
     } on TypeError {
