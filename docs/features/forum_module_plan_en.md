@@ -53,6 +53,7 @@ threads/{threadId}/posts/{postId}
 - Basic spam filter (length, profanity)
 - Post count per user stored in profile (e.g. for badges)
 - Optional: pinned threads or featured discussions
+- MarketSnapshotAdapter caches ApiFootball odds snapshots for the composer
 
 ---
 
