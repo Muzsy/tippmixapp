@@ -48,6 +48,7 @@
 * `lib/widgets/ticket_details_dialog.dart` – részletező: rövidített szelvényazonosító (első 4 + utolsó 4), létrehozás dátuma; függő státusznál legkorábbi tipp kezdési ideje; tippek státusz szerinti csoportosítása (Nyertes/Vesztes/Függőben) szekciókba, címkék: `loc.ticket_details_section_*` + darabszám. Szekció össze/kinyitás csak 2+ elemnél; 1 elemnél sima fejléc + sor. Sor tartalma: esemény cím, `outcome • market`, trailing: mini státusz‑chip + `xODDS`.
   * `lib/widgets/empty_ticket_placeholder.dart` – üres állapot, elsődleges CTA „Szelvény készítése” (GoRouter → `AppRoute.bets`).
   * Navigáció: `lib/widgets/app_drawer.dart`, `lib/widgets/my_bottom_navigation_bar.dart`.
+  * Fejlesztői `FloatingActionButton`: manuális szelvénykiértékelés indítása (csak uid = `2pEEqMzCsBfkrv4jWx3YP5yDb0F2`).
 * **Állapotok**:
 
   * [x] **Loading** — skeleton lista: `MyTicketsSkeleton`.

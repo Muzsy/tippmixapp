@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tippmixapp/l10n/app_localizations.dart';
@@ -13,7 +12,7 @@ import '../widgets/error_with_retry.dart';
 import '../widgets/my_tickets_skeleton.dart';
 import '../services/analytics_service.dart';
 import '../services/finalizer_service.dart';
-import '../providers/admin_provider.dart';
+import '../providers/onboarding_provider.dart' show firebaseAuthProvider;
 
 const _pageSize = 20;
 
@@ -33,7 +32,9 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
       .map((snap) => snap.docs.map((d) => Ticket.fromFirestore(d)).toList());
 });
 
-final _listViewedLoggedProvider = StateProvider.autoDispose<bool>((ref) => false);
+final _listViewedLoggedProvider = StateProvider.autoDispose<bool>(
+  (ref) => false,
+);
 
 class MyTicketsScreen extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -106,7 +107,8 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     }
   }
 
-  List<Ticket>? get _currentBase => ref.read(ticketsProvider).maybeWhen(data: (v) => v, orElse: () => null);
+  List<Ticket>? get _currentBase =>
+      ref.read(ticketsProvider).maybeWhen(data: (v) => v, orElse: () => null);
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,9 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
               ref.read(_listViewedLoggedProvider.notifier).state = true;
               // fire-and-forget telemetry
               // ignore: unawaited_futures
-              ref.read(analyticsServiceProvider).logTicketsListViewed(tickets.length);
+              ref
+                  .read(analyticsServiceProvider)
+                  .logTicketsListViewed(tickets.length);
             }
           });
           final combined = [...tickets, ..._extra];
@@ -157,29 +161,31 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
                       }
                       final t = combined[index];
                       return TicketCard(
-                      ticket: t,
-                      onTap: () async {
-                        // Telemetry: selected + details opened
-                        // ignore: unawaited_futures
-                        ref.read(analyticsServiceProvider).logTicketSelected(t.id);
-                        // ignore: unawaited_futures
-                        ref.read(analyticsServiceProvider).logTicketDetailsOpened(
-                              ticketId: t.id,
-                              tips: t.tips.length,
-                              status: t.status.name,
-                              stake: t.stake,
-                              totalOdd: t.totalOdd,
-                              potentialWin: t.potentialWin,
-                            );
-                        await showDialog(
-                          context: context,
-                          builder: (_) => TicketDetailsDialog(
-                            ticket: t,
-                            tips: t.tips,
-                          ),
-                        );
-                      },
-                    );
+                        ticket: t,
+                        onTap: () async {
+                          // Telemetry: selected + details opened
+                          // ignore: unawaited_futures
+                          ref
+                              .read(analyticsServiceProvider)
+                              .logTicketSelected(t.id);
+                          // ignore: unawaited_futures
+                          ref
+                              .read(analyticsServiceProvider)
+                              .logTicketDetailsOpened(
+                                ticketId: t.id,
+                                tips: t.tips.length,
+                                status: t.status.name,
+                                stake: t.stake,
+                                totalOdd: t.totalOdd,
+                                potentialWin: t.potentialWin,
+                              );
+                          await showDialog(
+                            context: context,
+                            builder: (_) =>
+                                TicketDetailsDialog(ticket: t, tips: t.tips),
+                          );
+                        },
+                      );
                     },
                   ),
           );
@@ -188,7 +194,9 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
         error: (e, _) {
           // fire-and-forget error telemetry
           // ignore: unawaited_futures
-          ref.read(analyticsServiceProvider).logErrorShown(
+          ref
+              .read(analyticsServiceProvider)
+              .logErrorShown(
                 screen: 'my_tickets',
                 code: e.runtimeType.toString(),
                 message: e.toString(),
@@ -211,48 +219,37 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(loc.my_tickets_title)),
       body: content,
-      floatingActionButton: _buildForceFab(context, loc),
+      floatingActionButton: _buildForceFab(context),
     );
   }
 
-  Widget? _buildForceFab(BuildContext context, AppLocalizations loc) {
-    final isAdmin = ref.watch(isAdminProvider);
-    if (!kDebugMode && !isAdmin) return null;
-    final scheme = Theme.of(context).colorScheme;
-    return FloatingActionButton(
-      backgroundColor: scheme.secondary,
-      foregroundColor: scheme.onSecondary,
+  Widget? _buildForceFab(BuildContext context) {
+    final uid = ref.watch(firebaseAuthProvider).currentUser?.uid;
+    if (uid != '2pEEqMzCsBfkrv4jWx3YP5yDb0F2') {
+      return null;
+    }
+
+    return FloatingActionButton.extended(
       onPressed: _forcing
           ? null
           : () async {
               setState(() => _forcing = true);
               final result = await FinalizerService.forceFinalizer();
-              if (!mounted) return;
-              final ok = result == 'OK';
-              // ignore: unawaited_futures
-              ref.read(analyticsServiceProvider).logEvent(
-                    'force_match_finalizer_tapped',
-                    parameters: {'result': ok ? 'success' : 'error'},
-                  );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text(ok ? loc.ok : loc.unknown_error_try_again),
-                ),
-              );
-              setState(() => _forcing = false);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      result == 'OK'
+                          ? 'Kiértékelés elindítva'
+                          : 'Hiba: $result',
+                    ),
+                  ),
+                );
+                setState(() => _forcing = false);
+              }
             },
-      child: _forcing
-          ? SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(scheme.onSecondary),
-              ),
-            )
-          : const Icon(Icons.bolt),
+      icon: const Icon(Icons.bolt),
+      label: Text(_forcing ? 'Fut…' : 'Kiértékelés'),
     );
   }
 }
