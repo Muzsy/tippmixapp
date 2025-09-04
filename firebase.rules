@@ -154,6 +154,42 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    /* --- forum threads --- */
+    match /threads/{threadId} {
+      allow read: if true;
+      allow create: if signedIn();
+      allow update, delete: if isModerator();
+
+      match /posts/{postId} {
+        allow read: if true;
+        allow create: if signedIn()
+          && request.resource.data.userId == request.auth.uid
+          && ['tip', 'comment', 'system'].has(request.resource.data.type);
+        allow update: if isModerator() ||
+          (isOwner(request.resource.data.userId) &&
+           request.time.diff(resource.data.createdAt, 'minutes') <= 15);
+        allow delete: if isModerator();
+      }
+    }
+
+    /* --- votes --- */
+    match /votes/{voteId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && voteId == request.resource.data.postId + '_' + request.auth.uid
+        && !exists(/databases/$(database)/documents/votes/$(voteId))
+        && (request.resource.data.value == 1 || request.resource.data.value == -1);
+      allow delete: if isOwner(request.resource.data.userId) || isModerator();
+      allow update: if false;
+    }
+
+    /* --- reports --- */
+    match /reports/{reportId} {
+      allow create: if signedIn();
+      allow read, update, delete: if isModerator();
+    }
+
     /* ——— relations (followers & friends) ——— */
     match /relations/{uid} {
       match /followers/{followerUid} {
