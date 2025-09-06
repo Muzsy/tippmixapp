@@ -4,18 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/ticket_model.dart';
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/models/user.dart' as app;
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/onboarding_provider.dart'
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/ticket_model.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/models/user.dart' as app;
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/onboarding_provider.dart'
     show firebaseAuthProvider;
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/providers/bet_slip_provider.dart';
-import 'package:tippmixapp/screens/create_ticket_screen.dart';
-import 'package:tippmixapp/screens/my_tickets_screen.dart';
-import 'package:tippmixapp/widgets/empty_ticket_placeholder.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/providers/bet_slip_provider.dart';
+import 'package:tipsterino/screens/create_ticket_screen.dart';
+import 'package:tipsterino/screens/my_tickets_screen.dart';
+import 'package:tipsterino/widgets/empty_ticket_placeholder.dart';
 
 // We avoid real Firebase by injecting a fake AuthService that exposes
 // a controllable auth state stream without platform channels.

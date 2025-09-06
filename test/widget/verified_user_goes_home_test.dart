@@ -5,16 +5,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
-import 'package:tippmixapp/screens/home_screen.dart';
-import 'package:tippmixapp/providers/onboarding_provider.dart';
-import 'package:tippmixapp/router.dart';
-import 'package:tippmixapp/controllers/splash_controller.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/user.dart' as tm;
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/screens/home_screen.dart';
+import 'package:tipsterino/providers/onboarding_provider.dart';
+import 'package:tipsterino/router.dart';
+import 'package:tipsterino/controllers/splash_controller.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart' as tm;
+import 'package:tipsterino/services/auth_service.dart';
 
 class MockFirebaseAuth extends Mock implements fb.FirebaseAuth {}
 

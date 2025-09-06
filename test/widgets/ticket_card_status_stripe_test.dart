@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/ticket_model.dart';
-import 'package:tippmixapp/widgets/ticket_card.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/ticket_model.dart';
+import 'package:tipsterino/widgets/ticket_card.dart';
 
 Ticket _t(TicketStatus s) => Ticket(
       id: 't1',

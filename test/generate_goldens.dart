@@ -3,19 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tippmixapp/theme/theme_builder.dart';
-import 'package:tippmixapp/theme/available_themes.dart';
-import 'package:tippmixapp/services/theme_service.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
+import 'package:tipsterino/theme/available_themes.dart';
+import 'package:tipsterino/services/theme_service.dart';
 import 'mock_theme_service.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/bet_slip_provider.dart';
-import 'package:tippmixapp/providers/feed_provider.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/providers/notification_provider.dart';
-import 'package:tippmixapp/screens/home_screen.dart'
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/bet_slip_provider.dart';
+import 'package:tipsterino/providers/feed_provider.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
+import 'package:tipsterino/providers/notification_provider.dart';
+import 'package:tipsterino/screens/home_screen.dart'
     show
         HomeScreen,
         dailyBonusAvailableProvider,
@@ -23,28 +23,28 @@ import 'package:tippmixapp/screens/home_screen.dart'
         aiTipFutureProvider,
         activeChallengesProvider,
         latestFeedActivityProvider;
-import 'package:tippmixapp/screens/my_tickets_screen.dart'
+import 'package:tipsterino/screens/my_tickets_screen.dart'
     show MyTicketsScreen, ticketsProvider;
-import 'package:tippmixapp/screens/badges/badge_screen.dart'
+import 'package:tipsterino/screens/badges/badge_screen.dart'
     show BadgeScreen, userBadgesProvider;
-import 'package:tippmixapp/screens/profile_screen.dart';
-import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
-import 'package:tippmixapp/screens/settings/settings_screen.dart';
-import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
-import 'package:tippmixapp/screens/create_ticket_screen.dart';
-import 'package:tippmixapp/screens/feed_screen.dart';
-import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
-import 'package:tippmixapp/providers/leaderboard_provider.dart'
+import 'package:tipsterino/screens/profile_screen.dart';
+import 'package:tipsterino/screens/events_screen.dart';
+import 'package:tipsterino/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tipsterino/screens/settings/settings_screen.dart';
+import 'package:tipsterino/screens/rewards/rewards_screen.dart';
+import 'package:tipsterino/screens/create_ticket_screen.dart';
+import 'package:tipsterino/screens/feed_screen.dart';
+import 'package:tipsterino/screens/notifications/notification_center_screen.dart';
+import 'package:tipsterino/providers/leaderboard_provider.dart'
     show topTipsterProvider;
-import 'package:tippmixapp/services/reward_service.dart'
+import 'package:tipsterino/services/reward_service.dart'
     show RewardService, rewardServiceProvider;
-import 'package:tippmixapp/providers/odds_api_provider.dart'
+import 'package:tipsterino/providers/odds_api_provider.dart'
     show oddsApiProvider, OddsApiProvider;
-import 'package:tippmixapp/services/odds_cache_wrapper.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tipsterino/services/odds_cache_wrapper.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/routes/app_route.dart';
 
 class _FakeAuthService implements AuthService {
   @override

@@ -3,7 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class _FailingAppCheck extends Fake implements FirebaseAppCheck {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tippmixapp/services/challenge_service.dart';
+import 'package:tipsterino/services/challenge_service.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeQueryDocumentSnapshot extends Fake

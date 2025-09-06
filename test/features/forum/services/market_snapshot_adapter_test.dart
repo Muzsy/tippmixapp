@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/features/forum/services/market_snapshot_adapter.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tipsterino/features/forum/services/market_snapshot_adapter.dart';
+import 'package:tipsterino/services/api_football_service.dart';
 
 class _MockApiFootballService extends ApiFootballService {
   int callCount = 0;

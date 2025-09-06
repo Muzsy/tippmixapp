@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/feed_event_type.dart';
-import 'package:tippmixapp/models/feed_model.dart';
-import 'package:tippmixapp/widgets/home/home_tile_feed_activity.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/feed_event_type.dart';
+import 'package:tipsterino/models/feed_model.dart';
+import 'package:tipsterino/widgets/home/home_tile_feed_activity.dart';
 
 void main() {
   testWidgets('renders feed event and handles CTA', (tester) async {

@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/config/badge_config.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/l10n/app_localizations_de.dart';
-import 'package:tippmixapp/l10n/app_localizations_en.dart';
-import 'package:tippmixapp/l10n/app_localizations_hu.dart';
-import 'package:tippmixapp/screens/badges/badge_screen.dart';
-import 'package:tippmixapp/widgets/badge_grid_view.dart';
+import 'package:tipsterino/config/badge_config.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations_de.dart';
+import 'package:tipsterino/l10n/app_localizations_en.dart';
+import 'package:tipsterino/l10n/app_localizations_hu.dart';
+import 'package:tipsterino/screens/badges/badge_screen.dart';
+import 'package:tipsterino/widgets/badge_grid_view.dart';
 
 Future<void> _pumpBadgeScreen(
   WidgetTester tester,

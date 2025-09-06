@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/helpers/validators.dart';
+import 'package:tipsterino/helpers/validators.dart';
 
 void main() {
   group('validateEmail', () {

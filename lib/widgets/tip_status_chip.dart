@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/tip_model.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/tip_model.dart';
 
 class TipStatusChip extends StatelessWidget {
   final TipStatus status;

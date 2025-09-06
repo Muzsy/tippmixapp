@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../controllers/register_step1_viewmodel.dart';
 import '../providers/register_state_notifier.dart';
 import '../providers/hibp_service_provider.dart';

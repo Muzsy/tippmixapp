@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/screens/profile_screen.dart';
+import 'package:tipsterino/screens/profile_screen.dart';
 
 void main() {
   testWidgets('shows placeholder when url is null', (tester) async {

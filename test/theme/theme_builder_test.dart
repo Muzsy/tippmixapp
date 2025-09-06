@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 
-import 'package:tippmixapp/theme/theme_builder.dart';
-import 'package:tippmixapp/theme/brand_colors.dart';
-import 'package:tippmixapp/theme/brand_colors_presets.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
+import 'package:tipsterino/theme/brand_colors.dart';
+import 'package:tipsterino/theme/brand_colors_presets.dart';
 
 void main() {
   test('buildTheme generates correct ThemeData for schemes and brightness', () {

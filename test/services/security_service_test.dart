@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/services/security_service.dart';
-import 'package:tippmixapp/models/two_factor_type.dart';
+import 'package:tipsterino/services/security_service.dart';
+import 'package:tipsterino/models/two_factor_type.dart';
 
 void main() {
   test('verifyOtp returns true for 123456', () async {

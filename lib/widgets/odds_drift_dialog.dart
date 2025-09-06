@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../models/odds_drift.dart';
 
 Future<bool> showOddsDriftDialog(

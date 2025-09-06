@@ -39,6 +39,17 @@ android {
         versionName = flutter.versionName
     }
 
+    // Allow overriding the applicationId in local/dev runs so that the
+    // bundled google-services.json (dev) can be used without changing source.
+    // Usage: USE_EXAMPLE_APP_ID=1 flutter test -d <device> integration_test
+    val useExampleAppId = System.getenv("USE_EXAMPLE_APP_ID") == "1"
+    if (useExampleAppId) {
+        defaultConfig {
+            applicationId = "com.example.tippmixapp"
+            println("⚙️ Using example applicationId for debug/dev: $applicationId")
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             // környezeti változó → manifestPlaceholder

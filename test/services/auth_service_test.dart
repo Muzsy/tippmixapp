@@ -5,8 +5,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/models/user.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/models/user.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeUser extends Fake implements fb.User {

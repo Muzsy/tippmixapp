@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/models/profile.dart';
+import 'package:tipsterino/models/profile.dart';
 
 void main() {
   test('fromJson/toJson roundtrip', () {

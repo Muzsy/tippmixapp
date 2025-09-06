@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tippmixapp/controllers/splash_controller.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/screens/splash_screen.dart';
-import 'package:tippmixapp/screens/register_wizard.dart';
+import 'package:tipsterino/controllers/splash_controller.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/screens/splash_screen.dart';
+import 'package:tipsterino/screens/register_wizard.dart';
 
 class _FakeSplashController extends StateNotifier<AsyncValue<AppRoute>>
     implements SplashController {

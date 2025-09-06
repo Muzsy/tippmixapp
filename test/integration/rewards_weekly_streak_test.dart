@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tippmixapp/services/stats_service.dart';
+import 'package:tipsterino/services/stats_service.dart';
 
 class LenientFakeFirestore extends FakeFirebaseFirestore {
   @override

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../models/ticket_model.dart';
 // duplicate import removed
 import '../services/analytics_service.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import 'ticket_status_chip.dart';
 import 'tip_status_chip.dart';
 import '../models/tip_model.dart';

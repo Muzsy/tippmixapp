@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/home/home_tile_challenge_prompt.dart';
-import 'package:tippmixapp/services/challenge_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/home/home_tile_challenge_prompt.dart';
+import 'package:tipsterino/services/challenge_service.dart';
 
 void main() {
   testWidgets('renders challenge and handles CTA', (tester) async {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/screens/profile/security/security_screen.dart';
-import 'package:tippmixapp/screens/profile/security/two_factor_wizard.dart';
-import 'package:tippmixapp/services/security_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/screens/profile/security/security_screen.dart';
+import 'package:tipsterino/screens/profile/security/two_factor_wizard.dart';
+import 'package:tipsterino/services/security_service.dart';
 
 void main() {
   testWidgets('toggle navigates to wizard', (tester) async {

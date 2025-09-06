@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/services/market_mapping.dart';
+import 'package:tipsterino/services/market_mapping.dart';
 
 void main() {
   test('H2H parser kinyeri az 1/X/2 oddsokat', () {

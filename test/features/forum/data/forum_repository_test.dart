@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/features/forum/data/firestore_forum_repository.dart';
-import 'package:tippmixapp/features/forum/domain/post.dart';
+import 'package:tipsterino/features/forum/data/firestore_forum_repository.dart';
+import 'package:tipsterino/features/forum/domain/post.dart';
 
 void main() {
   late FakeFirebaseFirestore fs;

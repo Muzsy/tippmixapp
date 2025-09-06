@@ -2,7 +2,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:mocktail/mocktail.dart';
-import 'package:tippmixapp/services/theme_service.dart';
+import 'package:tipsterino/services/theme_service.dart';
 
 /// Simple mock implementation of [ThemeService] for widget tests.
 ///

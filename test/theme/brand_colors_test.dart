@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tippmixapp/theme/brand_colors.dart';
-import 'package:tippmixapp/theme/brand_colors_presets.dart';
-import 'package:tippmixapp/theme/theme_builder.dart';
+import 'package:tipsterino/theme/brand_colors.dart';
+import 'package:tipsterino/theme/brand_colors_presets.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
 
 void main() {
   testWidgets('BrandColors accessible via Theme.of for light mode', (

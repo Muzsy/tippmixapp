@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tipsterino/services/api_football_service.dart';
 
 void main() {
   test('maps Match Winner bet to h2h market and team names', () async {

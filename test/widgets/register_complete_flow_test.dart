@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/register_state_notifier.dart';
-import 'package:tippmixapp/screens/register_step3_form.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/register_state_notifier.dart';
+import 'package:tipsterino/screens/register_step3_form.dart';
+import 'package:tipsterino/services/auth_service.dart';
 import '../mocks/mock_auth_service.dart';
 
 class FakeRegisterNotifier extends RegisterStateNotifier {

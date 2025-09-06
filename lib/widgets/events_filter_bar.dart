@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/features/filters/events_filter.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/widgets/action_pill.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/features/filters/events_filter.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/widgets/action_pill.dart';
 
 typedef EventsFilterChanged = void Function(EventsFilter filter);
 

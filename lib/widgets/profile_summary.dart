@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 class ProfileSummary extends ConsumerWidget {
   const ProfileSummary({super.key});

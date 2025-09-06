@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../../models/user_stats_model.dart';
 
 /// Tile displaying the top tipster in the current club.

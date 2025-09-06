@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/user_model.dart';
-import 'package:tippmixapp/screens/profile/edit_profile_screen.dart';
-import 'package:tippmixapp/services/user_service.dart';
-import 'package:tippmixapp/constants.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/user_model.dart';
+import 'package:tipsterino/screens/profile/edit_profile_screen.dart';
+import 'package:tipsterino/services/user_service.dart';
+import 'package:tipsterino/constants.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 const List<int> _kTransparentImage = <int>[

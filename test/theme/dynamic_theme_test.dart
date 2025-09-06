@@ -4,9 +4,9 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:dynamic_color/test_utils.dart';
 import 'package:dynamic_color/samples.dart';
 
-import 'package:tippmixapp/theme/theme_builder.dart';
-import 'package:tippmixapp/theme/brand_colors.dart';
-import 'package:tippmixapp/theme/brand_colors_presets.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
+import 'package:tipsterino/theme/brand_colors.dart';
+import 'package:tipsterino/theme/brand_colors_presets.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

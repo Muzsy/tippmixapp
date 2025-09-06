@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/providers/bet_slip_provider.dart';
-import 'package:tippmixapp/models/tip_model.dart';
+import 'package:tipsterino/providers/bet_slip_provider.dart';
+import 'package:tipsterino/models/tip_model.dart';
 
 TipModel tip(String eventId, String outcome) => TipModel(
   eventId: eventId,

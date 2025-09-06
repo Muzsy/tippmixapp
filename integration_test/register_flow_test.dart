@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:tippmixapp/main.dart' as app;
-import 'package:tippmixapp/router.dart';
-import 'package:tippmixapp/screens/register_step1_form.dart';
+import 'package:tipsterino/main.dart' as app;
+import 'package:tipsterino/router.dart';
+import 'package:tipsterino/screens/register_step1_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {

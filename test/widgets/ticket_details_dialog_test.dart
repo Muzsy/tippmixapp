@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/ticket_model.dart';
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/widgets/ticket_details_dialog.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/ticket_model.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/widgets/ticket_details_dialog.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

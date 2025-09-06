@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/screens/copied_ticket_edit_screen.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/screens/copied_ticket_edit_screen.dart';
 
 void main() {
   testWidgets('submit button enabled after modification', (tester) async {

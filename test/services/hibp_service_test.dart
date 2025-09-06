@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:clock/clock.dart';
-import 'package:tippmixapp/services/hibp_service.dart';
+import 'package:tipsterino/services/hibp_service.dart';
 
 void main() {
   test('returns true when suffix found', () async {

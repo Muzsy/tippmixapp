@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/models/odds_outcome.dart';
-import 'package:tippmixapp/models/h2h_market.dart';
-import 'package:tippmixapp/models/odds_market.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/widgets/action_pill.dart';
-import 'package:tippmixapp/widgets/league_pill.dart';
-import 'package:tippmixapp/widgets/team_badge.dart';
-import 'package:tippmixapp/services/ticket_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/models/odds_outcome.dart';
+import 'package:tipsterino/models/h2h_market.dart';
+import 'package:tipsterino/models/odds_market.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/widgets/action_pill.dart';
+import 'package:tipsterino/widgets/league_pill.dart';
+import 'package:tipsterino/widgets/team_badge.dart';
+import 'package:tipsterino/services/ticket_service.dart';
 
 class EventBetCard extends StatefulWidget {
   final OddsEvent event;

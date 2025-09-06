@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/home/home_tile_educational_tip.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/home/home_tile_educational_tip.dart';
 
 class FakeRandom implements Random {
   final int value;

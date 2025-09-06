@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:tippmixapp/screens/register_wizard.dart';
-import 'package:tippmixapp/providers/hibp_service_provider.dart';
-import 'package:tippmixapp/providers/recaptcha_service_provider.dart';
-import 'package:tippmixapp/providers/auth_repository_provider.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/services/hibp_service.dart';
-import 'package:tippmixapp/services/recaptcha_service.dart';
-import 'package:tippmixapp/services/auth_repository.dart';
-import 'package:tippmixapp/services/analytics_service.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/screens/register_wizard.dart';
+import 'package:tipsterino/providers/hibp_service_provider.dart';
+import 'package:tipsterino/providers/recaptcha_service_provider.dart';
+import 'package:tipsterino/providers/auth_repository_provider.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/services/hibp_service.dart';
+import 'package:tipsterino/services/recaptcha_service.dart';
+import 'package:tipsterino/services/auth_repository.dart';
+import 'package:tipsterino/services/analytics_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../mocks/mock_auth_service.dart';
 
 class FakeHIBPService extends HIBPService {

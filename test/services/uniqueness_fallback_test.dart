@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';

@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:tippmixapp/services/profile_service.dart';
-import 'package:tippmixapp/models/user_model.dart';
+import 'package:tipsterino/services/profile_service.dart';
+import 'package:tipsterino/models/user_model.dart';
 
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 

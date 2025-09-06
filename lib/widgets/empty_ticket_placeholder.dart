@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/services/analytics_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/services/analytics_service.dart';
 
 class EmptyTicketPlaceholder extends ConsumerWidget {
   const EmptyTicketPlaceholder({super.key});

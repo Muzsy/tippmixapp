@@ -2,11 +2,11 @@ import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tippmixapp/utils/simple_logger.dart';
+import 'package:tipsterino/utils/simple_logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:tippmixapp/utils/transaction_wrapper.dart';
-import 'package:tippmixapp/services/coin_service.dart';
+import 'package:tipsterino/utils/transaction_wrapper.dart';
+import 'package:tipsterino/services/coin_service.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeUser extends Fake implements User {

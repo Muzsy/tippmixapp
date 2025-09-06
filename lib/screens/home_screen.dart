@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/my_bottom_navigation_bar.dart';
-import 'package:tippmixapp/widgets/app_drawer.dart';
-import 'package:tippmixapp/widgets/notification_bell_widget.dart';
-import 'package:tippmixapp/widgets/home/home_tile_daily_bonus.dart';
-import 'package:tippmixapp/widgets/home/home_tile_educational_tip.dart';
-import 'package:tippmixapp/widgets/home/home_tile_ai_tip.dart';
-import 'package:tippmixapp/widgets/home/home_tile_top_tipster.dart';
-import 'package:tippmixapp/widgets/home/home_tile_badge_earned.dart';
-import 'package:tippmixapp/widgets/home/home_tile_challenge_prompt.dart';
-import 'package:tippmixapp/widgets/home/home_tile_feed_activity.dart';
-import 'package:tippmixapp/providers/leaderboard_provider.dart';
-import 'package:tippmixapp/services/ai_tip_provider.dart';
-import 'package:tippmixapp/services/badge_service.dart';
-import 'package:tippmixapp/services/challenge_service.dart';
-import 'package:tippmixapp/models/earned_badge_model.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/ui/auth/auth_gate.dart';
-import 'package:tippmixapp/providers/feed_provider.dart';
-import 'package:tippmixapp/models/feed_model.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/my_bottom_navigation_bar.dart';
+import 'package:tipsterino/widgets/app_drawer.dart';
+import 'package:tipsterino/widgets/notification_bell_widget.dart';
+import 'package:tipsterino/widgets/home/home_tile_daily_bonus.dart';
+import 'package:tipsterino/widgets/home/home_tile_educational_tip.dart';
+import 'package:tipsterino/widgets/home/home_tile_ai_tip.dart';
+import 'package:tipsterino/widgets/home/home_tile_top_tipster.dart';
+import 'package:tipsterino/widgets/home/home_tile_badge_earned.dart';
+import 'package:tipsterino/widgets/home/home_tile_challenge_prompt.dart';
+import 'package:tipsterino/widgets/home/home_tile_feed_activity.dart';
+import 'package:tipsterino/providers/leaderboard_provider.dart';
+import 'package:tipsterino/services/ai_tip_provider.dart';
+import 'package:tipsterino/services/badge_service.dart';
+import 'package:tipsterino/services/challenge_service.dart';
+import 'package:tipsterino/models/earned_badge_model.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/ui/auth/auth_gate.dart';
+import 'package:tipsterino/providers/feed_provider.dart';
+import 'package:tipsterino/models/feed_model.dart';
 import 'home_guest_cta_tile.dart';
-import 'package:tippmixapp/widgets/home/user_stats_header.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
+import 'package:tipsterino/widgets/home/user_stats_header.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
 
 /// Whether the daily bonus tile should be shown on the home screen.
 final dailyBonusAvailableProvider = StateProvider<bool>((ref) => false);
@@ -178,7 +178,7 @@ class HomeScreen extends ConsumerWidget {
     // Determine current route path for dynamic title.
     final currentPath = state?.uri.path ?? '/';
     final titles = <String, String>{
-      '/': 'Tipsterino',
+      // Default (including '/') falls back to loc.home_title below.
       '/feed': loc.feed_screen_title,
       '/profile': loc.profile_title,
       '/bets': loc.bets_title,

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/models/leaderboard_mode.dart';
-import 'package:tippmixapp/services/stats_service.dart';
+import 'package:tipsterino/models/leaderboard_mode.dart';
+import 'package:tipsterino/services/stats_service.dart';
 
 void main() {
   group('StatsService.computeStats', () {

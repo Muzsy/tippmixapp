@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/home/home_tile_daily_bonus.dart';
-import 'package:tippmixapp/services/coin_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/home/home_tile_daily_bonus.dart';
+import 'package:tipsterino/services/coin_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 class FakeCoinService extends CoinService {

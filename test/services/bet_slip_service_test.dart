@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/services/bet_slip_service.dart';
-import 'package:tippmixapp/services/coin_service.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/services/bet_slip_service.dart';
+import 'package:tipsterino/services/coin_service.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeUser extends Fake implements User {

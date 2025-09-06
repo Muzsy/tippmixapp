@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clock/clock.dart';
 
-import 'package:tippmixapp/services/profile_service.dart';
-import 'package:tippmixapp/models/user_model.dart';
+import 'package:tipsterino/services/profile_service.dart';
+import 'package:tipsterino/models/user_model.dart';
 
 class CacheEntry<T> {
   final T value;

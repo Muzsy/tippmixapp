@@ -4,7 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import '../../services/user_service.dart';
 import '../../validators/display_name_validator.dart';
 import '../../widgets/avatar_picker.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel? initial;

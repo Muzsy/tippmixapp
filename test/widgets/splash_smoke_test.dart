@@ -5,16 +5,16 @@ import 'package:go_router/go_router.dart';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:tippmixapp/controllers/splash_controller.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/screens/splash_screen.dart';
-import 'package:tippmixapp/screens/auth/login_screen.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/services/experiment_service.dart';
-import 'package:tippmixapp/services/analytics_service.dart';
+import 'package:tipsterino/controllers/splash_controller.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/screens/splash_screen.dart';
+import 'package:tipsterino/screens/auth/login_screen.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/services/experiment_service.dart';
+import 'package:tipsterino/services/analytics_service.dart';
 import '../mocks/mock_auth_service.dart';
-import 'package:tippmixapp/theme/theme_builder.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
 
 class _FakeSplashController extends StateNotifier<AsyncValue<AppRoute>>
     implements SplashController {

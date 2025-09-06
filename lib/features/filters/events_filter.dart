@@ -1,4 +1,4 @@
-import 'package:tippmixapp/models/odds_event.dart';
+import 'package:tipsterino/models/odds_event.dart';
 
 class EventsFilter {
   final DateTime? date; // only YMD
