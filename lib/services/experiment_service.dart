@@ -36,6 +36,14 @@ class ExperimentService {
       if (age.inDays < 28) return cached;
     }
 
+    // Offline/dev mode: skip network fetch and return deterministic default
+    const bool useEmu = bool.fromEnvironment('USE_EMULATOR', defaultValue: true);
+    if (useEmu) {
+      final variant = cached ?? 'A';
+      await _saveVariant(variant);
+      return variant;
+    }
+
     try {
       await _remoteConfig.fetchAndActivate();
       final fetched = _remoteConfig.getString(_variantKey);

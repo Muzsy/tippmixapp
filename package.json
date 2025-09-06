@@ -17,6 +17,14 @@
     "build-fx": "npm run build --prefix cloud_functions",
     "test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\"",
     "test:rules:coverage": "nyc --reporter=lcov npm run test:rules:run && npx coverage-badge --input coverage/coverage-final.json --output coverage/security_rules_badge.svg",
-    "test:rules:run": "mocha --timeout 15000 --experimental-modules \"test/security_rules.test.mjs\""
+    "test:rules:run": "mocha --timeout 15000 --experimental-modules \"test/security_rules.test.mjs\"",
+    "emu:start": "mkdir -p .emulator_data && firebase emulators:start --only auth,firestore,storage,functions --import=.emulator_data --export-on-exit",
+    "emu:reset": "rm -rf .emulator_data && mkdir -p .emulator_data",
+    "emu:export": "firebase emulators:export .emulator_data",
+    "emu:import": "firebase emulators:start --import=.emulator_data",
+    "seed": "node tools/seed.js",
+    "auth:seed": "bash tools/create_test_users.sh",
+    "dev:offline": "npm run -s emu:start",
+    "dev:offline:full": "bash tools/dev_offline.sh"
   }
 }

@@ -1,9 +1,17 @@
+import 'dart:io' show Platform;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'firebase_options.dart';
+
+const bool kUseEmulator = bool.fromEnvironment('USE_EMULATOR', defaultValue: true);
 
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +21,22 @@ Future<void> bootstrap() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+    }
+    // Build guard: prevent accidental prod usage in emulator mode
+    if (kUseEmulator) {
+      final pid = DefaultFirebaseOptions.currentPlatform.projectId;
+      if (pid.toLowerCase().contains('prod')) {
+        throw StateError('Offline/emulator mód mellett PROD Firebase projekt tiltott. (projectId=$pid)');
+      }
+    }
+    if (kUseEmulator) {
+      final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+      FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+      // Auth emulator requires await
+      await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+      FirebaseFunctions.instanceFor(region: 'europe-central2').useFunctionsEmulator(host, 5001);
+      FirebaseStorage.instance.useStorageEmulator(host, 9199);
+      try { await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(false); } catch (_) {}
     }
     // App Check – fejlesztői / CI környezetben Debug providerre váltunk,
     // hogy a Cloud Functions 403-at elkerüljük.

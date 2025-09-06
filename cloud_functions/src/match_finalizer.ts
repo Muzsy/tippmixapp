@@ -1,7 +1,5 @@
-import {
-  ApiFootballResultProvider,
-  findFixtureIdByMeta,
-} from "./services/ApiFootballResultProvider";
+import { findFixtureIdByMeta } from "./services/ApiFootballResultProvider";
+import { createResultProvider } from "./services/provider_factory";
 import { calcTicketPayout, deriveTicketStatus } from "./tickets/payout";
 import { getFirestore, FieldPath } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
@@ -61,9 +59,7 @@ export const match_finalizer = async (
   message: PubSubMessage,
 ): Promise<"OK" | "RETRY" | "DLQ"> => {
   // Provider példányosítás a handler scope‑ban – Secret olvasás futásidőben
-  const provider = new ApiFootballResultProvider(
-    API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || ''
-  );
+  const provider = createResultProvider();
   const attempt = Number((message?.attributes?.attempt as string) || "0");
   logger.info("match_finalizer.handle", {
     hasData: !!message?.data,

@@ -152,3 +152,15 @@ Terraform includes an optional Slack webhook for alerts. `slack_webhook_url` def
 **Note:** the legacy root collection `coin_logs` is **read-only**; clients cannot write there.
 
 For Codex configuration, see: [`AGENTS.md`](./AGENTS.md)
+
+---
+
+## 📴 Offline Playbook
+
+- Env: export `USE_EMULATOR=true USE_MOCK_SCORES=true USE_INLINE_FINALIZER=true API_FOOTBALL_KEY=dummy`
+- Start emulators: `npm run emu:start` (UI: http://localhost:4000)
+- Seed data: `npm run seed` and `npm run auth:seed`
+- Full offline flow: `npm run dev:offline:full`
+- Flutter run: `flutter run --dart-define=USE_EMULATOR=true`
+- Reset/export: `npm run emu:reset` / `npm run emu:export`
+- Troubleshooting: Android cleartext enabled; Functions logs in Emulator UI; Auth REST users via `tools/create_test_users.sh`.

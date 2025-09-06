@@ -5,7 +5,7 @@ service cloud.firestore {
     /* ——— SEGÉDFÜGGVÉNYEK ——— */
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
-    function isModerator()   { return request.auth != null && request.auth.token.moderator == true; }
+    function isModerator()   { return request.auth != null && request.auth.token != null && request.auth.token.moderator == true; }
     // ÚJ: kliens oldali ticket create ellenőrzéshez
     function isValidTicketCreate(data) {
       // Kötelező: ownerId == saját uid és kezdeti státusz 'pending'
@@ -74,9 +74,10 @@ service cloud.firestore {
 
     /* ——— users collection ——— */
     match /users/{uid} {
-      // A user csak a saját ágát olvashatja/írhatja, kivéve admin/mod
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-      allow read, write: if isModerator();
+      // Publikus profil olvasható minden bejelentkezett user számára (leaderboard, profil nézet)
+      allow read: if signedIn();
+      // Írás csak saját profilra vagy moderátor által
+      allow write: if (request.auth != null && request.auth.uid == uid) || isModerator();
 
       // Értesítések: /users/{uid}/notifications/{id}
       match /notifications/{id} {

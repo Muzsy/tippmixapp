@@ -35,6 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.match_finalizer = void 0;
 const ApiFootballResultProvider_1 = require("./services/ApiFootballResultProvider");
+const provider_factory_1 = require("./services/provider_factory");
 const payout_1 = require("./tickets/payout");
 const firestore_1 = require("firebase-admin/firestore");
 const logger = __importStar(require("firebase-functions/logger"));
@@ -42,7 +43,6 @@ const firebase_1 = require("./lib/firebase");
 const pubsub_1 = require("@google-cloud/pubsub");
 const CoinService_1 = require("./services/CoinService");
 const evaluators_1 = require("./evaluators");
-const global_1 = require("../global");
 const pubsub = new pubsub_1.PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || "result-check";
 const DLQ_TOPIC = process.env.DLQ_TOPIC || "result-check-dlq";
@@ -81,7 +81,7 @@ async function finalizeTicketAtomic(ticketRef, ticketData) {
 }
 const match_finalizer = async (message) => {
     // Provider példányosítás a handler scope‑ban – Secret olvasás futásidőben
-    const provider = new ApiFootballResultProvider_1.ApiFootballResultProvider(global_1.API_FOOTBALL_KEY.value() || process.env.API_FOOTBALL_KEY || '');
+    const provider = (0, provider_factory_1.createResultProvider)();
     const attempt = Number(message?.attributes?.attempt || "0");
     logger.info("match_finalizer.handle", {
         hasData: !!message?.data,

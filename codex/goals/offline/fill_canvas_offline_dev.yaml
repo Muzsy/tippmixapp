@@ -1,0 +1,244 @@
+# Codex futtatási terv — TippmixApp teljesen offline/emulátoros fejlesztői környezet
+# Séma: lásd „Codex Canvas Yaml Guide.pdf” (csak steps: name, description, outputs, opcionálisan inputs)
+# Megjegyzés: minden parancs Linux Mint környezetre készüljön. A Codex a repo gyökeréből fut.
+
+steps:
+  - name: Előfeltételek ellenőrzése
+    description: |
+      Ellenőrizd, hogy telepítve van-e a Node.js (>=18), npm, Flutter SDK (stable), Java JDK 17, Android SDK, valamint a Firebase CLI (>=13).
+      Futtasd:
+        - node -v
+        - npm -v
+        - flutter --version
+        - java -version
+        - firebase --version
+      Ha hiányzik a Firebase CLI, telepítsd: npm install -g firebase-tools
+    outputs:
+      - "Ellenőrző log: versions_precheck.txt"
+
+  - name: Projekt függőségek telepítése (root)
+    description: |
+      Futtasd a gyökérben az npm ci parancsot (ha van package-lock.json), különben npm install.
+      Cél: az emulátor indító scriptek és a tools parancsok futtathatók legyenek.
+    outputs:
+      - "node_modules/ jelen van a gyökérben"
+
+  - name: Firebase Emulator Suite konfiguráció bővítése
+    description: |
+      Nyisd meg a firebase.json fájlt. Egészítsd ki/hozd létre az emulators blokkot az alábbiakkal:
+      {
+        "emulators": {
+          "auth": { "port": 9099 },
+          "firestore": { "port": 8080 },
+          "storage": { "port": 9199 },
+          "functions": { "port": 5001 },
+          "ui": { "enabled": true, "port": 4000 },
+          "singleProjectMode": true
+        },
+        "firestore": { "rules": "firebase.rules" },
+        "storage":   { "rules": "storage.rules" },
+        "functions": [
+          {
+            "codebase": "default",
+            "source": "cloud_functions",
+            "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"]
+          }
+        ]
+      }
+      Ha a fájl nem létezik, hozd létre ezzel a tartalommal.
+    outputs:
+      - "firebase.json módosítva/létrehozva"
+
+  - name: Root npm scriptek felvétele az emulátorokhoz
+    description: |
+      A package.json-hoz add hozzá (vagy frissítsd) az alábbi scripteket:
+        {
+          "scripts": {
+            "emu:start": "firebase emulators:start --only auth,firestore,storage,functions --import=.emulator_data --export-on-exit",
+            "emu:reset": "rm -rf .emulator_data && mkdir -p .emulator_data",
+            "emu:export": "firebase emulators:export .emulator_data",
+            "emu:import": "firebase emulators:start --import=.emulator_data",
+            "dev:offline": "npm run -s emu:start"
+          }
+        }
+      Biztosítsd, hogy a .emulator_data mappa létrejöjjön (gitignore-olható).
+    outputs:
+      - "package.json scripts bővítve"
+      - ".emulator_data/ mappa létezik"
+
+  - name: Android cleartext engedélyezése (Functions/emu hívásokhoz)
+    description: |
+      Az android/app/src/main/AndroidManifest.xml-ben az <application ...> elemhez add hozzá:
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+      Hozz létre egy új fájlt: android/app/src/main/res/xml/network_security_config.xml az alábbi tartalommal:
+        <network-security-config>
+          <domain-config cleartextTrafficPermitted="true">
+            <domain includeSubdomains="true">10.0.2.2</domain>
+            <domain includeSubdomains="true">localhost</domain>
+          </domain-config>
+        </network-security-config>
+    outputs:
+      - "AndroidManifest.xml módosítva"
+      - "res/xml/network_security_config.xml létrehozva"
+
+  - name: Flutter Firebase emulátor kötés bevezetése
+    description: |
+      A kliens inicializáló modulban (pl. lib/bootstrap.dart vagy a projekt által használt startpontban) vezesd be az emulátor kötést.
+      Példakód (illeszd a projekthez):
+        import 'dart:io' show Platform;
+        import 'package:firebase_core/firebase_core.dart';
+        import 'package:cloud_firestore/cloud_firestore.dart';
+        import 'package:firebase_auth/firebase_auth.dart';
+        import 'package:cloud_functions/cloud_functions.dart';
+        import 'package:firebase_storage/firebase_storage.dart';
+        import 'package:firebase_analytics/firebase_analytics.dart';
+
+        const bool kUseEmu = bool.fromEnvironment('USE_EMULATOR', defaultValue: true);
+
+        Future<void> initFirebaseWithEmu() async {
+          if (Firebase.apps.isEmpty) {
+            await Firebase.initializeApp();
+          }
+          if (kUseEmu) {
+            final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+            FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+            await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+            FirebaseFunctions.instanceFor(region: 'europe-central2').useFunctionsEmulator(host, 5001);
+            FirebaseStorage.instance.useStorageEmulator(host, 9199);
+            try { await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(false); } catch (_) {}
+          }
+        }
+      Hívd meg az app indításkor. A Flutter futtatáskor add át: --dart-define=USE_EMULATOR=true
+    outputs:
+      - "lib/... bootstrap/init fájl módosítva az emulátor kötésre"
+
+  - name: App Check debug mód devben
+    description: |
+      Ha App Check használatban van, állíts be debug providert fejlesztési buildre, és tiltsd az enforcementet emulátor módban.
+      Ellenőrizd, hogy az App Check ne blokkoljon emulátoros hívásokat.
+    outputs:
+      - "App Check debug konfigurálva (dev)"
+
+  - name: Cloud Functions mock provider bevezetése (külső API kiváltása)
+    description: |
+      A cloud_functions/src/services alatt hozz létre egy __mocks__ mappát és készíts egy ApiFootballResultProvider mock implementációt, amely lokális JSON-ból szolgáltat eredményeket.
+      Példa fájl: cloud_functions/src/services/__mocks__/ApiFootballResultProvider.ts
+      A match_finalizer.ts-ben vezess be környezeti kapcsolót: USE_MOCK_SCORES=true esetén a mock providert importáld és használd.
+    outputs:
+      - "Mock provider fájl létrehozva"
+      - "match_finalizer.ts módosítva env-alapú provider választásra"
+
+  - name: Finalizer inline mód (Pub/Sub kiváltása fejlesztésben)
+    description: |
+      A cloud_functions/src/force_finalizer.ts-ben importáld a match_finalizer logikát és vezesd be az USE_INLINE_FINALIZER=true ágat, amely közvetlenül meghívja a finalizer függvényt Pub/Sub nélkül.
+    outputs:
+      - "force_finalizer.ts módosítva inline futtatási ággal"
+
+  - name: Cloud Functions build és lokális futás emulátoron
+    description: |
+      Lépj a cloud_functions mappába és futtasd:
+        npm ci
+        npm run build
+      Majd a projekt gyökérből indítsd az emulátorokat: npm run emu:start
+      Ellenőrizd a Functions endpointok regisztrációját a 4000-es Emulator UI-n.
+    outputs:
+      - "cloud_functions build sikeres"
+      - "Functions endpointok láthatók az Emulator UI-ban"
+
+  - name: Auth emulátor — teszt felhasználók feltöltése
+    description: |
+      Hozz létre legalább 3 teszt fiókot (user/moderator/admin) email+jelszóval a REST emu API segítségével. Példa curl:
+        curl -s -X POST "http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fake-api-key" \
+          -H "Content-Type: application/json" \
+          -d '{"email":"user@example.com","password":"Passw0rd!","returnSecureToken":true}'
+      Ha szükséges, állíts be custom claims-t admin SDK-val (lokális admin scriptben) az admin/moderator szerepkörökhöz.
+    outputs:
+      - "Teszt felhasználók létrehozva Auth emulátoron"
+
+  - name: Firestore rules és indexek betöltése
+    description: |
+      Győződj meg róla, hogy a firebase.rules és firestore.indexes.json fájlok a projektben vannak és az emulátor ezeket használja.
+      Indítás után az Emulator UI-ban ellenőrizd, hogy a jogosultságok érvényesülnek (deny/allow)
+    outputs:
+      - "Rules és indexek aktívak az emulátoron"
+
+  - name: Seed script létrehozása (admin SDK)
+    description: |
+      Hozz létre egy tools/seed.ts (vagy .js) scriptet, amely a Firestore emu hosthoz kapcsolódva felviszi a minimális adatkészletet: users, fixtures, tickets (pending), leaderboard snapshot, minta avatar meta.
+      A script fusson: npm run seed (add hozzá a root package.json-hoz: "seed": "ts-node tools/seed.ts" vagy node/tsx megfelelően).
+    outputs:
+      - "tools/seed.ts létrehozva"
+      - "npm run seed sikeresen lefut és adatok látszanak az emulátoron"
+
+  - name: Storage emu bekötés és minta avatarok feltöltése
+    description: |
+      Ellenőrizd, hogy a kliens Storage emulátort használja. Tölts fel 2-3 minta avatar fájlt (scriptből vagy Emulator UI-ból) a szabályok által engedett útvonalra, és jelenítsd meg a kliensben.
+    outputs:
+      - "Minta avatarok a Storage emulátoron"
+      - "Kliens képes letölteni/megjelenteni az avatarokat"
+
+  - name: Remote Config helyettesítő defaultok
+    description: |
+      Adj a kliensben default RC kulcs-értékeket (pl. assets/rc_defaults.json), és fejlesztésben tiltsd a fetch-et vagy állíts rövid timeoutot, cache-t. Dokumentáld, mely kulcsok befolyásolják a UI-t/flow-t.
+    outputs:
+      - "RC defaultok bevezetve"
+      - "Fejlesztésben nincs RC fetch timeout"
+
+  - name: Analytics dev kikapcsolása vagy lokális naplózás
+    description: |
+      Fejlesztésben tiltsd az Analytics gyűjtést (setAnalyticsCollectionEnabled(false)), opcionálisan irányítsd lokális logra a fő eseményeket (debug célra).
+    outputs:
+      - "Analytics nem küld adatot offline módban"
+
+  - name: DX parancs — teljes offline élmény
+    description: |
+      Vegyél fel egy összetett parancsot a package.json-ba: "dev:offline:full" amely:
+        1) cloud_functions build
+        2) emulátorok indítása importtal
+        3) seed script futtatása
+        4) Flutter run --dart-define=USE_EMULATOR=true
+      Használhatsz shell scriptet a tools/dev_offline.sh névvel, amelyet a script hív.
+    outputs:
+      - "package.json: dev:offline:full script elérhető"
+      - "tools/dev_offline.sh létrehozva és futtatható"
+
+  - name: QA kézi forgatókönyvek
+    description: |
+      Futtasd végig:
+        - Bejelentkezés teszt userrel (email/jelszó)
+        - Új ticket létrehozása min. 2 tippel
+        - Finalizer meghívása callable-ből (inline mód) → státusz frissül
+        - Avatar feltöltés/olvasás ellenőrzése
+        - RC-vezérelt UI variáns ellenőrzése
+      Készíts képernyőmentéseket és jegyzőkönyvet.
+    outputs:
+      - "QA jegyzőkönyv: qa_offline_run.md"
+      - "Képernyőmentések a docs/qa/ alatt"
+
+  - name: Védőkorlátok — build guard
+    description: |
+      Adj a kliens indításába egy ellenőrzést, amely USE_EMULATOR=true esetén biztosítja, hogy az endpointok emu hostokra mutatnak; ellenkező esetben hibát dob és leáll.
+      Adj pre-commit ellenőrzést (tools/precommit_guard.sh), ami figyelmeztet, ha eatures/HTTP URL-ek felhős végpontokra mutatnak dev buildben.
+    outputs:
+      - "Build guard a kliensben aktiválva"
+      - "tools/precommit_guard.sh létrehozva"
+
+  - name: README/Playbook frissítése
+    description: |
+      A README-be vedd fel az Offline Playbook szekciót: parancsok, env változók, Emulator UI URL-ek, gyakori hibák és megoldások (Android cleartext, eszköz-LAN IP, Functions logok, Auth REST példák).
+    outputs:
+      - "README Offline Playbook szekció elkészült"
+
+  - name: Exportálható demó állapot
+    description: |
+      Futtasd le: npm run emu:export és commitold a .emulator_data exportot (ha a repo házirend engedi; különben dokumentáld a létrehozását). Írj le egy visszaállítási folyamatot: npm run emu:reset && npm run emu:start && npm run seed.
+    outputs:
+      - ".emulator_data export állomány létrehozva"
+      - "docs/emu_restore.md útmutató létrehozva"
+
+  - name: Záró ellenőrzés — teljes offline próba internet nélkül
+    description: |
+      Kapcsold le a hálózatot (Wi‑Fi off), indítsd a dev:offline:full folyamatot és futtasd le a QA lépéseket. Ellenőrizd mitmproxy/proxy logokkal, hogy nincs külső HTTP hívás.
+    outputs:
+      - "Nincs külső hálózati forgalom — jegyzőkönyv: offline_parity_report.md"

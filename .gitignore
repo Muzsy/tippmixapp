@@ -42,6 +42,7 @@ tmp/
 .pub/
 /build/
 node_modules/
+.emulator_data/
 
 # Symbolication related
 app.*.symbols

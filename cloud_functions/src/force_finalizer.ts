@@ -1,6 +1,7 @@
 import '../global';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { PubSub } from '@google-cloud/pubsub';
+import { match_finalizer } from './match_finalizer';
 
 const pubsub = new PubSub();
 const RESULT_TOPIC = process.env.RESULT_TOPIC || 'result-check';
@@ -24,10 +25,18 @@ export const force_finalizer = onCall(async (request) => {
     ts: Date.now(),
   };
 
-  await pubsub.topic(RESULT_TOPIC).publishMessage({
-    data: Buffer.from(JSON.stringify(payload), 'utf8'),
-    attributes: { attempt: '0' },
-  });
-
-  return { status: 'OK' };
+  if (process.env.USE_INLINE_FINALIZER === 'true') {
+    // Inline run for dev/offline determinism
+    await match_finalizer({
+      data: Buffer.from(JSON.stringify({ type: 'final-sweep' }), 'utf8').toString('base64'),
+      attributes: { attempt: '0' },
+    } as any);
+    return { status: 'OK_INLINE' };
+  } else {
+    await pubsub.topic(RESULT_TOPIC).publishMessage({
+      data: Buffer.from(JSON.stringify(payload), 'utf8'),
+      attributes: { attempt: '0' },
+    });
+    return { status: 'OK' };
+  }
 });
