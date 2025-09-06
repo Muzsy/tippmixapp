@@ -1,0 +1,21 @@
+--- a/ios/Runner/Info.plist
++++ b/ios/Runner/Info.plist
+@@
+-	<key>CFBundleDisplayName</key>
+-	<string>Tippmixapp</string>
++	<key>CFBundleDisplayName</key>
++	<string>Tipsterino</string>
+@@
+-	<key>CFBundleName</key>
+-	<string>tippmixapp</string>
++	<key>CFBundleName</key>
++	<string>tipsterino</string>
+
+--- a/ios/Runner.xcodeproj/project.pbxproj
++++ b/ios/Runner.xcodeproj/project.pbxproj
+@@
+-				PRODUCT_BUNDLE_IDENTIFIER = com.example.tippmixapp;
++				PRODUCT_BUNDLE_IDENTIFIER = com.tipsterino.app;
+@@
+-				PRODUCT_BUNDLE_IDENTIFIER = com.example.tippmixapp.RunnerTests;
++				PRODUCT_BUNDLE_IDENTIFIER = com.tipsterino.app.RunnerTests;

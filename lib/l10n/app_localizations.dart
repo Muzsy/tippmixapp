@@ -814,6 +814,12 @@ abstract class AppLocalizations {
   /// **'GDPR consent required'**
   String get gdpr_required_error;
 
+  /// No description provided for @app_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Tipsterino'**
+  String get app_name;
+
   /// No description provided for @go_to_create_ticket.
   ///
   /// In en, this message translates to:

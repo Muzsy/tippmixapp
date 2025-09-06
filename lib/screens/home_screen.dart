@@ -178,7 +178,7 @@ class HomeScreen extends ConsumerWidget {
     // Determine current route path for dynamic title.
     final currentPath = state?.uri.path ?? '/';
     final titles = <String, String>{
-      '/': 'TippmixApp',
+      '/': 'Tipsterino',
       '/feed': loc.feed_screen_title,
       '/profile': loc.profile_title,
       '/bets': loc.bets_title,

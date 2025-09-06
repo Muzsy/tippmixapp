@@ -380,6 +380,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get gdpr_required_error => 'A GDPR hozzájárulás kötelező';
 
   @override
+  String get app_name => 'Tipsterino';
+
+  @override
   String get go_to_create_ticket => 'Szelvény elküldése';
 
   @override

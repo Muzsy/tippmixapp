@@ -1,4 +1,4 @@
-# 🧠 AGENTS.md – Codex Agent Configuration (TippmixApp)
+# 🧠 AGENTS.md – Codex Agent Configuration (Tipsterino)
 
 This file is **loaded automatically** every time the Codex AI agents start. All generated code must comply with every rule listed below; otherwise the output is **invalid**.
 
@@ -6,7 +6,7 @@ This file is **loaded automatically** every time the Codex AI agents start. All 
 
 ## 📦 Project summary
 
-* **TippmixApp** – community‑driven sports‑betting simulator (Flutter + Firebase)
+* **Tipsterino** – community‑driven sports‑betting simulator (Flutter + Firebase)
 * Virtual **TippCoin** currency (`CoinService` + Cloud Functions)
 * Security pop‑up flow (`GuardPopupService`)
 * Live odds via **OddsAPI** integration
@@ -132,4 +132,4 @@ If Codex needs to work on a different branch, an explicit instruction in the can
 
 ---
 
-This file is **binding** for the entire TippmixApp project. Any generated code violating these rules is **invalid** and must be fixed immediately before a pull request can be merged.
+This file is **binding** for the entire Tipsterino project. Any generated code violating these rules is **invalid** and must be fixed immediately before a pull request can be merged.

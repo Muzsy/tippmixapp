@@ -1,0 +1,14 @@
+--- a/android/app/build.gradle.kts
++++ b/android/app/build.gradle.kts
+@@
+-    namespace = "com.example.tippmixapp"
++    namespace = "com.tipsterino.app"
+@@
+-        applicationId = "com.example.tippmixapp"
++        applicationId = "com.tipsterino.app"
+
+--- a/android/app/src/main/AndroidManifest.xml
++++ b/android/app/src/main/AndroidManifest.xml
+@@
+-        android:label="tippmixapp"
++        android:label="Tipsterino"

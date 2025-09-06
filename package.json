@@ -13,6 +13,7 @@
   },
   "name": "tippmixapp-root",
   "private": true,
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "build-fx": "npm run build --prefix cloud_functions",
     "test:rules": "firebase emulators:exec --only firestore \"npm run test:rules:run\"",

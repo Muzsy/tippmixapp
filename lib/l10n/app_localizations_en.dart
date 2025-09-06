@@ -372,6 +372,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gdpr_required_error => 'GDPR consent required';
 
   @override
+  String get app_name => 'Tipsterino';
+
+  @override
   String get go_to_create_ticket => 'Submit Ticket';
 
   @override

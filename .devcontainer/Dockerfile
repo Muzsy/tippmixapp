@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/flutter:latest
 
-# Firebase CLI telepítése globálisan
-RUN npm install -g firebase-tools
+# Enable Corepack (pnpm via Corepack)
+RUN corepack enable
 
 # Hasznos alapcsomagok
 RUN apt-get update && \

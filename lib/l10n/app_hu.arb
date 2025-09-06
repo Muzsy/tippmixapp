@@ -58,6 +58,7 @@
   "dialog_add_comment_hint": "Adj hozzá megjegyzést",
   "dialog_cancel": "Mégse",
   "dialog_comment_title": "Hozzászólás",
+  "app_name": "Tipsterino",
   "dialog_reason_hint": "Indok",
   "dialog_send": "Küldés",
   "disable_two_factor": "Kétlépcsős hitelesítés kikapcsolása",
