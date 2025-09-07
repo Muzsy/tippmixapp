@@ -9,15 +9,6 @@ class AppLocalizationsHu extends AppLocalizations {
   AppLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
-  String get home_short => 'Hazai';
-
-  @override
-  String get draw_short => 'Döntetlen';
-
-  @override
-  String get away_short => 'Vendég';
-
-  @override
   String get accept => 'Elfogad';
 
   @override
@@ -58,6 +49,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get appActionsStatistics => 'Statisztika';
 
   @override
+  String get app_name => 'Tipsterino';
+
+  @override
   String get apple_login => 'Folytatás Apple-lel';
 
   @override
@@ -88,6 +82,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get auth_error_wrong_password => 'Hibás jelszó';
+
+  @override
+  String get away_short => 'Vendég';
 
   @override
   String get back_button => 'Vissza';
@@ -170,6 +167,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get copy_edit_title => 'Másolt szelvény szerkesztése';
 
   @override
+  String get copy_id => 'ID másolása';
+
+  @override
   String get copy_invalid_state =>
       'A szelvény nem módosult, így nem adható fel.';
 
@@ -178,9 +178,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get copy_success => 'Szelvény másolva!';
-
-  @override
-  String get copy_id => 'ID másolása';
 
   @override
   String countdown_to_kickoff(Object time) {
@@ -216,6 +213,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get dob_hint => 'Születési dátum';
+
+  @override
+  String get draw_short => 'Döntetlen';
 
   @override
   String get drawer_feed => 'Hírfolyam';
@@ -371,6 +371,33 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forgot_password => 'Elfelejtett jelszó?';
 
   @override
+  String get forum_empty => 'Nincs még szál';
+
+  @override
+  String get forum_error => 'A szálak betöltése sikertelen';
+
+  @override
+  String get forum_filter_all => 'Összes';
+
+  @override
+  String get forum_filter_general => 'Általános';
+
+  @override
+  String get forum_filter_matches => 'Meccsek';
+
+  @override
+  String get forum_filter_pinned => 'Kitűzött';
+
+  @override
+  String get forum_sort_latest => 'Legutóbbi aktivitás';
+
+  @override
+  String get forum_sort_newest => 'Legújabb';
+
+  @override
+  String get forum_title => 'Fórum';
+
+  @override
   String get friends => 'Barátok';
 
   @override
@@ -378,9 +405,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get gdpr_required_error => 'A GDPR hozzájárulás kötelező';
-
-  @override
-  String get app_name => 'Tipsterino';
 
   @override
   String get go_to_create_ticket => 'Szelvény elküldése';
@@ -440,6 +464,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get home_nav_stats => 'Statisztika';
+
+  @override
+  String get home_short => 'Hazai';
 
   @override
   String get home_stats => 'Statisztika';
@@ -980,10 +1007,37 @@ class AppLocalizationsHu extends AppLocalizations {
   String get team_hint => 'Kedvenc csapat';
 
   @override
+  String get ticket_details_no_items => 'Nincs megjeleníthető tipp';
+
+  @override
+  String get ticket_details_section_lost => 'Vesztes tippek';
+
+  @override
+  String get ticket_details_section_pending => 'Függőben lévő tippek';
+
+  @override
+  String get ticket_details_section_won => 'Nyertes tippek';
+
+  @override
   String get ticket_details_title => 'Szelvény részletei';
 
   @override
+  String get ticket_friendly_id => 'Szelvény';
+
+  @override
   String get ticket_id => 'Szelvény';
+
+  @override
+  String get ticket_meta_created => 'Létrehozva';
+
+  @override
+  String get ticket_meta_updated => 'Frissítve';
+
+  @override
+  String get ticket_potential_win => 'Várható nyeremény';
+
+  @override
+  String get ticket_stake => 'Tét';
 
   @override
   String get ticket_status_lost => 'Veszített';
@@ -1004,40 +1058,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get ticket_submit_success => 'Szelvény beküldve';
 
   @override
+  String get ticket_total_odd => 'Össz odds';
+
+  @override
   String get tips_label => 'Tippek';
 
   @override
   String get total_odds_label => 'Össz odds';
-
-  @override
-  String get ticket_details_section_won => 'Nyertes tippek';
-
-  @override
-  String get ticket_details_section_lost => 'Vesztes tippek';
-
-  @override
-  String get ticket_details_section_pending => 'Függőben lévő tippek';
-
-  @override
-  String get ticket_details_no_items => 'Nincs megjeleníthető tipp';
-
-  @override
-  String get ticket_friendly_id => 'Szelvény';
-
-  @override
-  String get ticket_meta_created => 'Létrehozva';
-
-  @override
-  String get ticket_meta_updated => 'Frissítve';
-
-  @override
-  String get ticket_potential_win => 'Várható nyeremény';
-
-  @override
-  String get ticket_total_odd => 'Össz odds';
-
-  @override
-  String get ticket_stake => 'Tét';
 
   @override
   String get unfollow => 'Követve';

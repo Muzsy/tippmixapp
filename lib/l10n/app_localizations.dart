@@ -100,24 +100,6 @@ abstract class AppLocalizations {
     Locale('hu'),
   ];
 
-  /// No description provided for @home_short.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get home_short;
-
-  /// No description provided for @draw_short.
-  ///
-  /// In en, this message translates to:
-  /// **'Draw'**
-  String get draw_short;
-
-  /// No description provided for @away_short.
-  ///
-  /// In en, this message translates to:
-  /// **'Away'**
-  String get away_short;
-
   /// No description provided for @accept.
   ///
   /// In en, this message translates to:
@@ -196,6 +178,12 @@ abstract class AppLocalizations {
   /// **'Statistics'**
   String get appActionsStatistics;
 
+  /// No description provided for @app_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Tipsterino'**
+  String get app_name;
+
   /// No description provided for @apple_login.
   ///
   /// In en, this message translates to:
@@ -255,6 +243,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wrong password'**
   String get auth_error_wrong_password;
+
+  /// No description provided for @away_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Away'**
+  String get away_short;
 
   /// No description provided for @back_button.
   ///
@@ -412,6 +406,12 @@ abstract class AppLocalizations {
   /// **'Edit copied ticket'**
   String get copy_edit_title;
 
+  /// No description provided for @copy_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy ID'**
+  String get copy_id;
+
   /// No description provided for @copy_invalid_state.
   ///
   /// In en, this message translates to:
@@ -429,12 +429,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ticket copied!'**
   String get copy_success;
-
-  /// No description provided for @copy_id.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy ID'**
-  String get copy_id;
 
   /// No description provided for @countdown_to_kickoff.
   ///
@@ -501,6 +495,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date of birth'**
   String get dob_hint;
+
+  /// No description provided for @draw_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw'**
+  String get draw_short;
 
   /// No description provided for @drawer_feed.
   ///
@@ -796,6 +796,60 @@ abstract class AppLocalizations {
   /// **'Forgot password?'**
   String get forgot_password;
 
+  /// No description provided for @forum_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No threads yet'**
+  String get forum_empty;
+
+  /// No description provided for @forum_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load threads'**
+  String get forum_error;
+
+  /// No description provided for @forum_filter_all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get forum_filter_all;
+
+  /// No description provided for @forum_filter_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get forum_filter_general;
+
+  /// No description provided for @forum_filter_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches'**
+  String get forum_filter_matches;
+
+  /// No description provided for @forum_filter_pinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get forum_filter_pinned;
+
+  /// No description provided for @forum_sort_latest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest activity'**
+  String get forum_sort_latest;
+
+  /// No description provided for @forum_sort_newest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get forum_sort_newest;
+
+  /// No description provided for @forum_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Forum'**
+  String get forum_title;
+
   /// No description provided for @friends.
   ///
   /// In en, this message translates to:
@@ -813,12 +867,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'GDPR consent required'**
   String get gdpr_required_error;
-
-  /// No description provided for @app_name.
-  ///
-  /// In en, this message translates to:
-  /// **'Tipsterino'**
-  String get app_name;
 
   /// No description provided for @go_to_create_ticket.
   ///
@@ -927,6 +975,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stats'**
   String get home_nav_stats;
+
+  /// No description provided for @home_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home_short;
 
   /// No description provided for @home_stats.
   ///
@@ -1966,17 +2020,71 @@ abstract class AppLocalizations {
   /// **'Favourite team'**
   String get team_hint;
 
+  /// No description provided for @ticket_details_no_items.
+  ///
+  /// In en, this message translates to:
+  /// **'No tips to display'**
+  String get ticket_details_no_items;
+
+  /// No description provided for @ticket_details_section_lost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost tips'**
+  String get ticket_details_section_lost;
+
+  /// No description provided for @ticket_details_section_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending tips'**
+  String get ticket_details_section_pending;
+
+  /// No description provided for @ticket_details_section_won.
+  ///
+  /// In en, this message translates to:
+  /// **'Won tips'**
+  String get ticket_details_section_won;
+
   /// No description provided for @ticket_details_title.
   ///
   /// In en, this message translates to:
   /// **'Ticket Details'**
   String get ticket_details_title;
 
+  /// No description provided for @ticket_friendly_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get ticket_friendly_id;
+
   /// No description provided for @ticket_id.
   ///
   /// In en, this message translates to:
   /// **'Ticket'**
   String get ticket_id;
+
+  /// No description provided for @ticket_meta_created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get ticket_meta_created;
+
+  /// No description provided for @ticket_meta_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get ticket_meta_updated;
+
+  /// No description provided for @ticket_potential_win.
+  ///
+  /// In en, this message translates to:
+  /// **'Potential win'**
+  String get ticket_potential_win;
+
+  /// No description provided for @ticket_stake.
+  ///
+  /// In en, this message translates to:
+  /// **'Stake'**
+  String get ticket_stake;
 
   /// No description provided for @ticket_status_lost.
   ///
@@ -2014,6 +2122,12 @@ abstract class AppLocalizations {
   /// **'Ticket submitted successfully'**
   String get ticket_submit_success;
 
+  /// No description provided for @ticket_total_odd.
+  ///
+  /// In en, this message translates to:
+  /// **'Total odds'**
+  String get ticket_total_odd;
+
   /// No description provided for @tips_label.
   ///
   /// In en, this message translates to:
@@ -2025,66 +2139,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total odds'**
   String get total_odds_label;
-
-  /// No description provided for @ticket_details_section_won.
-  ///
-  /// In en, this message translates to:
-  /// **'Won tips'**
-  String get ticket_details_section_won;
-
-  /// No description provided for @ticket_details_section_lost.
-  ///
-  /// In en, this message translates to:
-  /// **'Lost tips'**
-  String get ticket_details_section_lost;
-
-  /// No description provided for @ticket_details_section_pending.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending tips'**
-  String get ticket_details_section_pending;
-
-  /// No description provided for @ticket_details_no_items.
-  ///
-  /// In en, this message translates to:
-  /// **'No tips to display'**
-  String get ticket_details_no_items;
-
-  /// No description provided for @ticket_friendly_id.
-  ///
-  /// In en, this message translates to:
-  /// **'Ticket'**
-  String get ticket_friendly_id;
-
-  /// No description provided for @ticket_meta_created.
-  ///
-  /// In en, this message translates to:
-  /// **'Created'**
-  String get ticket_meta_created;
-
-  /// No description provided for @ticket_meta_updated.
-  ///
-  /// In en, this message translates to:
-  /// **'Updated'**
-  String get ticket_meta_updated;
-
-  /// No description provided for @ticket_potential_win.
-  ///
-  /// In en, this message translates to:
-  /// **'Potential win'**
-  String get ticket_potential_win;
-
-  /// No description provided for @ticket_total_odd.
-  ///
-  /// In en, this message translates to:
-  /// **'Total odds'**
-  String get ticket_total_odd;
-
-  /// No description provided for @ticket_stake.
-  ///
-  /// In en, this message translates to:
-  /// **'Stake'**
-  String get ticket_stake;
 
   /// No description provided for @unfollow.
   ///
