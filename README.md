@@ -53,6 +53,19 @@ It features a virtual coin economy, real-time odds from [API-Football](https://w
 
 ---
 
+## 📴 Offline quickstart (no cloud)
+
+- Prerequisites: Java JRE (Emulator UI), Node 20 (see `.nvmrc`), pnpm (via `packageManager`), Flutter stable.
+- Start emulators + seed:
+  - `bash tools/dev_offline.sh`  (UI: http://localhost:4000)
+- Run the app against emulators:
+  - `flutter run --dart-define=USE_EMULATOR=true`
+- Pub/Sub remark: in developer mode the finalizer runs inline when `USE_INLINE_FINALIZER=true`. Advanced users can switch to a Pub/Sub emulator as documented in `docs/offline/offline_guide_hu_en.md`.
+
+See also: `docs/offline/offline_guide_hu_en.md` for the full offline guide.
+
+---
+
 ## 🗂️ Repository Structure
 
 | Path           | Contents                                         |
