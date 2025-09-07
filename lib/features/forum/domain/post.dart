@@ -5,7 +5,6 @@ enum PostType { tip, comment, system }
 
 extension PostTypeX on PostType {
   String toJson() => name;
-
   static PostType fromJson(String value) =>
       PostType.values.firstWhere((e) => e.name == value);
 }
@@ -17,7 +16,11 @@ class Post {
   final String userId;
   final PostType type;
   final String content;
+  final String? quotedPostId;
   final DateTime createdAt;
+  final DateTime? editedAt;
+  final int votesCount;
+  final bool isHidden;
 
   const Post({
     required this.id,
@@ -25,7 +28,11 @@ class Post {
     required this.userId,
     required this.type,
     required this.content,
+    this.quotedPostId,
     required this.createdAt,
+    this.editedAt,
+    this.votesCount = 0,
+    this.isHidden = false,
   });
 
   factory Post.fromJson(String id, Map<String, dynamic> json) {
@@ -35,7 +42,11 @@ class Post {
       userId: json['userId'] as String,
       type: PostTypeX.fromJson(json['type'] as String),
       content: json['content'] as String,
+      quotedPostId: json['quotedPostId'] as String?,
       createdAt: (json['createdAt'] as Timestamp).toDate(),
+      editedAt: (json['editedAt'] as Timestamp?)?.toDate(),
+      votesCount: json['votesCount'] as int? ?? 0,
+      isHidden: json['isHidden'] as bool? ?? false,
     );
   }
 
@@ -44,6 +55,10 @@ class Post {
     'userId': userId,
     'type': type.toJson(),
     'content': content,
+    'quotedPostId': quotedPostId,
     'createdAt': Timestamp.fromDate(createdAt),
+    'editedAt': editedAt != null ? Timestamp.fromDate(editedAt!) : null,
+    'votesCount': votesCount,
+    'isHidden': isHidden,
   };
 }

@@ -1,32 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Vote document linking a user to a post.
+/// Entity types that can receive votes.
+enum VoteEntityType { post }
+
+extension VoteEntityTypeX on VoteEntityType {
+  String toJson() => name;
+  static VoteEntityType fromJson(String value) =>
+      VoteEntityType.values.firstWhere((e) => e.name == value);
+}
+
+/// Vote document linking a user to an entity.
 class Vote {
-  final String postId;
+  final String id;
+  final VoteEntityType entityType;
+  final String entityId;
   final String userId;
-  final int value;
   final DateTime createdAt;
 
   const Vote({
-    required this.postId,
+    required this.id,
+    required this.entityType,
+    required this.entityId,
     required this.userId,
-    required this.value,
     required this.createdAt,
   });
 
-  factory Vote.fromJson(Map<String, dynamic> json) {
+  factory Vote.fromJson(String id, Map<String, dynamic> json) {
     return Vote(
-      postId: json['postId'] as String,
+      id: id,
+      entityType: VoteEntityTypeX.fromJson(json['entityType'] as String),
+      entityId: json['entityId'] as String,
       userId: json['userId'] as String,
-      value: json['value'] as int,
       createdAt: (json['createdAt'] as Timestamp).toDate(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'postId': postId,
+    'entityType': entityType.toJson(),
+    'entityId': entityId,
     'userId': userId,
-    'value': value,
     'createdAt': Timestamp.fromDate(createdAt),
   };
 }

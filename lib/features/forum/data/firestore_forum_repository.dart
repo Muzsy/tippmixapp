@@ -28,9 +28,8 @@ class FirestoreForumRepository implements ForumRepository {
       query = query.startAfter([Timestamp.fromDate(startAfter)]);
     }
     return query.snapshots().map(
-          (s) =>
-              s.docs.map((d) => Thread.fromJson(d.id, d.data())).toList(),
-        );
+      (s) => s.docs.map((d) => Thread.fromJson(d.id, d.data())).toList(),
+    );
   }
 
   @override
@@ -43,9 +42,8 @@ class FirestoreForumRepository implements ForumRepository {
       query = query.startAfter([Timestamp.fromDate(startAfter)]);
     }
     return query.snapshots().map(
-          (s) =>
-              s.docs.map((d) => Thread.fromJson(d.id, d.data())).toList(),
-        );
+      (s) => s.docs.map((d) => Thread.fromJson(d.id, d.data())).toList(),
+    );
   }
 
   @override
@@ -63,9 +61,8 @@ class FirestoreForumRepository implements ForumRepository {
       query = query.startAfter([Timestamp.fromDate(startAfter)]);
     }
     return query.snapshots().map(
-          (s) =>
-              s.docs.map((d) => Post.fromJson(d.id, d.data())).toList(),
-        );
+      (s) => s.docs.map((d) => Post.fromJson(d.id, d.data())).toList(),
+    );
   }
 
   @override
@@ -80,18 +77,16 @@ class FirestoreForumRepository implements ForumRepository {
   @override
   Future<void> voteOnPost({
     required String postId,
-    required int value,
     required String userId,
   }) async {
     final vote = Vote(
-      postId: postId,
+      id: '${postId}_$userId',
+      entityType: VoteEntityType.post,
+      entityId: postId,
       userId: userId,
-      value: value,
       createdAt: DateTime.now(),
     );
-    await _firestore.collection('votes').doc('${postId}_$userId').set(
-          vote.toJson(),
-        );
+    await _firestore.collection('votes').doc(vote.id).set(vote.toJson());
   }
 
   @override

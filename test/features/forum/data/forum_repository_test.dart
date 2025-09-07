@@ -43,7 +43,9 @@ void main() {
       'type': 'tip',
       'threadId': 't1',
       'content': 'old',
-      'createdAt': Timestamp.fromDate(DateTime.now().subtract(const Duration(minutes: 1))),
+      'createdAt': Timestamp.fromDate(
+        DateTime.now().subtract(const Duration(minutes: 1)),
+      ),
     });
     await fs.collection('threads/t1/posts').doc('p2').set({
       'userId': 'u1',
