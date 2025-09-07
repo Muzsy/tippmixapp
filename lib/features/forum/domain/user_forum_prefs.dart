@@ -1,27 +1,32 @@
-/// Per-user fórum beállítások (mute, default filters)
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+/// Per-user forum preferences.
 class UserForumPrefs {
-  final List<String> mutedLeagues; // ligaId-k
-  final List<String> mutedThreads; // threadId-k
-  final String defaultTab; // 'tips' | 'comments' | 'poll'
+  final String userId;
+  final List<String> followedThreadIds;
+  final Map<String, DateTime> lastReads;
 
   const UserForumPrefs({
-    this.mutedLeagues = const [],
-    this.mutedThreads = const [],
-    this.defaultTab = 'tips',
+    required this.userId,
+    this.followedThreadIds = const [],
+    this.lastReads = const {},
   });
 
-  Map<String, dynamic> toMap() => {
-    'mutedLeagues': mutedLeagues,
-    'mutedThreads': mutedThreads,
-    'defaultTab': defaultTab,
-  };
-
-  static UserForumPrefs fromMap(Map<String, dynamic>? m) {
-    final d = m ?? <String, dynamic>{};
+  factory UserForumPrefs.fromJson(String id, Map<String, dynamic> json) {
+    final lastReadsMap = (json['lastReads'] as Map<String, dynamic>? ?? {}).map(
+      (key, value) => MapEntry(key, (value as Timestamp).toDate()),
+    );
     return UserForumPrefs(
-      mutedLeagues: (d['mutedLeagues'] as List?)?.cast<String>() ?? const [],
-      mutedThreads: (d['mutedThreads'] as List?)?.cast<String>() ?? const [],
-      defaultTab: (d['defaultTab'] ?? 'tips').toString(),
+      userId: json['userId'] as String? ?? id,
+      followedThreadIds:
+          (json['followedThreadIds'] as List?)?.cast<String>() ?? const [],
+      lastReads: lastReadsMap,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'userId': userId,
+    'followedThreadIds': followedThreadIds,
+    'lastReads': lastReads.map((k, v) => MapEntry(k, Timestamp.fromDate(v))),
+  };
 }

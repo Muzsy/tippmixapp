@@ -9,10 +9,7 @@ abstract class ForumRepository {
     DateTime? startAfter,
   });
 
-  Stream<List<Thread>> getRecentThreads({
-    int limit = 20,
-    DateTime? startAfter,
-  });
+  Stream<List<Thread>> getRecentThreads({int limit = 20, DateTime? startAfter});
 
   Stream<List<Post>> getPostsByThread(
     String threadId, {
@@ -22,11 +19,7 @@ abstract class ForumRepository {
 
   Future<void> addPost(Post post);
 
-  Future<void> voteOnPost({
-    required String postId,
-    required int value,
-    required String userId,
-  });
+  Future<void> voteOnPost({required String postId, required String userId});
 
   Future<void> reportPost(Report report);
 }
