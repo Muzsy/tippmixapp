@@ -1,4 +1,3 @@
-@Skip('pending')
 // ignore: unnecessary_library_name
 library forum_rules_test;
 import 'dart:io';
@@ -19,11 +18,13 @@ void main() {
       fs.authObject.add({'uid': 'u1'});
       await Future<void>.value();
       await fs.collection('threads').doc('t1').set({
-        'fixtureId': 'f1',
-        'type': 'pre',
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
         'createdAt': Timestamp.now(),
       });
       await fs.collection('threads/t1/posts').doc('p1').set({
+        'threadId': 't1',
         'userId': 'u1',
         'type': 'tip',
         'content': 'hi',
@@ -36,13 +37,15 @@ void main() {
       fs.authObject.add({'uid': 'u1'});
       await Future<void>.value();
       await fs.collection('threads').doc('t1').set({
-        'fixtureId': 'f1',
-        'type': 'pre',
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
         'createdAt': Timestamp.now(),
       });
       fs.authObject.add(null);
       await expectLater(
         () async => fs.collection('threads/t1/posts').doc('p1').set({
+          'threadId': 't1',
           'userId': 'u2',
           'type': 'tip',
           'content': 'hi',
@@ -57,14 +60,16 @@ void main() {
       fs.authObject.add({'uid': 'u1'});
       await Future<void>.value();
       await fs.collection('threads').doc('t1').set({
-        'fixtureId': 'f1',
-        'type': 'pre',
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
         'createdAt': Timestamp.now(),
       });
       final past = Timestamp.fromDate(
         DateTime.now().subtract(const Duration(minutes: 20)),
       );
       await fs.collection('threads/t1/posts').doc('p1').set({
+        'threadId': 't1',
         'userId': 'u1',
         'type': 'tip',
         'content': 'hi',
@@ -86,8 +91,9 @@ void main() {
       });
       await Future<void>.value();
       await fs.collection('threads').doc('t1').set({
-        'fixtureId': 'f1',
-        'type': 'pre',
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'mod',
         'createdAt': Timestamp.now(),
         'locked': false,
       });
@@ -99,16 +105,16 @@ void main() {
       fs.authObject.add({'uid': 'u1'});
       await Future<void>.value();
       await fs.collection('votes').doc('p1_u1').set({
-        'postId': 'p1',
+        'entityType': 'post',
+        'entityId': 'p1',
         'userId': 'u1',
-        'value': 1,
         'createdAt': Timestamp.now(),
       });
       await expectLater(
         () async => fs.collection('votes').doc('p1_u1').set({
-          'postId': 'p1',
+          'entityType': 'post',
+          'entityId': 'p1',
           'userId': 'u1',
-          'value': 1,
           'createdAt': Timestamp.now(),
         }),
         throwsA(isA<Exception>()),
@@ -119,8 +125,49 @@ void main() {
       final fs = FakeFirebaseFirestore(securityRules: rules);
       await expectLater(
         () async => fs.collection('threads').doc('t1').set({
-          'fixtureId': 'f1',
-          'type': 'pre',
+          'title': 't',
+          'type': 'general',
+          'createdBy': 'u1',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('locked thread blocks new posts', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await fs.collection('threads').doc('t1').set({
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
+        'createdAt': Timestamp.now(),
+        'locked': true,
+      });
+      await expectLater(
+        () async => fs.collection('threads/t1/posts').doc('p1').set({
+          'threadId': 't1',
+          'userId': 'u1',
+          'type': 'tip',
+          'content': 'hi',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('report status cannot be set by client', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('reports').doc('r1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'reason': 'spam',
+          'reporterId': 'u1',
+          'status': 'resolved',
           'createdAt': Timestamp.now(),
         }),
         throwsA(isA<Exception>()),

@@ -66,6 +66,21 @@ class FirestoreForumRepository implements ForumRepository {
   }
 
   @override
+  Future<void> addThread(Thread thread) async {
+    await _threadsCol.doc(thread.id).set(thread.toJson());
+  }
+
+  @override
+  Future<void> updateThread(String threadId, Map<String, dynamic> data) async {
+    await _threadsCol.doc(threadId).update(data);
+  }
+
+  @override
+  Future<void> deleteThread(String threadId) async {
+    await _threadsCol.doc(threadId).delete();
+  }
+
+  @override
   Future<void> addPost(Post post) async {
     await _threadsCol
         .doc(post.threadId)

@@ -17,6 +17,12 @@ abstract class ForumRepository {
     DateTime? startAfter,
   });
 
+  Future<void> addThread(Thread thread);
+
+  Future<void> updateThread(String threadId, Map<String, dynamic> data);
+
+  Future<void> deleteThread(String threadId);
+
   Future<void> addPost(Post post);
 
   Future<void> voteOnPost({required String postId, required String userId});

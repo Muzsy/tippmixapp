@@ -57,6 +57,17 @@ threads/{threadId}/posts/{postId}
 
 ---
 
+## 📇 Lekérdezés → Index megfeleltetés
+
+| Lekérdezés | Firestore index |
+| --- | --- |
+| Szálak fixture alapján | `(fixtureId ASC, type ASC, createdAt DESC)` |
+| Posztok szál szerint | `(threadId ASC, createdAt DESC)` |
+| Szavazatok entitás szerint | `(entityType ASC, entityId ASC, createdAt DESC, userId ASC)` |
+| Jelentések státusz szerint | `(status ASC, createdAt DESC)` |
+
+---
+
 ## 🧪 Tesztelés
 
 - Űrlap validáció teszt
