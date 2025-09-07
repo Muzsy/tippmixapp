@@ -68,6 +68,10 @@ threads/{threadId}/posts/{postId}
 
 ---
 
+## ✅ Implemented
+
+- ForumScreen with thread list, filters and sort
+
 ## 🧪 Testing
 
 - Form validation tests

@@ -68,6 +68,10 @@ threads/{threadId}/posts/{postId}
 
 ---
 
+## ✅ Megvalósítás
+
+- ForumScreen szál listával, szűrő tabokkal és rendező menüvel
+
 ## 🧪 Tesztelés
 
 - Űrlap validáció teszt

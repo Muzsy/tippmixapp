@@ -9,15 +9,6 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get home_short => 'Heim';
-
-  @override
-  String get draw_short => 'Unentschieden';
-
-  @override
-  String get away_short => 'Auswärts';
-
-  @override
   String get accept => 'Akzeptieren';
 
   @override
@@ -59,6 +50,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appActionsStatistics => 'Statistik';
 
   @override
+  String get app_name => 'Tipsterino';
+
+  @override
   String get apple_login => 'Weiter mit Apple';
 
   @override
@@ -89,6 +83,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get auth_error_wrong_password => 'Falsches Passwort';
+
+  @override
+  String get away_short => 'Auswärts';
 
   @override
   String get back_button => 'Zurück';
@@ -171,6 +168,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get copy_edit_title => 'Kopierten Schein bearbeiten';
 
   @override
+  String get copy_id => 'ID kopieren';
+
+  @override
   String get copy_invalid_state =>
       'Schein wurde nicht geändert, daher kann er nicht abgegeben werden.';
 
@@ -179,9 +179,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get copy_success => 'Schein kopiert!';
-
-  @override
-  String get copy_id => 'ID kopieren';
 
   @override
   String countdown_to_kickoff(Object time) {
@@ -217,6 +214,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dob_hint => 'Geburtsdatum';
+
+  @override
+  String get draw_short => 'Unentschieden';
 
   @override
   String get drawer_feed => 'Feed';
@@ -372,6 +372,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get forgot_password => 'Passwort vergessen?';
 
   @override
+  String get forum_empty => 'Noch keine Threads';
+
+  @override
+  String get forum_error => 'Threads konnten nicht geladen werden';
+
+  @override
+  String get forum_filter_all => 'Alle';
+
+  @override
+  String get forum_filter_general => 'Allgemein';
+
+  @override
+  String get forum_filter_matches => 'Spiele';
+
+  @override
+  String get forum_filter_pinned => 'Angeheftet';
+
+  @override
+  String get forum_sort_latest => 'Neueste Aktivität';
+
+  @override
+  String get forum_sort_newest => 'Neueste';
+
+  @override
+  String get forum_title => 'Forum';
+
+  @override
   String get friends => 'Freunde';
 
   @override
@@ -379,9 +406,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get gdpr_required_error => 'GDPR-Zustimmung erforderlich';
-
-  @override
-  String get app_name => 'Tipsterino';
 
   @override
   String get go_to_create_ticket => 'Wettschein abschicken';
@@ -441,6 +465,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get home_nav_stats => 'Statistik';
+
+  @override
+  String get home_short => 'Heim';
 
   @override
   String get home_stats => 'Statistik';
@@ -982,10 +1009,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get team_hint => 'Lieblingsteam';
 
   @override
+  String get ticket_details_no_items => 'Keine Tipps anzuzeigen';
+
+  @override
+  String get ticket_details_section_lost => 'Verlorene Tipps';
+
+  @override
+  String get ticket_details_section_pending => 'Ausstehende Tipps';
+
+  @override
+  String get ticket_details_section_won => 'Gewonnene Tipps';
+
+  @override
   String get ticket_details_title => 'Schein Details';
 
   @override
+  String get ticket_friendly_id => 'Wettschein';
+
+  @override
   String get ticket_id => 'Schein';
+
+  @override
+  String get ticket_meta_created => 'Erstellt';
+
+  @override
+  String get ticket_meta_updated => 'Aktualisiert';
+
+  @override
+  String get ticket_potential_win => 'Möglicher Gewinn';
+
+  @override
+  String get ticket_stake => 'Einsatz';
 
   @override
   String get ticket_status_lost => 'Verloren';
@@ -1006,40 +1060,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ticket_submit_success => 'Schein erfolgreich gesendet';
 
   @override
+  String get ticket_total_odd => 'Gesamtquote';
+
+  @override
   String get tips_label => 'Tipps';
 
   @override
   String get total_odds_label => 'Gesamtquote';
-
-  @override
-  String get ticket_details_section_won => 'Gewonnene Tipps';
-
-  @override
-  String get ticket_details_section_lost => 'Verlorene Tipps';
-
-  @override
-  String get ticket_details_section_pending => 'Ausstehende Tipps';
-
-  @override
-  String get ticket_details_no_items => 'Keine Tipps anzuzeigen';
-
-  @override
-  String get ticket_friendly_id => 'Wettschein';
-
-  @override
-  String get ticket_meta_created => 'Erstellt';
-
-  @override
-  String get ticket_meta_updated => 'Aktualisiert';
-
-  @override
-  String get ticket_potential_win => 'Möglicher Gewinn';
-
-  @override
-  String get ticket_total_odd => 'Gesamtquote';
-
-  @override
-  String get ticket_stake => 'Einsatz';
 
   @override
   String get unfollow => 'Entfolgen';
