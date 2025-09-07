@@ -1,0 +1,195 @@
+# Codex Canvas YAML – Forum Module MVP (Part 1 / 2)
+# Scope: Steps 1–9 from the full plan. Provide concrete, verifiable actions and outputs.
+# Schema: steps: name, description, outputs, (optional) inputs
+
+steps:
+  - name: Bind Real Auth UID (All Writes)
+    description: |
+      Replace any hardcoded/fallback user identifiers in forum write paths with the authenticated Firebase UID.
+      
+      **Where to change** (patterns/examples):
+      - Thread creation: pass `createdBy: auth.uid` and any required timestamps (server-side if possible) in the thread doc.
+      - First post creation (when creating a thread): pass `authorId: auth.uid` with allowed fields only.
+      - Reply / comment creation: pass `authorId: auth.uid` and required fields only.
+      - Vote document: key or field must associate with `auth.uid` to enforce idempotency.
+      - Report document: include `reporterId: auth.uid` and reason fields permitted by rules.
+      
+      **Client JSON compliance**:
+      - Ensure `toJson()` on all forum models emits only fields whitelisted by Firestore Security Rules (owner ids, createdAt/updatedAt, locked, pinned, etc.).
+      - Remove/avoid any extra fields not allowed by rules.
+      
+      **Testing (emulator)**:
+      - Start emulators (Firestore + Auth).
+      - Exercise: create thread → create first post → add comment → upvote → report.
+      - There must be no `permission-denied` errors.
+    outputs:
+      - All write paths use `auth.uid` from the auth provider.
+      - Code comments added at each write site noting rule-required fields.
+      - Emulator run log showing CRUD success without `permission-denied`.
+      - Checklist item "Bind real Auth UID for all create/update operations" marked complete.
+
+  - name: Wire UI Actions in Thread View
+    description: |
+      Connect visible buttons to controller methods with optimistic updates and robust error handling.
+      
+      **Actions to wire**:
+      - Reply / Add Comment → `controller.addPost(threadId, content)`
+      - Edit (owner only) → `controller.updatePost(postId, updatedContent)`; guard by ownership
+      - Delete (owner only) → `controller.deletePost(postId)`; confirm dialog
+      - Upvote (toggle) → `controller.toggleVote(postId)`; show own vote state
+      - Report → open form (reason, optional note) → `controller.reportPost(postId, reason, note)`
+      
+      **UI/UX**:
+      - Disable actions while pending; show progress where reasonable.
+      - Snackbar/toast on success and on failure; revert optimistic changes on failure.
+      - Only owner sees Edit/Delete; otherwise hide or disable.
+      
+      **Testing**:
+      - Widget tests: each button triggers the correct controller method and updates UI.
+      - Negative path: simulate controller failure → UI shows error and reverts state.
+    outputs:
+      - Working buttons for Reply/Edit/Delete/Upvote/Report in thread view.
+      - Widget tests covering success/failure paths (minimum 1 per action).
+      - Checklist item "Wire UI actions in thread view" marked complete.
+
+  - name: Complete New Thread Creation Flow
+    description: |
+      Implement full form validation and navigation.
+      
+      **Form requirements**:
+      - Required: Title (non-empty), First Post content (non-empty), Type selection (e.g., general/match).
+      - Disable submit until valid; show inline validation messages.
+      - On submit: create thread (with `createdBy: auth.uid`, timestamps) → create first post → navigate to thread view.
+      - Handle and display backend errors; no duplicate submissions (debounce/disable).
+      
+      **Navigation**:
+      - After successful creation, push/replace to the thread view route with the new thread id.
+      
+      **Testing**:
+      - Integration test (happy path): open form → invalid state prevented → fill valid → submit → routed to thread view and first post visible.
+    outputs:
+      - Validated form and success navigation to the created thread.
+      - Integration test for the happy path (green on emulator/CI).
+      - Checklist item "New thread creation flow completed" marked complete.
+
+  - name: Forum FAB → New Thread Screen
+    description: |
+      Connect Floating Action Button on forum list screen to open the New Thread screen.
+      
+      **Behavior**:
+      - Tapping FAB opens the new thread form.
+      - Handle deep-link or named-route navigation consistently with the app router.
+      
+      **Testing**:
+      - Widget/integration test verifying FAB tap navigates to the form.
+    outputs:
+      - FAB opens new thread form reliably.
+      - Passing test proving navigation works.
+      - Checklist item "Forum list FAB → New Thread screen" marked complete.
+
+  - name: Firestore Rules and Client JSON Alignment
+    description: |
+      Ensure the client payloads exactly match Firestore Security Rules.
+      
+      **Tasks**:
+      - Review models' `toJson()` and all write calls (create/update) for threads, posts, votes, reports.
+      - Align field names and presence with rules (e.g., enforce `createdBy == auth.uid` on create; guard updates to owner-only fields; forbid extraneous keys).
+      - Add/update unit tests for rules (positive and negative), using the Firestore emulator.
+      
+      **Negative cases to cover**:
+      - Create/update with mismatched owner id.
+      - Attempt to write disallowed fields.
+      - Post to locked thread.
+      - Vote/report without auth.
+      
+      **Acceptance**:
+      - All rules tests pass; manual emulator interactions show no rejections for valid flows.
+    outputs:
+      - Updated client payloads compliant with rules, or rules adjusted to intended payloads.
+      - Rules test suite covering positive/negative cases (green).
+      - Checklist item "Firestore rules and client JSON alignment" marked complete.
+
+  - name: Locked Threads Handling (UI + Enforcement)
+    description: |
+      Respect the `locked` flag from the thread document throughout the UI and actions.
+      
+      **UI**:
+      - If `locked == true`: disable/hide composer (input + send button) and show an informative banner/message (localized).
+      - If `locked == false`: composer enabled as normal.
+      
+      **Controller**:
+      - Guard write methods (add post) against locked threads to avoid wasted calls.
+      
+      **Testing**:
+      - Widget tests for locked/unlocked rendering.
+      - Negative test: attempt to add post on locked thread → no write; user gets clear feedback.
+    outputs:
+      - Composer disabled + banner shown when locked.
+      - Tests passing for both states and negative attempt.
+      - Checklist item "Locked threads UI handling" marked complete.
+
+  - name: Infinite Scroll & Pagination (Threads and Posts)
+    description: |
+      Implement end-of-list pagination with duplicate prevention and loading indicators.
+      
+      **Threads list**:
+      - Use a scrolling listener to trigger `loadMore()` when near end.
+      - Show a footer loader while fetching; prevent concurrent fetches (in-flight flag).
+      - Deduplicate items by id when merging pages.
+      
+      **Thread posts**:
+      - Same pattern: `loadMorePosts(threadId)` triggered near bottom, with footer loader and de-dup.
+      
+      **Edge cases**:
+      - Empty lists; last page; error and retry state.
+      
+      **Testing**:
+      - Widget/integration tests simulating long lists and multiple pages; assert no duplicates and smooth loading.
+    outputs:
+      - Smooth infinite scrolling for threads and posts with no duplication.
+      - Passing tests for pagination behavior.
+      - Checklist item "Infinite scroll / pagination implemented" marked complete.
+
+  - name: Filtering & Sorting (All Combinations)
+    description: |
+      Implement Firestore queries to support all advertised filter/sort combos.
+      
+      **Filters (examples)**:
+      - All (no additional constraint)
+      - Matches (domain-specific tag/field)
+      - General (domain-specific tag/field)
+      - Pinned (boolean field)
+      
+      **Sorts (examples)**:
+      - Newest (createdAt desc)
+      - Latest Activity (lastActivityAt desc)
+      - Oldest (createdAt asc) if used anywhere
+      
+      **Implementation**:
+      - Centralize query construction to a single helper/builder used by the list controller.
+      - Ensure cursor-based pagination (`startAfter(doc)` or equivalent) is compatible with each sort.
+      - Respect Firestore composite index requirements (see next step).
+      
+      **Unit tests**:
+      - For each filter/sort combo, assert the constructed query fields/orderings are correct.
+      - If using a fake/in-memory layer, assert results order on a sample dataset.
+    outputs:
+      - Query builder supporting all filter/sort combinations.
+      - Unit tests for builder logic (green).
+      - Checklist item "Filtering/sorting fully implemented" marked complete.
+
+  - name: Firestore Indexes (Complete Coverage)
+    description: |
+      Provide all required composite indexes for the implemented queries and pagination.
+      
+      **Process**:
+      - Run the app against the emulator; observe any missing-index warnings/errors for combinations.
+      - Update `firestore.indexes.json` with the needed composite indexes (e.g., `where` fields + `orderBy` fields, including equality and array-contains cases if used).
+      - Keep index definitions minimal but sufficient; remove stale/unused definitions.
+      
+      **Verification**:
+      - Re-run manual flows for all filter/sort combos and pagination; no missing index messages should appear.
+    outputs:
+      - Updated `firestore.indexes.json` containing all required composite indexes.
+      - Manual verification notes: no missing-index errors for any combo.
+      - Checklist item "All required Firestore indexes present" marked complete.
