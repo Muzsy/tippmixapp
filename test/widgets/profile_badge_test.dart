@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/badge.dart';
-import 'package:tippmixapp/widgets/profile_badge.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/badge.dart';
+import 'package:tipsterino/widgets/profile_badge.dart';
 
 void main() {
   testWidgets('ProfileBadgeGrid shows badges', (tester) async {

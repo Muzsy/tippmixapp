@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/screens/home_screen.dart';
-// import 'package:tippmixapp/screens/home_body_screen.dart';
-import 'package:tippmixapp/screens/profile_screen.dart';
-import 'package:tippmixapp/screens/profile/edit_profile_screen.dart';
-import 'package:tippmixapp/screens/my_tickets_screen.dart';
-import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/screens/auth/login_screen.dart';
-import 'package:tippmixapp/screens/leaderboard/leaderboard_screen.dart';
-import 'package:tippmixapp/screens/settings/settings_screen.dart';
-import 'package:tippmixapp/screens/badges/badge_screen.dart';
-import 'package:tippmixapp/ui/auth/auth_gate.dart';
-import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
-import 'package:tippmixapp/screens/social/friends_screen.dart';
-import 'package:tippmixapp/providers/auth_guard.dart';
-import 'package:tippmixapp/screens/create_ticket_screen.dart';
-import 'package:tippmixapp/screens/feed_screen.dart';
-import 'package:tippmixapp/screens/onboarding/onboarding_flow_screen.dart';
-import 'package:tippmixapp/screens/splash_screen.dart';
-import 'package:tippmixapp/screens/register_wizard.dart';
+import 'package:tipsterino/screens/home_screen.dart';
+// import 'package:tipsterino/screens/home_body_screen.dart';
+import 'package:tipsterino/screens/profile_screen.dart';
+import 'package:tipsterino/screens/profile/edit_profile_screen.dart';
+import 'package:tipsterino/screens/my_tickets_screen.dart';
+import 'package:tipsterino/screens/events_screen.dart';
+import 'package:tipsterino/screens/auth/login_screen.dart';
+import 'package:tipsterino/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tipsterino/screens/settings/settings_screen.dart';
+import 'package:tipsterino/screens/badges/badge_screen.dart';
+import 'package:tipsterino/ui/auth/auth_gate.dart';
+import 'package:tipsterino/screens/rewards/rewards_screen.dart';
+import 'package:tipsterino/screens/social/friends_screen.dart';
+import 'package:tipsterino/providers/auth_guard.dart';
+import 'package:tipsterino/screens/create_ticket_screen.dart';
+import 'package:tipsterino/screens/feed_screen.dart';
+import 'package:tipsterino/screens/onboarding/onboarding_flow_screen.dart';
+import 'package:tipsterino/screens/splash_screen.dart';
+import 'package:tipsterino/screens/register_wizard.dart';
 import 'routes/app_route.dart';
-import 'package:tippmixapp/screens/notifications/notification_center_screen.dart';
-import 'package:tippmixapp/screens/debug/debug_menu_screen.dart';
-import 'package:tippmixapp/screens/forgot_password_screen.dart';
-import 'package:tippmixapp/screens/password_reset_confirm_screen.dart';
-import 'package:tippmixapp/screens/reset_password_screen.dart';
-import 'package:tippmixapp/screens/auth/email_not_verified_screen.dart';
+import 'package:tipsterino/screens/notifications/notification_center_screen.dart';
+import 'package:tipsterino/screens/debug/debug_menu_screen.dart';
+import 'package:tipsterino/screens/forgot_password_screen.dart';
+import 'package:tipsterino/screens/password_reset_confirm_screen.dart';
+import 'package:tipsterino/screens/reset_password_screen.dart';
+import 'package:tipsterino/screens/auth/email_not_verified_screen.dart';
 import 'providers/auth_provider.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
-// import 'package:tippmixapp/providers/auth_provider.dart'; // Későbbi bővítéshez
+// import 'package:tipsterino/providers/auth_provider.dart'; // Későbbi bővítéshez
 
 String? _redirect(BuildContext context, GoRouterState state) {
   final container = ProviderScope.containerOf(context, listen: false);

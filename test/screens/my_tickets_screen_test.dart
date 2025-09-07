@@ -3,15 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/ticket_model.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/screens/my_tickets_screen.dart';
-import 'package:tippmixapp/widgets/empty_ticket_placeholder.dart';
-import 'package:tippmixapp/widgets/ticket_card.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/ticket_model.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/screens/my_tickets_screen.dart';
+import 'package:tipsterino/widgets/empty_ticket_placeholder.dart';
+import 'package:tipsterino/widgets/ticket_card.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();

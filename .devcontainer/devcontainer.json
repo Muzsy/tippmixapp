@@ -4,7 +4,7 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "postCreateCommand": "flutter doctor && flutter pub get && npm install --prefix functions",
+  "postCreateCommand": "flutter doctor && flutter pub get && corepack enable && corepack prepare pnpm@10.15.1 --activate && pnpm install --filter ./cloud_functions",
   "customizations": {
     "vscode": {
       "extensions": [

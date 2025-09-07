@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tipsterino/services/api_football_service.dart';
 
 class CountingClient extends http.BaseClient {
   int calls = 0;

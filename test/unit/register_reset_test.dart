@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/providers/register_state_notifier.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/providers/register_state_notifier.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class _FakeAuth extends Fake implements AuthService {}
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/models/notification_model.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/services/notification_handler.dart';
+import 'package:tipsterino/models/notification_model.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/services/notification_handler.dart';
 
 class FakeRouter extends Fake implements GoRouter {
   String? navigated;

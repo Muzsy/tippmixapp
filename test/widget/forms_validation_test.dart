@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/screens/register_step1_form.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/screens/register_step1_form.dart';
 
 void main() {
   testWidgets('RegisterStep1Form disables continue button for invalid input', (

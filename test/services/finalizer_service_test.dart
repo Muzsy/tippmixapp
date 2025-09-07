@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
-import 'package:tippmixapp/services/finalizer_service.dart';
+import 'package:tipsterino/services/finalizer_service.dart';
 
 class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
   @override

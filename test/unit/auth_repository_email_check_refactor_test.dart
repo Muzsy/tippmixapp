@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tippmixapp/services/auth_repository.dart';
+import 'package:tipsterino/services/auth_repository.dart';
 
 class _MockAuth extends Mock implements FirebaseAuth {}
 

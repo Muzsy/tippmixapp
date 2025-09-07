@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/models/leaderboard_mode.dart';
-import 'package:tippmixapp/models/stats_backend_mode.dart';
-import 'package:tippmixapp/models/user_stats_model.dart';
-import 'package:tippmixapp/services/leaderboard_service.dart';
-import 'package:tippmixapp/services/stats_service.dart';
+import 'package:tipsterino/models/leaderboard_mode.dart';
+import 'package:tipsterino/models/stats_backend_mode.dart';
+import 'package:tipsterino/models/user_stats_model.dart';
+import 'package:tipsterino/services/leaderboard_service.dart';
+import 'package:tipsterino/services/stats_service.dart';
 
 class FakeStatsService extends StatsService {
   final Stream<List<UserStatsModel>> _stream;

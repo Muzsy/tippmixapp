@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/bet_slip_provider.dart';
-import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/bet_slip_provider.dart';
+import 'package:tipsterino/routes/app_route.dart';
 import '../models/tip_model.dart';
 import '../services/bet_slip_service.dart';
 

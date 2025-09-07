@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../theme/brand_colors.dart';
 import '../theme/brand_colors_presets.dart';

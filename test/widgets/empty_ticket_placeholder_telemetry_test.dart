@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/services/analytics_service.dart';
-import 'package:tippmixapp/widgets/empty_ticket_placeholder.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/services/analytics_service.dart';
+import 'package:tipsterino/widgets/empty_ticket_placeholder.dart';
 
 class FakeAnalytics extends AnalyticsService {
   bool ctaLogged = false;

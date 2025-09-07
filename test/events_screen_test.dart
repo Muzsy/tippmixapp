@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/odds_bookmaker.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/models/odds_market.dart';
-import 'package:tippmixapp/models/odds_outcome.dart';
-import 'package:tippmixapp/providers/odds_api_provider.dart';
-import 'package:tippmixapp/providers/bet_slip_provider.dart';
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/services/odds_cache_wrapper.dart';
-import 'package:tippmixapp/models/h2h_market.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/odds_bookmaker.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/models/odds_market.dart';
+import 'package:tipsterino/models/odds_outcome.dart';
+import 'package:tipsterino/providers/odds_api_provider.dart';
+import 'package:tipsterino/providers/bet_slip_provider.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/screens/events_screen.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/services/odds_cache_wrapper.dart';
+import 'package:tipsterino/models/h2h_market.dart';
 import 'package:go_router/go_router.dart';
 
 class _StubApiFootballService extends ApiFootballService {

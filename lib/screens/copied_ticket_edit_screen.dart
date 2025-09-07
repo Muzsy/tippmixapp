@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 import '../models/tip_model.dart';
 

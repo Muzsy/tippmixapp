@@ -43,6 +43,7 @@ tmp/
 /build/
 node_modules/
 .emulator_data/
+assets/branding/*.png
 
 # Symbolication related
 app.*.symbols

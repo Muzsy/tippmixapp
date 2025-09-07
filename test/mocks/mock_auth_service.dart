@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/models/user.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/models/user.dart';
 
 class MockAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();

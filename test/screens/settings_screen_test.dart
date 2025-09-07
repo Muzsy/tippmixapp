@@ -2,18 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/controllers/app_locale_controller.dart';
-import 'package:tippmixapp/controllers/app_theme_controller.dart';
-import 'package:tippmixapp/services/theme_service.dart';
+import 'package:tipsterino/controllers/app_locale_controller.dart';
+import 'package:tipsterino/controllers/app_theme_controller.dart';
+import 'package:tipsterino/services/theme_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/screens/settings/settings_screen.dart';
-import 'package:tippmixapp/models/user.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/screens/settings/settings_screen.dart';
+import 'package:tipsterino/models/user.dart';
 
 class FakeUser extends Fake implements fb.User {
   @override

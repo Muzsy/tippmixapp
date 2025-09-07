@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:tippmixapp/services/theme_service.dart';
+import 'package:tipsterino/services/theme_service.dart';
 
 class FakeUser extends Fake implements User {
   @override

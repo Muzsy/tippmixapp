@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import 'dart:async';
 
-import 'package:tippmixapp/screens/home_screen.dart'
+import 'package:tipsterino/screens/home_screen.dart'
     show
         HomeScreen,
         dailyBonusAvailableProvider,
@@ -13,17 +13,17 @@ import 'package:tippmixapp/screens/home_screen.dart'
         aiTipFutureProvider,
         activeChallengesProvider,
         latestFeedActivityProvider;
-import 'package:tippmixapp/screens/events_screen.dart';
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/providers/auth_provider.dart'
+import 'package:tipsterino/screens/events_screen.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/providers/auth_provider.dart'
     show authProvider, authServiceProvider, AuthNotifier;
-import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/providers/odds_api_provider.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/services/odds_cache_wrapper.dart';
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/user.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
+import 'package:tipsterino/providers/odds_api_provider.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/services/odds_cache_wrapper.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart';
 
 class FakeAuthService implements AuthService {
   final _controller = StreamController<User?>.broadcast();

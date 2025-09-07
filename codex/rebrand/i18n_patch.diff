@@ -1,0 +1,20 @@
+--- a/lib/l10n/app_en.arb
++++ b/lib/l10n/app_en.arb
+@@
+-  "gdpr_required_error": "GDPR consent required",
++  "gdpr_required_error": "GDPR consent required",
++  "app_name": "Tipsterino",
+
+--- a/lib/l10n/app_hu.arb
++++ b/lib/l10n/app_hu.arb
+@@
+-  "dialog_comment_title": "Hozzászólás",
++  "dialog_comment_title": "Hozzászólás",
++  "app_name": "Tipsterino",
+
+--- a/lib/l10n/app_de.arb
++++ b/lib/l10n/app_de.arb
+@@
+-  "backup_codes_title": "Backup-Codes",
++  "backup_codes_title": "Backup-Codes",
++  "app_name": "Tipsterino",

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/features/forum/domain/thread.dart';
-import 'package:tippmixapp/features/forum/domain/post.dart';
-import 'package:tippmixapp/features/forum/domain/vote.dart';
-import 'package:tippmixapp/features/forum/domain/report.dart';
+import 'package:tipsterino/features/forum/domain/thread.dart';
+import 'package:tipsterino/features/forum/domain/post.dart';
+import 'package:tipsterino/features/forum/domain/vote.dart';
+import 'package:tipsterino/features/forum/domain/report.dart';
 
 void main() {
   group('Thread', () {

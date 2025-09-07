@@ -118,6 +118,7 @@
   "friends": "Friends",
   "gdpr_consent": "I agree to the privacy policy",
   "gdpr_required_error": "GDPR consent required",
+  "app_name": "Tipsterino",
   "go_to_create_ticket": "Submit Ticket",
   "google_login": "Continue with Google",
   "home_coin": "TippCoin",

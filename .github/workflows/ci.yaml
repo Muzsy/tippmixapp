@@ -28,8 +28,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Enable Corepack + pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.1 --activate
+          pnpm -v
       - name: Install markdown linters
-        run: npm i -g markdownlint-cli markdownlint-cli2
+        run: pnpm dlx markdownlint-cli2 .
       - name: Run docs lint script (non-blocking)
         continue-on-error: true
         run: |
@@ -85,16 +90,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: cloud_functions/package-lock.json
+      - name: Enable Corepack + pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.1 --activate
+          pnpm -v
       - name: Install deps
-        run: npm ci --prefix cloud_functions
+        run: pnpm install --filter ./cloud_functions --frozen-lockfile
       - name: Lint (non-blocking)
-        run: npm run lint --prefix cloud_functions || true
+        run: pnpm --filter ./cloud_functions run lint || true
       - name: Build
-        run: npm run build --prefix cloud_functions
+        run: pnpm --filter ./cloud_functions run build
       - name: Run unit tests
-        run: npm test --prefix cloud_functions
+        run: pnpm --filter ./cloud_functions test
 
   firestore_rules:
     name: Firestore rules tests
@@ -104,8 +112,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Enable Corepack + pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.1 --activate
+          pnpm -v
       - name: Install Firebase CLI
-        run: npm i -g firebase-tools
+        run: pnpm dlx firebase-tools --version
       - name: Run rules tests
         run: |
           chmod +x scripts/test_firebase_rules.sh

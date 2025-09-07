@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tippmixapp/services/experiment_service.dart';
+import 'package:tipsterino/services/experiment_service.dart';
 
 class FakeRemoteConfig extends Fake implements FirebaseRemoteConfig {
   String variant;

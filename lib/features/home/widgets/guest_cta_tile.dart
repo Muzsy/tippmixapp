@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/routes/app_route.dart';
 
 class GuestCtaTile extends StatelessWidget {
   const GuestCtaTile({super.key});

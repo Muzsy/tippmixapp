@@ -1,0 +1,7 @@
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@
+-name: tippmixapp
+-description: "A new Flutter project."
++name: tipsterino
++description: "Tipsterino — community-driven sports betting simulator (virtual currency, no real gambling)."

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 import '../providers/odds_api_provider.dart';
 import '../providers/bet_slip_provider.dart';
@@ -11,7 +11,7 @@ import '../models/tip_model.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/event_bet_card.dart';
 import '../services/api_football_service.dart';
-import 'package:tippmixapp/routes/app_route.dart';
+import 'package:tipsterino/routes/app_route.dart';
 
 class EventsScreen extends ConsumerStatefulWidget {
   final String sportKey;

@@ -1,4 +1,4 @@
-# TippmixApp Offline Fejlesztői Útmutató / Offline Development Guide
+# Tipsterino Offline Fejlesztői Útmutató / Offline Development Guide
 
 Dátum / Date: 2025-09-06
 
@@ -6,7 +6,7 @@ Dátum / Date: 2025-09-06
 
 ## HU — Áttekintés
 
-Ez a dokumentum lépésről lépésre bemutatja, hogyan futtasd a TippmixApp‑ot teljesen offline módban a Firebase Emulator Suite és lokális mockok segítségével. Nem szükséges internet vagy felhős erőforrás.
+Ez a dokumentum lépésről lépésre bemutatja, hogyan futtasd a Tipsterino‑t teljesen offline módban a Firebase Emulator Suite és lokális mockok segítségével. Nem szükséges internet vagy felhős erőforrás.
 
 - Emulátor portok: Auth 9099, Firestore 8080, Storage 9199, Functions 5001, UI 4000
 - Környezeti változók (dev): `USE_EMULATOR=true USE_MOCK_SCORES=true USE_INLINE_FINALIZER=true API_FOOTBALL_KEY=dummy`
@@ -58,7 +58,7 @@ Ez a dokumentum lépésről lépésre bemutatja, hogyan futtasd a TippmixApp‑o
 
 ## EN — Overview
 
-This guide explains how to run TippmixApp fully offline using the Firebase Emulator Suite and local mocks. No internet or cloud resources required.
+This guide explains how to run Tipsterino fully offline using the Firebase Emulator Suite and local mocks. No internet or cloud resources required.
 
 - Emulator ports: Auth 9099, Firestore 8080, Storage 9199, Functions 5001, UI 4000
 - Dev env vars: `USE_EMULATOR=true USE_MOCK_SCORES=true USE_INLINE_FINALIZER=true API_FOOTBALL_KEY=dummy`
@@ -114,4 +114,3 @@ This guide explains how to run TippmixApp fully offline using the Firebase Emula
 - Emulators: `npm run emu:start` | Reset: `npm run emu:reset` | Export: `npm run emu:export`
 - Seed: `npm run auth:seed` && `npm run seed` && `bash tools/seed_avatars.sh`
 - Flutter: `flutter run --dart-define=USE_EMULATOR=true`
-

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/l10n/app_localizations_en.dart';
-import 'package:tippmixapp/models/user_model.dart';
-import 'package:tippmixapp/screens/public_profile_screen.dart';
-import 'package:tippmixapp/constants.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations_en.dart';
+import 'package:tipsterino/models/user_model.dart';
+import 'package:tipsterino/screens/public_profile_screen.dart';
+import 'package:tipsterino/constants.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(

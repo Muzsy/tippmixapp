@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tippmixapp/models/api_response.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/services/odds_cache_wrapper.dart';
+import 'package:tipsterino/models/api_response.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/services/odds_cache_wrapper.dart';
 
 class FakeApiFootballService extends ApiFootballService {
   int callCount = 0;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/widgets/event_bet_card.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/models/h2h_market.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/widgets/event_bet_card.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/models/h2h_market.dart';
 
 class _NullApi extends ApiFootballService {
   @override

@@ -1,11 +1,11 @@
-# 🏟️ TippmixApp
+# 🏟️ Tipsterino
 
 ![Coverage](./badges/coverage.svg)
 [![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
 [![Security Rules Coverage](coverage/security_rules_badge.svg)](coverage/security_rules_badge.svg)
 [![CI](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml/badge.svg)](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml)
 
-TippmixApp is a modular Flutter application simulating community-based sports betting.
+Tipsterino is a modular Flutter application simulating community-based sports betting with virtual currency (no real gambling).
 It features a virtual coin economy, real-time odds from [API-Football](https://www.api-football.com/), Firebase backend, and a Codex-based development workflow.
 
 ![Login Screen](docs/images/login_revamp_screenshot_v1.png)
@@ -158,9 +158,10 @@ For Codex configuration, see: [`AGENTS.md`](./AGENTS.md)
 ## 📴 Offline Playbook
 
 - Env: export `USE_EMULATOR=true USE_MOCK_SCORES=true USE_INLINE_FINALIZER=true API_FOOTBALL_KEY=dummy`
-- Start emulators: `npm run emu:start` (UI: http://localhost:4000)
-- Seed data: `npm run seed` and `npm run auth:seed`
-- Full offline flow: `npm run dev:offline:full`
+- Start emulators: `pnpm run emu:start` (UI: http://localhost:4000)
+- Seed data: `pnpm run seed` and `pnpm run auth:seed`
+- Full offline flow: `pnpm run dev:offline:full`
 - Flutter run: `flutter run --dart-define=USE_EMULATOR=true`
-- Reset/export: `npm run emu:reset` / `npm run emu:export`
+- Reset/export: `pnpm run emu:reset` / `pnpm run emu:export`
+- Tooling: enable Corepack and pnpm (10.15.1): `corepack enable && corepack prepare pnpm@10.15.1 --activate`
 - Troubleshooting: Android cleartext enabled; Functions logs in Emulator UI; Auth REST users via `tools/create_test_users.sh`.

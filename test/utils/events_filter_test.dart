@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/utils/events_filter.dart';
-import 'package:tippmixapp/models/odds_event.dart';
-import 'package:tippmixapp/models/odds_bookmaker.dart';
+import 'package:tipsterino/utils/events_filter.dart';
+import 'package:tipsterino/models/odds_event.dart';
+import 'package:tipsterino/models/odds_bookmaker.dart';
 
 OddsEvent makeEvent(String id, DateTime when) => OddsEvent(
   id: id,

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/odds_drift.dart';
-import 'package:tippmixapp/widgets/odds_drift_dialog.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/odds_drift.dart';
+import 'package:tipsterino/widgets/odds_drift_dialog.dart';
 
 void main() {
   final result = OddsDriftResult([

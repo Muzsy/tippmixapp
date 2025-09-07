@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/services/odds_drift_checker.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tipsterino/services/odds_drift_checker.dart';
+import 'package:tipsterino/services/api_football_service.dart';
 
 class _MockApiFootballService extends ApiFootballService {
   final Map<String, Map<String, dynamic>> fixtures;

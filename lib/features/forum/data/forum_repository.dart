@@ -1,6 +1,6 @@
-import 'package:tippmixapp/features/forum/domain/post.dart';
-import 'package:tippmixapp/features/forum/domain/report.dart';
-import 'package:tippmixapp/features/forum/domain/thread.dart';
+import 'package:tipsterino/features/forum/domain/post.dart';
+import 'package:tipsterino/features/forum/domain/report.dart';
+import 'package:tipsterino/features/forum/domain/thread.dart';
 
 abstract class ForumRepository {
   Stream<List<Thread>> getThreadsByFixture(

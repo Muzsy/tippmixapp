@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/l10n/app_localizations_de.dart';
-import 'package:tippmixapp/l10n/app_localizations_en.dart';
-import 'package:tippmixapp/l10n/app_localizations_hu.dart';
-import 'package:tippmixapp/models/reward_model.dart';
-import 'package:tippmixapp/screens/rewards/rewards_screen.dart';
-import 'package:tippmixapp/services/reward_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations_de.dart';
+import 'package:tipsterino/l10n/app_localizations_en.dart';
+import 'package:tipsterino/l10n/app_localizations_hu.dart';
+import 'package:tipsterino/models/reward_model.dart';
+import 'package:tipsterino/screens/rewards/rewards_screen.dart';
+import 'package:tipsterino/services/reward_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {

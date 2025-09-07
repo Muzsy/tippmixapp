@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/widgets/home_profile_header.dart';
-import 'package:tippmixapp/widgets/guest_promo_tile.dart';
-import 'package:tippmixapp/widgets/home/user_stats_header.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/models/user_stats_model.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/home_profile_header.dart';
+import 'package:tipsterino/widgets/guest_promo_tile.dart';
+import 'package:tipsterino/widgets/home/user_stats_header.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/models/user_stats_model.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class _FakeAuthService implements AuthService {
   @override

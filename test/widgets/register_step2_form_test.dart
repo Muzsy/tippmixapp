@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/providers/register_state_notifier.dart';
-import 'package:tippmixapp/screens/register_wizard.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/register_state_notifier.dart';
+import 'package:tipsterino/screens/register_wizard.dart';
 import '../mocks/mock_auth_service.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class _FakeCallableResult<T> implements HttpsCallableResult<T> {

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:tippmixapp/flows/copy_bet_flow.dart';
-import 'package:tippmixapp/models/tip_model.dart';
+import 'package:tipsterino/flows/copy_bet_flow.dart';
+import 'package:tipsterino/models/tip_model.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake

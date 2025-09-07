@@ -1,0 +1,92 @@
+
+# 📦 Codex YAML — `codex/goals/canvases/fill_canvas_rebrand_tipsterino.yaml`
+
+```yaml
+version: 1
+name: "TippmixApp → Tipsterino rebrand"
+description: "A teljes átnevezés és brand-egységesítés végrehajtása a kódban és a metaállományokban."
+steps:
+  - name: Repo feltérképezése
+    description: |
+      Keresd meg a projektben a Flutter és platform-specifikus fájlokat a rebrandhez. Ne tételezz fel nem létező útvonalat — minden fájlt LÉTEZÉS ALAPJÁN kezelj.
+      Célfájlok (ha léteznek):
+        - pubspec.yaml
+        - lib/** (AppBar címek, About/Settings stringek)
+        - android/app/build.gradle, android/app/src/main/AndroidManifest.xml, android/app/src/main/res/values/strings.xml
+        - ios/Runner/Info.plist, ios/Runner.xcodeproj/project.pbxproj
+        - assets/** (ikon/splash források)
+        - README.md, docs/** (nyílt szövegek)
+    outputs: ["felfedezesi_jelentes.md"]
+
+  - name: Appnév és csomagnév döntés rögzítése
+    description: |
+      A megjelenített appnév mindenhol: "Tipsterino" (nem fordítandó).
+      Android/iOS bundle: `com.tipsterino.app`. Ha ütközés van, dokumentáld és javasolj alternatívát (pl. `app.tipsterino`).
+    outputs: ["branding_decision.md"]
+
+  - name: pubspec.yaml frissítése
+    description: |
+      Állítsd be a projekt nevét `tipsterino`-ra. Frissítsd a human‑readable nevet, ha szerepel. Ellenőrizd a `flutter_launcher_icons` és `flutter_native_splash` szekciók létezését; ha vannak, frissítsd bennük az asset‑útvonalakat a Tipsterino ikon/splash fájlokra.
+    outputs: ["patch_pubspec.diff"]
+
+  - name: Android applicationId és megjelenített név frissítése
+    description: |
+      - `android/app/build.gradle`: `applicationId "com.tipsterino.app"`.
+      - `android/app/src/main/res/values/strings.xml`: `app_name` → "Tipsterino".
+      - `AndroidManifest.xml`: ellenőrizd a `label` attribútumot; ha explicit van, "Tipsterino".
+      - Ha a package mappastruktúra a régi névre utal, hagyd érintetlenül, amíg a build sikeres (Flutter projekteknél a package mappa ritkán kritikus). Csak akkor refaktorálj package‑mappát, ha a build vagy IDE kéri.
+    outputs: ["patch_android.diff"]
+
+  - name: iOS bundle és megjelenített név frissítése
+    description: |
+      - `ios/Runner/Info.plist`: `CFBundleName` → "Tipsterino".
+      - Xcode projektfájl: `PRODUCT_BUNDLE_IDENTIFIER` → `com.tipsterino.app` (mind Debug/Release konfigurációkban).
+    outputs: ["patch_ios.diff"]
+
+  - name: Ikon és splash csere
+    description: |
+      - Helyezz el új forrás ikonokat (1024x1024, előny: egyszerű, erős T betű/jelvény) és splash képeket az assets‑be.
+      - Frissítsd a `flutter_launcher_icons` és `flutter_native_splash` configot (ha van), majd dokumentáld a futtatandó parancsokat.
+      - Ne töröld a régi asseteket, csak ha nem hivatkozik rá semmi.
+    outputs: ["assets_change_log.md", "icon_splash_commands.sh"]
+
+  - name: Szövegek és diszklémerek cseréje
+    description: |
+      - Keresd a projektben a "TippmixApp" előfordulásokat. Cseréld "Tipsterino"-ra, kivéve jogi/migrációs megjegyzésekben.
+      - Add hozzá/erősítsd meg a diszklémert: a Tipsterino nem valódi pénzes szerencsejáték, közösségi és gamifikációs app.
+      - Lokalizáció: HU/EN/DE kulcsok frissítése. A brandnév fix.
+    outputs: ["string_replacements_report.md", "i18n_patch.diff"]
+
+  - name: Privacy Policy és külső linkek
+    description: |
+      - Átmeneti privacy‑policy statikus oldal URL‑jének beállítása (pl. `https://tipsterino.com/privacy`). Ha nincs domain, ideiglenes GitHub Pages link.
+      - Az appban szereplő linkek frissítése (About/Settings).
+    outputs: ["external_links_update.md"]
+
+  - name: Build & teszt (helyben)
+    description: |
+      - Futtasd: `flutter clean && flutter pub get`.
+      - Android debug build: `flutter run -d emulator` vagy fizikai eszköz.
+      - Unit + widget tesztek: párhuzamosítva, **coverage nélkül**.
+      - Dokumentáld a fő user‑flow kézi ellenőrzését.
+    outputs: ["local_build_log.txt", "test_results.txt", "manual_checklist.md"]
+
+  - name: Play Console metaelőkészítés
+    description: |
+      - Exportálj store‑szöveg vázlatot (HU/EN), screenshot listát, feature graphic, ikon (1024x1024), promo assetek.
+      - Ne tölts fel semmit: csak csomagold egy `store_assets/` mappába.
+    outputs: ["store_assets/", "store_copy_draft.md"]
+
+  - name: Patreon beállítás
+    description: |
+      - Hozd létre a Tipsterino Patreon oldalt (brandnév, leírás, bannerek).
+      - Hozd létre a 3 tier‑t (Supporter, Beta Tester, Insider) és az első üdvözlő posztot (vázlat).
+      - Dokumentáld a zárt teszt csatorna bekötését (Play belső/zárt track + Patreon email lista).
+    outputs: ["patreon_setup_checklist.md", "welcome_post_draft.md"]
+
+  - name: Zárás és visszaellenőrzés
+    description: |
+      - Készíts összefoglalót az érintett fájlokról, patch-ekről és nyitott teendőkről.
+      - Sorold fel a fennmaradó "TippmixApp" találatokat (ha vannak) és javasolj döntést.
+    outputs: ["rebrand_summary.md"]
+```

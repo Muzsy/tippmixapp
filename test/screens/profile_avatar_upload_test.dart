@@ -7,12 +7,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/screens/profile_screen.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/screens/profile_screen.dart';
+import 'package:tipsterino/services/auth_service.dart';
 import 'dart:async';
 
 class FakeFile extends Fake implements File {}

@@ -3,7 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:tippmixapp/services/coin_service.dart';
+import 'package:tipsterino/services/coin_service.dart';
 
 class FakeHttpsCallableResult<T> implements HttpsCallableResult<T> {
   @override

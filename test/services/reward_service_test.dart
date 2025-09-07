@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:tippmixapp/models/reward_model.dart';
-import 'package:tippmixapp/services/reward_service.dart';
+import 'package:tipsterino/models/reward_model.dart';
+import 'package:tipsterino/services/reward_service.dart';
 
 class FakeHttpsCallable extends Fake implements HttpsCallable {
   Map<String, dynamic>? last;

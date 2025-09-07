@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/widgets/avatar_gallery.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/widgets/avatar_gallery.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 void main() {
   testWidgets('AvatarGallery shows empty state', (tester) async {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/user_stats_model.dart';
-import 'package:tippmixapp/widgets/home/home_tile_top_tipster.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/user_stats_model.dart';
+import 'package:tipsterino/widgets/home/home_tile_top_tipster.dart';
 
 void main() {
   testWidgets('renders stats and handles CTA', (tester) async {

@@ -30,7 +30,12 @@ require() {
 }
 
 require node
-require npm
+require npm || true
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "pnpm not found; npm will be used where needed."
+else
+  echo "Using pnpm where possible."
+fi
 require gcloud
 
 attempt=1
@@ -41,18 +46,30 @@ while (( attempt <= MAX_ATTEMPTS )); do
   pushd "$CF_DIR" >/dev/null
   if (( attempt > 1 )); then
     log "Cleaning node_modules and lockfile (cloud_functions)"
-    rm -rf node_modules package-lock.json || true
+    rm -rf node_modules package-lock.json pnpm-lock.yaml || true
   fi
   log "Installing deps (cloud_functions)"
-  npm ci
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm install --frozen-lockfile || pnpm install
+  else
+    npm ci || npm install
+  fi
   log "Building (tsc)"
-  npm run -s build
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm run -s build
+  else
+    npm run -s build
+  fi
   popd >/dev/null
 
   # Deploy using selected deployer
   if [[ "$DEPLOYER" == "firebase" ]]; then
     log "Deploying (firebase) function ${FUNCTION_NAME} (project=${PROJECT_ID})"
-    npx --yes firebase deploy --only "functions:${FUNCTION_NAME}" --project "${PROJECT_ID}" --force
+    if command -v pnpm >/dev/null 2>&1; then
+      pnpm dlx firebase-tools deploy --only "functions:${FUNCTION_NAME}" --project "${PROJECT_ID}" --force
+    else
+      npx --yes firebase deploy --only "functions:${FUNCTION_NAME}" --project "${PROJECT_ID}" --force
+    fi
   elif [[ "$DEPLOYER" == "gcloud" ]]; then
     log "Deploying (gcloud) function ${FUNCTION_NAME} (project=${PROJECT_ID})"
     pushd "$CF_DIR" >/dev/null

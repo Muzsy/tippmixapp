@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tippmixapp/services/feed_service.dart';
-import 'package:tippmixapp/models/feed_event_type.dart';
+import 'package:tipsterino/services/feed_service.dart';
+import 'package:tipsterino/models/feed_event_type.dart';
 
 // ignore: subtype_of_sealed_class
 class FakeDocumentReference extends Fake

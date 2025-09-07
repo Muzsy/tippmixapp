@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:fake_async/fake_async.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:cloud_functions/cloud_functions.dart';

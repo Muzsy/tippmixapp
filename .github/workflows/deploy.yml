@@ -44,20 +44,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: |
-            cloud_functions/package-lock.json
+      - name: Enable Corepack + pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.1 --activate
+          pnpm -v
 
       - name: Install firebase-tools (pinned major)
-        run: npm i -g firebase-tools@^13
+        run: pnpm dlx firebase-tools@^13 --version
 
       - name: Clean stale build artifacts
         run: rm -rf cloud_functions/lib
 
       - name: Install deps & build functions
         run: |
-          npm ci --prefix cloud_functions
-          npm run build --prefix cloud_functions
+          pnpm install --filter ./cloud_functions --frozen-lockfile
+          pnpm --filter ./cloud_functions run build
       # 1) ADC (Application Default Credentials) beállítása a SA JSON-ból
       - name: Google Auth (ADC)
         uses: google-github-actions/auth@v2
@@ -123,8 +125,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: cloud_functions/package-lock.json
+      - name: Enable Corepack + pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.1 --activate
+          pnpm -v
 
       - name: Google Auth (ADC)
         uses: google-github-actions/auth@v2

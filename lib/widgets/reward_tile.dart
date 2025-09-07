@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 import '../models/reward_model.dart';
 
 class RewardTile extends StatelessWidget {

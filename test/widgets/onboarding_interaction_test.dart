@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tippmixapp/screens/onboarding/onboarding_flow_screen.dart';
-import 'package:tippmixapp/providers/onboarding_provider.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/services/user_service.dart';
-import 'package:tippmixapp/services/analytics_service.dart';
+import 'package:tipsterino/screens/onboarding/onboarding_flow_screen.dart';
+import 'package:tipsterino/providers/onboarding_provider.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/services/user_service.dart';
+import 'package:tipsterino/services/analytics_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 // ignore: subtype_of_sealed_class

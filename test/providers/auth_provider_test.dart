@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class ThrowingAuthService implements AuthService {
   final String code;

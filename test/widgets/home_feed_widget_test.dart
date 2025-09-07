@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/feed_event_type.dart';
-import 'package:tippmixapp/models/feed_model.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/models/tip_model.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/providers/feed_provider.dart';
-import 'package:tippmixapp/widgets/home_feed.dart';
-import 'package:tippmixapp/widgets/components/comment_modal.dart';
-import 'package:tippmixapp/widgets/components/report_dialog.dart';
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/flows/copy_bet_flow.dart';
-import 'package:tippmixapp/services/feed_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/feed_event_type.dart';
+import 'package:tipsterino/models/feed_model.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/models/tip_model.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/providers/feed_provider.dart';
+import 'package:tipsterino/widgets/home_feed.dart';
+import 'package:tipsterino/widgets/components/comment_modal.dart';
+import 'package:tipsterino/widgets/components/report_dialog.dart';
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/flows/copy_bet_flow.dart';
+import 'package:tipsterino/services/feed_service.dart';
 
 class FakeAuthNotifier extends AuthNotifier {
   FakeAuthNotifier(User? user) : super(FakeAuthService()) {

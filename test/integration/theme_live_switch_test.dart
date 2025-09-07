@@ -6,12 +6,12 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 
-import 'package:tippmixapp/services/theme_service.dart';
-import 'package:tippmixapp/theme/theme_builder.dart';
-import 'package:tippmixapp/screens/settings/settings_screen.dart';
-import 'package:tippmixapp/controllers/app_locale_controller.dart';
-import 'package:tippmixapp/controllers/app_theme_controller.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
+import 'package:tipsterino/services/theme_service.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
+import 'package:tipsterino/screens/settings/settings_screen.dart';
+import 'package:tipsterino/controllers/app_locale_controller.dart';
+import 'package:tipsterino/controllers/app_theme_controller.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 class FakeFirebaseAuth extends Fake implements fb.FirebaseAuth {
   FakeFirebaseAuth(this._user);

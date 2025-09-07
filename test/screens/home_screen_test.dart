@@ -8,12 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/user.dart';
-import 'package:tippmixapp/models/user_stats_model.dart';
-import 'package:tippmixapp/providers/auth_provider.dart';
-import 'package:tippmixapp/providers/stats_provider.dart';
-import 'package:tippmixapp/screens/home_screen.dart'
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/models/user_stats_model.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/stats_provider.dart';
+import 'package:tipsterino/screens/home_screen.dart'
     show
         HomeScreen,
         dailyBonusAvailableProvider,
@@ -21,8 +21,8 @@ import 'package:tippmixapp/screens/home_screen.dart'
         aiTipFutureProvider,
         activeChallengesProvider,
         latestFeedActivityProvider;
-import 'package:tippmixapp/routes/app_route.dart';
-import 'package:tippmixapp/services/auth_service.dart';
+import 'package:tipsterino/routes/app_route.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 /// Simplest possible stub that fulfils every member of [AuthService]
 /// without touching Firebase during widget tests.

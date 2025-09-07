@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/utils/telemetry_sanitizer.dart';
+import 'package:tipsterino/utils/telemetry_sanitizer.dart';
 
 void main() {
   group('TelemetrySanitizer', () {

@@ -1,0 +1,115 @@
+# Codex YAML – Fórum modul megvalósítás
+
+> A következő YAML a Codex IDE számára készült. A lépések **magyar nyelvűek**, mindegyik tartalmaz `name`, `description`, `outputs`, opcionálisan `inputs`. Ne használj `analyze`/`summarize` jellegű parancsokat.
+
+```yaml
+steps:
+  - name: Projekt kontextus beolvasása
+    description: Olvasd be a projektstruktúrát és a fórumhoz kapcsolódó dokumentumokat a /canvases, /docs, /codex_docs könyvtárakból. Keresd meg a fórum modulhoz köthető leírásokat, majd térképezd fel, hogy a kódban hol legyen a modul (pl. lib/features/forum/...).
+    outputs:
+      - Rövid összefoglaló a releváns fájlokról és a célszerkezetről (MARKDOWN).
+
+  - name: Adatmodell egyeztetés
+    description: Hozz létre/adaptálj típusos modelleket a threads, posts, votes, reports (és opcionális user_forum_prefs) entitásokhoz. Biztosíts JSON (to/from) konverziót, és egyeztesd a mezők neveit az előirányzott Firestore struktúrával.
+    outputs:
+      - Új vagy frissített modellek (Dart) commit patch
+      - Unit teszt a modellek szériálizációjára
+
+  - name: Repository réteg
+    description: Hozz létre egységes repository interfészt és implementációt a Firestore-hoz. Biztosítsd a fő műveleteket (threads/posts stream, create/update/delete, vote, report) és a szükséges query-ket lapozással, rendezéssel, szűréssel.
+    outputs:
+      - Repository interfész és Firestore implementáció commit patch
+      - Unit tesztek (mockolt Firestore kliens)
+
+  - name: Firestore Security Rules – első kör
+    description: Egészítsd ki a security rules-okat a fórum gyűjteményekre. Auth kötelező írásra, saját tulajdon védelme, mező-whitelisting, locked thread poszt-tiltás, report státusz írás tiltása.
+    outputs:
+      - Frissített rules fájl commit patch
+      - Rules unit tesztek (ENGEDÉLYEZVE – ne legyen @Skip)
+
+  - name: Firestore indexek
+    description: Ellenőrizd a repository query-ket és készíts hozzájuk kompozit index definíciókat (threads, posts, votes, reports). Készíts diffet a firestore.indexes.json bővítésére.
+    outputs:
+      - Frissített firestore.indexes.json commit patch
+      - Rövid lista a query→index megfeleltetésekről (MARKDOWN)
+
+  - name: Állapotkezelés (Riverpod) és kontrollerek
+    description: Hozd létre a ForumFilterState, ThreadListController, ThreadDetailController, ComposerController osztályokat. Oldd meg a stream-ek előfizetését, lapozást, hiba/üres állapotokat, és akciókat (create post/thread, vote, report, follow toggle).
+    outputs:
+      - Providers/Notifiers commit patch
+      - Unit tesztek a kontrollerek fő ágraira
+
+  - name: ForumScreen
+    description: Készíts reszponzív lista képernyőt szűrőkkel (All/Matches/General/Pinned) és rendezéssel (Latest/Newest). Kártyákon jelenjen meg a fő meta (pinned/locked badge, poszt- és aktivitásszám). Legyen FAB új szálhoz. Üres- és hibaállapotok.
+    outputs:
+      - ForumScreen widget commit patch
+      - Widget tesztek (üres, adat, hiba)
+
+  - name: NewThread composer
+    description: Készíts új szál létrehozó UI-t (külön képernyő vagy bottom-sheet). Validáció (min/max), opcionális fixtureId választás/mező, első poszt megadása. Mentéskor tranzakció vagy soros írás, hibakezelés és siker visszajelzés.
+    outputs:
+      - NewThread képernyő/bottom-sheet commit patch
+      - Widget tesztek (validáció, gomb állapotok, siker/hiba)
+
+  - name: ThreadViewScreen és posztlista
+    description: Készíts résznézetet posztlistával, válasz/idézet, szerkesztés (időablak), törlés (időablak), jelentés és szavazás akciókkal. Locked szál esetén composer tiltása. Lapozás és „Új posztok” jelvény.
+    outputs:
+      - ThreadViewScreen és komponensei commit patch
+      - Widget tesztek (interakciók, locked állapot)
+
+  - name: Jelentés (Report) flow
+    description: Készíts könnyű jelentési űrlapot (ok-lista + opcionális üzenet), írás a reports gyűjteménybe, visszajelzés. Admin funkciók (status váltás) felület nélkül, csak szabályokban.
+    outputs:
+      - Report UI komponens commit patch
+      - Unit/widget teszt a flow-ra
+
+  - name: Szavazás (Vote) flow
+    description: Like/upvote gomb kezelés, duplázás elleni védelem (kliens), aggregált számláló frissítése (kliensoldali lekérdezés vagy egyszerű összesítés; később CF aggregáció).
+    outputs:
+      - Vote logika és UI commit patch
+      - Unit/widget tesztek
+
+  - name: Meccs meta komponens
+    description: Opcionális komponens a ThreadView fejlécében, amely az API-Football adataiból mutat alapinformációkat (csapatok, kezdés, állás). Hibára/hiányra kegyes degrade.
+    outputs:
+      - Match header komponens commit patch
+      - Mock alapú widget teszt
+
+  - name: Lokalizáció
+    description: Vedd fel a szükséges i18n kulcsokat (HU/EN/DE), és fordítsd le a gombokat, címkéket, üzeneteket. Használj konzisztens névkonvenciót és meglévő i18n infrastruktúrát.
+    outputs:
+      - i18n fájlok módosítása commit patch
+      - Egyszerű ellenőrző teszt (kulcs-létezés)
+
+  - name: Navigáció bekötése
+    description: Add hozzá a /forum, /forum/new, /forum/:threadId útvonalakat a routerhez, és egészítsd ki az alsó navigációt a Fórum menüponttal. Állapot-visszaállítás támogatása visszanavigáláskor.
+    outputs:
+      - Router és nav módosítás commit patch
+      - Widget tesztek (útvonal elérés)
+
+  - name: Integrációs teszt emulátorral (opcionális, ajánlott)
+    description: Indítsd el a Firestore emulátort, futtasd végig a fő user-utat (szál+első poszt létrehozás → listában megjelenik → résznézet → új poszt → vote → report). Ellenőrizd az index igényeket.
+    outputs:
+      - Integration test fájlok commit patch
+      - Futási jegyzőkönyv (MARKDOWN)
+
+  - name: CI beállítás frissítése
+    description: Állítsd be a GitHub Actions munkafolyamatot, hogy futtassa a unit/widget/rules (és ha engedélyezett: integrációs) teszteket. Cache, párhuzamosítás, emulátor indítás a job-ban.
+    outputs:
+      - .github/workflows módosítás commit patch
+      - Rövid leírás a futási idő és megbízhatóság optimalizálásáról
+
+  - name: QA ellenőrzőlista és kézikönyv
+    description: Készíts egy pipálható QA listát és egy rövid használati útmutatót a Fórum modulról (képernyőképes leírás opcionális), hogy manuális teszt során is végigkövethető legyen.
+    outputs:
+      - QA_CHECKLIST.md és FORUM_GUIDE.md commit patch
+```
+
+---
+
+## Megjegyzések a végrehajtáshoz
+
+* A YAML lépései egymásra épülnek; a Rules és Indexek lépését a UI előtt érdemes lezárni, hogy a fejlesztői futtatásnál ne álljon meg a query.
+* Az edit/törlés időablak első körben eltávolítható, ha a rules tesztek túl komplexek; később visszavezethető.
+* A follow/notification teljes push-integrációja külön ütem – itt csak „követem” flag és kliensoldali „új” jelvény.
+* Az API-Football integráció degradációját tervezzük (ha nincs adat, a ThreadView továbbra is működik).

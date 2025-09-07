@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tippmixapp/services/theme_service.dart';
-import 'package:tippmixapp/theme/theme_builder.dart';
+import 'package:tipsterino/services/theme_service.dart';
+import 'package:tipsterino/theme/theme_builder.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';

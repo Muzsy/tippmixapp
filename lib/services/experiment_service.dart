@@ -7,11 +7,13 @@ class ExperimentService {
   ExperimentService({
     FirebaseRemoteConfig? remoteConfig,
     SharedPreferences? prefs,
-  }) : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance,
-       _prefs = prefs;
+  })  : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance,
+        _prefs = prefs,
+        _customRemoteConfig = remoteConfig != null;
 
   final FirebaseRemoteConfig _remoteConfig;
   SharedPreferences? _prefs;
+  final bool _customRemoteConfig;
 
   static const _variantKey = 'login_variant';
   static const _timestampKey = 'login_variant_ts';
@@ -37,8 +39,11 @@ class ExperimentService {
     }
 
     // Offline/dev mode: skip network fetch and return deterministic default
+    // If a custom remote config is provided (e.g., in tests), always allow
+    // network flow so fakes/mocks can be exercised.
     const bool useEmu = bool.fromEnvironment('USE_EMULATOR', defaultValue: true);
-    if (useEmu) {
+    final bool skipNetwork = useEmu && !_customRemoteConfig;
+    if (skipNetwork) {
       final variant = cached ?? 'A';
       await _saveVariant(variant);
       return variant;

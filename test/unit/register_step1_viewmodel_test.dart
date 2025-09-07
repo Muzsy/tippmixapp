@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/controllers/register_step1_viewmodel.dart';
-import 'package:tippmixapp/services/auth_repository.dart';
+import 'package:tipsterino/controllers/register_step1_viewmodel.dart';
+import 'package:tipsterino/services/auth_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   bool throwConflict;

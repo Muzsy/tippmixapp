@@ -1,11 +1,11 @@
-# 🏟️ TippmixApp
+# 🏟️ Tipsterino
 
 ![Lefedettség](./badges/coverage.svg)
 [![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
 [![Security Rules Coverage](coverage/security_rules_badge.svg)](coverage/security_rules_badge.svg)
 [![CI](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml/badge.svg)](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml)
 
-A TippmixApp egy moduláris Flutter alkalmazás, amely közösségi alapú sportfogadás szimulációjára épül.
+A Tipsterino egy moduláris Flutter alkalmazás, amely közösségi alapú sportfogadás szimulációjára épül, virtuális valutával (nem valódi pénzes szerencsejáték).
 TippCoin virtuális gazdaságot, valós idejű API-Football-integrációt, Firebase backendet és Codex-alapú fejlesztési munkafolyamatot tartalmaz.
 
 ![Bejelentkezés képernyő](docs/images/login_revamp_screenshot_v1.png)

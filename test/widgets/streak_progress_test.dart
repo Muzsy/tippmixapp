@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/widgets/streak_progress_bar.dart';
+import 'package:tipsterino/widgets/streak_progress_bar.dart';
 
 void main() {
   testWidgets('displays progress value', (tester) async {

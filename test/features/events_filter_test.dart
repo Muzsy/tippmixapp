@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/features/filters/events_filter.dart';
-import 'package:tippmixapp/models/odds_event.dart';
+import 'package:tipsterino/features/filters/events_filter.dart';
+import 'package:tipsterino/models/odds_event.dart';
 
 void main() {
   test('apply filters by date and country/league', () {

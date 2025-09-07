@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tippmixapp/models/notification_model.dart';
-import 'package:tippmixapp/services/notification_cache.dart';
+import 'package:tipsterino/models/notification_model.dart';
+import 'package:tipsterino/services/notification_cache.dart';
 
 void main() {
   group('NotificationCache', () {

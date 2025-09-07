@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/utils/image_resizer.dart';
+import 'package:tipsterino/utils/image_resizer.dart';
 
 void main() {
   test('cropSquareResize256 produces 256x256 under 150KB', () async {

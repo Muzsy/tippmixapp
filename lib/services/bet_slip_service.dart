@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:tippmixapp/models/ticket_model.dart';
-import 'package:tippmixapp/models/tip_model.dart';
+import 'package:tipsterino/models/ticket_model.dart';
+import 'package:tipsterino/models/tip_model.dart';
 import 'coin_service.dart';
 
 /// A szelvény-összeállító réteg végleges mentésért felelős statikus szolgáltatás.

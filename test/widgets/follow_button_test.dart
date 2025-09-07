@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:async';
-import 'package:tippmixapp/widgets/follow_button.dart';
-import 'package:tippmixapp/providers/social_provider.dart';
-import 'package:tippmixapp/services/social_service.dart';
-import 'package:tippmixapp/l10n/app_localizations.dart';
-import 'package:tippmixapp/models/auth_state.dart';
-import 'package:tippmixapp/models/user.dart' as tm;
-import 'package:tippmixapp/services/auth_service.dart';
-import 'package:tippmixapp/providers/auth_provider.dart'
+import 'package:tipsterino/widgets/follow_button.dart';
+import 'package:tipsterino/providers/social_provider.dart';
+import 'package:tipsterino/services/social_service.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart' as tm;
+import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/providers/auth_provider.dart'
     show AuthNotifier, authProvider;
 
 class FakeSocialService extends Fake implements SocialService {

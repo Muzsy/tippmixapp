@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:tippmixapp/services/api_football_service.dart';
+import 'package:tipsterino/services/api_football_service.dart';
 
 /// Provides cached market/odd snapshots for the forum composer.
 class MarketSnapshotAdapter {

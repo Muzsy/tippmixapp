@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tippmixapp/services/api_football_service.dart';
-import 'package:tippmixapp/models/h2h_market.dart';
+import 'package:tipsterino/services/api_football_service.dart';
+import 'package:tipsterino/models/h2h_market.dart';
 
 class _TestApiFootballService extends ApiFootballService {
   @override
