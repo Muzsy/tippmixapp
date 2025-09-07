@@ -72,6 +72,10 @@ threads/{threadId}/posts/{postId}
 
 - ForumScreen with thread list, filters and sort
 - NewThreadScreen for creating threads
+- Firestore security rules for threads, posts, votes and reports
+- Central routing with ThreadViewScreen and composer
+- Bottom navigation entry for forum
+- threadDetailControllerProviderFamily export
 
 ## 🧪 Testing
 
