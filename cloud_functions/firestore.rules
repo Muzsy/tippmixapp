@@ -5,6 +5,9 @@ service cloud.firestore {
     /* ——— SEGÉDFÜGGVÉNYEK ——— */
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/app_meta/admins/$(request.auth.uid));
+    }
 
     /* --- tickets gyökérkollekció (csak olvasás) --- */
     match /tickets/{ticketId} {
@@ -154,6 +157,55 @@ service cloud.firestore {
     match /appConfig/{docId} {
       allow read: if true;
       allow write, delete: if false;
+    }
+
+    /* --- forum --- */
+    match /threads/{threadId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'title',
+          'type',
+          'createdBy',
+          'createdAt',
+          'pinned',
+          'locked',
+          'fixtureId',
+          'lastActivityAt',
+        ]);
+      allow update: if isOwner(resource.data.createdBy);
+      allow delete: if false;
+
+      match /posts/{postId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.userId == request.auth.uid
+          && !get(/databases/$(database)/documents/threads/$(threadId)).data.locked
+          && request.resource.data.keys().hasOnly([
+            'id',
+            'threadId',
+            'userId',
+            'type',
+            'content',
+            'createdAt',
+            'editedAt',
+          ]);
+        allow update, delete: if isOwner(resource.data.userId);
+      }
+
+      match /votes/{voteId} {
+        allow read: if signedIn();
+        allow create, delete: if signedIn() && request.auth.uid == request.resource.data.userId;
+        allow update: if false;
+      }
+
+      match /reports/{reportId} {
+        allow read: if isOwner(resource.data.userId) || isAdmin();
+        allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+        allow update: if isAdmin() && request.resource.data.keys().hasOnly(['status']);
+        allow delete: if false;
+      }
     }
 
     /* --- NEW: user-centric wallet & ledger (SoT) --- */

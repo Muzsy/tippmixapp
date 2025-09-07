@@ -17,6 +17,9 @@ import 'package:tipsterino/screens/social/friends_screen.dart';
 import 'package:tipsterino/providers/auth_guard.dart';
 import 'package:tipsterino/screens/create_ticket_screen.dart';
 import 'package:tipsterino/screens/feed_screen.dart';
+import 'package:tipsterino/screens/forum/forum_screen.dart';
+import 'package:tipsterino/screens/forum/new_thread_screen.dart';
+import 'package:tipsterino/screens/forum/thread_view_screen.dart';
 import 'package:tipsterino/screens/onboarding/onboarding_flow_screen.dart';
 import 'package:tipsterino/screens/splash_screen.dart';
 import 'package:tipsterino/screens/register_wizard.dart';
@@ -126,21 +129,55 @@ final GoRouter router = GoRouter(
                     FadeTransition(opacity: animation, child: child),
           ),
         ),
-        GoRoute(
-          name: AppRoute.feed.name,
-          path: '/feed',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            child: const FeedScreen(showAppBar: false),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(opacity: animation, child: child),
+          GoRoute(
+            name: AppRoute.feed.name,
+            path: '/feed',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              child: const FeedScreen(showAppBar: false),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      FadeTransition(opacity: animation, child: child),
+            ),
           ),
-        ),
-        GoRoute(
-          path: '/leaderboard',
-          name: AppRoute.leaderboard.name,
-          pageBuilder: (context, state) => CustomTransitionPage(
-            child: const LeaderboardScreen(),
+          GoRoute(
+            path: '/forum',
+            name: AppRoute.forum.name,
+            pageBuilder: (context, state) => CustomTransitionPage(
+              child: const ForumScreen(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      FadeTransition(opacity: animation, child: child),
+            ),
+            routes: [
+              GoRoute(
+                path: 'new',
+                name: AppRoute.newThread.name,
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  child: const NewThreadScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
+                path: ':threadId',
+                name: AppRoute.threadView.name,
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  child: ThreadViewScreen(
+                    threadId: state.pathParameters['threadId']!,
+                  ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/leaderboard',
+            name: AppRoute.leaderboard.name,
+            pageBuilder: (context, state) => CustomTransitionPage(
+              child: const LeaderboardScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),

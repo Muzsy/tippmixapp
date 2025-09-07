@@ -72,6 +72,10 @@ threads/{threadId}/posts/{postId}
 
 - ForumScreen szál listával, szűrő tabokkal és rendező menüvel
 - NewThreadScreen új szál létrehozásához
+- Firestore security rules a szálakra, posztokra, szavazatokra és jelentésekre
+- Központi router ThreadViewScreen-nel és komponálóval
+- Fórum fül az alsó navigációban
+- threadDetailControllerProviderFamily export
 
 ## 🧪 Tesztelés
 

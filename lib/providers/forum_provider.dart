@@ -7,6 +7,8 @@ import '../features/forum/domain/thread.dart';
 import '../features/forum/providers/forum_filter_state.dart';
 import '../features/forum/providers/thread_list_controller.dart';
 import '../features/forum/providers/composer_controller.dart';
+import '../features/forum/providers/thread_detail_controller.dart';
+import '../features/forum/domain/post.dart';
 
 /// Provides the [ForumRepository] implementation.
 final forumRepositoryProvider = Provider<ForumRepository>(
@@ -31,4 +33,11 @@ final threadListControllerProvider = StateNotifierProvider<
 final composerControllerProvider =
     StateNotifierProvider<ComposerController, AsyncValue<void>>(
   (ref) => ComposerController(ref.watch(forumRepositoryProvider)),
+);
+
+/// Exposes [ThreadDetailController] for a given thread.
+final threadDetailControllerProviderFamily = StateNotifierProvider.family<
+    ThreadDetailController, AsyncValue<List<Post>>, String>(
+  (ref, threadId) =>
+      ThreadDetailController(ref.watch(forumRepositoryProvider), threadId),
 );

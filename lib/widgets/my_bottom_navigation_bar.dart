@@ -10,9 +10,10 @@ class MyBottomNavigationBar extends StatelessWidget {
     final state = GoRouterState.of(context);
     final location = state.uri.toString();
     if (location == '/feed') return 1;
-    if (location.startsWith('/bets')) return 2;
-    if (location == '/my-tickets') return 3;
-    if (location == '/profile') return 4;
+    if (location.startsWith('/forum')) return 2;
+    if (location.startsWith('/bets')) return 3;
+    if (location == '/my-tickets') return 4;
+    if (location == '/profile') return 5;
     return 0; // alap: főoldal
   }
 
@@ -22,6 +23,7 @@ class MyBottomNavigationBar extends StatelessWidget {
     final routeNames = [
       AppRoute.home.name,
       AppRoute.feed.name,
+      AppRoute.forum.name,
       AppRoute.bets.name,
       AppRoute.myTickets.name,
       AppRoute.profile.name,
@@ -49,6 +51,11 @@ class MyBottomNavigationBar extends StatelessWidget {
           icon: const Icon(Icons.dynamic_feed),
           label: '',
           tooltip: loc.bottom_nav_feed,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.forum),
+          label: '',
+          tooltip: loc.home_nav_forum,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.sports_soccer, key: Key('nav_bets')),
