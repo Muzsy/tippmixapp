@@ -7,11 +7,13 @@ class ComposerBar extends StatelessWidget {
     required this.controller,
     required this.onSubmit,
     this.enabled = true,
+    required this.focusNode,
   });
 
   final TextEditingController controller;
   final Future<void> Function()? onSubmit;
   final bool enabled;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class ComposerBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               enabled: enabled,
+              focusNode: focusNode,
               decoration: InputDecoration(hintText: loc.dialog_comment_title),
             ),
           ),
