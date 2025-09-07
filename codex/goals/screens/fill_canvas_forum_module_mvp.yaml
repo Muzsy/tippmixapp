@@ -1,0 +1,142 @@
+# Codex Canvas YAML – Fórum modul MVP lezárás
+# Séma: steps: name, description, outputs, (opcionális) inputs
+
+steps:
+  - name: Valódi Auth UID bekötése
+    description: |
+      Cseréld le az összes hardcode/fallback userId használatát a bejelentkezett felhasználó uid-jára.
+      A thread/post/vote/report create/update hívások mindenhol az authból származó uid-ot használják.
+      Ellenőrizd, hogy a toJson() csak a Firestore rules által engedett kulcsokat küldi (tulajdonos, timestamp-ek stb.).
+      Futtasd emulatoron a CRUD műveleteket és javíts, ha permission-denied jelentkezik.
+    outputs:
+      - Minden írási művelet auth.uid-et használ; permission-denied nem fordul elő emulatoron.
+      - Kódkommentek a kritikus pontokon (miért kell ez a mező a rules miatt).
+      - Pipálás a vásznon: "Valódi Auth UID bekötése minden create/update művelethez".
+
+  - name: UI akciók drótozása a szál nézetben
+    description: |
+      Drótozd be a Reply/Add comment, Edit (owner), Delete (owner), Upvote, Report gombokat a thread részlet nézetben.
+      Optimista frissítés és hiba-kezelés (snackbar/toast) szükséges. Saját posztra engedélyezd az Edit/Delete ikonokat.
+    outputs:
+      - Működő interakciók minden ikonhoz; optimista state update.
+      - Widget teszt(ek) a fő áramlatokra.
+      - Pipálás a vásznon: "UI akciók drótozása a vezérlőkhöz a szál nézetben".
+
+  - name: Új szál létrehozás flow
+    description: |
+      Egészítsd ki az új szál képernyőt validációval (kötelező cím, első poszt, típus választás).
+      Siker esetén navigálj az új thread nézetre. Hibás inputnál jelenjen meg visszajelzés.
+    outputs:
+      - Validációk és sikeres navigáció az új szálra.
+      - Integration test (happy-path rész).
+      - Pipálás a vásznon: "Új szál létrehozás flow teljes".
+
+  - name: FAB → új szál képernyő
+    description: |
+      Kösd be a fórum lista képernyő FAB gombját úgy, hogy az új szál képernyőt nyissa meg.
+    outputs:
+      - Navigáció a FAB-ra kattintva.
+      - Widget/integration teszt a navigációra.
+      - Pipálás a vásznon: "Forum lista FAB → Új szál képernyő".
+
+  - name: Firestore rules-kliens összhang
+    description: |
+      Vizsgáld felül a toJson()/fromJson() mezőkészletet és az írási hívásokat, hogy pontosan megfeleljenek a Firestore security rules-nak.
+      Frissítsd a rules tesztet, hogy pozitív és negatív eseteket is fedjen.
+    outputs:
+      - Zöld rules unit tesztek (pozitív/negatív esetekkel).
+      - Emulatoron manuális próba: nincs permission-denied.
+      - Pipálás a vásznon: "Firestore rules és kliens JSON teljes összhangja".
+
+  - name: Lezárt szálak (locked) UI-kezelése
+    description: |
+      A thread dokumentum locked mezőjét olvasd és a composer-t ennek megfelelően tiltsd/engedd.
+      Adj felhasználói jelzést, ha a szál lezárt.
+    outputs:
+      - Locked thread esetén nincs post létrehozás; jól látható jelzés.
+      - Widget teszt locked/unlocked állapotra.
+      - Pipálás a vásznon: "Lezárt szálak (locked) UI-kezelése".
+
+  - name: Infinite scroll / lapozás
+    description: |
+      Kösd be a lista és szál nézetek lapozását (scroll végén loadMore), tegyél footer loading indikátort és duplikációvédelmet.
+    outputs:
+      - Scroll végén automatikus betöltés; nincs duplikáció.
+      - Widget/integration teszt a lapozásra.
+      - Pipálás a vásznon: "Infinite scroll / lapozás bekötése".
+
+  - name: Szűrés/sorrend implementálása
+    description: |
+      Valósítsd meg a fórum filterek és sorrendek teljes kombinációját a lekérdezésekben.
+      Készíts unit teszteket a query builderre.
+    outputs:
+      - Minden kombináció működik; manuális próba megfelel.
+      - Query builder unit tesztek zöldek.
+      - Pipálás a vásznon: "Szűrés/sorrend teljes körű implementálása".
+
+  - name: Firestore indexek kiegészítése
+    description: |
+      Ellenőrizd futás közben az index szükségleteket, egészítsd ki az `firestore.indexes.json`-t, és szinkronizáld a projektben.
+    outputs:
+      - Nincs index hiány üzenet; indexes fájl frissítve.
+      - Pipálás a vásznon: "Szükséges Firestore indexek megléte".
+
+  - name: Thread aggregát mezők karbantartása
+    description: |
+      Post létrehozás/törlés esetén frissítsd a thread aggregát mezőit (lastActivityAt, postCount) tranzakcióban vagy CF-ben.
+    outputs:
+      - Lista rendezése "Latest activity" szerint helyes; postCount pontos.
+      - Unit tesztek az aggregátok frissítésére.
+      - Pipálás a vásznon: "Thread aggregát mezők karbantartása (lastActivityAt, postCount, pinned)".
+
+  - name: Report áramlás
+    description: |
+      Implementáld a Report űrlapot és a visszajelzést (snackbar/toast). Hozz létre report dokumentumot a bejelentett posztra.
+    outputs:
+      - Működő report flow; dokumentum létrejön.
+      - Unit teszt(ek) a report hívásra.
+      - Pipálás a vásznon: "Report áramlás és visszajelzés".
+
+  - name: Upvote állapot és számláló
+    description: |
+      Jelenítsd meg a saját upvote állapotot és az összesített számlálót; biztosíts optimista frissítést és idempotens viselkedést.
+    outputs:
+      - Helyes állapot és számláló; nincs többszörös növekedés gyors kattintásnál.
+      - Widget teszt(ek) upvote-ra.
+      - Pipálás a vásznon: "Upvote állapot és számláló".
+
+  - name: Szerkesztés/Törlés saját posztokra
+    description: |
+      Adj Edit dialógust validációval és Delete megerősítést; csak owner fér hozzá ezekhez a műveletekhez.
+    outputs:
+      - Működő Edit/Delete csak ownerre; rules szerint engedélyezett.
+      - Widget + rules teszt esetek.
+      - Pipálás a vásznon: "Szerkesztés/Törlés saját posztokra".
+
+  - name: Integration test (happy-path)
+    description: |
+      Írj egy végponttól végpontig tesztet: Login → új thread → első post → listában megjelenik → thread megnyit → új komment → upvote → report.
+    outputs:
+      - Zöld integration test lokálisan és CI-ben.
+      - Pipálás a vásznon: "Integration test (happy-path)".
+
+  - name: Rules teszt path-igazítás és bővítés
+    description: |
+      A rules tesztek a projektben ténylegesen használt rules fájlt töltik be és ellenőrzik a pozitív/negatív eseteit.
+    outputs:
+      - Zöld rules tesztek több esetre (owner/not owner, locked/not locked, mezőwhitelist megsértése stb.).
+      - Pipálás a vásznon: "Rules tesztek path-igazítása és bővítése".
+
+  - name: Lokalizáció bővítése (HU/EN/DE)
+    description: |
+      Kulcsosíts minden új UI-üzenetet (hibák, form label, snackbár), egészítsd ki az ARB fájlokat és futtasd a l10n generálást.
+    outputs:
+      - Frissített ARB fájlok és sikeres l10n build.
+      - Pipálás a vásznon: "Lokalizáció bővítés (HU/EN/DE)".
+
+  - name: Definition of Done ellenőrzés
+    description: |
+      Futtasd az összes tesztet (unit/widget/integration + rules), kézi próba az emulatoron. Győződj meg róla, hogy nincs index hiány üzenet és a l10n build hibátlan.
+    outputs:
+      - Minden teszt zöld; kézi próba sikeres; nincs index hiány.
+      - A vásznon **minden** checklist pont kipipálva.
