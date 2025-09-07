@@ -1,0 +1,3 @@
+00:00 +0: loading /home/muszy/projects/tippmixapp/test/accessibility_test.dart
+00:00 +0: black text on white background
+00:00 +1: All tests passed!
