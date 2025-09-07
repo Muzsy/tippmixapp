@@ -71,6 +71,7 @@ threads/{threadId}/posts/{postId}
 ## ✅ Implemented
 
 - ForumScreen with thread list, filters and sort
+- NewThreadScreen for creating threads
 
 ## 🧪 Testing
 

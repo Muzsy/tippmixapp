@@ -398,6 +398,21 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forum_title => 'Fórum';
 
   @override
+  String get new_thread_title => 'Új szál';
+
+  @override
+  String get first_post_hint => 'Írj valamit...';
+
+  @override
+  String get btn_create_thread => 'Szál létrehozása';
+
+  @override
+  String get saved_success => 'Sikeresen mentve';
+
+  @override
+  String get saved_error => 'Mentés sikertelen';
+
+  @override
   String get friends => 'Barátok';
 
   @override

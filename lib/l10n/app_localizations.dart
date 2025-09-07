@@ -850,6 +850,36 @@ abstract class AppLocalizations {
   /// **'Forum'**
   String get forum_title;
 
+  /// No description provided for @new_thread_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New thread'**
+  String get new_thread_title;
+
+  /// No description provided for @first_post_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something...'**
+  String get first_post_hint;
+
+  /// No description provided for @btn_create_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Create thread'**
+  String get btn_create_thread;
+
+  /// No description provided for @saved_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved successfully'**
+  String get saved_success;
+
+  /// No description provided for @saved_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get saved_error;
+
   /// No description provided for @friends.
   ///
   /// In en, this message translates to:
