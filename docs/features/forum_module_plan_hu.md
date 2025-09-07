@@ -71,6 +71,7 @@ threads/{threadId}/posts/{postId}
 ## ✅ Megvalósítás
 
 - ForumScreen szál listával, szűrő tabokkal és rendező menüvel
+- NewThreadScreen új szál létrehozásához
 
 ## 🧪 Tesztelés
 

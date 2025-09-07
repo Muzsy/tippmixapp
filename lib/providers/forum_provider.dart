@@ -6,6 +6,7 @@ import '../features/forum/data/forum_repository.dart';
 import '../features/forum/domain/thread.dart';
 import '../features/forum/providers/forum_filter_state.dart';
 import '../features/forum/providers/thread_list_controller.dart';
+import '../features/forum/providers/composer_controller.dart';
 
 /// Provides the [ForumRepository] implementation.
 final forumRepositoryProvider = Provider<ForumRepository>(
@@ -24,4 +25,10 @@ final threadListControllerProvider = StateNotifierProvider<
     final filter = ref.watch(forumFilterProvider);
     return ThreadListController(repo, filter);
   },
+);
+
+/// Handles composing new threads and first posts.
+final composerControllerProvider =
+    StateNotifierProvider<ComposerController, AsyncValue<void>>(
+  (ref) => ComposerController(ref.watch(forumRepositoryProvider)),
 );

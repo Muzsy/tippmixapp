@@ -399,6 +399,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get forum_title => 'Forum';
 
   @override
+  String get new_thread_title => 'Neuer Thread';
+
+  @override
+  String get first_post_hint => 'Schreib etwas...';
+
+  @override
+  String get btn_create_thread => 'Thread erstellen';
+
+  @override
+  String get saved_success => 'Erfolgreich gespeichert';
+
+  @override
+  String get saved_error => 'Speichern fehlgeschlagen';
+
+  @override
   String get friends => 'Freunde';
 
   @override
