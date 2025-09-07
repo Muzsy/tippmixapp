@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/forum/domain/post.dart';
 import '../../features/forum/domain/thread.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/forum_provider.dart';
 
 /// Screen for composing a new forum thread with its first post.
@@ -40,19 +41,21 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
   Future<void> _submit() async {
     final loc = AppLocalizations.of(context)!;
     final controller = ref.read(composerControllerProvider.notifier);
+    final user = ref.read(authProvider).user;
+    if (user == null) return; // requires authentication
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     final thread = Thread(
       id: id,
       title: _titleCtrl.text.trim(),
       type: ThreadType.general,
-      createdBy: 'u1',
+      createdBy: user.id, // uses auth uid per rules
       createdAt: DateTime.now(),
       lastActivityAt: DateTime.now(),
     );
     final post = Post(
       id: '${id}_p1',
       threadId: id,
-      userId: 'u1',
+      userId: user.id, // uses auth uid per rules
       type: PostType.comment,
       content: _contentCtrl.text.trim(),
       createdAt: DateTime.now(),

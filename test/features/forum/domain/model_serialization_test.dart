@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/vote.dart';
@@ -7,7 +8,7 @@ import 'package:tipsterino/features/forum/domain/user_forum_prefs.dart';
 
 void main() {
   group('Thread', () {
-    test('toJson/fromJson', () {
+    test('toJson only includes client fields', () {
       final thread = Thread(
         id: 't1',
         title: 'Hello',
@@ -22,11 +23,26 @@ void main() {
         votesCount: 2,
       );
       final json = thread.toJson();
+      expect(json.keys, containsAll(['title', 'type', 'createdBy', 'createdAt']));
+      expect(json.containsKey('locked'), isFalse);
+    });
+
+    test('fromJson parses full document', () {
+      final json = {
+        'title': 'Hello',
+        'type': 'general',
+        'fixtureId': 'f1',
+        'createdBy': 'u1',
+        'createdAt': Timestamp.fromDate(DateTime.utc(2024, 1, 1)),
+        'locked': true,
+        'pinned': false,
+        'lastActivityAt': Timestamp.fromDate(DateTime.utc(2024, 1, 2)),
+        'postsCount': 1,
+        'votesCount': 2,
+      };
       final copy = Thread.fromJson('t1', json);
-      expect(copy.id, thread.id);
-      expect(copy.title, thread.title);
-      expect(copy.locked, thread.locked);
-      expect(copy.postsCount, thread.postsCount);
+      expect(copy.locked, isTrue);
+      expect(copy.postsCount, 1);
     });
 
     test('missing field throws', () {
@@ -35,7 +51,7 @@ void main() {
   });
 
   group('Post', () {
-    test('toJson/fromJson', () {
+    test('toJson excludes server fields', () {
       final post = Post(
         id: 'p1',
         threadId: 't1',
@@ -49,10 +65,25 @@ void main() {
         isHidden: true,
       );
       final json = post.toJson();
+      expect(json.containsKey('votesCount'), isFalse);
+      expect(json.containsKey('editedAt'), isFalse);
+    });
+
+    test('fromJson parses full document', () {
+      final json = {
+        'threadId': 't1',
+        'userId': 'u1',
+        'type': 'tip',
+        'content': 'hello',
+        'quotedPostId': 'q1',
+        'createdAt': Timestamp.fromDate(DateTime.utc(2024, 1, 1)),
+        'editedAt': Timestamp.fromDate(DateTime.utc(2024, 1, 2)),
+        'votesCount': 3,
+        'isHidden': true,
+      };
       final copy = Post.fromJson('p1', json);
-      expect(copy.type, post.type);
-      expect(copy.quotedPostId, post.quotedPostId);
-      expect(copy.votesCount, post.votesCount);
+      expect(copy.votesCount, 3);
+      expect(copy.isHidden, isTrue);
     });
 
     test('missing field throws', () {
@@ -81,7 +112,7 @@ void main() {
   });
 
   group('Report', () {
-    test('toJson/fromJson', () {
+    test('toJson excludes status', () {
       final report = Report(
         id: 'r1',
         entityType: ReportEntityType.post,
@@ -93,9 +124,21 @@ void main() {
         status: ReportStatus.open,
       );
       final json = report.toJson();
+      expect(json.containsKey('status'), isFalse);
+    });
+
+    test('fromJson parses status', () {
+      final json = {
+        'entityType': 'post',
+        'entityId': 'p1',
+        'reason': 'spam',
+        'message': 'pls',
+        'reporterId': 'u1',
+        'createdAt': Timestamp.fromDate(DateTime.utc(2024, 1, 1)),
+        'status': 'open',
+      };
       final copy = Report.fromJson('r1', json);
-      expect(copy.reason, report.reason);
-      expect(copy.reporterId, report.reporterId);
+      expect(copy.status, ReportStatus.open);
     });
 
     test('missing field throws', () {

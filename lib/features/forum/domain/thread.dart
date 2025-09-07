@@ -53,16 +53,15 @@ class Thread {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'title': title,
-    'type': type.toJson(),
-    'fixtureId': fixtureId,
-    'createdBy': createdBy,
-    'createdAt': Timestamp.fromDate(createdAt),
-    'locked': locked,
-    'pinned': pinned,
-    'lastActivityAt': Timestamp.fromDate(lastActivityAt),
-    'postsCount': postsCount,
-    'votesCount': votesCount,
-  };
+  Map<String, dynamic> toJson() {
+    // Only fields allowed by Firestore rules are sent on create.
+    final json = <String, dynamic>{
+      'title': title,
+      'type': type.toJson(),
+      if (fixtureId != null) 'fixtureId': fixtureId,
+      'createdBy': createdBy, // must match request.auth.uid per rules
+      'createdAt': Timestamp.fromDate(createdAt),
+    };
+    return json;
+  }
 }

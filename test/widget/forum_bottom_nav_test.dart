@@ -23,6 +23,6 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.tap(find.byIcon(Icons.forum));
     await tester.pumpAndSettle();
-    expect(router.location, '/forum');
+    expect(router.routerDelegate.currentConfiguration.fullPath, '/forum');
   });
 }

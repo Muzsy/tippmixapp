@@ -76,6 +76,7 @@ threads/{threadId}/posts/{postId}
 - Central routing with ThreadViewScreen and composer
 - Bottom navigation entry for forum
 - threadDetailControllerProviderFamily export
+- Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
 
 ## 🧪 Testing
 
