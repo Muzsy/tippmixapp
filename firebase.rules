@@ -158,17 +158,22 @@ service cloud.firestore {
     /* --- forum threads --- */
     match /threads/{threadId} {
       allow read: if true;
-      allow create: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.keys().hasOnly(['title','type','fixtureId','createdBy','createdAt']);
       allow update, delete: if isModerator();
 
       match /posts/{postId} {
         allow read: if true;
         allow create: if signedIn()
           && request.resource.data.userId == request.auth.uid
-          && ['tip', 'comment', 'system'].has(request.resource.data.type);
+          && ['tip', 'comment', 'system'].has(request.resource.data.type)
+          && !get(/databases/$(database)/documents/threads/$(threadId)).data.locked
+          && request.resource.data.keys().hasOnly(['threadId','userId','type','content','quotedPostId','createdAt']);
         allow update: if isModerator() ||
-          (isOwner(request.resource.data.userId) &&
-           request.time.diff(resource.data.createdAt, 'minutes') <= 15);
+          (isOwner(request.resource.data.userId)
+            && request.time.diff(resource.data.createdAt, 'minutes') <= 15
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['content','editedAt']));
         allow delete: if isModerator();
       }
     }
@@ -178,16 +183,18 @@ service cloud.firestore {
       allow read: if true;
       allow create: if signedIn()
         && request.resource.data.userId == request.auth.uid
-        && voteId == request.resource.data.postId + '_' + request.auth.uid
-        && !exists(/databases/$(database)/documents/votes/$(voteId))
-        && (request.resource.data.value == 1 || request.resource.data.value == -1);
+        && request.resource.data.entityType == 'post'
+        && voteId == request.resource.data.entityId + '_' + request.auth.uid
+        && !exists(/databases/$(database)/documents/votes/$(voteId));
       allow delete: if isOwner(request.resource.data.userId) || isModerator();
       allow update: if false;
     }
 
     /* --- reports --- */
     match /reports/{reportId} {
-      allow create: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.reporterId == request.auth.uid
+        && !request.resource.data.keys().hasAny(['status']);
       allow read, update, delete: if isModerator();
     }
 

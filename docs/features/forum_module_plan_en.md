@@ -57,6 +57,17 @@ threads/{threadId}/posts/{postId}
 
 ---
 
+## 📇 Query → Index Mapping
+
+| Query | Firestore index |
+| --- | --- |
+| Threads by fixture | `(fixtureId ASC, type ASC, createdAt DESC)` |
+| Posts by thread | `(threadId ASC, createdAt DESC)` |
+| Votes by entity | `(entityType ASC, entityId ASC, createdAt DESC, userId ASC)` |
+| Reports by status | `(status ASC, createdAt DESC)` |
+
+---
+
 ## 🧪 Testing
 
 - Form validation tests
