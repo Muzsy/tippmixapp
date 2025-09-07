@@ -67,6 +67,7 @@ class FirestoreForumRepository implements ForumRepository {
 
   @override
   Future<void> addThread(Thread thread) async {
+    // createdBy must equal auth.uid per security rules
     await _threadsCol.doc(thread.id).set(thread.toJson());
   }
 
@@ -82,6 +83,7 @@ class FirestoreForumRepository implements ForumRepository {
 
   @override
   Future<void> addPost(Post post) async {
+    // userId must equal auth.uid per security rules
     await _threadsCol
         .doc(post.threadId)
         .collection('posts')
@@ -114,6 +116,7 @@ class FirestoreForumRepository implements ForumRepository {
     required String postId,
     required String userId,
   }) async {
+    // userId must equal auth.uid; vote id ensures idempotency
     final vote = Vote(
       id: '${postId}_$userId',
       entityType: VoteEntityType.post,
@@ -126,6 +129,7 @@ class FirestoreForumRepository implements ForumRepository {
 
   @override
   Future<void> reportPost(Report report) async {
+    // reporterId must equal auth.uid per security rules
     await _firestore.collection('reports').add(report.toJson());
   }
 }

@@ -16,7 +16,7 @@ The following tasks are organized by priority. Each task has **completion criter
 
 ### P0 – Critical (MVP blockers)
 
-* [ ] **Bind real Auth UID for all operations**
+* [x] **Bind real Auth UID for all operations**
   Replace all hardcoded userIds with the Firebase Auth UID. Ensure Firestore writes only send allowed fields per rules.
   **Done when**: All writes succeed on emulator without `permission-denied`.
 
