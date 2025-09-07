@@ -94,8 +94,8 @@ class PostItem extends ConsumerWidget {
                   id: '',
                   entityType: ReportEntityType.post,
                   entityId: post.id,
-                  userId: uid,
                   reason: 'inappropriate',
+                  reporterId: uid,
                   createdAt: DateTime.now(),
                 );
                 ref
