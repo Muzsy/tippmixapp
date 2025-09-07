@@ -1,0 +1,56 @@
+steps:
+  - name: Security Rules patch
+    description: Egészítsd ki a cloud_functions/firestore.rules fájlt a fórum kollekciókkal (threads, posts, votes, reports). Auth-kötelező írásra, creator-védelem, mező-whitelisting, locked thread poszt-tiltás, report status csak admin által módosítható.
+    outputs:
+      - Commit patch a firestore.rules módosítására
+      - Rules unit tesztek futtatása emulátorral
+
+  - name: Útvonalak felvétele
+    description: Add hozzá a /forum, /forum/new, /forum/:threadId útvonalakat a központi routerhez. A Fórum főlistát a ForumScreen, az új szálat a NewThreadScreen, a résznézetet a ThreadViewScreen szolgálja ki.
+    outputs:
+      - Router módosítás commit patch
+
+  - name: Alsó navigáció bővítése
+    description: Egészítsd ki az alsó navigációt (BottomNavigationBar) egy Fórum menüponttal. Használd az i18n kulcsot (home_nav_forum). Navigáljon a /forum route‑ra.
+    outputs:
+      - Bottom nav módosítás commit patch
+      - Widget teszt a menüpontra
+
+  - name: ThreadDetail provider export
+    description: Exportálj publikus providert a ThreadDetailController‑hez (pl. threadDetailControllerProviderFamily(threadId)).
+    outputs:
+      - forum_provider.dart módosítás commit patch
+
+  - name: ThreadViewScreen létrehozása
+    description: Készítsd el a ThreadViewScreen‑t. Fejléc: thread meta (title, type, pinned/locked badge, opcionális fixture info). Posztlista lapozással, vote/report gombok. Alul composer (locked esetén tiltva).
+    outputs:
+      - thread_view_screen.dart commit patch
+      - post_item.dart, composer_bar.dart komponensek
+
+  - name: Post-műveletek
+    description: Vezesd be a válasz/idézet, szerkesztés (időablak), törlés (időablak), report és vote akciókat a UI-ban. Tiszteld a rules korlátozásait.
+    outputs:
+      - UI akciók commit patch
+      - Unit/widget tesztek
+
+  - name: Állapot UI és lapozás
+    description: Üres lista, hibaállapot és progress jelzések. Lapozás 20–30‑as tételekkel.
+    outputs:
+      - Állapot UI commit patch
+      - Widget teszt (üres/hiba/lapozás)
+
+  - name: Rules tesztek futtatása
+    description: Aktiváld és futtasd a forum rules teszteket. Ellenőrizd a tiltásokat és az engedélyezéseket.
+    outputs:
+      - Futási log (MARKDOWN)
+
+  - name: Widget tesztek ThreadView-ra
+    description: Készíts widget teszteket a ThreadViewScreen fő ágraira (locked composer tiltás, vote/report gombok).
+    outputs:
+      - thread_view_screen_test.dart commit patch
+
+  - name: Integrációs teszt
+    description: E2E: új szál + első poszt → listában megjelenik → résznézet → új poszt → vote → report. Jegyzőkönyvben rögzítsd az index igényeket.
+    outputs:
+      - forum_e2e_test.dart commit patch
+      - Futási jegyzőkönyv (MARKDOWN)
