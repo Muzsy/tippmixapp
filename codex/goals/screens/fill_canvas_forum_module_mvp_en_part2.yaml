@@ -1,0 +1,166 @@
+# Codex Canvas YAML – Forum Module MVP (Part 2 / 2)
+# Scope: Steps 10–17 from the full plan. Provide concrete, verifiable actions and outputs.
+# Schema: steps: name, description, outputs, (optional) inputs
+
+steps:
+  - name: Thread Aggregate Fields (lastActivityAt, postCount)
+    description: |
+      Maintain thread-level aggregates whenever a post is created or deleted. Ensure consistency across failures and concurrent writes.
+
+      **Fields and semantics**:
+      - `lastActivityAt` (Timestamp): Updated to `serverTimestamp()` on any successful post create; on delete, recompute based on latest remaining post (or fallback to thread.createdAt).
+      - `postCount` (int): Increment on post create; decrement on post delete (never below 0).
+
+      **Implementation options** (choose one and document):
+      1) **Client transaction**: Use a Firestore transaction that creates the post and updates the thread aggregates atomically. For delete, transactionally delete post and adjust aggregates (may need an additional query to fetch the latest post time when recomputing `lastActivityAt`).
+      2) **Cloud Function (onCreate/onDelete)**: Server-side triggers update the aggregates, keeping client simpler (client only writes posts). Ensure idempotency and retries.
+
+      **Concurrency & correctness**:
+      - Use `FieldValue.increment(1|−1)` for `postCount`.
+      - For `lastActivityAt`, prefer server timestamps and/or recomputation on delete to avoid stale values.
+
+      **Testing**:
+      - Unit tests for increment/decrement logic and recomputation.
+      - Integration test: create multiple posts quickly; verify correct `postCount` and `lastActivityAt` ordering.
+    outputs:
+      - Aggregates updated reliably on create/delete according to the chosen strategy.
+      - Passing tests proving correct behavior under rapid writes/deletes.
+      - Checklist item "Thread aggregate fields maintained" marked complete.
+
+  - name: Report Flow (UI + Data)
+    description: |
+      Implement end-to-end reporting of posts for moderation.
+
+      **UI/UX**:
+      - Open a modal/dialog from the Report icon.
+      - Fields: `reason` (enum/select: spam, abuse, off-topic, other), `note` (optional text up to N chars).
+      - Disable submit while pending; show success/failure feedback.
+
+      **Data**:
+      - Create a `reports` document with fields: `postId`, `threadId`, `reporterId: auth.uid`, `reason`, `note`, `createdAt: serverTimestamp()`.
+      - Ensure Firestore rules allow creation by any authenticated user, forbid edits/deletes except moderators/admins.
+
+      **Testing**:
+      - Unit test for controller method `reportPost(postId, reason, note)`.
+      - Widget test: open dialog → fill → submit → success snackbar; mock failure path shows error.
+    outputs:
+      - Functional report UI and Firestore document creation.
+      - Tests for positive and negative paths.
+      - Checklist item "Report flow implemented" marked complete.
+
+  - name: Upvote State and Counter (Idempotent Toggle)
+    description: |
+      Provide reliable upvote toggling with per-user state and total count, supporting optimistic UI.
+
+      **Data model**:
+      - `votes` collection: docs keyed by `(postId, userId)` or nested under `posts/{postId}/votes/{userId}`.
+      - Aggregate `voteCount` on the post document (optional but recommended for fast display).
+
+      **Operations**:
+      - Toggle: if user's vote exists → remove; else → create.
+      - Optimistic UI: immediately reflect the change; on failure, revert and show error.
+      - Concurrency: use transactions or batched writes to update both the vote doc and `voteCount` consistently.
+
+      **UI**:
+      - Visual state (filled icon) if the current user has voted; number displayed next to icon.
+
+      **Testing**:
+      - Widget tests for toggle behavior (single and rapid clicks).
+      - Unit test verifying idempotency and accurate `voteCount`.
+    outputs:
+      - Idempotent toggle voting with accurate counters.
+      - Passing tests (widget + unit) for voting flows.
+      - Checklist item "Upvote state and counter" marked complete.
+
+  - name: Edit and Delete Own Posts (Owner-Only)
+    description: |
+      Implement editing and deletion of posts restricted to the owner, with proper validations and confirmations.
+
+      **Edit**:
+      - Open dialog with current content; validate non-empty and length constraints.
+      - On save, update only allowed fields; update `updatedAt: serverTimestamp()`.
+
+      **Delete**:
+      - Confirmation dialog ("This action cannot be undone").
+      - Use transaction or batched write if aggregates (postCount, lastActivityAt) must be updated.
+
+      **Rules**:
+      - Ensure Firestore rules permit only `createdBy == auth.uid` to modify/delete their posts.
+
+      **Testing**:
+      - Widget tests for edit/delete flows (success and failure).
+      - Rules tests: owner vs non-owner attempts.
+    outputs:
+      - Fully functional edit/delete for owners only.
+      - Tests passing for UI and rules.
+      - Checklist item "Edit/Delete for own posts" marked complete.
+
+  - name: End-to-End Integration Test (Happy Path)
+    description: |
+      Build a single integration test that exercises the critical user journey.
+
+      **Scenario**:
+      - Login (mock or emulator auth) → open forum list → press FAB → fill and submit new thread form → verify thread appears in list → open thread → add comment → upvote a post → report a post → navigate back to list and confirm list refresh.
+
+      **Stability**:
+      - Use test IDs (keys), avoid relying on localized strings.
+      - Wait for stream updates deterministically (pumpAndSettle with timeouts).
+
+      **CI**:
+      - Ensure the test runs headless with Firestore emulator.
+    outputs:
+      - One integration test executing the complete flow successfully locally and in CI.
+      - Checklist item "End-to-end integration test" marked complete.
+
+  - name: Extended Rules Testing (Edge Cases)
+    description: |
+      Expand security rules coverage to reduce regressions.
+
+      **Cases to include**:
+      - Create with mismatched owner id (should fail).
+      - Update disallowed fields (should fail).
+      - Post to locked thread (should fail).
+      - Vote/report without auth (should fail).
+      - Owner vs non-owner edit/delete (owner pass; non-owner fail).
+
+      **Harness**:
+      - Use `@firebase/rules-unit-testing` or equivalent Dart driver to simulate auth contexts and verify allow/deny.
+
+      **Outputs**:
+      - Clear, named test cases with expected allow/deny for each rule.
+    outputs:
+      - Comprehensive rules tests all green.
+      - Checklist item "Extended rules testing" marked complete.
+
+  - name: Localization Updates (HU/EN/DE)
+    description: |
+      Externalize all new strings and ensure localization builds cleanly.
+
+      **Work items**:
+      - Add ARB keys for: buttons, error messages, validation messages, snackbars, banners (locked), dialog titles, and labels introduced in MVP tasks.
+      - Provide HU/EN/DE translations; follow existing naming conventions.
+      - Run l10n generation and fix any missing placeholder/format issues.
+
+      **Verification**:
+      - Switch app language and spot-check the new flows.
+    outputs:
+      - Updated ARB files and successful l10n build.
+      - Checklist item "Localization updates completed (HU/EN/DE)" marked complete.
+
+  - name: Definition of Done Verification
+    description: |
+      Perform a final verification pass matching the DoD from the plan.
+
+      **Checklist**:
+      - All P0–P3 items checked in the canvas.
+      - All tests green in CI (unit, widget, integration, rules).
+      - Emulator manual walkthrough completed without errors.
+      - No missing Firestore index warnings at runtime.
+      - l10n build passes without warnings/errors.
+
+      **Artifacts**:
+      - CI run links or logs archived.
+      - Brief handoff notes summarizing what was implemented and any follow-ups.
+    outputs:
+      - DoD confirmation notes committed in the repo (e.g., `docs/forum_mvp_done.md`).
+      - Checklist item "All checklist items completed" marked complete.
