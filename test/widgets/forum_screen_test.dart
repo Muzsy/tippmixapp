@@ -24,6 +24,19 @@ class _FakeRepo implements ForumRepository {
   Future<void> deleteThread(String threadId) async {}
 
   @override
+  Future<void> updatePost({
+    required String threadId,
+    required String postId,
+    required String content,
+  }) async {}
+
+  @override
+  Future<void> deletePost({
+    required String threadId,
+    required String postId,
+  }) async {}
+
+  @override
   Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
 
   @override

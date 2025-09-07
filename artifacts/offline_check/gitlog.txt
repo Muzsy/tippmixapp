@@ -1,0 +1,20 @@
+62c7c5d chore: add offline verification report and artifacts
+34529b8 fix(forum): align Report API usage and update test fakes for new ForumRepository methods
+2ae6627 docs: add offline quickstart, Java note, and Pub/Sub remark
+c3a9759 node: pin project to Node 20 for local emulators/functions
+f10b8e4 ios: add ATS exception for local emulators (dev only)
+b243d54 forum_module_mvp részletesebb
+a6ad73e Merge pull request #482 from Muzsy/codex/execute-yaml-goal-for-fill_canvas_forum_module_mvp
+95e2679 test: add post item widget test
+7f8256f Merge pull request #481 from Muzsy/codex/execute-yaml-goal-for-canvas-module
+4fa22be feat: use auth uid for forum writes
+d5a7eb9 Merge pull request #480 from Muzsy/chore/pnpm-migration
+ea27019 forum_modul_mvp_canvas+yaml fájl
+a3b9206 Merge pull request #479 from Muzsy/codex/execute-yaml-goal-steps-in-order-x7u4e2
+a3a696f docs: update forum module plan
+ea6b1c0 Merge pull request #478 from Muzsy/chore/pnpm-migration
+bedaa9e forum modul security routing canvas+yaml
+d08a78a Merge pull request #477 from Muzsy/codex/execute-yaml-goal-steps-in-order-u0jf5u
+7f7697e feat(forum): add new thread screen
+2152702 Merge pull request #476 from Muzsy/codex/execute-yaml-goal-steps-in-order-t6mjci
+c002886 feat: add forum screen

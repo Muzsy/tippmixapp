@@ -75,7 +75,7 @@ class PostItem extends ConsumerWidget {
             icon: const Icon(Icons.thumb_up),
             tooltip: loc.feed_like,
             onPressed: () {
-              final uid = user?.id;
+              final uid = user?.id; // auth.uid for vote idempotency
               if (uid != null) {
                 ref
                     .read(threadDetailControllerProviderFamily(post.threadId)
@@ -88,12 +88,16 @@ class PostItem extends ConsumerWidget {
             icon: const Icon(Icons.flag),
             tooltip: loc.feed_report,
             onPressed: () {
-              final uid = user?.id;
+              final uid = user?.id; // auth.uid per rules
               if (uid != null) {
                 final report = Report(
                   id: '',
                   entityType: ReportEntityType.post,
                   entityId: post.id,
+<<<<<<< HEAD
+=======
+                  reporterId: uid, // reporterId must equal auth.uid
+>>>>>>> f85e18b73498184d7662923a2a1ac3f2d3e82de3
                   reason: 'inappropriate',
                   reporterId: uid,
                   createdAt: DateTime.now(),

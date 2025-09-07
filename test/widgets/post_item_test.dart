@@ -10,6 +10,7 @@ import 'package:tipsterino/features/forum/providers/thread_detail_controller.dar
 import 'package:tipsterino/models/user.dart';
 import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
+import '../mocks/mock_auth_service.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
 
@@ -119,6 +120,7 @@ void main() {
     final user = User(id: 'u1', email: '', displayName: '');
     await tester.pumpWidget(ProviderScope(
       overrides: [
+        authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
         authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
         threadDetailControllerProviderFamily('t1')
             .overrideWith((ref) => ThreadDetailController(repo, 't1')),
