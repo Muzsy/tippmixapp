@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 
 import 'composer_bar.dart';
@@ -67,11 +68,12 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         enabled: !widget.locked,
         onSubmit: () async {
           final text = _textController.text.trim();
-          if (text.isEmpty) return;
+          final user = ref.read(authProvider).user;
+          if (text.isEmpty || user == null) return;
           final post = Post(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             threadId: widget.threadId,
-            userId: 'u1',
+            userId: user.id, // uses auth uid per rules
             type: PostType.comment,
             content: text,
             createdAt: DateTime.now(),

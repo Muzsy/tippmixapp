@@ -11,6 +11,11 @@ import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/l10n/app_localizations_en.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/new_thread_screen.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart';
+
+import '../mocks/mock_auth_service.dart';
 
 class _FakeRepo implements ForumRepository {
   @override
@@ -56,10 +61,18 @@ class _FakeComposer extends ComposerController {
   }
 }
 
+class _FakeAuthNotifier extends AuthNotifier {
+  _FakeAuthNotifier()
+      : super(MockAuthService()) {
+    state = AuthState(user: User(id: 'u1', email: 'e', displayName: 'Me'));
+  }
+}
+
 Widget _buildApp(_FakeComposer composer) {
   return ProviderScope(
     overrides: [
-      composerControllerProvider.overrideWith(() => composer),
+      composerControllerProvider.overrideWith((ref) => composer),
+      authProvider.overrideWith((ref) => _FakeAuthNotifier()),
     ],
     child: MaterialApp(
       home: const NewThreadScreen(),

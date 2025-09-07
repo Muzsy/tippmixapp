@@ -50,15 +50,15 @@ class Post {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'threadId': threadId,
-    'userId': userId,
-    'type': type.toJson(),
-    'content': content,
-    'quotedPostId': quotedPostId,
-    'createdAt': Timestamp.fromDate(createdAt),
-    'editedAt': editedAt != null ? Timestamp.fromDate(editedAt!) : null,
-    'votesCount': votesCount,
-    'isHidden': isHidden,
-  };
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'threadId': threadId,
+      'userId': userId, // must equal auth.uid per rules
+      'type': type.toJson(),
+      'content': content,
+      'createdAt': Timestamp.fromDate(createdAt),
+      if (quotedPostId != null) 'quotedPostId': quotedPostId,
+    };
+    return json;
+  }
 }

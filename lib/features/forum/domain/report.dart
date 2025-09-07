@@ -53,13 +53,16 @@ class Report {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'entityType': entityType.toJson(),
-    'entityId': entityId,
-    'reason': reason,
-    'message': message,
-    'reporterId': reporterId,
-    'createdAt': Timestamp.fromDate(createdAt),
-    'status': status.toJson(),
-  };
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'entityType': entityType.toJson(),
+      'entityId': entityId,
+      'reason': reason,
+      if (message != null) 'message': message,
+      'reporterId': reporterId, // must match auth.uid per rules
+      'createdAt': Timestamp.fromDate(createdAt),
+      // 'status' excluded – client cannot set it
+    };
+    return json;
+  }
 }

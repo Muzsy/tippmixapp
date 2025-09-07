@@ -36,9 +36,9 @@ class Vote {
   }
 
   Map<String, dynamic> toJson() => {
-    'entityType': entityType.toJson(),
-    'entityId': entityId,
-    'userId': userId,
-    'createdAt': Timestamp.fromDate(createdAt),
-  };
+        'entityType': entityType.toJson(),
+        'entityId': entityId,
+        'userId': userId, // must match auth.uid per rules
+        'createdAt': Timestamp.fromDate(createdAt),
+      };
 }

@@ -76,6 +76,7 @@ threads/{threadId}/posts/{postId}
 - Központi router ThreadViewScreen-nel és komponálóval
 - Fórum fül az alsó navigációban
 - threadDetailControllerProviderFamily export
+- Auth UID bekötve a szál/poszt létrehozásnál; JSON csak rules által engedett mezőket küld
 
 ## 🧪 Tesztelés
 

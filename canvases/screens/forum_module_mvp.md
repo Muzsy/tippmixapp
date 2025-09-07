@@ -16,7 +16,7 @@ Az alábbi feladatok prioritás szerint rendezve. Minden feladatnál a **kész**
 
 ### P0 – Blokkoló (MVP-hez kötelező)
 
-* [ ] **Valódi Auth UID bekötése minden create/update művelethez**
+* [x] **Valódi Auth UID bekötése minden create/update művelethez**
   **Leírás**: Minden thread/post/vote/report író művelet a bejelentkezett felhasználó `uid`-ját használja.
   **Kritérium**: Nincs több hardcode/fallback userId; egységesen auth-ból jön. Create során a JSON kulcsok megfelelnek a Firestore szabályoknak (csak engedett mezők).
   **Ellenőrzés**: Emulatoron CRUD sikeres; nincs `permission-denied` a szabályok miatt.
