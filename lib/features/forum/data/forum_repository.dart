@@ -25,6 +25,17 @@ abstract class ForumRepository {
 
   Future<void> addPost(Post post);
 
+  Future<void> updatePost({
+    required String threadId,
+    required String postId,
+    required String content,
+  });
+
+  Future<void> deletePost({
+    required String threadId,
+    required String postId,
+  });
+
   Future<void> voteOnPost({required String postId, required String userId});
 
   Future<void> reportPost(Report report);

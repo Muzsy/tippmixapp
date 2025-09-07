@@ -21,6 +21,7 @@ class ThreadViewScreen extends ConsumerStatefulWidget {
 class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
   void dispose() {
     _scrollController.dispose();
     _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -57,7 +59,13 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
           return ListView.builder(
             controller: _scrollController,
             itemCount: posts.length,
-            itemBuilder: (context, index) => PostItem(post: posts[index]),
+            itemBuilder: (context, index) => PostItem(
+              post: posts[index],
+              onReply: () {
+                _textController.text = '@${posts[index].userId} ';
+                _focusNode.requestFocus();
+              },
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -65,6 +73,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
       ),
       bottomNavigationBar: ComposerBar(
         controller: _textController,
+        focusNode: _focusNode,
         enabled: !widget.locked,
         onSubmit: () async {
           final text = _textController.text.trim();

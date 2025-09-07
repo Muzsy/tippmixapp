@@ -39,6 +39,12 @@ class ThreadDetailController extends StateNotifier<AsyncValue<List<Post>>> {
 
   Future<void> addPost(Post post) => _repository.addPost(post);
 
+  Future<void> updatePost(String postId, String content) => _repository
+      .updatePost(threadId: threadId, postId: postId, content: content);
+
+  Future<void> deletePost(String postId) =>
+      _repository.deletePost(threadId: threadId, postId: postId);
+
   Future<void> voteOnPost(String postId, String userId) =>
       _repository.voteOnPost(postId: postId, userId: userId);
 

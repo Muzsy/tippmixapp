@@ -90,6 +90,26 @@ class FirestoreForumRepository implements ForumRepository {
   }
 
   @override
+  Future<void> updatePost({
+    required String threadId,
+    required String postId,
+    required String content,
+  }) async {
+    await _threadsCol.doc(threadId).collection('posts').doc(postId).update({
+      'content': content,
+      'editedAt': Timestamp.fromDate(DateTime.now()),
+    });
+  }
+
+  @override
+  Future<void> deletePost({
+    required String threadId,
+    required String postId,
+  }) async {
+    await _threadsCol.doc(threadId).collection('posts').doc(postId).delete();
+  }
+
+  @override
   Future<void> voteOnPost({
     required String postId,
     required String userId,
