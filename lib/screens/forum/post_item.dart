@@ -6,108 +6,169 @@ import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 
-class PostItem extends ConsumerWidget {
+class PostItem extends ConsumerStatefulWidget {
   const PostItem({super.key, required this.post, this.onReply});
 
   final Post post;
   final VoidCallback? onReply;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PostItem> createState() => _PostItemState();
+}
+
+class _PostItemState extends ConsumerState<PostItem> {
+  bool _loading = false;
+  bool _liked = false;
+
+  Future<void> _showError(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(loc.unknown_error_try_again)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
-    final isOwner = user?.id == post.userId;
+    final isOwner = user?.id == widget.post.userId;
     return ListTile(
-      title: Text(post.content),
-      subtitle: Text(post.userId),
+      title: Text(widget.post.content),
+      subtitle: Text(widget.post.userId),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
             icon: const Icon(Icons.reply),
             tooltip: loc.dialog_comment_title,
-            onPressed: onReply,
+            onPressed: _loading ? null : widget.onReply,
           ),
           if (isOwner)
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: loc.edit_title,
-              onPressed: () async {
-                final controller = TextEditingController(text: post.content);
-                final result = await showDialog<String>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(loc.edit_title),
-                    content: TextField(controller: controller),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(loc.dialog_cancel),
-                      ),
-                      TextButton(
-                        onPressed: () =>
-                            Navigator.pop(context, controller.text.trim()),
-                        child: Text(loc.dialog_send),
-                      ),
-                    ],
-                  ),
-                );
-                if (result != null && result.isNotEmpty) {
-                  await ref
-                      .read(threadDetailControllerProviderFamily(post.threadId)
-                          .notifier)
-                      .updatePost(post.id, result);
-                }
-              },
+              onPressed: _loading
+                  ? null
+                  : () async {
+                      final controller =
+                          TextEditingController(text: widget.post.content);
+                      final result = await showDialog<String>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(loc.edit_title),
+                          content: TextField(controller: controller),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(loc.dialog_cancel),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(
+                                  context, controller.text.trim()),
+                              child: Text(loc.dialog_send),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (result != null && result.isNotEmpty) {
+                        setState(() => _loading = true);
+                        try {
+                          await ref
+                              .read(threadDetailControllerProviderFamily(
+                                      widget.post.threadId)
+                                  .notifier)
+                              .updatePost(widget.post.id, result);
+                        } catch (_) {
+                          await _showError(context);
+                        } finally {
+                          if (mounted) setState(() => _loading = false);
+                        }
+                      }
+                    },
             ),
           if (isOwner)
             IconButton(
               icon: const Icon(Icons.delete),
               tooltip: loc.dialog_cancel,
-              onPressed: () async {
-                await ref
-                    .read(threadDetailControllerProviderFamily(post.threadId)
-                        .notifier)
-                    .deletePost(post.id);
-              },
+              onPressed: _loading
+                  ? null
+                  : () async {
+                      setState(() => _loading = true);
+                      try {
+                        await ref
+                            .read(threadDetailControllerProviderFamily(
+                                    widget.post.threadId)
+                                .notifier)
+                            .deletePost(widget.post.id);
+                      } catch (_) {
+                        await _showError(context);
+                      } finally {
+                        if (mounted) setState(() => _loading = false);
+                      }
+                    },
             ),
           IconButton(
-            icon: const Icon(Icons.thumb_up),
+            icon: Icon(Icons.thumb_up,
+                color: _liked
+                    ? Theme.of(context).colorScheme.primary
+                    : null),
             tooltip: loc.feed_like,
-            onPressed: () {
-              final uid = user?.id; // auth.uid for vote idempotency
-              if (uid != null) {
-                ref
-                    .read(threadDetailControllerProviderFamily(post.threadId)
-                        .notifier)
-                    .voteOnPost(post.id, uid);
-              }
-            },
+            onPressed: _loading
+                ? null
+                : () async {
+                    final uid = user?.id; // auth.uid for vote idempotency
+                    if (uid != null) {
+                      setState(() {
+                        _liked = !_liked;
+                        _loading = true;
+                      });
+                      try {
+                        await ref
+                            .read(threadDetailControllerProviderFamily(
+                                    widget.post.threadId)
+                                .notifier)
+                            .voteOnPost(widget.post.id, uid);
+                      } catch (_) {
+                        setState(() => _liked = !_liked); // revert
+                        await _showError(context);
+                      } finally {
+                        if (mounted) setState(() => _loading = false);
+                      }
+                    }
+                  },
           ),
           IconButton(
             icon: const Icon(Icons.flag),
             tooltip: loc.feed_report,
-            onPressed: () {
-              final uid = user?.id; // auth.uid per rules
-              if (uid != null) {
-                final report = Report(
-                  id: '',
-                  entityType: ReportEntityType.post,
-                  entityId: post.id,
-<<<<<<< HEAD
-=======
-                  reporterId: uid, // reporterId must equal auth.uid
->>>>>>> f85e18b73498184d7662923a2a1ac3f2d3e82de3
-                  reason: 'inappropriate',
-                  reporterId: uid,
-                  createdAt: DateTime.now(),
-                );
-                ref
-                    .read(threadDetailControllerProviderFamily(post.threadId)
-                        .notifier)
-                    .reportPost(report);
-              }
-            },
+            onPressed: _loading
+                ? null
+                : () async {
+                    final uid = user?.id; // auth.uid per rules
+                    if (uid != null) {
+                      final report = Report(
+                        id: '',
+                        entityType: ReportEntityType.post,
+                        entityId: widget.post.id,
+                        reporterId: uid, // reporterId must equal auth.uid
+                        reason: 'inappropriate',
+                        createdAt: DateTime.now(),
+                      );
+                      setState(() => _loading = true);
+                      try {
+                        await ref
+                            .read(threadDetailControllerProviderFamily(
+                                    widget.post.threadId)
+                                .notifier)
+                            .reportPost(report);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(loc.feed_report_success)),
+                        );
+                      } catch (_) {
+                        await _showError(context);
+                      } finally {
+                        if (mounted) setState(() => _loading = false);
+                      }
+                    }
+                  },
           ),
         ],
       ),
