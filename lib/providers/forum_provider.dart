@@ -16,28 +16,33 @@ final forumRepositoryProvider = Provider<ForumRepository>(
 );
 
 /// Holds the current filter and sort state.
-final forumFilterProvider =
-    StateProvider<ForumFilterState>((ref) => const ForumFilterState());
+final forumFilterProvider = StateProvider<ForumFilterState>(
+  (ref) => const ForumFilterState(),
+);
 
 /// Exposes the list of threads based on [forumFilterProvider].
-final threadListControllerProvider = StateNotifierProvider<
-    ThreadListController, AsyncValue<List<Thread>>>(
-  (ref) {
-    final repo = ref.watch(forumRepositoryProvider);
-    final filter = ref.watch(forumFilterProvider);
-    return ThreadListController(repo, filter);
-  },
-);
+final threadListControllerProvider =
+    StateNotifierProvider<ThreadListController, AsyncValue<List<Thread>>>((
+      ref,
+    ) {
+      final repo = ref.watch(forumRepositoryProvider);
+      ref.watch(forumFilterProvider);
+      return ThreadListController(repo);
+    });
 
 /// Handles composing new threads and first posts.
 final composerControllerProvider =
     StateNotifierProvider<ComposerController, AsyncValue<void>>(
-  (ref) => ComposerController(ref.watch(forumRepositoryProvider)),
-);
+      (ref) => ComposerController(ref.watch(forumRepositoryProvider)),
+    );
 
 /// Exposes [ThreadDetailController] for a given thread.
-final threadDetailControllerProviderFamily = StateNotifierProvider.family<
-    ThreadDetailController, AsyncValue<List<Post>>, String>(
-  (ref, threadId) =>
-      ThreadDetailController(ref.watch(forumRepositoryProvider), threadId),
-);
+final threadDetailControllerProviderFamily =
+    StateNotifierProvider.family<
+      ThreadDetailController,
+      AsyncValue<List<Post>>,
+      String
+    >(
+      (ref, threadId) =>
+          ThreadDetailController(ref.watch(forumRepositoryProvider), threadId),
+    );
