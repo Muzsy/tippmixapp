@@ -33,6 +33,32 @@ void main() {
     expect(snap.exists, isTrue);
   });
 
+  test('addPost updates thread aggregates', () async {
+    final now = DateTime.now();
+    await fs.collection('threads').doc('t1').set({
+      'fixtureId': 'f1',
+      'type': 'pre',
+      'createdAt': Timestamp.fromDate(now),
+      'lastActivityAt': Timestamp.fromDate(now),
+      'postsCount': 0,
+    });
+    final post = Post(
+      id: 'p1',
+      threadId: 't1',
+      userId: 'u1',
+      type: PostType.tip,
+      content: 'hello',
+      createdAt: now.add(const Duration(minutes: 1)),
+    );
+    await repo.addPost(post);
+    final threadSnap = await fs.collection('threads').doc('t1').get();
+    expect(threadSnap['postsCount'], 1);
+    expect(
+      (threadSnap['lastActivityAt'] as Timestamp).toDate(),
+      post.createdAt,
+    );
+  });
+
   test('getPostsByThread returns ordered posts', () async {
     await fs.collection('threads').doc('t1').set({
       'fixtureId': 'f1',
@@ -99,5 +125,39 @@ void main() {
     await repo.deleteThread('t1');
     final snap = await fs.collection('threads').doc('t1').get();
     expect(snap.exists, isFalse);
+  });
+
+  test('deletePost decrements count and recomputes lastActivity', () async {
+    final now = DateTime.now();
+    await fs.collection('threads').doc('t1').set({
+      'fixtureId': 'f1',
+      'type': 'pre',
+      'createdAt': Timestamp.fromDate(now),
+      'lastActivityAt': Timestamp.fromDate(now),
+      'postsCount': 2,
+    });
+    await fs.collection('threads/t1/posts').doc('p1').set({
+      'userId': 'u1',
+      'type': 'tip',
+      'threadId': 't1',
+      'content': 'old',
+      'createdAt': Timestamp.fromDate(now.add(const Duration(minutes: 1))),
+    });
+    await fs.collection('threads/t1/posts').doc('p2').set({
+      'userId': 'u1',
+      'type': 'tip',
+      'threadId': 't1',
+      'content': 'new',
+      'createdAt': Timestamp.fromDate(now.add(const Duration(minutes: 2))),
+    });
+
+    await repo.deletePost(threadId: 't1', postId: 'p2');
+    final threadSnap = await fs.collection('threads').doc('t1').get();
+    expect(threadSnap['postsCount'], 1);
+    expect(
+      (threadSnap['lastActivityAt'] as Timestamp).toDate(),
+      DateTime.fromMillisecondsSinceEpoch(
+          now.add(const Duration(minutes: 1)).millisecondsSinceEpoch),
+    );
   });
 }

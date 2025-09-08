@@ -16,7 +16,7 @@ Ez a dokumentum a TippmixApp fórum (közösségi beszélgetés) moduljának ter
 
 ```
 threads/{threadId}
-  → title, createdBy, createdAt, tags
+  → title, createdBy, createdAt, tags, lastActivityAt, postsCount
 threads/{threadId}/posts/{postId}
   → content, userId, createdAt, upvotes
 ```
@@ -52,6 +52,7 @@ threads/{threadId}/posts/{postId}
 
 - Alap spam szűrés (hossz, trágár szavak)
 - Felhasználói statisztika: posztok száma (badge alap)
+- Szál aggregátumok: `lastActivityAt` és `postsCount` frissítése poszt létrehozáskor/törléskor
 - Opcionális: kiemelt szálak, rögzített témák
 - MarketSnapshotAdapter cache-eli az ApiFootball odds pillanatképet a komponálóhoz
 
