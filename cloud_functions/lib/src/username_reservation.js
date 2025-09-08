@@ -71,7 +71,7 @@ exports.reserve_nickname = (0, https_1.onCall)(async (request) => {
                 tx.delete(oldRef);
             }
         });
-        logger.info('reserve_nickname.ok', { uid, nickname, norm });
+        logger.debug('reserve_nickname.ok', { uid, nickname, norm });
         return { success: true, norm };
     }
     catch (e) {

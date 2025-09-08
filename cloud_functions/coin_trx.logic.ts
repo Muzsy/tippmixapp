@@ -124,7 +124,7 @@ export const coin_trx = onCall(async (request) => {
         { merge: true },
       );
     });
-    logger.info('coin_trx.success', { uid: userId, type, amount, transactionId, after });
+    logger.debug('coin_trx.success', { uid: userId, type, amount, transactionId, after });
     return { success: true, balance: after };
   } catch (e: any) {
     logger.error('coin_trx.error', { uid: context?.auth?.uid, type, amount, transactionId, error: e?.message || String(e) });

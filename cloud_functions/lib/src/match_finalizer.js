@@ -112,7 +112,7 @@ const match_finalizer = async (message) => {
                 .limit(BATCH_SIZE)
                 .get();
             if (idxSnap.empty) {
-                logger.info('match_finalizer.no_pending_fixture', { fixtureId: fid });
+                logger.debug('match_finalizer.no_pending_fixture', { fixtureId: fid });
                 return 'OK';
             }
             const ticketRefs = [];

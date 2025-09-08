@@ -35,11 +35,10 @@ export const finalize_publish = onRequest({ timeoutSeconds: 120 }, async (req, r
       });
       published++;
     }
-    logger.info('finalize_publish.published', { count: published });
+    logger.debug('finalize_publish.published', { count: published });
     res.json({ ok: true, published });
   } catch (e: any) {
     logger.error('finalize_publish.error', { error: e?.message || String(e) });
     res.status(500).json({ ok: false, error: e?.message || String(e) });
   }
 });
-

@@ -68,7 +68,7 @@ exports.finalize_publish = (0, https_1.onRequest)({ timeoutSeconds: 120 }, async
             });
             published++;
         }
-        logger.info('finalize_publish.published', { count: published });
+        logger.debug('finalize_publish.published', { count: published });
         res.json({ ok: true, published });
     }
     catch (e) {

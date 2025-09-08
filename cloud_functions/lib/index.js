@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.force_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.dev_scheduler_kick = exports.dev_publish_finalize = exports.force_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
 const pubsub_1 = require("firebase-functions/v2/pubsub");
 const logger = __importStar(require("firebase-functions/logger"));
@@ -45,8 +45,8 @@ Object.defineProperty(exports, "coin_trx", { enumerable: true, get: function () 
 // firebase functions:delete log_coin --region=europe-central2 --force
 var friend_request_1 = require("./friend_request");
 Object.defineProperty(exports, "onFriendRequestAccepted", { enumerable: true, get: function () { return friend_request_1.onFriendRequestAccepted; } });
-var daily_bonus_1 = require("./src/daily_bonus");
-Object.defineProperty(exports, "daily_bonus", { enumerable: true, get: function () { return daily_bonus_1.daily_bonus; } });
+// cost-hardening: disable mass daily bonus cron (use claim_daily_bonus instead)
+// export { daily_bonus } from './src/daily_bonus';
 var bonus_claim_1 = require("./src/bonus_claim");
 Object.defineProperty(exports, "claim_daily_bonus", { enumerable: true, get: function () { return bonus_claim_1.claim_daily_bonus; } });
 var admin_coin_ops_1 = require("./admin_coin_ops");
@@ -61,6 +61,9 @@ var finalize_publish_1 = require("./src/finalize_publish");
 Object.defineProperty(exports, "finalize_publish", { enumerable: true, get: function () { return finalize_publish_1.finalize_publish; } });
 var force_finalizer_1 = require("./src/force_finalizer");
 Object.defineProperty(exports, "force_finalizer", { enumerable: true, get: function () { return force_finalizer_1.force_finalizer; } });
+var dev_pubsub_emulator_1 = require("./src/dev_pubsub_emulator");
+Object.defineProperty(exports, "dev_publish_finalize", { enumerable: true, get: function () { return dev_pubsub_emulator_1.dev_publish_finalize; } });
+Object.defineProperty(exports, "dev_scheduler_kick", { enumerable: true, get: function () { return dev_pubsub_emulator_1.dev_scheduler_kick; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 // Gen2 Pub/Sub trigger – topic: result-check
 exports.match_finalizer = (0, pubsub_1.onMessagePublished)('result-check', async (event) => {
@@ -85,13 +88,13 @@ exports.match_finalizer = (0, pubsub_1.onMessagePublished)('result-check', async
         ...(eventType ? { eventType } : {}),
     });
     if (!hasMsg) {
-        logger.info('match_finalizer.no_message');
+        logger.debug('match_finalizer.no_message');
         return;
     }
     const msg = { data: dataB64, attributes: attrs };
     try {
         const result = await (0, match_finalizer_1.match_finalizer)(msg);
-        logger.info('match_finalizer.done', { result });
+        logger.debug('match_finalizer.done', { result });
     }
     catch (e) {
         logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });

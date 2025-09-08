@@ -64,7 +64,7 @@ exports.daily_bonus = (0, scheduler_1.onSchedule)({ schedule: '5 0 * * *', timeZ
             }
         }
         lastDoc = snap.docs[snap.docs.length - 1];
-        logger.info('daily_bonus.page_done', { processed: total });
+        // reduced log volume: page_done log removed
     }
     logger.info('daily_bonus.completed', { total });
 });

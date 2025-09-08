@@ -125,7 +125,7 @@ exports.coin_trx = (0, https_1.onCall)(async (request) => {
                 createdAt: firestore_1.FieldValue.serverTimestamp(),
             }, { merge: true });
         });
-        logger.info('coin_trx.success', { uid: userId, type, amount, transactionId, after });
+        logger.debug('coin_trx.success', { uid: userId, type, amount, transactionId, after });
         return { success: true, balance: after };
     }
     catch (e) {

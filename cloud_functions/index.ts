@@ -7,7 +7,8 @@ export { onUserCreate, coin_trx } from './coin_trx.logic';
 // log_coin kivezetve (Step4) – végleges törléshez futtasd egyszer:
 // firebase functions:delete log_coin --region=europe-central2 --force
 export { onFriendRequestAccepted } from './friend_request';
-export { daily_bonus } from './src/daily_bonus';
+// cost-hardening: disable mass daily bonus cron (use claim_daily_bonus instead)
+// export { daily_bonus } from './src/daily_bonus';
 export { claim_daily_bonus } from './src/bonus_claim';
 export { admin_coin_ops } from './admin_coin_ops';
 export { reserve_nickname } from './src/username_reservation';
@@ -41,13 +42,13 @@ export const match_finalizer = onMessagePublished('result-check', async (event) 
     ...(eventType ? { eventType } : {}),
   });
   if (!hasMsg) {
-    logger.info('match_finalizer.no_message');
+    logger.debug('match_finalizer.no_message');
     return;
   }
   const msg = { data: dataB64, attributes: attrs };
   try {
     const result = await matchFinalizerHandler(msg as any);
-    logger.info('match_finalizer.done', { result });
+    logger.debug('match_finalizer.done', { result });
   } catch (e: any) {
     logger.error('match_finalizer.unhandled_error', { error: e?.message || String(e) });
     throw e;
