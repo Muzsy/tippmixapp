@@ -78,6 +78,7 @@ threads/{threadId}/posts/{postId}
 - Bottom navigation entry for forum
 - threadDetailControllerProviderFamily export
 - Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
+- ThreadViewScreen post actions (reply, edit, delete, upvote, report) with error handling
 
 ## 🧪 Testing
 
