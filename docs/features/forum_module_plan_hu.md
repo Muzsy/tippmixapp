@@ -74,6 +74,7 @@ threads/{threadId}/posts/{postId}
 - NewThreadScreen új szál létrehozásához
 - Firestore security rules a szálakra, posztokra, szavazatokra és jelentésekre
 - Központi router ThreadViewScreen-nel és komponálóval
+- Fórumlista FAB megnyitja a NewThreadScreen-t
 - Fórum fül az alsó navigációban
 - threadDetailControllerProviderFamily export
 - Auth UID bekötve a szál/poszt létrehozásnál; JSON csak rules által engedett mezőket küld

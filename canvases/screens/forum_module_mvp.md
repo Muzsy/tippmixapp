@@ -28,7 +28,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Add validation (title, first post, type). Navigate to thread view after success.
   **Done when**: Invalid inputs show errors, success redirects to thread with first post visible.
 
-* [ ] **Forum FAB navigation**
+* [x] **Forum FAB navigation**
   Connect FAB on Forum list to New Thread screen.
   **Done when**: Clicking FAB opens new thread form.
 
