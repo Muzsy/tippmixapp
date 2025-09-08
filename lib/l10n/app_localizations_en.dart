@@ -336,6 +336,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feed_screen_title => 'Feed';
 
   @override
+  String get field_required => 'Field required';
+
+  @override
   String get filtersAny => 'Any';
 
   @override

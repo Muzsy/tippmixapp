@@ -71,7 +71,7 @@ threads/{threadId}/posts/{postId}
 ## ✅ Megvalósítás
 
 - ForumScreen szál listával, szűrő tabokkal és rendező menüvel
-- NewThreadScreen új szál létrehozásához
+- NewThreadScreen új szál létrehozásához (mezők validálása, siker esetén navigál a szál nézetre)
 - Firestore security rules a szálakra, posztokra, szavazatokra és jelentésekre
 - Központi router ThreadViewScreen-nel és komponálóval
 - Fórumlista FAB megnyitja a NewThreadScreen-t

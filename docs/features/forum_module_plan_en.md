@@ -71,7 +71,7 @@ threads/{threadId}/posts/{postId}
 ## ✅ Implemented
 
 - ForumScreen with thread list, filters and sort
-- NewThreadScreen for creating threads
+- NewThreadScreen for creating threads (validates fields and navigates to thread view on success)
 - Firestore security rules for threads, posts, votes and reports
 - Central routing with ThreadViewScreen and composer
 - Forum list FAB navigates to NewThreadScreen

@@ -742,6 +742,12 @@ abstract class AppLocalizations {
   /// **'Feed'**
   String get feed_screen_title;
 
+  /// No description provided for @field_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Field required'**
+  String get field_required;
+
   /// No description provided for @filtersAny.
   ///
   /// In en, this message translates to:

@@ -344,6 +344,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get feed_screen_title => 'Hírfolyam';
 
   @override
+  String get field_required => 'Kötelező mező';
+
+  @override
   String get filtersAny => 'Mind';
 
   @override
