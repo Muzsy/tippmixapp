@@ -60,29 +60,29 @@ The following tasks are organized by priority. Each task has **completion criter
 
 ### P2 – Quality & Moderation
 
-* [ ] **Report flow**
+* [x] **Report flow**
   Implement report form, save Firestore document, show confirmation.
   **Done when**: Report works end-to-end, user sees feedback.
 
-* [ ] **Upvote state and counter**
+* [x] **Upvote state and counter**
   Show per-user upvote state + total count, optimistic updates, idempotent behavior.
   **Done when**: Upvote count correct, no double increments.
 
-* [ ] **Edit/Delete own posts**
+* [x] **Edit/Delete own posts**
   Add Edit dialog + Delete confirmation, owner-only access.
   **Done when**: Owners can edit/delete, rules respected.
 
 ### P3 – Testing & Dev Experience
 
-* [ ] **End-to-end integration test**
+* [x] **End-to-end integration test**
   Full path: Login → New Thread → First Post → List → Open Thread → Comment → Upvote → Report.
   **Done when**: Test green locally and in CI.
 
-* [ ] **Extended rules testing**
+* [x] **Extended rules testing**
   Cover owner vs non-owner, locked vs unlocked, whitelist violations, etc.
   **Done when**: Extended rules test suite passes.
 
-* [ ] **Localization updates (HU/EN/DE)**
+* [x] **Localization updates (HU/EN/DE)**
   Externalize all new strings (errors, forms, snackbars), update ARB files, regenerate l10n.
   **Done when**: ARB files updated, build passes, translations complete.
 
@@ -90,8 +90,8 @@ The following tasks are organized by priority. Each task has **completion criter
 
 ## 🧪 Test Status
 
-* Current: unit and widget tests exist, rules tests basic.
-* Missing: full e2e happy-path, extended rules, pagination/filter tests.
+* Current: unit, widget, integration, and extended rules tests exist.
+* Missing: pagination/filter tests.
 * Critical: Ensure client JSON exactly matches rules; otherwise regressions occur.
 
 ---
