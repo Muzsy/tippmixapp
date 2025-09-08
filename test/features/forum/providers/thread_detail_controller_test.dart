@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tipsterino/features/forum/data/forum_repository.dart';
@@ -10,22 +9,26 @@ class _MockRepo extends Mock implements ForumRepository {}
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(Post(
-      id: 'p',
-      threadId: 't',
-      userId: 'u',
-      type: PostType.tip,
-      content: 'c',
-      createdAt: DateTime.now(),
-    ));
-    registerFallbackValue(Report(
-      id: 'r',
-      entityType: ReportEntityType.post,
-      entityId: 'p',
-      reason: 'spam',
-      reporterId: 'u',
-      createdAt: DateTime.now(),
-    ));
+    registerFallbackValue(
+      Post(
+        id: 'p',
+        threadId: 't',
+        userId: 'u',
+        type: PostType.tip,
+        content: 'c',
+        createdAt: DateTime.now(),
+      ),
+    );
+    registerFallbackValue(
+      Report(
+        id: 'r',
+        entityType: ReportEntityType.post,
+        entityId: 'p',
+        reason: 'spam',
+        reporterId: 'u',
+        createdAt: DateTime.now(),
+      ),
+    );
   });
 
   test('emits posts from repository', () async {
@@ -40,8 +43,9 @@ void main() {
         createdAt: DateTime.now(),
       ),
     ];
-    when(() => repo.getPostsByThread('t1', startAfter: any(named: 'startAfter')))
-        .thenAnswer((_) => Stream.value(posts));
+    when(
+      () => repo.getPostsByThread('t1', startAfter: any(named: 'startAfter')),
+    ).thenAnswer((_) => Stream.value(posts));
     final controller = ThreadDetailController(repo, 't1');
     await Future.delayed(Duration.zero);
     expect(controller.state.value, posts);
@@ -50,11 +54,16 @@ void main() {
 
   test('actions delegate to repository', () async {
     final repo = _MockRepo();
-    when(() => repo.getPostsByThread('t1', startAfter: any(named: 'startAfter')))
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => repo.getPostsByThread('t1', startAfter: any(named: 'startAfter')),
+    ).thenAnswer((_) => const Stream.empty());
     when(() => repo.addPost(any())).thenAnswer((_) async {});
-    when(() => repo.voteOnPost(postId: any(named: 'postId'), userId: any(named: 'userId')))
-        .thenAnswer((_) async {});
+    when(
+      () => repo.voteOnPost(
+        postId: any(named: 'postId'),
+        userId: any(named: 'userId'),
+      ),
+    ).thenAnswer((_) async {});
     when(() => repo.reportPost(any())).thenAnswer((_) async {});
     final controller = ThreadDetailController(repo, 't1');
     final post = Post(
