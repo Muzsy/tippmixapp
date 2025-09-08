@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/forum/providers/forum_filter_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/forum_provider.dart';
+import '../../routes/app_route.dart';
+import 'package:go_router/go_router.dart';
 
 /// Displays a list of forum threads with basic filtering and sorting.
 class ForumScreen extends ConsumerWidget {
@@ -96,7 +98,7 @@ class ForumScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => context.pushNamed(AppRoute.newThread.name),
         child: const Icon(Icons.add),
       ),
     );
