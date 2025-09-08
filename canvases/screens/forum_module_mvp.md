@@ -20,7 +20,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Replace all hardcoded userIds with the Firebase Auth UID. Ensure Firestore writes only send allowed fields per rules.
   **Done when**: All writes succeed on emulator without `permission-denied`.
 
-* [ ] **Wire UI actions in Thread View**
+* [x] **Wire UI actions in Thread View**
   Implement Reply, Add Comment, Edit (owner), Delete (owner), Upvote, Report buttons. Add optimistic updates + error handling.
   **Done when**: All icons trigger correct behavior with feedback.
 
