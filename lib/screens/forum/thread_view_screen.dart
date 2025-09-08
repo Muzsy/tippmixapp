@@ -49,6 +49,8 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
     final loc = AppLocalizations.of(context)!;
     final postsAsync =
         ref.watch(threadDetailControllerProviderFamily(widget.threadId));
+    final isLoadingMore =
+        ref.watch(threadDetailLoadingProviderFamily(widget.threadId));
     return Scaffold(
       appBar: AppBar(title: Text('Thread')),
       body: Column(
@@ -66,14 +68,22 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
                 }
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) => PostItem(
-                    post: posts[index],
-                    onReply: () {
-                      _textController.text = '@${posts[index].userId} ';
-                      _focusNode.requestFocus();
-                    },
-                  ),
+                  itemCount: posts.length + (isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == posts.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    return PostItem(
+                      post: posts[index],
+                      onReply: () {
+                        _textController.text = '@${posts[index].userId} ';
+                        _focusNode.requestFocus();
+                      },
+                    );
+                  },
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),

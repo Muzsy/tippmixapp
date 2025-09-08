@@ -65,6 +65,10 @@ threads/{threadId}/posts/{postId}
 | Posztok szál szerint | `(threadId ASC, createdAt DESC)` |
 | Szavazatok entitás szerint | `(entityType ASC, entityId ASC, createdAt DESC, userId ASC)` |
 | Jelentések státusz szerint | `(status ASC, createdAt DESC)` |
+| Rögzített szálak aktivitás szerint | `(pinned ASC, lastActivityAt DESC)` |
+| Rögzített szálak legújabb | `(pinned ASC, createdAt DESC)` |
+| Szálak típus szerint utolsó aktivitás | `(type ASC, lastActivityAt DESC)` |
+| Szálak típus szerint legújabb | `(type ASC, createdAt DESC)` |
 
 ---
 
@@ -80,6 +84,9 @@ threads/{threadId}/posts/{postId}
 - Auth UID bekötve a szál/poszt létrehozásnál; JSON csak rules által engedett mezőket küld
 - ThreadViewScreen poszt műveletek (válasz, szerkesztés, törlés, szavazat, jelentés) hibakezeléssel
 - Zárolt szál esetén figyelmeztető sáv és letiltott komponáló
+- Végtelen görgetés és lapozás a szál- és posztlistákban duplikációvédelemmel
+- Központosított lekérdezésépítő a szűrési/rendezési kombinációkhoz
+- Összetett Firestore indexek a lekérdezésekhez igazítva
 
 ## 🧪 Tesztelés
 

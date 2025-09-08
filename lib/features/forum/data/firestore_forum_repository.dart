@@ -3,7 +3,9 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/domain/vote.dart';
+import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 
+import 'thread_query_builder.dart';
 import 'forum_repository.dart';
 
 class FirestoreForumRepository implements ForumRepository {
@@ -33,11 +35,20 @@ class FirestoreForumRepository implements ForumRepository {
   }
 
   @override
-  Stream<List<Thread>> getRecentThreads({
+  Stream<List<Thread>> queryThreads({
+    required ForumFilter filter,
+    required ForumSort sort,
     int limit = 20,
     DateTime? startAfter,
   }) {
-    var query = _threadsCol.orderBy('createdAt', descending: true).limit(limit);
+    final params = buildThreadQueryParams(filter, sort);
+    Query<Map<String, dynamic>> query = _threadsCol;
+    if (params.whereField != null) {
+      query = query.where(params.whereField!, isEqualTo: params.whereValue);
+    }
+    query = query
+        .orderBy(params.orderByField, descending: params.descending)
+        .limit(limit);
     if (startAfter != null) {
       query = query.startAfter([Timestamp.fromDate(startAfter)]);
     }

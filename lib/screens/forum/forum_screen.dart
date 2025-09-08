@@ -1,21 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../features/forum/providers/forum_filter_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/forum_provider.dart';
 import '../../routes/app_route.dart';
-import 'package:go_router/go_router.dart';
 
-/// Displays a list of forum threads with basic filtering and sorting.
-class ForumScreen extends ConsumerWidget {
+/// Displays a list of forum threads with filtering, sorting and pagination.
+class ForumScreen extends ConsumerStatefulWidget {
   const ForumScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ForumScreen> createState() => _ForumScreenState();
+}
+
+class _ForumScreenState extends ConsumerState<ForumScreen> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        ref.read(threadListControllerProvider.notifier).loadMore();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final threadsAsync = ref.watch(threadListControllerProvider);
     final filter = ref.watch(forumFilterProvider);
+    final isLoadingMore = ref.watch(threadListLoadingProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -77,8 +102,15 @@ class ForumScreen extends ConsumerWidget {
                   return Center(child: Text(loc.forum_empty));
                 }
                 return ListView.builder(
-                  itemCount: threads.length,
+                  controller: _scrollController,
+                  itemCount: threads.length + (isLoadingMore ? 1 : 0),
                   itemBuilder: (context, index) {
+                    if (index == threads.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
                     final thread = threads[index];
                     return ListTile(
                       title: Text(thread.title),
@@ -90,8 +122,7 @@ class ForumScreen extends ConsumerWidget {
                   },
                 );
               },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text(loc.forum_error)),
             ),
           ),

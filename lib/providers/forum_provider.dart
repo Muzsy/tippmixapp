@@ -26,9 +26,13 @@ final threadListControllerProvider =
       ref,
     ) {
       final repo = ref.watch(forumRepositoryProvider);
-      ref.watch(forumFilterProvider);
-      return ThreadListController(repo);
+      final filter = ref.watch(forumFilterProvider);
+      return ThreadListController(repo, filter);
     });
+
+final threadListLoadingProvider = Provider<bool>(
+  (ref) => ref.watch(threadListControllerProvider.notifier).isLoadingMore,
+);
 
 /// Handles composing new threads and first posts.
 final composerControllerProvider =
@@ -46,3 +50,9 @@ final threadDetailControllerProviderFamily =
       (ref, threadId) =>
           ThreadDetailController(ref.watch(forumRepositoryProvider), threadId),
     );
+
+final threadDetailLoadingProviderFamily = Provider.family<bool, String>(
+  (ref, threadId) =>
+      ref.watch(threadDetailControllerProviderFamily(threadId).notifier)
+          .isLoadingMore,
+);
