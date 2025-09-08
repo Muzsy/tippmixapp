@@ -173,5 +173,147 @@ void main() {
         throwsA(isA<Exception>()),
       );
     });
+
+    test('cannot create post with mismatched userId', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await fs.collection('threads').doc('t1').set({
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
+        'createdAt': Timestamp.now(),
+      });
+      await expectLater(
+        () async => fs.collection('threads/t1/posts').doc('p1').set({
+          'threadId': 't1',
+          'userId': 'u2',
+          'type': 'tip',
+          'content': 'hi',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('thread creation with extra field is rejected', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('threads').doc('t1').set({
+          'title': 't',
+          'type': 'general',
+          'createdBy': 'u1',
+          'createdAt': Timestamp.now(),
+          'locked': false,
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('cannot create thread with mismatched owner', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('threads').doc('t1').set({
+          'title': 't',
+          'type': 'general',
+          'createdBy': 'u2',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('cannot vote with mismatched userId', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('votes').doc('p1_u2').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'userId': 'u2',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('cannot report with mismatched reporterId', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('reports').doc('r1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'reason': 'spam',
+          'reporterId': 'u2',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('unauthenticated user cannot vote', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      await expectLater(
+        () async => fs.collection('votes').doc('p1_u1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'userId': 'u1',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('unauthenticated user cannot report', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      await expectLater(
+        () async => fs.collection('reports').doc('r1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'reason': 'spam',
+          'reporterId': 'u1',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('user can delete own vote', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await fs.collection('votes').doc('p1_u1').set({
+        'entityType': 'post',
+        'entityId': 'p1',
+        'userId': 'u1',
+        'createdAt': Timestamp.now(),
+      });
+      await fs.collection('votes').doc('p1_u1').delete();
+    });
+
+    test('user cannot delete another user\'s vote', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await fs.collection('votes').doc('p1_u1').set({
+        'entityType': 'post',
+        'entityId': 'p1',
+        'userId': 'u1',
+        'createdAt': Timestamp.now(),
+      });
+      fs.authObject.add({'uid': 'u2'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('votes').doc('p1_u1').delete(),
+        throwsA(isA<Exception>()),
+      );
+    });
   });
 }
