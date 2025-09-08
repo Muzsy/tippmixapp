@@ -106,6 +106,7 @@
   "feed_report": "Melden",
   "feed_report_success": "Der Beitrag wurde unseren Moderatoren gemeldet.",
   "feed_screen_title": "Feed",
+  "field_required": "Pflichtfeld",
   "filtersAny": "Alle",
   "filtersCountry": "Land",
   "filtersDate": "Datum",
