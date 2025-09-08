@@ -6,7 +6,6 @@ import 'package:tipsterino/features/forum/data/forum_repository.dart';
 import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
-import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 import 'package:tipsterino/features/forum/providers/thread_list_controller.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/l10n/app_localizations_en.dart';
@@ -37,13 +36,24 @@ class _FakeRepo implements ForumRepository {
   }) async {}
 
   @override
-  Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Post>> getPostsByThread(
+    String threadId, {
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getRecentThreads({int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Thread>> getRecentThreads({
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getThreadsByFixture(String fixtureId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Thread>> getThreadsByFixture(
+    String fixtureId, {
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
   Future<void> reportPost(Report report) async {}
@@ -52,12 +62,15 @@ class _FakeRepo implements ForumRepository {
   Future<void> updateThread(String threadId, Map<String, dynamic> data) async {}
 
   @override
-  Future<void> voteOnPost({required String postId, required String userId}) async {}
+  Future<void> voteOnPost({
+    required String postId,
+    required String userId,
+  }) async {}
 }
 
 class _FakeThreadListController extends ThreadListController {
   _FakeThreadListController(AsyncValue<List<Thread>> initial)
-      : super(_FakeRepo(), const ForumFilterState()) {
+    : super(_FakeRepo()) {
     state = initial;
   }
 }
@@ -85,7 +98,9 @@ void main() {
   });
 
   testWidgets('shows error state', (tester) async {
-    await tester.pumpWidget(_buildApp(const AsyncError('err', StackTrace.empty)));
+    await tester.pumpWidget(
+      _buildApp(const AsyncError('err', StackTrace.empty)),
+    );
     await tester.pump();
     expect(find.text(AppLocalizationsEn().forum_error), findsOneWidget);
   });

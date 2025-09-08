@@ -12,6 +12,7 @@ import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
+import '../mocks/mock_auth_service.dart';
 
 class _DummyRepo implements ForumRepository {
   @override
@@ -21,35 +22,60 @@ class _DummyRepo implements ForumRepository {
   Future<void> addThread(Thread thread) async {}
 
   @override
-  Future<void> deletePost({required String threadId, required String postId}) async {}
+  Future<void> deletePost({
+    required String threadId,
+    required String postId,
+  }) async {}
 
   @override
   Future<void> deleteThread(String threadId) async {}
 
   @override
-  Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Post>> getPostsByThread(
+    String threadId, {
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getRecentThreads({int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Thread>> getRecentThreads({
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getThreadsByFixture(String fixtureId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Thread>> getThreadsByFixture(
+    String fixtureId, {
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
   Future<void> reportPost(Report report) async {}
 
   @override
-  Future<void> updatePost({required String threadId, required String postId, required String content}) async {}
+  Future<void> updatePost({
+    required String threadId,
+    required String postId,
+    required String content,
+  }) async {}
 
   @override
   Future<void> updateThread(String threadId, Map<String, dynamic> data) async {}
 
   @override
-  Future<void> voteOnPost({required String postId, required String userId}) async {}
+  Future<void> voteOnPost({
+    required String postId,
+    required String userId,
+  }) async {}
 }
 
-class _FakeAuth extends StateNotifier<AuthState> {
-  _FakeAuth() : super(AuthState(user: User(id: 'u1', email: '', displayName: '')));
+class _FakeAuth extends AuthNotifier {
+  _FakeAuth() : super(MockAuthService()) {
+    state = AuthState(
+      user: User(id: 'u1', email: '', displayName: ''),
+    );
+  }
 }
 
 class _TestController extends ThreadDetailController {
@@ -112,15 +138,14 @@ void main() {
       ProviderScope(
         overrides: [
           authProvider.overrideWith((ref) => _FakeAuth()),
-          threadDetailControllerProviderFamily('t1').overrideWith((ref) => controller),
+          threadDetailControllerProviderFamily(
+            't1',
+          ).overrideWith((ref) => controller),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: PostItem(
-            post: post,
-            onReply: () => replied = true,
-          ),
+          home: PostItem(post: post, onReply: () => replied = true),
         ),
       ),
     );
@@ -155,7 +180,9 @@ void main() {
       ProviderScope(
         overrides: [
           authProvider.overrideWith((ref) => _FakeAuth()),
-          threadDetailControllerProviderFamily('t1').overrideWith((ref) => controller),
+          threadDetailControllerProviderFamily(
+            't1',
+          ).overrideWith((ref) => controller),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
