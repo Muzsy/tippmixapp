@@ -151,6 +151,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnContinue => 'Continue';
 
   @override
+  String get btn_create_thread => 'Create thread';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -333,6 +336,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feed_report_success => 'The post has been reported.';
 
   @override
+  String get report_dialog_title => 'Report post';
+
+  @override
+  String get report_reason_label => 'Reason';
+
+  @override
+  String get report_note_label => 'Additional note';
+
+  @override
+  String get report_reason_spam => 'Spam';
+
+  @override
+  String get report_reason_abuse => 'Abuse';
+
+  @override
+  String get report_reason_off_topic => 'Off-topic';
+
+  @override
+  String get report_reason_other => 'Other';
+
+  @override
   String get feed_screen_title => 'Feed';
 
   @override
@@ -355,6 +379,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filtersToday => 'Today';
+
+  @override
+  String get first_post_hint => 'Say something...';
 
   @override
   String get follow => 'Follow';
@@ -390,25 +417,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forum_sort_newest => 'Newest';
 
   @override
-  String get forum_title => 'Forum';
-
-  @override
   String get forum_thread_locked => 'Thread is locked';
 
   @override
-  String get new_thread_title => 'New thread';
-
-  @override
-  String get first_post_hint => 'Say something...';
-
-  @override
-  String get btn_create_thread => 'Create thread';
-
-  @override
-  String get saved_success => 'Saved successfully';
-
-  @override
-  String get saved_error => 'Failed to save';
+  String get forum_title => 'Forum';
 
   @override
   String get friends => 'Friends';
@@ -669,6 +681,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get name_hint => 'Display name';
+
+  @override
+  String get new_thread_title => 'New thread';
 
   @override
   String get no_tips_selected => 'No tips selected';
@@ -953,6 +968,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String reward_streak(Object days) {
     return 'Streak: $days/7';
   }
+
+  @override
+  String get saved_error => 'Failed to save';
+
+  @override
+  String get saved_success => 'Saved successfully';
 
   @override
   String get security_title => 'Security';

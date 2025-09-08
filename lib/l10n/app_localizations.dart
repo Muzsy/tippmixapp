@@ -382,6 +382,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get btnContinue;
 
+  /// No description provided for @btn_create_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Create thread'**
+  String get btn_create_thread;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -736,6 +742,48 @@ abstract class AppLocalizations {
   /// **'The post has been reported.'**
   String get feed_report_success;
 
+  /// No description provided for @report_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report post'**
+  String get report_dialog_title;
+
+  /// No description provided for @report_reason_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get report_reason_label;
+
+  /// No description provided for @report_note_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional note'**
+  String get report_note_label;
+
+  /// No description provided for @report_reason_spam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get report_reason_spam;
+
+  /// No description provided for @report_reason_abuse.
+  ///
+  /// In en, this message translates to:
+  /// **'Abuse'**
+  String get report_reason_abuse;
+
+  /// No description provided for @report_reason_off_topic.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-topic'**
+  String get report_reason_off_topic;
+
+  /// No description provided for @report_reason_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get report_reason_other;
+
   /// No description provided for @feed_screen_title.
   ///
   /// In en, this message translates to:
@@ -783,6 +831,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get filtersToday;
+
+  /// No description provided for @first_post_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something...'**
+  String get first_post_hint;
 
   /// No description provided for @follow.
   ///
@@ -850,47 +904,17 @@ abstract class AppLocalizations {
   /// **'Newest'**
   String get forum_sort_newest;
 
-  /// No description provided for @forum_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Forum'**
-  String get forum_title;
-
   /// No description provided for @forum_thread_locked.
   ///
   /// In en, this message translates to:
   /// **'Thread is locked'**
   String get forum_thread_locked;
 
-  /// No description provided for @new_thread_title.
+  /// No description provided for @forum_title.
   ///
   /// In en, this message translates to:
-  /// **'New thread'**
-  String get new_thread_title;
-
-  /// No description provided for @first_post_hint.
-  ///
-  /// In en, this message translates to:
-  /// **'Say something...'**
-  String get first_post_hint;
-
-  /// No description provided for @btn_create_thread.
-  ///
-  /// In en, this message translates to:
-  /// **'Create thread'**
-  String get btn_create_thread;
-
-  /// No description provided for @saved_success.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved successfully'**
-  String get saved_success;
-
-  /// No description provided for @saved_error.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to save'**
-  String get saved_error;
+  /// **'Forum'**
+  String get forum_title;
 
   /// No description provided for @friends.
   ///
@@ -1383,6 +1407,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Display name'**
   String get name_hint;
+
+  /// No description provided for @new_thread_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New thread'**
+  String get new_thread_title;
 
   /// No description provided for @no_tips_selected.
   ///
@@ -1941,6 +1971,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Streak: {days}/7'**
   String reward_streak(Object days);
+
+  /// No description provided for @saved_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get saved_error;
+
+  /// No description provided for @saved_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved successfully'**
+  String get saved_success;
 
   /// No description provided for @security_title.
   ///
