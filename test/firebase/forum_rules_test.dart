@@ -173,5 +173,85 @@ void main() {
         throwsA(isA<Exception>()),
       );
     });
+
+    test('mismatched owner id rejected on thread create', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('threads').doc('t1').set({
+          'title': 't',
+          'type': 'general',
+          'createdBy': 'u2', // different from auth.uid
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('mismatched userId rejected on post create', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await fs.collection('threads').doc('t1').set({
+        'title': 't',
+        'type': 'general',
+        'createdBy': 'u1',
+        'createdAt': Timestamp.now(),
+      });
+      await expectLater(
+        () async => fs.collection('threads/t1/posts').doc('p1').set({
+          'threadId': 't1',
+          'userId': 'u2', // different from auth.uid
+          'type': 'tip',
+          'content': 'hi',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('disallowed field rejected on thread create', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      fs.authObject.add({'uid': 'u1'});
+      await Future<void>.value();
+      await expectLater(
+        () async => fs.collection('threads').doc('t1').set({
+          'title': 't',
+          'type': 'general',
+          'createdBy': 'u1',
+          'createdAt': Timestamp.now(),
+          'pinned': true, // not whitelisted in rules
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('unauthenticated user cannot vote', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      await expectLater(
+        () async => fs.collection('votes').doc('p1_u1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'userId': 'u1',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('unauthenticated user cannot report', () async {
+      final fs = FakeFirebaseFirestore(securityRules: rules);
+      await expectLater(
+        () async => fs.collection('reports').doc('r1').set({
+          'entityType': 'post',
+          'entityId': 'p1',
+          'reason': 'spam',
+          'reporterId': 'u1',
+          'createdAt': Timestamp.now(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
   });
 }

@@ -86,3 +86,4 @@ threads/{threadId}/posts/{postId}
 - Űrlap validáció teszt
 - Lapozás a szál nézetben
 - Írási jogosultság ellenőrzése
+- Bővített security rules tesztek hibás azonosítókra, tiltott mezőkre és hitelesítetlen műveletekre
