@@ -79,6 +79,7 @@ threads/{threadId}/posts/{postId}
 - threadDetailControllerProviderFamily export
 - Auth UID bekötve a szál/poszt létrehozásnál; JSON csak rules által engedett mezőket küld
 - ThreadViewScreen poszt műveletek (válasz, szerkesztés, törlés, szavazat, jelentés) hibakezeléssel
+- Zárolt szál esetén figyelmeztető sáv és letiltott komponáló
 
 ## 🧪 Tesztelés
 

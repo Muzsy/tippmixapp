@@ -51,31 +51,48 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         ref.watch(threadDetailControllerProviderFamily(widget.threadId));
     return Scaffold(
       appBar: AppBar(title: Text('Thread')),
-      body: postsAsync.when(
-        data: (posts) {
-          if (posts.isEmpty) {
-            return Center(child: Text(loc.forum_empty));
-          }
-          return ListView.builder(
-            controller: _scrollController,
-            itemCount: posts.length,
-            itemBuilder: (context, index) => PostItem(
-              post: posts[index],
-              onReply: () {
-                _textController.text = '@${posts[index].userId} ';
-                _focusNode.requestFocus();
-              },
+      body: Column(
+        children: [
+          if (widget.locked)
+            MaterialBanner(
+              content: Text(loc.forum_thread_locked),
+              actions: const [],
             ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(loc.forum_error)),
+          Expanded(
+            child: postsAsync.when(
+              data: (posts) {
+                if (posts.isEmpty) {
+                  return Center(child: Text(loc.forum_empty));
+                }
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) => PostItem(
+                    post: posts[index],
+                    onReply: () {
+                      _textController.text = '@${posts[index].userId} ';
+                      _focusNode.requestFocus();
+                    },
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text(loc.forum_error)),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: ComposerBar(
         controller: _textController,
         focusNode: _focusNode,
         enabled: !widget.locked,
         onSubmit: () async {
+          if (widget.locked) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(loc.forum_thread_locked)),
+            );
+            return;
+          }
           final text = _textController.text.trim();
           final user = ref.read(authProvider).user;
           if (text.isEmpty || user == null) return;

@@ -401,6 +401,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forum_title => 'Fórum';
 
   @override
+  String get forum_thread_locked => 'A szál zárolva van';
+
+  @override
   String get new_thread_title => 'Új szál';
 
   @override
