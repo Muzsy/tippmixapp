@@ -6,6 +6,7 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/thread_detail_controller.dart';
+import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/models/user.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
@@ -38,7 +39,9 @@ class _DummyRepo implements ForumRepository {
   }) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getRecentThreads({
+  Stream<List<Thread>> queryThreads({
+    required ForumFilter filter,
+    required ForumSort sort,
     int limit = 20,
     DateTime? startAfter,
   }) => const Stream.empty();

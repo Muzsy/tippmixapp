@@ -8,6 +8,7 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/composer_controller.dart';
+import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/models/user.dart';
@@ -39,7 +40,12 @@ class _FakeRepo implements ForumRepository {
   Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
 
   @override
-  Stream<List<Thread>> getRecentThreads({int limit = 20, DateTime? startAfter}) => const Stream.empty();
+  Stream<List<Thread>> queryThreads({
+    required ForumFilter filter,
+    required ForumSort sort,
+    int limit = 20,
+    DateTime? startAfter,
+  }) => const Stream.empty();
 
   @override
   Stream<List<Thread>> getThreadsByFixture(String fixtureId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();

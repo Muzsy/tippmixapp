@@ -1,6 +1,7 @@
 import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
+import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 
 abstract class ForumRepository {
   Stream<List<Thread>> getThreadsByFixture(
@@ -9,7 +10,12 @@ abstract class ForumRepository {
     DateTime? startAfter,
   });
 
-  Stream<List<Thread>> getRecentThreads({int limit = 20, DateTime? startAfter});
+  Stream<List<Thread>> queryThreads({
+    required ForumFilter filter,
+    required ForumSort sort,
+    int limit = 20,
+    DateTime? startAfter,
+  });
 
   Stream<List<Post>> getPostsByThread(
     String threadId, {

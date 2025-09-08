@@ -42,15 +42,15 @@ The following tasks are organized by priority. Each task has **completion criter
 
 ### P1 – Important (MVP polish)
 
-* [ ] **Infinite scroll & pagination**
+* [x] **Infinite scroll & pagination**
   Load more threads/posts at scroll end, add loading footer, prevent duplicates.
   **Done when**: Smooth scroll loads, no duplicate entries.
 
-* [ ] **Filtering & sorting**
+* [x] **Filtering & sorting**
   Implement All/Matches/General/Pinned + Latest/Newest/Activity combinations. Unit test query builder.
   **Done when**: Filters and sorts return correct results.
 
-* [ ] **Firestore indexes**
+* [x] **Firestore indexes**
   Update `firestore.indexes.json` for all queries.
   **Done when**: No missing index errors in emulator.
 

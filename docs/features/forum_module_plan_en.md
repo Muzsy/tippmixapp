@@ -65,6 +65,10 @@ threads/{threadId}/posts/{postId}
 | Posts by thread | `(threadId ASC, createdAt DESC)` |
 | Votes by entity | `(entityType ASC, entityId ASC, createdAt DESC, userId ASC)` |
 | Reports by status | `(status ASC, createdAt DESC)` |
+| Pinned threads by activity | `(pinned ASC, lastActivityAt DESC)` |
+| Pinned threads newest | `(pinned ASC, createdAt DESC)` |
+| Threads by type latest | `(type ASC, lastActivityAt DESC)` |
+| Threads by type newest | `(type ASC, createdAt DESC)` |
 
 ---
 
@@ -80,6 +84,9 @@ threads/{threadId}/posts/{postId}
 - Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
 - ThreadViewScreen post actions (reply, edit, delete, upvote, report) with error handling
 - Locked thread banner and composer disabled
+- Infinite scroll and pagination for thread lists and posts with duplicate prevention
+- Centralized query builder for filter/sort combinations
+- Composite Firestore indexes aligned with queries
 
 ## 🧪 Testing
 

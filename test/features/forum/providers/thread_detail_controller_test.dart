@@ -31,24 +31,27 @@ void main() {
     );
   });
 
-  test('emits posts from repository', () async {
+  test('merges pages without duplicates', () async {
     final repo = _MockRepo();
-    final posts = [
-      Post(
-        id: 'p1',
-        threadId: 't1',
-        userId: 'u1',
-        type: PostType.tip,
-        content: 'hi',
-        createdAt: DateTime.now(),
-      ),
-    ];
+    final p1 = Post(
+      id: 'p1',
+      threadId: 't1',
+      userId: 'u1',
+      type: PostType.tip,
+      content: 'hi',
+      createdAt: DateTime.now(),
+    );
     when(
       () => repo.getPostsByThread('t1', startAfter: any(named: 'startAfter')),
-    ).thenAnswer((_) => Stream.value(posts));
+    ).thenAnswer((invocation) {
+      final startAfter = invocation.namedArguments[#startAfter] as DateTime?;
+      return Stream.value(startAfter == null ? [p1] : [p1]);
+    });
     final controller = ThreadDetailController(repo, 't1');
     await Future.delayed(Duration.zero);
-    expect(controller.state.value, posts);
+    controller.loadMore();
+    await Future.delayed(Duration.zero);
+    expect(controller.state.value, [p1]);
     controller.dispose();
   });
 
