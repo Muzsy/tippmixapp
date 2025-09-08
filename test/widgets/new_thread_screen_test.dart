@@ -64,19 +64,6 @@ class _FakeRepo implements ForumRepository {
 
   @override
   Future<void> voteOnPost({required String postId, required String userId}) async {}
-
-  @override
-  Future<void> updatePost({
-    required String threadId,
-    required String postId,
-    required String content,
-  }) async {}
-
-  @override
-  Future<void> deletePost({
-    required String threadId,
-    required String postId,
-  }) async {}
 }
 
 class _FakeComposer extends ComposerController {
