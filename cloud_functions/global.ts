@@ -9,9 +9,9 @@ setGlobalOptions({
   region: 'europe-central2',
   secrets: [API_FOOTBALL_KEY],
   // Scaling knobs – align with scaling guide
-  concurrency: 15,
-  minInstances: 1,
-  maxInstances: 30,
+  concurrency: 10,
+  // no global minInstances (defaults to 0)
+  maxInstances: 10,
   cpu: 1,
-  memory: '1GiB',
+  memory: '512MiB',
 });

@@ -1,0 +1,16 @@
+Analyzing 5 items...                                            
+
+warning • The value of the field '_filter' isn't used • lib/features/forum/providers/thread_list_controller.dart:17:26 • unused_field
+   info • Unnecessary use of multiple underscores • lib/screens/forum/new_thread_screen.dart:67:18 • unnecessary_underscores
+   info • Don't use 'BuildContext's across async gaps • lib/screens/forum/new_thread_screen.dart:71:28 • use_build_context_synchronously
+   info • Use 'const' with the constructor to improve performance • lib/screens/forum/thread_view_screen.dart:53:29 • prefer_const_constructors
+warning • Unused import: 'package:flutter_riverpod/flutter_riverpod.dart' • test/features/forum/providers/thread_detail_controller_test.dart:1:8 • unused_import
+warning • Unused import: 'package:flutter_riverpod/flutter_riverpod.dart' • test/features/forum/providers/thread_list_controller_test.dart:3:8 • unused_import
+   info • Unnecessary use of multiple underscores • test/widget/forum_bottom_nav_test.dart:12:24 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • test/widget/forum_bottom_nav_test.dart:18:24 • unnecessary_underscores
+   info • Use 'const' with the constructor to improve performance • test/widget/thread_view_locked_test.dart:8:29 • prefer_const_constructors
+warning • This method overrides a method annotated as '@mustCallSuper' in 'StateNotifier', but doesn't invoke the overridden method • test/widget/thread_view_screen_state_test.dart:67:8 • must_call_super
+   info • Use 'const' with the constructor to improve performance • test/widget/thread_view_screen_state_test.dart:79:16 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/widgets/forum_screen_test.dart:72:12 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/widgets/new_thread_screen_test.dart:90:12 • prefer_const_constructors
+

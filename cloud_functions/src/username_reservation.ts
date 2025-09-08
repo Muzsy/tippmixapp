@@ -42,7 +42,7 @@ export const reserve_nickname = onCall(async (request) => {
         tx.delete(oldRef);
       }
     });
-    logger.info('reserve_nickname.ok', { uid, nickname, norm });
+    logger.debug('reserve_nickname.ok', { uid, nickname, norm });
     return { success: true, norm };
   } catch (e: any) {
     if (e instanceof HttpsError) throw e;
@@ -50,4 +50,3 @@ export const reserve_nickname = onCall(async (request) => {
     throw new HttpsError('internal', 'reservation failed');
   }
 });
-

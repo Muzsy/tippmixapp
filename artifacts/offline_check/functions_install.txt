@@ -1,0 +1,12 @@
+ WARN  Unsupported engine: wanted: {"node":"20.x"} (current: {"node":"v22.19.0","pnpm":"10.15.1"})
+Scope: all 3 workspace projects
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @firebase/util, protobufjs, re2, unrs-resolver.     │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Done in 14.3s using pnpm v10.15.1

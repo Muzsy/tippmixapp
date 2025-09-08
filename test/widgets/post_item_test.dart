@@ -14,8 +14,45 @@ import '../mocks/mock_auth_service.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
 
+import 'package:tipsterino/services/auth_service.dart';
+class _StubAuthService implements AuthService {
+  @override
+  Stream<User?> authStateChanges() async* {}
+  @override
+  Future<User?> signInWithEmail(String email, String password) async => null;
+  @override
+  Future<User?> registerWithEmail(String email, String password) async => null;
+  @override
+  Future<void> signOut() async {}
+  @override
+  Future<void> sendEmailVerification() async {}
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {}
+  @override
+  bool get isEmailVerified => true;
+  @override
+  User? get currentUser => null;
+  @override
+  Future<bool> validateEmailUnique(String email) async => true;
+  @override
+  Future<bool> validateNicknameUnique(String nickname) async => true;
+  @override
+  Future<User?> signInWithGoogle() async => null;
+  @override
+  Future<User?> signInWithApple() async => null;
+  @override
+  Future<User?> signInWithFacebook() async => null;
+  @override
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async => true;
+}
+
 class FakeAuthNotifier extends AuthNotifier {
-  FakeAuthNotifier(User user) : super(MockAuthService()) {
+  FakeAuthNotifier(User user) : super(_StubAuthService()) {
     state = AuthState(user: user);
   }
 }
@@ -84,6 +121,7 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [
         authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
+        authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
         threadDetailControllerProviderFamily('t1')
             .overrideWith((ref) => ThreadDetailController(repo, 't1')),
       ],
@@ -96,4 +134,3 @@ void main() {
     expect(repo.voteCalled, true);
   });
 }
-
