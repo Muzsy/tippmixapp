@@ -26,6 +26,99 @@ class _PostItemState extends ConsumerState<PostItem> {
         .showSnackBar(SnackBar(content: Text(loc.unknown_error_try_again)));
   }
 
+  Future<void> _onReport(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    final user = ref.read(authProvider).user;
+    if (user == null) return;
+    String reason = 'spam';
+    final noteController = TextEditingController();
+    final result = await showDialog<(String, String?)>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.report_dialog_title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<String>(
+              value: reason,
+              decoration:
+                  InputDecoration(labelText: loc.report_reason_label),
+              items: [
+                DropdownMenuItem(
+                  value: 'spam',
+                  child: Text(loc.report_reason_spam),
+                ),
+                DropdownMenuItem(
+                  value: 'abuse',
+                  child: Text(loc.report_reason_abuse),
+                ),
+                DropdownMenuItem(
+                  value: 'off_topic',
+                  child: Text(loc.report_reason_off_topic),
+                ),
+                DropdownMenuItem(
+                  value: 'other',
+                  child: Text(loc.report_reason_other),
+                ),
+              ],
+              onChanged: (v) => reason = v ?? 'spam',
+            ),
+            TextField(
+              controller: noteController,
+              decoration: InputDecoration(labelText: loc.report_note_label),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.dialog_cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(
+              context,
+              (
+                reason,
+                noteController.text.trim().isEmpty
+                    ? null
+                    : noteController.text.trim(),
+              ),
+            ),
+            child: Text(loc.dialog_send),
+          ),
+        ],
+      ),
+    );
+    if (result != null) {
+      final report = Report(
+        id: '',
+        entityType: ReportEntityType.post,
+        entityId: widget.post.id,
+        reporterId: user.id, // reporterId must equal auth.uid
+        reason: result.$1,
+        message: result.$2,
+        createdAt: DateTime.now(),
+      );
+      setState(() => _loading = true);
+      try {
+        await ref
+            .read(
+                threadDetailControllerProviderFamily(widget.post.threadId)
+                    .notifier)
+            .reportPost(report);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(loc.feed_report_success)),
+          );
+        }
+      } catch (_) {
+        await _showError(context);
+      } finally {
+        if (mounted) setState(() => _loading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -139,36 +232,7 @@ class _PostItemState extends ConsumerState<PostItem> {
           IconButton(
             icon: const Icon(Icons.flag),
             tooltip: loc.feed_report,
-            onPressed: _loading
-                ? null
-                : () async {
-                    final uid = user?.id; // auth.uid per rules
-                    if (uid != null) {
-                      final report = Report(
-                        id: '',
-                        entityType: ReportEntityType.post,
-                        entityId: widget.post.id,
-                        reporterId: uid, // reporterId must equal auth.uid
-                        reason: 'inappropriate',
-                        createdAt: DateTime.now(),
-                      );
-                      setState(() => _loading = true);
-                      try {
-                        await ref
-                            .read(threadDetailControllerProviderFamily(
-                                    widget.post.threadId)
-                                .notifier)
-                            .reportPost(report);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(loc.feed_report_success)),
-                        );
-                      } catch (_) {
-                        await _showError(context);
-                      } finally {
-                        if (mounted) setState(() => _loading = false);
-                      }
-                    }
-                  },
+            onPressed: _loading ? null : () => _onReport(context),
           ),
         ],
       ),

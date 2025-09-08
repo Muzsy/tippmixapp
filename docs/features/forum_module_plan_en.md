@@ -84,6 +84,7 @@ threads/{threadId}/posts/{postId}
 - threadDetailControllerProviderFamily export
 - Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
 - ThreadViewScreen post actions (reply, edit, delete, upvote, report) with error handling
+- Report dialog collects a reason (spam, abuse, off-topic, other) and optional note
 - Locked thread banner and composer disabled
 - Infinite scroll and pagination for thread lists and posts with duplicate prevention
 - Centralized query builder for filter/sort combinations

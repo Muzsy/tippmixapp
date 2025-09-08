@@ -155,6 +155,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get btnContinue => 'Folytatás';
 
   @override
+  String get btn_create_thread => 'Szál létrehozása';
+
+  @override
   String get cancel => 'Mégse';
 
   @override
@@ -341,6 +344,27 @@ class AppLocalizationsHu extends AppLocalizations {
       'A bejegyzést jelentettük moderátorainknak.';
 
   @override
+  String get report_dialog_title => 'Bejegyzés jelentése';
+
+  @override
+  String get report_reason_label => 'Ok';
+
+  @override
+  String get report_note_label => 'Megjegyzés';
+
+  @override
+  String get report_reason_spam => 'Spam';
+
+  @override
+  String get report_reason_abuse => 'Visszaélés';
+
+  @override
+  String get report_reason_off_topic => 'Témán kívüli';
+
+  @override
+  String get report_reason_other => 'Egyéb';
+
+  @override
   String get feed_screen_title => 'Hírfolyam';
 
   @override
@@ -363,6 +387,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get filtersToday => 'Ma';
+
+  @override
+  String get first_post_hint => 'Írj valamit...';
 
   @override
   String get follow => 'Követés';
@@ -398,25 +425,10 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forum_sort_newest => 'Legújabb';
 
   @override
-  String get forum_title => 'Fórum';
-
-  @override
   String get forum_thread_locked => 'A szál zárolva van';
 
   @override
-  String get new_thread_title => 'Új szál';
-
-  @override
-  String get first_post_hint => 'Írj valamit...';
-
-  @override
-  String get btn_create_thread => 'Szál létrehozása';
-
-  @override
-  String get saved_success => 'Sikeresen mentve';
-
-  @override
-  String get saved_error => 'Mentés sikertelen';
+  String get forum_title => 'Fórum';
 
   @override
   String get friends => 'Barátok';
@@ -680,6 +692,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get name_hint => 'Megjelenített név';
+
+  @override
+  String get new_thread_title => 'Új szál';
 
   @override
   String get no_tips_selected => 'Nincs kiválasztott tipp';
@@ -964,6 +979,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String reward_streak(Object days) {
     return 'Sorozat: $days/7';
   }
+
+  @override
+  String get saved_error => 'Mentés sikertelen';
+
+  @override
+  String get saved_success => 'Sikeresen mentve';
 
   @override
   String get security_title => 'Biztonság';
