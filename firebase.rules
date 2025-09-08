@@ -186,7 +186,7 @@ service cloud.firestore {
         && request.resource.data.entityType == 'post'
         && voteId == request.resource.data.entityId + '_' + request.auth.uid
         && !exists(/databases/$(database)/documents/votes/$(voteId));
-      allow delete: if isOwner(request.resource.data.userId) || isModerator();
+      allow delete: if isOwner(resource.data.userId) || isModerator();
       allow update: if false;
     }
 

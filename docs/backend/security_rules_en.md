@@ -126,6 +126,15 @@ service cloud.firestore {
 
 ---
 
+## 💬 Forum Collections
+
+- `threads/{threadId}`: only authenticated users may create; `createdBy` must equal `request.auth.uid` and only `title`, `type`, `fixtureId`, `createdBy`, `createdAt` fields are accepted.
+- `threads/{threadId}/posts/{postId}`: requires `userId == request.auth.uid`; updates limited to `content` and `editedAt` within 15 minutes; thread must not be locked.
+- `votes/{voteId}`: user can create when `userId` matches `auth.uid`; document id must be `entityId_uid`; owners or moderators may delete.
+- `reports/{reportId}`: create allowed for signed-in users with `reporterId == auth.uid`; `status` cannot be set by client; only moderators can read or modify.
+
+---
+
 ## 📌 Planned Enhancements
 
 - Add validation for `ticket.status` and `stake`

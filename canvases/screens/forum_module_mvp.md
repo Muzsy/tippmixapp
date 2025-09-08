@@ -32,7 +32,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Connect FAB on Forum list to New Thread screen.
   **Done when**: Clicking FAB opens new thread form.
 
-* [ ] **Firestore rules alignment**
+* [x] **Firestore rules alignment**
   Ensure all client JSON structures align with Firestore rules. Expand rule tests.
   **Done when**: Rules tests pass (positive/negative), emulator shows no rejection.
 

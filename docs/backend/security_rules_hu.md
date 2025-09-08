@@ -126,6 +126,15 @@ service cloud.firestore {
 
 ---
 
+## 💬 Fórum gyűjtemények
+
+- `threads/{threadId}`: csak hitelesített felhasználó hozhat létre; a `createdBy` mezőnek egyeznie kell a `request.auth.uid` értékkel, és csak a `title`, `type`, `fixtureId`, `createdBy`, `createdAt` mezők engedélyezettek.
+- `threads/{threadId}/posts/{postId}`: `userId == request.auth.uid`; frissítés csak `content` és `editedAt` mezőkre, 15 percen belül; a thread nem lehet zárolva.
+- `votes/{voteId}`: a felhasználó akkor szavazhat, ha `userId` megegyezik az auth UID-vel; a dokumentum azonosítója `entityId_uid`; törlés a tulajdonos vagy moderátor által.
+- `reports/{reportId}`: jelentés létrehozása csak bejelentkezett felhasználónak `reporterId == auth.uid`; `status` mező nem állítható kliensről; csak moderátor olvashatja vagy módosíthatja.
+
+---
+
 ## 📌 Tervezett fejlesztések
 
 - `ticket.status` és `stake` mezők validálása
