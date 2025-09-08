@@ -24,6 +24,7 @@ Az angol a **hivatalos forrás** az AI-eszközök (pl. Codex) számára, a magya
 | Badge System                    | `badge_system_en.md`               | `badge_system_hu.md`               |
 | Feed Module Plan                | `feed_module_plan_en.md`           | `feed_module_plan_hu.md`           |
 | Forum Module Plan               | `forum_module_plan_en.md`          | `forum_module_plan_hu.md`          |
+| Forum Module MVP Verification   | `forum_mvp_done_en.md`             | `forum_mvp_done_hu.md`             |
 | Push Notification Strategy      | `push_notification_strategy_en.md` | `push_notification_strategy_hu.md` |
 | Pub/Sub Topics                  | `pubsub_topics_en.md`              | `pubsub_topics_hu.md`              |
 | Result Provider Service         | `result_provider_en.md`            | `result_provider_hu.md`            |

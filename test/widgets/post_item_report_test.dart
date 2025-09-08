@@ -14,6 +14,7 @@ import 'package:tipsterino/models/user.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
+import 'package:tipsterino/services/auth_service.dart';
 
 class _DummyRepo implements ForumRepository {
   Report? lastReport;
@@ -81,9 +82,60 @@ class _FakeController extends ThreadDetailController {
   Report? get lastReport => repo.lastReport;
 }
 
-class _AuthNotifier extends StateNotifier<AuthState> {
-  _AuthNotifier()
-      : super(AuthState(user: User(id: 'u1', email: '', displayName: '')));
+class _StubAuthService implements AuthService {
+  @override
+  Stream<User?> authStateChanges() async* {}
+
+  @override
+  Future<User?> signInWithEmail(String email, String password) async => null;
+
+  @override
+  Future<User?> registerWithEmail(String email, String password) async => null;
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> sendEmailVerification() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {}
+
+  @override
+  bool get isEmailVerified => true;
+
+  @override
+  User? get currentUser => null;
+
+  @override
+  Future<bool> validateEmailUnique(String email) async => true;
+
+  @override
+  Future<bool> validateNicknameUnique(String nickname) async => true;
+
+  @override
+  Future<User?> signInWithGoogle() async => null;
+
+  @override
+  Future<User?> signInWithApple() async => null;
+
+  @override
+  Future<User?> signInWithFacebook() async => null;
+
+  @override
+  Future<bool> pollEmailVerification({
+    Duration timeout = const Duration(minutes: 3),
+    Duration interval = const Duration(seconds: 5),
+  }) async => true;
+}
+
+class _AuthNotifier extends AuthNotifier {
+  _AuthNotifier() : super(_StubAuthService()) {
+    state = AuthState(user: User(id: 'u1', email: '', displayName: ''));
+  }
 }
 
 void main() {
