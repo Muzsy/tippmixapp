@@ -86,3 +86,4 @@ threads/{threadId}/posts/{postId}
 - Form validation tests
 - Pagination in thread view
 - Write-permission logic
+- Expanded security rules tests for mismatched IDs, disallowed fields, and unauthenticated actions
