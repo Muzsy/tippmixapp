@@ -106,6 +106,7 @@
   "feed_report": "Jelentés",
   "feed_report_success": "A bejegyzést jelentettük moderátorainknak.",
   "feed_screen_title": "Hírfolyam",
+  "field_required": "Kötelező mező",
   "filtersAny": "Mind",
   "filtersCountry": "Ország",
   "filtersDate": "Dátum",

@@ -24,7 +24,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Implement Reply, Add Comment, Edit (owner), Delete (owner), Upvote, Report buttons. Add optimistic updates + error handling.
   **Done when**: All icons trigger correct behavior with feedback.
 
-* [ ] **New Thread creation flow**
+* [x] **New Thread creation flow**
   Add validation (title, first post, type). Navigate to thread view after success.
   **Done when**: Invalid inputs show errors, success redirects to thread with first post visible.
 
