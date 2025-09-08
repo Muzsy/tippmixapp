@@ -16,7 +16,7 @@ This document defines the design and vision for the forum feature in TippmixApp.
 
 ```
 threads/{threadId}
-  → title, createdBy, createdAt, tags
+  → title, createdBy, createdAt, tags, lastActivityAt, postsCount
 threads/{threadId}/posts/{postId}
   → content, userId, createdAt, upvotes
 ```
@@ -52,6 +52,7 @@ threads/{threadId}/posts/{postId}
 
 - Basic spam filter (length, profanity)
 - Post count per user stored in profile (e.g. for badges)
+- Thread aggregates: update `lastActivityAt` and `postsCount` on post create/delete
 - Optional: pinned threads or featured discussions
 - MarketSnapshotAdapter caches ApiFootball odds snapshots for the composer
 

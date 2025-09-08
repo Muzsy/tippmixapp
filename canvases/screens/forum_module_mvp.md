@@ -54,7 +54,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Update `firestore.indexes.json` for all queries.
   **Done when**: No missing index errors in emulator.
 
-* [ ] **Thread aggregate fields**
+* [x] **Thread aggregate fields**
   Maintain `lastActivityAt` and `postCount` on create/delete.
   **Done when**: Ordering and counts are correct.
 

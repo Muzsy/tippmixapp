@@ -95,11 +95,16 @@ class FirestoreForumRepository implements ForumRepository {
   @override
   Future<void> addPost(Post post) async {
     // userId must equal auth.uid per security rules
-    await _threadsCol
-        .doc(post.threadId)
-        .collection('posts')
-        .doc(post.id)
-        .set(post.toJson());
+    // Client transaction keeps thread aggregates in sync with posts
+    final threadRef = _threadsCol.doc(post.threadId);
+    final postRef = threadRef.collection('posts').doc(post.id);
+    await _firestore.runTransaction((tx) async {
+      tx.set(postRef, post.toJson());
+      tx.update(threadRef, {
+        'postsCount': FieldValue.increment(1),
+        'lastActivityAt': Timestamp.fromDate(post.createdAt),
+      });
+    });
   }
 
   @override
@@ -119,7 +124,28 @@ class FirestoreForumRepository implements ForumRepository {
     required String threadId,
     required String postId,
   }) async {
-    await _threadsCol.doc(threadId).collection('posts').doc(postId).delete();
+    final threadRef = _threadsCol.doc(threadId);
+    final postRef = threadRef.collection('posts').doc(postId);
+
+    // Transactionally delete post and decrement counter
+    await _firestore.runTransaction((tx) async {
+      tx.delete(postRef);
+      tx.update(threadRef, {
+        'postsCount': FieldValue.increment(-1),
+      });
+    });
+
+    // Recompute lastActivityAt from remaining posts or fallback to thread.createdAt
+    final threadSnap = await threadRef.get();
+    final createdAt = threadSnap.data()?['createdAt'] as Timestamp;
+    final latest = await threadRef
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .get();
+    final lastActivity =
+        latest.docs.isNotEmpty ? latest.docs.first['createdAt'] as Timestamp : createdAt;
+    await threadRef.update({'lastActivityAt': lastActivity});
   }
 
   @override
