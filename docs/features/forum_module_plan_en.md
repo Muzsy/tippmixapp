@@ -74,6 +74,7 @@ threads/{threadId}/posts/{postId}
 - NewThreadScreen for creating threads
 - Firestore security rules for threads, posts, votes and reports
 - Central routing with ThreadViewScreen and composer
+- Forum list FAB navigates to NewThreadScreen
 - Bottom navigation entry for forum
 - threadDetailControllerProviderFamily export
 - Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
