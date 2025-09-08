@@ -79,6 +79,7 @@ threads/{threadId}/posts/{postId}
 - threadDetailControllerProviderFamily export
 - Auth UID wired for thread/post creation; JSON payloads limited to rule-allowed fields
 - ThreadViewScreen post actions (reply, edit, delete, upvote, report) with error handling
+- Locked thread banner and composer disabled
 
 ## 🧪 Testing
 

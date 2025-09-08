@@ -36,7 +36,7 @@ The following tasks are organized by priority. Each task has **completion criter
   Ensure all client JSON structures align with Firestore rules. Expand rule tests.
   **Done when**: Rules tests pass (positive/negative), emulator shows no rejection.
 
-* [ ] **Locked threads handling**
+* [x] **Locked threads handling**
   Respect `locked` field: disable composer and show message.
   **Done when**: Locked thread blocks posting, clear feedback visible.
 

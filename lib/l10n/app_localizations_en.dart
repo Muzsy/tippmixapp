@@ -393,6 +393,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forum_title => 'Forum';
 
   @override
+  String get forum_thread_locked => 'Thread is locked';
+
+  @override
   String get new_thread_title => 'New thread';
 
   @override

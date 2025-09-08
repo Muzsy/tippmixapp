@@ -856,6 +856,12 @@ abstract class AppLocalizations {
   /// **'Forum'**
   String get forum_title;
 
+  /// No description provided for @forum_thread_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread is locked'**
+  String get forum_thread_locked;
+
   /// No description provided for @new_thread_title.
   ///
   /// In en, this message translates to:
