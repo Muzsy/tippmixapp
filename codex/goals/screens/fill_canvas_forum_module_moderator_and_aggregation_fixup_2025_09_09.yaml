@@ -1,0 +1,96 @@
+# Codex Goal — Forum Module: Moderator & Aggregation Fixup (2025‑09‑09)
+
+# Kötelező séma: steps: list; minden elem: name, description, outputs, opcionálisan inputs.
+
+# Nyelv: magyar.
+
+steps:
+
+* name: Törlés jogosultság összehangolása (P0)
+  description: |
+  A PostItem jelenleg tulajdonosnak is mutat törlés gombot, miközben a Firestore szabályok csak moderátornak engedik a törlést.
+  Rejtsd el a törlés gombot minden nem‑moderátornál, és védd le a hívási réteget is (repo szintű guard).
+  Sikertelen jogosulatlan hívásnál felhasználóbarát hibaüzenet jelenjen meg.
+  outputs:
+
+  * lib/screens/forum/post\_item.dart
+  * lib/features/forum/data/forum\_repository.dart
+  * lib/features/forum/data/firestore\_forum\_repository.dart
+  * test/widgets/forum/post\_item\_delete\_visibility\_test.dart
+
+* name: Moderátor jogosultság bekötése custom claims‑re
+  description: |
+  Az isAdminProvider helyett használj Firebase Auth custom claims‑t (pl. roles.moderator: true).
+  Készíts szolgáltatót, amely figyeli a token frissítést, és mockolható tesztben.
+  outputs:
+
+  * lib/providers/moderator\_claim\_provider.dart
+  * lib/screens/forum/thread\_view\_screen.dart
+  * test/providers/moderator\_claim\_provider\_test.dart
+
+* name: Server‑side votesCount aggregáció véglegesítése
+  description: |
+  Hozz létre / egészíts ki Cloud Functions triggereket a votes create/delete eseményekre.
+  Tranzakcióval vagy FieldValue.increment‑tel frissítsd a posts/{postId}.votesCount mezőt.
+  Írj Jest tesztet, amely több párhuzamos szavazást is szimulál.
+  outputs:
+
+  * cloud\_functions/src/triggers/forumVotes.ts
+  * cloud\_functions/test/forumVotes.test.ts
+  * .github/workflows/ci.yaml
+
+* name: Komponáló tiltása lockolt szálnál + banner
+  description: |
+  Thread lock állapotban a ComposerBar ne engedje a beküldést; jelenjen meg egy lokális nyelvi kulccsal ellátott banner.
+  outputs:
+
+  * lib/screens/forum/thread\_view\_screen.dart
+  * lib/screens/forum/composer\_bar.dart
+  * test/widgets/forum/locked\_thread\_composer\_test.dart
+
+* name: E2E forgatókönyv hozzáadása
+  description: |
+  Írj teljes E2E tesztet: auth → új szál → komment → upvote (votesCount++) → report → lock/pin → UI állapotok ellenőrzése → unlock/unpin → törlés csak moderátornak.
+  A teszt fusson a CI‑ben.
+  outputs:
+
+  * integration\_test/forum\_e2e\_test.dart
+  * .github/workflows/ci.yaml
+
+* name: Rules és indexek frissítése
+  description: |
+  Vizsgáld át és igazítsd a Firestore szabályokat a fenti viselkedésekhez (törlés csak moderátor; lockolt szálba írás tiltása; report írás auth mögött).
+  Ellenőrizd és egészítsd ki a szükséges összetett indexeket.
+  outputs:
+
+  * firebase.rules
+  * firestore.indexes.json
+  * cloud\_functions/test/forum.rules.test.ts
+
+* name: UX finomítások (idézet kártya, edited flag)
+  description: |
+  Idézetelt posztnál jelenjen meg vizuális kártya, amelyre kattintva az idézett bejegyzésre ugrunk.
+  Ha a poszt szerkesztett (editedAt), jelenjen meg „edited” jelölés.
+  outputs:
+
+  * lib/screens/forum/post\_item.dart
+  * lib/widgets/forum/quoted\_post\_card.dart
+  * test/widgets/forum/quoted\_post\_card\_test.dart
+
+* name: Lokalizáció és dokumentáció frissítése
+  description: |
+  Add hozzá az új HU/EN/DE nyelvi kulcsokat, és frissítsd a fórum modulra vonatkozó dokumentációt.
+  outputs:
+
+  * lib/l10n/intl\_hu.arb
+  * lib/l10n/intl\_en.arb
+  * lib/l10n/intl\_de.arb
+  * docs/features/forum\_module\_moderator\_and\_aggregation\_fixup\_hu.md
+  * docs/features/forum\_module\_moderator\_and\_aggregation\_fixup\_en.md
+
+* name: Pipálható checklist szinkronizálása
+  description: |
+  A fenti lépések elkészültekor pipáld ki a vászon megfelelő tételeit. A Codex csak akkor tekintheti késznek a feladatot, ha minden tétel kipipálva.
+  outputs:
+
+  * canvases/screens/forum\_module\_moderator\_and\_aggregation\_fixup\_2025\_09\_09.md
