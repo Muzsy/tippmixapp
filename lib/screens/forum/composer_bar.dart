@@ -8,12 +8,14 @@ class ComposerBar extends StatelessWidget {
     required this.onSubmit,
     this.enabled = true,
     required this.focusNode,
+    this.disabledMessage,
   });
 
   final TextEditingController controller;
   final Future<void> Function()? onSubmit;
   final bool enabled;
   final FocusNode focusNode;
+  final String? disabledMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,10 @@ class ComposerBar extends StatelessWidget {
               controller: controller,
               enabled: enabled,
               focusNode: focusNode,
-              decoration: InputDecoration(hintText: loc.dialog_comment_title),
+              decoration: InputDecoration(
+                hintText:
+                    enabled ? loc.dialog_comment_title : disabledMessage,
+              ),
             ),
           ),
           IconButton(

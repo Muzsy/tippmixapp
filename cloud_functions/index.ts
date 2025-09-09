@@ -17,6 +17,7 @@ export { backfill_fixture_index } from './backfill_fixture_index';
 export { finalize_publish } from './src/finalize_publish';
 export { force_finalizer } from './src/force_finalizer';
 export { dev_publish_finalize, dev_scheduler_kick } from './src/dev_pubsub_emulator';
+export { onVoteCreate, onVoteDelete } from './src/triggers/forumVotes';
 
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 

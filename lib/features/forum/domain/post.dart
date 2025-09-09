@@ -19,6 +19,7 @@ class Post {
   final String? quotedPostId;
   final DateTime createdAt;
   final DateTime? editedAt;
+  /// Aggregated on server – client treats as read-only.
   final int votesCount;
   final bool isHidden;
 

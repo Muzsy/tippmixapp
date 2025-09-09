@@ -102,7 +102,7 @@ jobs:
       - name: Build
         run: pnpm --filter ./cloud_functions run build
       - name: Run unit tests
-        run: pnpm --filter ./cloud_functions test
+        run: FIREBASE_RULES=../firebase.rules pnpm --filter ./cloud_functions test
 
   firestore_rules:
     name: Firestore rules tests
