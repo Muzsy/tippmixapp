@@ -87,6 +87,10 @@ threads/{threadId}/posts/{postId}
 - Jelentés párbeszédpanel oka (spam, visszaélés, off-topic, egyéb) és opcionális megjegyzés bekérésével
 - Zárolt szál esetén figyelmeztető sáv és letiltott komponáló
 - Végtelen görgetés és lapozás a szál- és posztlistákban duplikációvédelemmel
+- Szál lista elemei megnyitják a ThreadViewScreen-t
+- Posztok szavazatszámot mutatnak, unvote támogatással
+- Új szálaknál mérkőzés típus és fixture hivatkozás választható
+- Idézett posztok tartalma megjelenik
 - Központosított lekérdezésépítő a szűrési/rendezési kombinációkhoz
 - Összetett Firestore indexek a lekérdezésekhez igazítva
 

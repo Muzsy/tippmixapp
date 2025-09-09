@@ -9,10 +9,9 @@ import 'composer_bar.dart';
 import 'post_item.dart';
 
 class ThreadViewScreen extends ConsumerStatefulWidget {
-  const ThreadViewScreen({super.key, required this.threadId, this.locked = false});
+  const ThreadViewScreen({super.key, required this.threadId});
 
   final String threadId;
-  final bool locked;
 
   @override
   ConsumerState<ThreadViewScreen> createState() => _ThreadViewScreenState();
@@ -22,6 +21,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
+  String? _quotedPostId;
 
   @override
   void initState() {
@@ -51,13 +51,23 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         ref.watch(threadDetailControllerProviderFamily(widget.threadId));
     final isLoadingMore =
         ref.watch(threadDetailLoadingProviderFamily(widget.threadId));
+    final threadAsync = ref.watch(threadProviderFamily(widget.threadId));
+    final locked = threadAsync.asData?.value.locked ?? false;
+    final pinned = threadAsync.asData?.value.pinned ?? false;
     return Scaffold(
-      appBar: AppBar(title: Text('Thread')),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const Text('Thread'),
+            if (pinned) const Icon(Icons.push_pin),
+          ],
+        ),
+      ),
       body: Column(
         children: [
-          if (widget.locked)
+          if (locked)
             MaterialBanner(
-              content: Text(loc.forum_thread_locked),
+              content: Text(loc.forum_thread_locked_banner),
               actions: [
                 TextButton(onPressed: () {}, child: Text(loc.ok)),
               ],
@@ -78,10 +88,21 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
                         child: Center(child: CircularProgressIndicator()),
                       );
                     }
+                    final post = posts[index];
+                    Post? quoted;
+                    try {
+                      quoted = posts.firstWhere(
+                        (p) => p.id == post.quotedPostId,
+                      );
+                    } catch (_) {
+                      quoted = null;
+                    }
                     return PostItem(
-                      post: posts[index],
+                      post: post,
+                      quotedPost: quoted,
                       onReply: () {
-                        _textController.text = '@${posts[index].userId} ';
+                        _quotedPostId = post.id;
+                        _textController.text = '@${post.userId} ';
                         _focusNode.requestFocus();
                       },
                     );
@@ -97,11 +118,11 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
       bottomNavigationBar: ComposerBar(
         controller: _textController,
         focusNode: _focusNode,
-        enabled: !widget.locked,
+        enabled: !locked,
         onSubmit: () async {
-          if (widget.locked) {
+          if (locked) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(loc.forum_thread_locked)),
+              SnackBar(content: Text(loc.forum_thread_locked_banner)),
             );
             return;
           }
@@ -115,11 +136,13 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
             type: PostType.comment,
             content: text,
             createdAt: DateTime.now(),
+            quotedPostId: _quotedPostId,
           );
           await ref
               .read(threadDetailControllerProviderFamily(widget.threadId).notifier)
               .addPost(post);
           _textController.clear();
+          _quotedPostId = null;
         },
       ),
     );

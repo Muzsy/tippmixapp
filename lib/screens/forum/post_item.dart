@@ -7,10 +7,16 @@ import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 
 class PostItem extends ConsumerStatefulWidget {
-  const PostItem({super.key, required this.post, this.onReply});
+  const PostItem({
+    super.key,
+    required this.post,
+    this.onReply,
+    this.quotedPost,
+  });
 
   final Post post;
   final VoidCallback? onReply;
+  final Post? quotedPost;
 
   @override
   ConsumerState<PostItem> createState() => _PostItemState();
@@ -19,6 +25,25 @@ class PostItem extends ConsumerStatefulWidget {
 class _PostItemState extends ConsumerState<PostItem> {
   bool _loading = false;
   bool _liked = false;
+  late int _votes;
+
+  @override
+  void initState() {
+    super.initState();
+    _votes = widget.post.votesCount;
+    _initVote();
+  }
+
+  Future<void> _initVote() async {
+    final uid = ref.read(authProvider).user?.id;
+    if (uid != null) {
+      final liked = await ref
+          .read(threadDetailControllerProviderFamily(widget.post.threadId)
+              .notifier)
+          .hasVoted(widget.post.id, uid);
+      if (mounted) setState(() => _liked = liked);
+    }
+  }
 
   Future<void> _showError(BuildContext context) async {
     final loc = AppLocalizations.of(context)!;
@@ -124,8 +149,22 @@ class _PostItemState extends ConsumerState<PostItem> {
     final loc = AppLocalizations.of(context)!;
     final user = ref.watch(authProvider).user;
     final isOwner = user?.id == widget.post.userId;
+    final expired =
+        DateTime.now().difference(widget.post.createdAt).inMinutes > 15;
     return ListTile(
-      title: Text(widget.post.content),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.quotedPost != null)
+            Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(bottom: 4),
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              child: Text(widget.quotedPost!.content),
+            ),
+          Text(widget.post.content),
+        ],
+      ),
       subtitle: Text(widget.post.userId),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -142,6 +181,12 @@ class _PostItemState extends ConsumerState<PostItem> {
               onPressed: _loading
                   ? null
                   : () async {
+                      if (expired) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(loc.error_edit_time_expired)),
+                        );
+                        return;
+                      }
                       final controller =
                           TextEditingController(text: widget.post.content);
                       final result = await showDialog<String>(
@@ -212,16 +257,24 @@ class _PostItemState extends ConsumerState<PostItem> {
                     if (uid != null) {
                       setState(() {
                         _liked = !_liked;
+                        _votes += _liked ? 1 : -1;
                         _loading = true;
                       });
                       try {
-                        await ref
-                            .read(threadDetailControllerProviderFamily(
+                        final controller = ref.read(
+                            threadDetailControllerProviderFamily(
                                     widget.post.threadId)
-                                .notifier)
-                            .voteOnPost(widget.post.id, uid);
+                                .notifier);
+                        if (_liked) {
+                          await controller.voteOnPost(widget.post.id, uid);
+                        } else {
+                          await controller.unvoteOnPost(widget.post.id, uid);
+                        }
                       } catch (_) {
-                        setState(() => _liked = !_liked); // revert
+                        setState(() {
+                          _liked = !_liked;
+                          _votes += _liked ? 1 : -1;
+                        });
                         await _showError(context);
                       } finally {
                         if (mounted) setState(() => _loading = false);
@@ -229,6 +282,7 @@ class _PostItemState extends ConsumerState<PostItem> {
                     }
                   },
           ),
+          Text(loc.vote_count(_votes)),
           IconButton(
             icon: const Icon(Icons.flag),
             tooltip: loc.feed_report,

@@ -87,6 +87,10 @@ threads/{threadId}/posts/{postId}
 - Report dialog collects a reason (spam, abuse, off-topic, other) and optional note
 - Locked thread banner and composer disabled
 - Infinite scroll and pagination for thread lists and posts with duplicate prevention
+- Thread list items navigate to ThreadViewScreen
+- Posts show vote counts with toggle/unvote support
+- New threads can link fixtures via match type selection
+- Quoted posts display referenced content
 - Centralized query builder for filter/sort combinations
 - Composite Firestore indexes aligned with queries
 
