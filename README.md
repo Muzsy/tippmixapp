@@ -1,180 +1,183 @@
-# 🏟️ Tipsterino
+# Supabase CLI
 
-![Coverage](./badges/coverage.svg)
-[![Coverage Status](https://codecov.io/gh/Muzsy/tippmixapp/branch/main/graph/badge.svg)](https://codecov.io/gh/Muzsy/tippmixapp)
-[![Security Rules Coverage](coverage/security_rules_badge.svg)](coverage/security_rules_badge.svg)
-[![CI](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml/badge.svg)](https://github.com/Muzsy/tippmixapp/actions/workflows/ci.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-Tipsterino is a modular Flutter application simulating community-based sports betting with virtual currency (no real gambling).
-It features a virtual coin economy, real-time odds from [API-Football](https://www.api-football.com/), Firebase backend, and a Codex-based development workflow.
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-![Login Screen](docs/images/login_revamp_screenshot_v1.png)
+This repository contains all the functionality for Supabase CLI.
 
----
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-## 🚀 Features
+## Getting started
 
-- **Firebase Authentication** – email/password login and registration
-- **TippCoin economy** – stake, reward, and coin logs (CoinService planned)
-- **Firestore backend** – stores user, tickets, badge, and leaderboard data
-- **API-Football integration** – fetch real-time sports events and odds
-- **Bet slip workflow** – add tips and submit tickets
-- **Gamification** – badges, leaderboard, community feed (planned)
-- **Forum module** – user discussions with threads and replies (planned)
-- **Push notifications** – key event alerts via Firebase Cloud Messaging
-- **GoRouter navigation** and ARB-based localization with enum keys
-- **Theming** – light/dark mode via FlexColorScheme
-- **Widget + golden testing** – CI-enforced quality gates
+### Install the CLI
 
----
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
-## 🧪 Getting Started
+```bash
+npm i supabase --save-dev
+```
 
-1. Install [Flutter](https://docs.flutter.dev/get-started/install) 3.10.0 or later
-2. Run: `flutter pub get`
-3. Create a `.env` file in project root:
+To install the beta release channel:
 
-   ```bash
-   API_FOOTBALL_KEY=your_api_key_here
-   ```
+```bash
+npm i supabase@beta --save-dev
+```
 
-4. Configure Firebase (via `google-services.json`, `GoogleService-Info.plist`)
-5. Run the app:
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-   ```bash
-   flutter run
-   ```
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
 
-6. Run tests:
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-   ```bash
-   flutter test
-   ```
+<details>
+  <summary><b>macOS</b></summary>
 
----
+  Available via [Homebrew](https://brew.sh). To install:
 
-## 📴 Offline quickstart (no cloud)
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-- Prerequisites: Java JRE (Emulator UI), Node 20 (see `.nvmrc`), pnpm (via `packageManager`), Flutter stable.
-- Start emulators + seed:
-  - `bash tools/dev_offline.sh`  (UI: http://localhost:4000)
-- Run the app against emulators:
-  - `flutter run --dart-define=USE_EMULATOR=true`
-- Pub/Sub remark: in developer mode the finalizer runs inline when `USE_INLINE_FINALIZER=true`. Advanced users can switch to a Pub/Sub emulator as documented in `docs/offline/offline_guide_hu_en.md`.
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
 
-See also: `docs/offline/offline_guide_hu_en.md` for the full offline guide.
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
 
----
+<details>
+  <summary><b>Windows</b></summary>
 
-## 🗂️ Repository Structure
+  Available via [Scoop](https://scoop.sh). To install:
 
-| Path           | Contents                                         |
-| -------------- | ------------------------------------------------ |
-| `lib/`         | Application logic: screens, services, providers  |
-| `test/`        | Widget, service, golden, and integration tests   |
-| `docs/`        | Technical documentation in English and Hungarian |
-| `codex_docs/`  | Codex policy files (`*_en.md`, `*_en.yaml`)      |
-| `canvases/`    | AI canvas files describing Codex tasks           |
-| `codex/goals/` | YAML workflows for Codex execution               |
-| `legacy/`      | Deprecated components (e.g. old AppColors class) |
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
 
----
+  To upgrade:
 
-## 📚 Documentation Map
+  ```powershell
+  scoop update supabase
+  ```
+</details>
 
-The following files under `docs/` provide detailed insights into the application design.
-Only the English versions (`*_en.md`) are used by Codex agents.
+<details>
+  <summary><b>Linux</b></summary>
 
-### 🧩 Screen-based Documentation
+  Available via [Homebrew](https://brew.sh) and Linux packages.
 
-- Guidelines: `docs/guidelines/screen_based_doc_system.md`
-- How-to (create a new screen doc): `docs/guidelines/new_screen_howto.md`
-- Screen specs live under: `docs/screens/<screen_name>/screen_spec.md`
-- Templates: `docs/templates/` (`screen_spec_template.md`, `acceptance_template.md`, `test_plan_template.md`)
-- PR rule: any screen change must update its `screen_spec.md` and include initial `qa/acceptance.md` and `qa/test-plan.md` under the screen folder.
+  #### via Homebrew
 
-### 🔨 Backend Logic
+  To install:
 
-- `docs/backend/data_model_en.md`
-- `docs/backend/coin_service_logic_en.md`
-- `docs/backend/security_rules_en.md`
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-### 🎯 Core Features
+  To upgrade:
 
-- `docs/features/leaderboard_logic_en.md`
-- `docs/features/badge_system_en.md`
-- `docs/features/feed_module_plan_en.md`
-- `docs/features/forum_module_plan_en.md`
-- `docs/features/push_notification_strategy_en.md`
+  ```sh
+  brew upgrade supabase
+  ```
 
-### 💡 Frontend Behavior
+  #### via Linux packages
 
-- `docs/frontend/auth_strategy_en.md`
-- `docs/frontend/localization_best_practice_en.md`
-- `docs/frontend/theme_rules_en.md`
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
 
-### 📐 Architecture & QA
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
 
-- `docs/architecture/architecture_overview_en.md`
-- `docs/qa/golden_workflow_en.md`
-- `docs/ci-cd/github_actions_pipeline_en.md`
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
 
-All documentation has a `_hu.md` Hungarian version for human readers.
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
 
----
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
 
-## 🎨 Theming
+<details>
+  <summary><b>Other Platforms</b></summary>
 
-Color and typography styles are defined using `BrandColors` and `FlexColorScheme`.
-Avoid using `AppColors` (legacy) – it lives under `legacy/AppColors.dart` for reference only.
-All widgets must pull theme colors from `Theme.of(context)`.
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
 
----
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
 
-## 🛡️ CI: Firestore Security Rules
+  Add a symlink to the binary in `$PATH` for easier access:
 
-A GitHub Actions workflow runs `scripts/test_firebase_rules.sh` to start the Firebase Emulator
-and execute `test/security_rules.test.mjs`. Results are saved to `security_rules_test.log`
-and uploaded as a `security-rules-log` artifact.
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
 
----
+  This works on other non-standard Linux distros.
+</details>
 
-## 👤 Avatar Assets
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
 
-Place avatar images under `assets/avatar/` manually. Do not commit binary assets to Git.
-Default: `assets/avatar/default_avatar.png` if provided.
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
 
----
+  ```bash
+  pkgx install supabase
+  ```
 
-## ☁️ Infrastructure
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
 
-Terraform includes an optional Slack webhook for alerts. `slack_webhook_url` defaults to an empty string, disabling the notification channel in dev/staging. To enable alerts, pass a non-empty token: `terraform apply -var slack_webhook_url=...`.
+### Run the CLI
 
----
+```bash
+supabase bootstrap
+```
 
-## Firestore Rules – canonical source & deploy order
+Or using npx:
 
-- **Canonical source:** `firebase.rules` at repository root.
-- `cloud_functions/firestore.rules` is not a deploy source (kept only as reference).
-- **Deploy order (GitHub Actions):**
-  1. `rm -rf cloud_functions/lib` (stale build guard)
-  2. `npm ci && npm run build` under `cloud_functions`
-  3. `firebase deploy --only firestore:rules` (from root `firebase.rules`)
-  4. `firebase deploy --only functions`
+```bash
+npx supabase bootstrap
+```
 
-**Note:** the legacy root collection `coin_logs` is **read-only**; clients cannot write there.
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
 
-For Codex configuration, see: [`AGENTS.md`](./AGENTS.md)
+## Docs
 
----
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
 
-## 📴 Offline Playbook
+## Breaking changes
 
-- Env: export `USE_EMULATOR=true USE_MOCK_SCORES=true USE_INLINE_FINALIZER=true API_FOOTBALL_KEY=dummy`
-- Start emulators: `pnpm run emu:start` (UI: http://localhost:4000)
-- Seed data: `pnpm run seed` and `pnpm run auth:seed`
-- Full offline flow: `pnpm run dev:offline:full`
-- Flutter run: `flutter run --dart-define=USE_EMULATOR=true`
-- Reset/export: `pnpm run emu:reset` / `pnpm run emu:export`
-- Tooling: enable Corepack and pnpm (10.15.1): `corepack enable && corepack prepare pnpm@10.15.1 --activate`
-- Troubleshooting: Android cleartext enabled; Functions logs in Emulator UI; Auth REST users via `tools/create_test_users.sh`.
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
+```

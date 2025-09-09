@@ -1,0 +1,108 @@
+# codex/goals/fill\_canvas\_supabase\_migration.yaml — FRISSÍTETT VÁLTOZAT (2025-09-10)
+
+```yaml
+# Cél: Firebase → Supabase kódoldali átállás végrehajtása. A manuális előkészítés KÉSZ (projekt: tipsterino, URL/ANON kulcsok az .env-ben, CLI login/init/start, Auth email+jelszó megerősítéssel).
+# Szabályrendszer: Codex Canvas Yaml Guide.pdf — kötelező séma: steps: name, description, outputs, opcionálisan inputs. Magyar nyelv, konkrétumok.
+
+steps:
+  - name: Függőségek frissítése (Firebase kivezetés, Supabase bevezetés)
+    description: |
+      Távolítsd el a Firebase csomagokat a pubspec.yaml-ből (firebase_core, cloud_firestore, firebase_auth, firebase_storage, firebase_functions, firebase_remote_config, stb.).
+      Add hozzá a supabase csomagokat: supabase_flutter, gotrue, postgrest, realtime, storage, edge-functions kliens (amennyiben szükséges). Futtasd a "flutter pub get"-et.
+    outputs:
+      - módosított fájl: pubspec.yaml
+      - parancs: flutter pub get
+
+  - name: Alkalmazás inicializálásának átírása Supabase-re
+    description: |
+      A lib/bootstrap.dart fájlban vezesd ki a Firebase inicializációt és készíts Supabase.init hívást, amely a .env-ből olvassa a SUPABASE_URL és SUPABASE_ANON_KEY értékeket.
+      Gondoskodj a hibakezelésről és a hidegindítási Splash/Loading állapotról.
+    outputs:
+      - módosított fájl: lib/bootstrap.dart
+      - új util: lib/env/env.dart (.env kulcsok beolvasására, ha még nincs)
+
+  - name: Auth réteg csere (email+jelszó, email megerősítés támogatás)
+    description: |
+      Írd át az auth szolgáltatásokat a supabase_flutter.auth API-kra (signUp, signInWithPassword, signOut, onAuthStateChange).
+      Kezeld az email megerősítés állapotát, és töltsd be a hozzá tartozó profile rekordot a profiles táblából.
+    outputs:
+      - módosított fájlok: lib/services/auth_service.dart, lib/controllers/splash_controller.dart, lib/screens/register_*.dart, lib/screens/login_*.dart
+
+  - name: Postgres sémamigrációk létrehozása (tables + RLS)
+    description: |
+      Hozz létre SQL migrációkat a megadott táblákra: profiles, forum_threads, forum_posts, votes, tickets, ticket_items, coins_ledger.
+      Készíts RLS policy-kat: publikus olvasás a fórum táblákra, írás csak bejelentkezett felhasználónak; tickets/ledger csak tulaj láthatja/írhatja (ledger írás csak szerver/edge role).
+      A votes változás frissítse a forum_posts.votes_count mezőt (trigger + function).
+    outputs:
+      - új fájlok: supabase/migrations/*_init_schema.sql, supabase/migrations/*_rls_policies.sql, supabase/migrations/*_votes_trigger.sql
+      - parancs: supabase db push
+
+  - name: Fórum repository átírása PostgREST + Realtime használatára
+    description: |
+      Cseréld a Firestore alapú repository-t egy Supabase/PostgREST alapú implementációra.
+      Real-time előfizetés thread_id szerint a forum_posts táblára.
+    outputs:
+      - új fájl: lib/features/forum/data/supabase_forum_repository.dart
+      - módosított fájlok: lib/features/forum/** (providerek, use case-ek, DI)
+
+  - name: Ticket és TicketItem szolgáltatások átállítása PostgREST-re
+    description: |
+      A lib/services/bet_slip_service.dart és lib/services/ticket_service.dart kódot írd át a tickets és ticket_items táblák használatára.
+      Készíts beillesztési/lekérdezési metódusokat és állapotváltást (status mező) a finalizer integrációhoz.
+    outputs:
+      - módosított fájlok: lib/services/bet_slip_service.dart, lib/services/ticket_service.dart
+
+  - name: Storage — avatars bucket és aláírt URL-ek
+    description: |
+      Hozz létre egy avatars bucketet. A kliensoldalon írás csak saját könyvtárba (avatars/{user_id}/…).
+      Olvasáskor generálj signed URL-t. Frissítsd a storage service réteget.
+    outputs:
+      - SQL/CLI: avatars bucket létrehozva
+      - módosított fájl: lib/services/storage_service.dart
+
+  - name: Edge Functions — coin_trx, claim_daily_bonus, reserve_nickname
+    description: |
+      Portold a Cloud Functions logikát Deno alapú Edge Functions-re.
+      Készíts HTTP endpointokat JWT ellenőrzéssel (service role helyett preferált: verifyJWT + RLS-kompatibilis hívások).
+      Gondoskodj idempotenciáról a coins_ledger könyvelésnél.
+    outputs:
+      - új könyvtárak: supabase/functions/coin_trx, supabase/functions/claim_daily_bonus, supabase/functions/reserve_nickname
+      - parancs: supabase functions deploy <name>
+
+  - name: Ütemezések (CRON) beállítása
+    description: |
+      Állíts be időzítéseket a match_finalizer és tickets_payout futtatására 5–10 percenként.
+      Dokumentáld a CRON szabályokat és a hívott endpointokat.
+    outputs:
+      - beállított CRON szabályok: supabase/config.toml vagy SQL pg_cron
+      - dokumentáció: /docs/infra/cron.md
+
+  - name: CI/CD frissítése Supabase deploy-ra
+    description: |
+      Egészítsd ki a GitHub Actions workflow-t: supabase db push és supabase functions deploy lépések.
+      Add hozzá a szükséges secreteket: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY.
+    outputs:
+      - módosított fájl: .github/workflows/ci.yaml (vagy meglévő workflow frissítve)
+
+  - name: Remote Config kivezetése és helyettesítése
+    description: |
+      Távolítsd el a Firebase Remote Config használatát. Hozz létre egy config táblát, vagy használj build-time env megoldást.
+      Frissítsd az experiment/feature-flag logikát.
+    outputs:
+      - módosított fájlok: lib/services/experiment_service.dart, kapcsolódó hívások
+      - új SQL: supabase/migrations/*_config_table.sql (ha szükséges)
+
+  - name: Integrációs és RLS negatív tesztek
+    description: |
+      Írj/futtass unit és widget teszteket az új rétegekhez. Készíts RLS negatív teszteket (más user adatához ne férjen hozzá), és moderátor pozitív esetet.
+    outputs:
+      - tesztfájlok frissítve a test/ alatt
+      - parancsok: flutter analyze; flutter test
+
+  - name: Eltakarítás és dokumentáció frissítése
+    description: |
+      Távolíts el minden megmaradt Firebase utilt és GCP deploy fájlt. Frissítsd a /docs és /codex_docs releváns részeit (architekt/infra, routing_integrity, testing_guidelines, localization_logic).
+    outputs:
+      - törölt fájlok listája (Firebase/GCP maradványok)
+      - frissített dokumentációs fájlok: /docs/**, /codex_docs/**
+```
