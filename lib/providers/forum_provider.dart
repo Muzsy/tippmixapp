@@ -9,6 +9,7 @@ import '../features/forum/providers/thread_list_controller.dart';
 import '../features/forum/providers/composer_controller.dart';
 import '../features/forum/providers/thread_detail_controller.dart';
 import '../features/forum/domain/post.dart';
+import '../features/forum/domain/thread.dart';
 
 /// Provides the [ForumRepository] implementation.
 final forumRepositoryProvider = Provider<ForumRepository>(
@@ -55,4 +56,10 @@ final threadDetailLoadingProviderFamily = Provider.family<bool, String>(
   (ref, threadId) =>
       ref.watch(threadDetailControllerProviderFamily(threadId).notifier)
           .isLoadingMore,
+);
+
+/// Provides a single thread stream by id.
+final threadProviderFamily = StreamProvider.family<Thread, String>(
+  (ref, threadId) =>
+      ref.watch(forumRepositoryProvider).watchThread(threadId),
 );

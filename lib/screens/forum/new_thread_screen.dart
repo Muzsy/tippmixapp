@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/forum/domain/post.dart';
 import '../../features/forum/domain/thread.dart';
+import '../../features/forum/services/market_snapshot_adapter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/forum_provider.dart';
@@ -21,9 +22,13 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleCtrl = TextEditingController();
   final _contentCtrl = TextEditingController();
+  final _fixtureCtrl = TextEditingController();
+  ThreadType _type = ThreadType.general;
 
   bool get _isValid =>
-      _titleCtrl.text.trim().isNotEmpty && _contentCtrl.text.trim().isNotEmpty;
+      _titleCtrl.text.trim().isNotEmpty &&
+      _contentCtrl.text.trim().isNotEmpty &&
+      (_type != ThreadType.match || _fixtureCtrl.text.trim().isNotEmpty);
 
   @override
   void initState() {
@@ -38,6 +43,7 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
   void dispose() {
     _titleCtrl.dispose();
     _contentCtrl.dispose();
+    _fixtureCtrl.dispose();
     super.dispose();
   }
 
@@ -48,10 +54,15 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
     final user = ref.read(authProvider).user;
     if (user == null) return; // requires authentication
     final id = DateTime.now().millisecondsSinceEpoch.toString();
+    if (_type == ThreadType.match) {
+      final adapter = MarketSnapshotAdapter();
+      await adapter.getSnapshot(int.parse(_fixtureCtrl.text.trim()));
+    }
     final thread = Thread(
       id: id,
       title: _titleCtrl.text.trim(),
-      type: ThreadType.general,
+      type: _type,
+      fixtureId: _type == ThreadType.match ? _fixtureCtrl.text.trim() : null,
       createdBy: user.id, // uses auth uid per rules
       createdAt: DateTime.now(),
       lastActivityAt: DateTime.now(),
@@ -92,6 +103,30 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
+              DropdownButtonFormField<ThreadType>(
+                value: _type,
+                decoration: InputDecoration(labelText: loc.thread_type),
+                items: [
+                  DropdownMenuItem(
+                    value: ThreadType.general,
+                    child: Text(loc.thread_type_general),
+                  ),
+                  DropdownMenuItem(
+                    value: ThreadType.match,
+                    child: Text(loc.thread_type_match),
+                  ),
+                ],
+                onChanged: (v) => setState(() => _type = v ?? ThreadType.general),
+              ),
+              if (_type == ThreadType.match)
+                TextFormField(
+                  key: const Key('fixture'),
+                  controller: _fixtureCtrl,
+                  decoration: InputDecoration(labelText: loc.fixture_id_label),
+                  validator: (v) =>
+                      v!.trim().isEmpty ? loc.field_required : null,
+                ),
+              const SizedBox(height: 8),
               TextFormField(
                 key: const Key('title'),
                 controller: _titleCtrl,
@@ -99,7 +134,6 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
                 validator: (v) =>
                     v!.trim().isEmpty ? loc.field_required : null,
               ),
-              const SizedBox(height: 8),
               TextFormField(
                 key: const Key('content'),
                 controller: _contentCtrl,

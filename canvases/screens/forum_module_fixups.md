@@ -83,18 +83,18 @@ This canvas documents the missing and incomplete parts that must be finished to 
 
 ✅ **Checklist**
 
-* [ ] Forum list items currently do not open thread detail view (`ThreadViewScreen`).
-* [ ] `ThreadViewScreen` always assumes unlocked threads; composer is active even for locked ones.
-* [ ] Two divergent rulesets exist: `firebase.rules` and `cloud_functions/firestore.rules`.
-* [ ] No initial state query for a user’s vote.
-* [ ] No unvote/removal option.
-* [ ] Votes count not surfaced in UI.
-* [ ] New thread form only supports `general` type.
-* [ ] No match/fixture integration; `MarketSnapshotAdapter` unused.
-* [ ] UI allows edit icon beyond 15 minutes; Firestore rule rejects, but UI lacks feedback.
-* [ ] Model has `quotedPostId` but UI only inserts `@username`.
-* [ ] Implemented against `/reports` root collection.
-* [ ] Inconsistent with the alternative rules file (subcollections).
-* [ ] No “Thread locked” banner.
-* [ ] No clear pinned marker in `ThreadView`.
+* [x] Forum list items currently do not open thread detail view (`ThreadViewScreen`).
+* [x] `ThreadViewScreen` always assumes unlocked threads; composer is active even for locked ones.
+* [x] Two divergent rulesets exist: `firebase.rules` and `cloud_functions/firestore.rules`.
+* [x] No initial state query for a user’s vote.
+* [x] No unvote/removal option.
+* [x] Votes count not surfaced in UI.
+* [x] New thread form only supports `general` type.
+* [x] No match/fixture integration; `MarketSnapshotAdapter` unused.
+* [x] UI allows edit icon beyond 15 minutes; Firestore rule rejects, but UI lacks feedback.
+* [x] Model has `quotedPostId` but UI only inserts `@username`.
+* [x] Implemented against `/reports` root collection.
+* [x] Inconsistent with the alternative rules file (subcollections).
+* [x] No “Thread locked” banner.
+* [x] No clear pinned marker in `ThreadView`.
 * [ ] No admin UI for pinning/locking threads.

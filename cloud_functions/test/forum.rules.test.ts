@@ -7,7 +7,7 @@ let testEnv: any;
 beforeAll(async () => {
   testEnv = await initializeTestEnvironment({
     projectId: 'forum-rules-test',
-    firestore: { rules: readFileSync('firestore.rules', 'utf8') },
+    firestore: { rules: readFileSync('../firebase.rules', 'utf8') },
   });
 });
 

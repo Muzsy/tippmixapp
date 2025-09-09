@@ -118,6 +118,10 @@ class _ForumScreenState extends ConsumerState<ForumScreen> {
                       leading:
                           thread.pinned ? const Icon(Icons.push_pin) : null,
                       trailing: thread.locked ? const Icon(Icons.lock) : null,
+                      onTap: () => context.pushNamed(
+                        AppRoute.threadView.name,
+                        pathParameters: {'threadId': thread.id},
+                      ),
                     );
                   },
                 );

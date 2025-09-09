@@ -23,6 +23,8 @@ abstract class ForumRepository {
     DateTime? startAfter,
   });
 
+  Stream<Thread> watchThread(String threadId);
+
   Future<void> addThread(Thread thread);
 
   Future<void> updateThread(String threadId, Map<String, dynamic> data);
@@ -43,6 +45,10 @@ abstract class ForumRepository {
   });
 
   Future<void> voteOnPost({required String postId, required String userId});
+
+  Future<void> unvoteOnPost({required String postId, required String userId});
+
+  Future<bool> hasVoted({required String postId, required String userId});
 
   Future<void> reportPost(Report report);
 }

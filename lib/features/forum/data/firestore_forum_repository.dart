@@ -77,6 +77,13 @@ class FirestoreForumRepository implements ForumRepository {
   }
 
   @override
+  Stream<Thread> watchThread(String threadId) {
+    return _threadsCol.doc(threadId).snapshots().map(
+          (d) => Thread.fromJson(d.id, d.data()!),
+        );
+  }
+
+  @override
   Future<void> addThread(Thread thread) async {
     // createdBy must equal auth.uid per security rules
     await _threadsCol.doc(thread.id).set(thread.toJson());
@@ -166,6 +173,25 @@ class FirestoreForumRepository implements ForumRepository {
       createdAt: DateTime.now(),
     );
     await _firestore.collection('votes').doc(vote.id).set(vote.toJson());
+  }
+
+  @override
+  Future<void> unvoteOnPost({
+    required String postId,
+    required String userId,
+  }) async {
+    final voteId = '${postId}_$userId';
+    await _firestore.collection('votes').doc(voteId).delete();
+  }
+
+  @override
+  Future<bool> hasVoted({
+    required String postId,
+    required String userId,
+  }) async {
+    final voteId = '${postId}_$userId';
+    final doc = await _firestore.collection('votes').doc(voteId).get();
+    return doc.exists;
   }
 
   @override
