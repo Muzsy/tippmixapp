@@ -73,7 +73,7 @@ class _PostItemState extends ConsumerState<PostItem> {
           mainAxisSize: MainAxisSize.min,
           children: [
               DropdownButtonFormField<String>(
-                initialValue: reason,
+                value: reason,
                 decoration:
                     InputDecoration(labelText: loc.report_reason_label),
               items: [

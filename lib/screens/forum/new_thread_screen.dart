@@ -104,7 +104,7 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
           child: Column(
             children: [
               DropdownButtonFormField<ThreadType>(
-                initialValue: _type,
+                value: _type,
                 decoration: InputDecoration(labelText: loc.thread_type),
                 items: [
                   DropdownMenuItem(
