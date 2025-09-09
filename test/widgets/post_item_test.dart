@@ -13,6 +13,7 @@ import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
+import 'package:tipsterino/l10n/app_localizations.dart';
 
 import 'package:tipsterino/services/auth_service.dart';
 class _StubAuthService implements AuthService {
@@ -125,14 +126,18 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [
         authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
-        authProvider.overrideWith((ref) => FakeAuthNotifier(user)),
         threadDetailControllerProviderFamily('t1')
             .overrideWith((ref) => ThreadDetailController(repo, 't1')),
       ],
-      child: MaterialApp(home: PostItem(post: post)),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: PostItem(post: post)),
+      ),
     ));
 
-    await tester.tap(find.byIcon(Icons.thumb_up));
+    // Tap the like button by its localized tooltip to avoid icon-set differences.
+    await tester.tap(find.byTooltip('Like'));
     await tester.pump();
 
     expect(repo.voteCalled, true);

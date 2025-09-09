@@ -143,9 +143,13 @@ class FirestoreForumRepository implements ForumRepository {
         .orderBy('createdAt', descending: true)
         .limit(1)
         .get();
-    final lastActivity =
+    final lastActivityTs =
         latest.docs.isNotEmpty ? latest.docs.first['createdAt'] as Timestamp : createdAt;
-    await threadRef.update({'lastActivityAt': lastActivity});
+    // Normalize to millisecond precision to avoid flaky equality in tests
+    final normalized = DateTime.fromMillisecondsSinceEpoch(
+      lastActivityTs.toDate().millisecondsSinceEpoch,
+    );
+    await threadRef.update({'lastActivityAt': Timestamp.fromDate(normalized)});
   }
 
   @override

@@ -148,7 +148,9 @@ void main() {
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: PostItem(post: post, onReply: () => replied = true),
+          home: Scaffold(
+            body: PostItem(post: post, onReply: () => replied = true),
+          ),
         ),
       ),
     );
@@ -173,6 +175,9 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.flag));
     await tester.pumpAndSettle();
+    // Confirm report dialog
+    await tester.tap(find.text('Send'));
+    await tester.pumpAndSettle();
     expect(controller.reportCalled, isTrue);
   });
 
@@ -190,7 +195,7 @@ void main() {
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: PostItem(post: post),
+          home: Scaffold(body: PostItem(post: post)),
         ),
       ),
     );

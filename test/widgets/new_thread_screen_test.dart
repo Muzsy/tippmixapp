@@ -140,7 +140,7 @@ void main() {
 
   testWidgets('creates thread when valid', (tester) async {
     final composer = _FakeComposer();
-    await tester.pumpWidget(_buildApp(composer));
+    await tester.pumpWidget(_buildRouterApp(composer));
     await tester.enterText(find.byKey(const Key('title')), 'Hello');
     await tester.enterText(find.byKey(const Key('content')), 'First post');
     await tester.pump();

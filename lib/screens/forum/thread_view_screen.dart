@@ -58,7 +58,9 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
           if (widget.locked)
             MaterialBanner(
               content: Text(loc.forum_thread_locked),
-              actions: const [],
+              actions: [
+                TextButton(onPressed: () {}, child: Text(loc.ok)),
+              ],
             ),
           Expanded(
             child: postsAsync.when(

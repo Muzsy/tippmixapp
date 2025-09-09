@@ -10,6 +10,11 @@ import 'package:tipsterino/features/forum/providers/thread_list_controller.dart'
 class _MockRepo extends Mock implements ForumRepository {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(ForumFilter.all);
+    registerFallbackValue(ForumSort.latest);
+    registerFallbackValue(DateTime.fromMillisecondsSinceEpoch(0));
+  });
   test('merges pages without duplicates', () async {
     final repo = _MockRepo();
     final t1 = Thread(

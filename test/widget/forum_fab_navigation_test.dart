@@ -9,6 +9,7 @@ import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/composer_controller.dart';
 import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
+import 'package:tipsterino/features/forum/providers/thread_list_controller.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/models/user.dart';
@@ -95,6 +96,9 @@ void main() {
         overrides: [
           composerControllerProvider.overrideWith((ref) => _FakeComposer()),
           authProvider.overrideWith((ref) => _FakeAuthNotifier()),
+          threadListControllerProvider.overrideWith(
+            (ref) => ThreadListController(_FakeRepo(), const ForumFilterState()),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: router,

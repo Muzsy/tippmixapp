@@ -1,0 +1,123 @@
+steps:
+
+* name: Add navigation from Forum list to ThreadView
+  description: >
+  Implement onTap handler in ForumScreen ListTile to navigate to ThreadViewScreen,
+  passing threadId via AppRoute.threadView. On completion: tick the corresponding
+  checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/forum\_screen.dart
+  * lib/router.dart
+
+* name: Load thread metadata in ThreadView
+  description: >
+  Fetch thread by threadId in ThreadViewScreen, bind locked/pinned flags.
+  Disable composer if locked and display a "Thread is locked" banner.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/thread\_view\_screen.dart
+  * lib/providers/forum\_provider.dart
+
+* name: Consolidate Firestore rules
+  description: >
+  Remove duplication between firebase.rules and cloud\_functions/firestore.rules.
+  Keep firebase.rules as source of truth; update or delete alternative.
+  Align rule tests accordingly. On completion: tick the corresponding checklist
+  item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * firebase.rules
+  * cloud\_functions/firestore.rules
+  * test/firebase/forum\_rules\_test.dart
+  * cloud\_functions/test/forum.rules.test.ts
+
+* name: Implement vote state and unvote
+  description: >
+  Extend repository to query initial vote state for current user.
+  Support unvote (delete vote doc). Update UI to reflect state and display votesCount.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/features/forum/data/forum\_repository.dart
+  * lib/screens/forum/post\_item.dart
+
+* name: Support match type thread creation
+  description: >
+  Update NewThreadScreen with thread type selector (general/match).
+  If match selected, allow linking a fixture using MarketSnapshotAdapter.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/new\_thread\_screen.dart
+  * lib/features/forum/domain/thread.dart
+
+* name: Respect edit time window in UI
+  description: >
+  Hide or disable edit button after 15 minutes since createdAt.
+  Show error message if edit attempted beyond window. On completion: tick the
+  corresponding checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/post\_item.dart
+
+* name: Implement quoting
+  description: >
+  Extend reply action to include quotedPostId field.
+  Display quoted content in PostItem if present. On completion: tick the
+  corresponding checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/post\_item.dart
+  * lib/features/forum/domain/post.dart
+
+* name: Adjust report handling
+  description: >
+  Verify consistency: keep reports in root collection.
+  Remove or update code/tests that expect subcollection. On completion: tick the
+  corresponding checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/features/forum/data/forum\_repository.dart
+  * firebase.rules
+
+* name: UI improvements
+  description: >
+  Add "Thread locked" banner to ThreadView.
+  Add clear pinned marker in ThreadView. On completion: tick the corresponding
+  checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/screens/forum/thread\_view\_screen.dart
+
+* name: Extend tests
+  description: >
+  Add widget and integration tests for:
+  \- Thread list navigation
+  \- Locked composer behavior
+  \- Voting toggle/unvote
+  \- Match thread creation
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * test/widgets/forum\_navigation\_test.dart
+  * test/widgets/forum\_locked\_test.dart
+  * test/widgets/forum\_vote\_test.dart
+  * test/widgets/forum\_match\_thread\_test.dart
+
+* name: Update localization keys
+  description: >
+  Add new keys: forum\_thread\_locked\_banner, vote\_count, thread\_type\_match,
+  error\_edit\_time\_expired in HU/EN/DE arb files and enum. On completion: tick the
+  corresponding checklist item in canvas "Forum Module – Fixups and Completion Tasks (Checklist)".
+  outputs:
+
+  * lib/l10n/intl\_en.arb
+  * lib/l10n/intl\_hu.arb
+  * lib/l10n/intl\_de.arb
+  * lib/l10n/app\_localizations\_key.dart

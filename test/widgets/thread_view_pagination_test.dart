@@ -10,6 +10,10 @@ import 'package:tipsterino/features/forum/providers/thread_detail_controller.dar
 import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
+import 'package:tipsterino/models/auth_state.dart';
+import 'package:tipsterino/models/user.dart';
+import 'package:tipsterino/providers/auth_provider.dart';
+import '../mocks/mock_auth_service.dart';
 import 'package:tipsterino/screens/forum/thread_view_screen.dart';
 
 class _LoadMoreDetailController extends ThreadDetailController {
@@ -63,6 +67,12 @@ class _FakeRepo implements ForumRepository {
   Future<void> reportPost(Report report) async {}
 }
 
+class _FakeAuthNotifier extends AuthNotifier {
+  _FakeAuthNotifier() : super(MockAuthService()) {
+    state = AuthState(user: User(id: 'u1', email: '', displayName: ''));
+  }
+}
+
 void main() {
   testWidgets('scrolling loads more posts', (tester) async {
     final posts = List.generate(
@@ -83,6 +93,7 @@ void main() {
           threadDetailControllerProviderFamily('t1').overrideWith(
             (ref) => controller,
           ),
+          authProvider.overrideWith((ref) => _FakeAuthNotifier()),
         ],
         child: MaterialApp(
           home: const ThreadViewScreen(threadId: 't1'),
@@ -92,7 +103,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    // Scroll far enough towards the end to trigger the threshold
+    await tester.drag(find.byType(ListView), const Offset(0, -3000));
     await tester.pump();
     expect(controller.called, isTrue);
   });

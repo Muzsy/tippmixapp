@@ -50,7 +50,7 @@ void main() {
       createdAt: DateTime.now(),
     );
     final future = controller.createThread(thread, post);
-    expect(controller.state, const AsyncLoading());
+    expect(controller.state, const AsyncLoading<void>());
     await future;
     expect(controller.state, const AsyncData<void>(null));
     verify(() => repo.addThread(thread)).called(1);

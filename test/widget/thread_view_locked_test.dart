@@ -98,12 +98,18 @@ void main() {
   });
 
   testWidgets('composer enabled when unlocked', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: const ThreadViewScreen(threadId: 't1'),
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        threadDetailControllerProviderFamily('t1')
+            .overrideWith((ref) => _FakeController()),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const ThreadViewScreen(threadId: 't1'),
+      ),
     ));
-    final sendButton = find.byIcon(Icons.send);
+    final sendButton = find.widgetWithIcon(IconButton, Icons.send);
     expect(tester.widget<IconButton>(sendButton).onPressed, isNotNull);
     expect(find.text('Thread is locked'), findsNothing);
   });

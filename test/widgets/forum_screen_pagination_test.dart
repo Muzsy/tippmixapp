@@ -90,7 +90,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    // Scroll near the end to trigger the listener threshold
+    final listFinder = find.byType(ListView);
+    await tester.dragUntilVisible(
+      find.text('T29'),
+      listFinder,
+      const Offset(0, -300),
+    );
     await tester.pump();
     expect(controller.called, isTrue);
   });
