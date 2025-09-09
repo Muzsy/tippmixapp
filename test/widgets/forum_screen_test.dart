@@ -25,11 +25,11 @@ Widget _buildApp(AsyncValue<List<Thread>> state) {
         (ref) => _FakeThreadListController(state),
       ),
     ],
-    child: MaterialApp(
-      home: const ForumScreen(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-    ),
+      child: const MaterialApp(
+        home: ForumScreen(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
   );
 }
 

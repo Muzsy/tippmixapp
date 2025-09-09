@@ -65,17 +65,17 @@ class _PostItemState extends ConsumerState<PostItem> {
     if (user == null) return;
     String reason = 'spam';
     final noteController = TextEditingController();
-    final result = await showDialog<(String, String?)>(
-      context: context,
-      builder: (context) => AlertDialog(
+      final result = await showDialog<(String, String?)>(
+        context: context,
+        builder: (context) => AlertDialog(
         title: Text(loc.report_dialog_title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButtonFormField<String>(
-              value: reason,
-              decoration:
-                  InputDecoration(labelText: loc.report_reason_label),
+              DropdownButtonFormField<String>(
+                initialValue: reason,
+                decoration:
+                    InputDecoration(labelText: loc.report_reason_label),
               items: [
                 DropdownMenuItem(
                   value: 'spam',
@@ -122,34 +122,34 @@ class _PostItemState extends ConsumerState<PostItem> {
         ],
       ),
     );
-    if (result != null) {
-      final report = Report(
-        id: '',
-        entityType: ReportEntityType.post,
-        entityId: widget.post.id,
-        reporterId: user.id, // reporterId must equal auth.uid
-        reason: result.$1,
-        message: result.$2,
-        createdAt: DateTime.now(),
-      );
-      setState(() => _loading = true);
-      try {
-        await ref
-            .read(
-                threadDetailControllerProviderFamily(widget.post.threadId)
-                    .notifier)
-            .reportPost(report);
-        if (mounted) {
+      if (result != null) {
+        final report = Report(
+          id: '',
+          entityType: ReportEntityType.post,
+          entityId: widget.post.id,
+          reporterId: user.id, // reporterId must equal auth.uid
+          reason: result.$1,
+          message: result.$2,
+          createdAt: DateTime.now(),
+        );
+        setState(() => _loading = true);
+        try {
+          await ref
+              .read(
+                  threadDetailControllerProviderFamily(widget.post.threadId)
+                      .notifier)
+              .reportPost(report);
+          if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(loc.feed_report_success)),
           );
+        } catch (_) {
+          if (!context.mounted) return;
+          await _showError(context);
+        } finally {
+          if (context.mounted) setState(() => _loading = false);
         }
-      } catch (_) {
-        await _showError(context);
-      } finally {
-        if (mounted) setState(() => _loading = false);
       }
-    }
   }
 
   @override
@@ -164,12 +164,13 @@ class _PostItemState extends ConsumerState<PostItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.quotedPost != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(bottom: 4),
-              color: Theme.of(context).colorScheme.surfaceVariant,
-              child: Text(widget.quotedPost!.content),
-            ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(bottom: 4),
+                color:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Text(widget.quotedPost!.content),
+              ),
           Text(widget.post.content),
         ],
       ),
@@ -215,20 +216,21 @@ class _PostItemState extends ConsumerState<PostItem> {
                           ],
                         ),
                       );
-                      if (result != null && result.isNotEmpty) {
-                        setState(() => _loading = true);
-                        try {
-                          await ref
-                              .read(threadDetailControllerProviderFamily(
-                                      widget.post.threadId)
-                                  .notifier)
-                              .updatePost(widget.post.id, result);
-                        } catch (_) {
-                          await _showError(context);
-                        } finally {
-                          if (mounted) setState(() => _loading = false);
+                        if (result != null && result.isNotEmpty) {
+                          setState(() => _loading = true);
+                          try {
+                            await ref
+                                .read(threadDetailControllerProviderFamily(
+                                        widget.post.threadId)
+                                    .notifier)
+                                .updatePost(widget.post.id, result);
+                          } catch (_) {
+                            if (!context.mounted) return;
+                            await _showError(context);
+                          } finally {
+                            if (context.mounted) setState(() => _loading = false);
+                          }
                         }
-                      }
                     },
             ),
           if (isOwner)
@@ -238,18 +240,19 @@ class _PostItemState extends ConsumerState<PostItem> {
               onPressed: _loading
                   ? null
                   : () async {
-                      setState(() => _loading = true);
-                      try {
-                        await ref
-                            .read(threadDetailControllerProviderFamily(
-                                    widget.post.threadId)
-                                .notifier)
-                            .deletePost(widget.post.id);
-                      } catch (_) {
-                        await _showError(context);
-                      } finally {
-                        if (mounted) setState(() => _loading = false);
-                      }
+                        setState(() => _loading = true);
+                        try {
+                          await ref
+                              .read(threadDetailControllerProviderFamily(
+                                      widget.post.threadId)
+                                  .notifier)
+                              .deletePost(widget.post.id);
+                        } catch (_) {
+                          if (!context.mounted) return;
+                          await _showError(context);
+                        } finally {
+                          if (context.mounted) setState(() => _loading = false);
+                        }
                     },
             ),
           IconButton(
@@ -268,29 +271,30 @@ class _PostItemState extends ConsumerState<PostItem> {
                         _votes += _liked ? 1 : -1;
                         _loading = true;
                       });
-                      try {
-                        final controller = ref.read(
-                            threadDetailControllerProviderFamily(
-                                    widget.post.threadId)
-                                .notifier);
-                        if (_liked) {
-                          await controller.voteOnPost(widget.post.id, uid);
-                        } else {
-                          await controller.unvoteOnPost(widget.post.id, uid);
+                        try {
+                          final controller = ref.read(
+                              threadDetailControllerProviderFamily(
+                                      widget.post.threadId)
+                                  .notifier);
+                          if (_liked) {
+                            await controller.voteOnPost(widget.post.id, uid);
+                          } else {
+                            await controller.unvoteOnPost(widget.post.id, uid);
+                          }
+                        } catch (_) {
+                          setState(() {
+                            _liked = !_liked;
+                            _votes += _liked ? 1 : -1;
+                          });
+                          if (!context.mounted) return;
+                          await _showError(context);
+                        } finally {
+                          if (context.mounted) setState(() => _loading = false);
                         }
-                      } catch (_) {
-                        setState(() {
-                          _liked = !_liked;
-                          _votes += _liked ? 1 : -1;
-                        });
-                        await _showError(context);
-                      } finally {
-                        if (mounted) setState(() => _loading = false);
-                      }
                     }
                   },
           ),
-          Text(loc.vote_count(_votes)),
+            Text(loc.vote_count(_votes)),
           IconButton(
             icon: const Icon(Icons.flag),
             tooltip: loc.feed_report,

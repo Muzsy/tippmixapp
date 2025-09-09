@@ -32,11 +32,11 @@ void main() {
         composerControllerProvider.overrideWith((ref) => composer),
         authProvider.overrideWith((ref) => _Auth()),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const NewThreadScreen(),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: NewThreadScreen(),
+        ),
     ));
     await tester.tap(find.byType(DropdownButtonFormField<ThreadType>));
     await tester.pumpAndSettle();

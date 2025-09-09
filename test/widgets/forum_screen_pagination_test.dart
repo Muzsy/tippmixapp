@@ -44,11 +44,11 @@ void main() {
         overrides: [
           threadListControllerProvider.overrideWith((ref) => controller),
         ],
-        child: MaterialApp(
-          home: const ForumScreen(),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-        ),
+          child: const MaterialApp(
+            home: ForumScreen(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
       ),
     );
     await tester.pumpAndSettle();

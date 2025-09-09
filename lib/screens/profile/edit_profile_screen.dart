@@ -157,10 +157,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               maxLength: 160,
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _team,
-              decoration: InputDecoration(labelText: loc.team_hint),
-              items: const [
+              DropdownButtonFormField<String>(
+                initialValue: _team,
+                decoration: InputDecoration(labelText: loc.team_hint),
+                items: const [
                 DropdownMenuItem(value: 'teamA', child: Text('Team A')),
                 DropdownMenuItem(value: 'teamB', child: Text('Team B')),
               ],

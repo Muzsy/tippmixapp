@@ -12,14 +12,14 @@ void main() {
         GoRoute(
           path: '/',
           name: AppRoute.home.name,
-          builder: (_, __) => const Scaffold(
-            bottomNavigationBar: MyBottomNavigationBar(),
-          ),
+            builder: (context, state) => const Scaffold(
+              bottomNavigationBar: MyBottomNavigationBar(),
+            ),
         ),
         GoRoute(
           path: '/forum',
           name: AppRoute.forum.name,
-          builder: (_, __) => const SizedBox.shrink(),
+            builder: (context, state) => const SizedBox.shrink(),
         ),
       ],
     );

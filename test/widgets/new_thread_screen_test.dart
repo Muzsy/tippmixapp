@@ -41,11 +41,11 @@ Widget _buildApp(_FakeComposer composer) {
       composerControllerProvider.overrideWith((ref) => composer),
       authProvider.overrideWith((ref) => _FakeAuthNotifier()),
     ],
-    child: MaterialApp(
-      home: const NewThreadScreen(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-    ),
+      child: const MaterialApp(
+        home: NewThreadScreen(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
   );
 }
 

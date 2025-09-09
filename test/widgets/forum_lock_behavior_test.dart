@@ -33,11 +33,11 @@ void main() {
         threadDetailControllerProviderFamily('t1').overrideWith((ref) => _FakeController()),
         threadProviderFamily.overrideWith((ref, id) => controller.stream),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ThreadViewScreen(threadId: 't1'),
+        ),
     ));
     await tester.pump();
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isTrue);

@@ -41,11 +41,11 @@ void main() {
         isModeratorProvider.overrideWithValue(true),
         forumRepositoryProvider.overrideWithValue(_DummyRepo()),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ThreadViewScreen(threadId: 't1'),
+        ),
     ));
     await tester.pump();
     expect(find.byType(PopupMenuButton), findsOneWidget);
@@ -57,11 +57,11 @@ void main() {
         isModeratorProvider.overrideWithValue(false),
         forumRepositoryProvider.overrideWithValue(_DummyRepo()),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ThreadViewScreen(threadId: 't1'),
+        ),
     ));
     await tester.pump();
     expect(find.byType(PopupMenuButton), findsNothing);
@@ -84,11 +84,11 @@ void main() {
         isModeratorProvider.overrideWithValue(true),
         forumRepositoryProvider.overrideWithValue(repo),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ThreadViewScreen(threadId: 't1'),
+        ),
     ));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.more_vert));
