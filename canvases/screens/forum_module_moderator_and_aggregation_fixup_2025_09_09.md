@@ -54,7 +54,7 @@ A fórum modul moderátori funkcióinak (pin/lock) és a szerveroldali szavazat�
 
 **Pipálható checklista**
 
-* [ ] P0: törlés UI elrejtése nem‑moderátornál + repo guard
+* [x] P0: törlés UI elrejtése nem‑moderátornál + repo guard
 * [ ] Moderátor claim provider bekötése (custom claims)
 * [ ] Functions: votesCount inkrement/dekrement, tesztekkel
 * [ ] E2E: teljes happy‑path + lock/pin forgatókönyv

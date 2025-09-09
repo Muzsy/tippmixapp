@@ -9,9 +9,10 @@ import 'thread_query_builder.dart';
 import 'forum_repository.dart';
 
 class FirestoreForumRepository implements ForumRepository {
-  FirestoreForumRepository(this._firestore);
+  FirestoreForumRepository(this._firestore, this._isModerator);
 
   final FirebaseFirestore _firestore;
+  final bool Function() _isModerator;
 
   CollectionReference<Map<String, dynamic>> get _threadsCol =>
       _firestore.collection('threads');
@@ -78,9 +79,10 @@ class FirestoreForumRepository implements ForumRepository {
 
   @override
   Stream<Thread> watchThread(String threadId) {
-    return _threadsCol.doc(threadId).snapshots().map(
-          (d) => Thread.fromJson(d.id, d.data()!),
-        );
+    return _threadsCol
+        .doc(threadId)
+        .snapshots()
+        .map((d) => Thread.fromJson(d.id, d.data()!));
   }
 
   @override
@@ -141,15 +143,16 @@ class FirestoreForumRepository implements ForumRepository {
     required String threadId,
     required String postId,
   }) async {
+    if (!_isModerator()) {
+      throw const ForumPermissionException();
+    }
     final threadRef = _threadsCol.doc(threadId);
     final postRef = threadRef.collection('posts').doc(postId);
 
     // Transactionally delete post and decrement counter
     await _firestore.runTransaction((tx) async {
       tx.delete(postRef);
-      tx.update(threadRef, {
-        'postsCount': FieldValue.increment(-1),
-      });
+      tx.update(threadRef, {'postsCount': FieldValue.increment(-1)});
     });
 
     // Recompute lastActivityAt from remaining posts or fallback to thread.createdAt
@@ -160,8 +163,9 @@ class FirestoreForumRepository implements ForumRepository {
         .orderBy('createdAt', descending: true)
         .limit(1)
         .get();
-    final lastActivityTs =
-        latest.docs.isNotEmpty ? latest.docs.first['createdAt'] as Timestamp : createdAt;
+    final lastActivityTs = latest.docs.isNotEmpty
+        ? latest.docs.first['createdAt'] as Timestamp
+        : createdAt;
     // Normalize to millisecond precision to avoid flaky equality in tests
     final normalized = DateTime.fromMillisecondsSinceEpoch(
       lastActivityTs.toDate().millisecondsSinceEpoch,

@@ -11,7 +11,7 @@ void main() {
 
   setUp(() {
     fs = FakeFirebaseFirestore();
-    repo = FirestoreForumRepository(fs);
+    repo = FirestoreForumRepository(fs, () => true);
   });
 
   test('addPost writes to thread subcollection', () async {
@@ -157,7 +157,8 @@ void main() {
     expect(
       (threadSnap['lastActivityAt'] as Timestamp).toDate(),
       DateTime.fromMillisecondsSinceEpoch(
-          now.add(const Duration(minutes: 1)).millisecondsSinceEpoch),
+        now.add(const Duration(minutes: 1)).millisecondsSinceEpoch,
+      ),
     );
   });
 }
