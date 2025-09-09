@@ -122,7 +122,7 @@ class _DatePill extends StatelessWidget {
 class _Drop extends StatelessWidget {
   final String label;
   final List<String> items;
-    final String? value;
+  final String? value;
   final ValueChanged<String?> onChanged;
   const _Drop(this.label, this.items, this.value, this.onChanged);
   @override
@@ -130,7 +130,7 @@ class _Drop extends StatelessWidget {
       return DropdownButtonFormField<String>(
         isDense: true,
         isExpanded: true,
-        initialValue: value ?? (items.isNotEmpty ? items.first : null),
+        value: value ?? (items.isNotEmpty ? items.first : null),
         items: items
           .map(
             (e) => DropdownMenuItem(
