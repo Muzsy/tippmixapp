@@ -4,6 +4,7 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
+import 'package:tipsterino/providers/moderator_claim_provider.dart';
 import 'composer_bar.dart';
 import 'post_item.dart';
 
@@ -23,6 +24,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
   String? _quotedPostId;
+  final Map<String, GlobalKey> _postKeys = {};
 
   @override
   void initState() {
@@ -143,14 +145,28 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
                     } catch (_) {
                       quoted = null;
                     }
-                    return PostItem(
-                      post: post,
-                      quotedPost: quoted,
-                      onReply: () {
-                        _quotedPostId = post.id;
-                        _textController.text = '@${post.userId} ';
-                        _focusNode.requestFocus();
-                      },
+                    final key =
+                        _postKeys.putIfAbsent(post.id, () => GlobalKey());
+                    return KeyedSubtree(
+                      key: key,
+                      child: PostItem(
+                        post: post,
+                        quotedPost: quoted,
+                        onReply: () {
+                          _quotedPostId = post.id;
+                          _textController.text = '@${post.userId} ';
+                          _focusNode.requestFocus();
+                        },
+                        onTapQuoted: quoted == null
+                            ? null
+                            : () {
+                                final targetKey = _postKeys[quoted!.id];
+                                final ctx = targetKey?.currentContext;
+                                if (ctx != null) {
+                                  Scrollable.ensureVisible(ctx);
+                                }
+                              },
+                      ),
                     );
                   },
                 );

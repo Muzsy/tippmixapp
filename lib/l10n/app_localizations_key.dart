@@ -7,6 +7,7 @@ enum AppLocalizationsKey {
   unlockThread,
   moderatorActionSuccess,
   moderatorActionFailed,
+  editedLabel,
   voteCount,
   threadType,
   threadTypeGeneral,

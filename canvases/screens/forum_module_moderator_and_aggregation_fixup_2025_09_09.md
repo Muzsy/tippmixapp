@@ -55,11 +55,11 @@ A fórum modul moderátori funkcióinak (pin/lock) és a szerveroldali szavazat�
 **Pipálható checklista**
 
 * [x] P0: törlés UI elrejtése nem‑moderátornál + repo guard
-* [ ] Moderátor claim provider bekötése (custom claims)
-* [ ] Functions: votesCount inkrement/dekrement, tesztekkel
+* [x] Moderátor claim provider bekötése (custom claims)
+* [x] Functions: votesCount inkrement/dekrement, tesztekkel
 * [ ] E2E: teljes happy‑path + lock/pin forgatókönyv
 * [ ] Rules és indexek frissítése
-* [ ] UX: idézet kártya + edited jelölés
+* [x] UX: idézet kártya + edited jelölés
 
 ---
 

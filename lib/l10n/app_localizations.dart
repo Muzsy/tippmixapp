@@ -958,6 +958,12 @@ abstract class AppLocalizations {
   /// **'Action failed'**
   String get moderator_action_failed;
 
+  /// No description provided for @edited_label.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get edited_label;
+
   /// No description provided for @vote_count.
   ///
   /// In en, this message translates to:

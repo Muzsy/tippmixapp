@@ -452,6 +452,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get moderator_action_failed => 'Művelet sikertelen';
 
   @override
+  String get edited_label => 'szerkesztve';
+
+  @override
   String vote_count(Object count) {
     return 'Szavazatok: $count';
   }

@@ -9,7 +9,7 @@ import '../features/forum/providers/thread_list_controller.dart';
 import '../features/forum/providers/composer_controller.dart';
 import '../features/forum/providers/thread_detail_controller.dart';
 import '../features/forum/domain/post.dart';
-import 'admin_provider.dart';
+import 'moderator_claim_provider.dart';
 
 /// Provides the [ForumRepository] implementation.
 final forumRepositoryProvider = Provider<ForumRepository>(
@@ -66,4 +66,3 @@ final threadProviderFamily = StreamProvider.family<Thread, String>(
   (ref, threadId) => ref.watch(forumRepositoryProvider).watchThread(threadId),
 );
 
-final isModeratorProvider = Provider<bool>((ref) => ref.watch(isAdminProvider));
