@@ -1,0 +1,87 @@
+steps:
+
+* name: Add moderator actions to ThreadView AppBar (pin/lock)
+  description: >
+  Implement a contextual moderator menu in ThreadViewScreen AppBar with pin/unpin and lock/unlock.
+  Use current user claims or a provider to determine moderator visibility.
+  Apply optimistic updates with proper error handling and snackbars.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * lib/screens/forum/thread\_view\_screen.dart
+  * lib/features/forum/data/forum\_repository.dart
+  * lib/features/forum/domain/thread.dart
+
+* name: Enforce locked state in composer and live updates
+  description: >
+  Ensure composer disables immediately when thread.locked becomes true (stream-driven), shows banner,
+  and prevents post creation locally with clear messaging.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * lib/screens/forum/thread\_view\_screen.dart
+  * lib/screens/forum/composer\_bar.dart
+  * lib/providers/forum\_provider.dart
+
+* name: Implement Cloud Functions vote triggers (server aggregation)
+  description: >
+  Add onCreate/onDelete triggers on votes collection to increment/decrement posts/{postId}.votesCount atomically.
+  Handle missing post, retries, and idempotency. Export via CF index and include Jest unit tests.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * cloud\_functions/src/triggers/forumVotes.ts
+  * cloud\_functions/src/index.ts
+  * cloud\_functions/test/forumVotes.test.ts
+
+* name: Remove client-side votesCount mutation and switch to server value
+  description: >
+  Refactor repository and Post model so votesCount is treated as a read-only field coming from Firestore.
+  UI should display server value and optionally perform a local optimistic delta while awaiting snapshot.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * lib/features/forum/domain/post.dart
+  * lib/features/forum/data/forum\_repository.dart
+  * lib/screens/forum/post\_item.dart
+
+* name: Update tests (widgets, integration, CF)
+  description: >
+  Add/adjust tests to verify moderator actions visibility and effects, composer lock behavior,
+  and CF triggers increment/decrement votesCount. Ensure tests import firebase.rules from project root.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * test/widgets/forum\_moderator\_menu\_test.dart
+  * test/widgets/forum\_lock\_behavior\_test.dart
+  * cloud\_functions/test/forumVotes.test.ts
+
+* name: CI alignment for Cloud Functions tests
+  description: >
+  Ensure CI runs cloud\_functions Jest tests in addition to Flutter tests, with a single source-of-truth for firebase.rules.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * .github/workflows/ci.yaml
+  * cloud\_functions/jest.config.js
+
+* name: Documentation and localization update
+  description: >
+  Update docs to explain moderator workflow, locking effects, and server-side vote aggregation.
+  Add i18n keys: moderator\_menu\_title, pin\_thread, unpin\_thread, lock\_thread, unlock\_thread,
+  moderator\_action\_success, moderator\_action\_failed in HU/EN/DE.
+  On completion: tick the corresponding checklist item in canvas
+  "Forum Module – Moderator Controls & Server Aggregation (Canvas)".
+  outputs:
+
+  * docs/features/forum\_module\_moderator\_and\_aggregation\_{en,hu}.md
+  * lib/l10n/intl\_en.arb
+  * lib/l10n/intl\_hu.arb
+  * lib/l10n/intl\_de.arb
+  * lib/l10n/app\_localizations\_key.dart
