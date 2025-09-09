@@ -80,6 +80,9 @@ jobs:
         run: |
           flutter test --no-pub --concurrency 4 --reporter expanded --exclude-tags slow
 
+      - name: Forum E2E
+        run: flutter test integration_test/forum_e2e_test.dart
+
   functions:
     name: Cloud Functions – unit & e2e
     runs-on: ubuntu-latest
