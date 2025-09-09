@@ -10,39 +10,12 @@ import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/models/user.dart';
-import 'package:tipsterino/features/forum/data/forum_repository.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
-import 'package:tipsterino/features/forum/domain/post.dart';
-import 'package:tipsterino/features/forum/domain/report.dart';
 import '../mocks/mock_auth_service.dart';
-
-class _FakeRepo implements ForumRepository {
-  @override
-  Future<void> addThread(Thread thread) async {}
-  @override
-  Future<void> addPost(Post post) async {}
-  @override
-  Future<void> updateThread(String threadId, Map<String, dynamic> data) async {}
-  @override
-  Future<void> deleteThread(String threadId) async {}
-  @override
-  Stream<List<Thread>> queryThreads({required ForumFilter filter, required ForumSort sort, int limit = 20, DateTime? startAfter}) => const Stream.empty();
-  @override
-  Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
-  @override
-  Stream<List<Thread>> getThreadsByFixture(String fixtureId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
-  @override
-  Future<void> updatePost({required String threadId, required String postId, required String content}) async {}
-  @override
-  Future<void> deletePost({required String threadId, required String postId}) async {}
-  @override
-  Future<void> voteOnPost({required String postId, required String userId}) async {}
-  @override
-  Future<void> reportPost(Report report) async {}
-}
+import '../mocks/fake_forum_repository.dart';
 
 class _Composer extends ComposerController {
-  _Composer() : super(_FakeRepo());
+  _Composer() : super(FakeForumRepository());
 }
 
 class _Auth extends AuthNotifier {

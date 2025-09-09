@@ -9,7 +9,6 @@ import '../features/forum/providers/thread_list_controller.dart';
 import '../features/forum/providers/composer_controller.dart';
 import '../features/forum/providers/thread_detail_controller.dart';
 import '../features/forum/domain/post.dart';
-import '../features/forum/domain/thread.dart';
 import 'admin_provider.dart';
 
 /// Provides the [ForumRepository] implementation.

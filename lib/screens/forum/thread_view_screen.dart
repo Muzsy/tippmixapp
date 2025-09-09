@@ -4,11 +4,10 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
-
-enum _ModAction { pin, lock }
-
 import 'composer_bar.dart';
 import 'post_item.dart';
+
+enum _ModAction { pin, lock }
 
 class ThreadViewScreen extends ConsumerStatefulWidget {
   const ThreadViewScreen({super.key, required this.threadId});

@@ -3,10 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tipsterino/features/forum/data/forum_repository.dart';
-import 'package:tipsterino/features/forum/domain/post.dart';
-import 'package:tipsterino/features/forum/domain/report.dart';
-import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/composer_controller.dart';
 import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 import 'package:tipsterino/features/forum/providers/thread_list_controller.dart';
@@ -20,49 +16,10 @@ import 'package:tipsterino/screens/forum/forum_screen.dart';
 import 'package:tipsterino/screens/forum/new_thread_screen.dart';
 
 import '../mocks/mock_auth_service.dart';
-
-class _FakeRepo implements ForumRepository {
-  @override
-  Future<void> addPost(Post post) async {}
-
-  @override
-  Future<void> addThread(Thread thread) async {}
-
-  @override
-  Future<void> deleteThread(String threadId) async {}
-
-  @override
-  Future<void> updatePost({required String threadId, required String postId, required String content}) async {}
-
-  @override
-  Future<void> deletePost({required String threadId, required String postId}) async {}
-
-  @override
-  Stream<List<Post>> getPostsByThread(String threadId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
-
-  @override
-  Stream<List<Thread>> queryThreads({
-    required ForumFilter filter,
-    required ForumSort sort,
-    int limit = 20,
-    DateTime? startAfter,
-  }) => const Stream.empty();
-
-  @override
-  Stream<List<Thread>> getThreadsByFixture(String fixtureId, {int limit = 20, DateTime? startAfter}) => const Stream.empty();
-
-  @override
-  Future<void> reportPost(Report report) async {}
-
-  @override
-  Future<void> updateThread(String threadId, Map<String, dynamic> data) async {}
-
-  @override
-  Future<void> voteOnPost({required String postId, required String userId}) async {}
-}
+import '../mocks/fake_forum_repository.dart';
 
 class _FakeComposer extends ComposerController {
-  _FakeComposer() : super(_FakeRepo());
+  _FakeComposer() : super(FakeForumRepository());
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
@@ -97,7 +54,7 @@ void main() {
           composerControllerProvider.overrideWith((ref) => _FakeComposer()),
           authProvider.overrideWith((ref) => _FakeAuthNotifier()),
           threadListControllerProvider.overrideWith(
-            (ref) => ThreadListController(_FakeRepo(), const ForumFilterState()),
+            (ref) => ThreadListController(FakeForumRepository(), const ForumFilterState()),
           ),
         ],
         child: MaterialApp.router(

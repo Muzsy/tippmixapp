@@ -428,6 +428,50 @@ class AppLocalizationsHu extends AppLocalizations {
   String get forum_thread_locked => 'A szál zárolva van';
 
   @override
+  String get forum_thread_locked_banner => 'A szál zárolva van';
+
+  @override
+  String get moderator_menu_title => 'Moderátor';
+
+  @override
+  String get pin_thread => 'Szál rögzítése';
+
+  @override
+  String get unpin_thread => 'Rögzítés feloldása';
+
+  @override
+  String get lock_thread => 'Szál zárolása';
+
+  @override
+  String get unlock_thread => 'Zárolás feloldása';
+
+  @override
+  String get moderator_action_success => 'Művelet sikeres';
+
+  @override
+  String get moderator_action_failed => 'Művelet sikertelen';
+
+  @override
+  String vote_count(Object count) {
+    return 'Szavazatok: $count';
+  }
+
+  @override
+  String get thread_type => 'Téma típusa';
+
+  @override
+  String get thread_type_general => 'Általános';
+
+  @override
+  String get thread_type_match => 'Mérkőzés';
+
+  @override
+  String get fixture_id_label => 'Mérkőzés azonosító';
+
+  @override
+  String get error_edit_time_expired => 'A szerkesztési idő lejárt';
+
+  @override
   String get forum_title => 'Fórum';
 
   @override
