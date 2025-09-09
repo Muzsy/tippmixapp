@@ -34,6 +34,14 @@ class _PostItemState extends ConsumerState<PostItem> {
     _initVote();
   }
 
+  @override
+  void didUpdateWidget(covariant PostItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.post.votesCount != oldWidget.post.votesCount) {
+      _votes = widget.post.votesCount;
+    }
+  }
+
   Future<void> _initVote() async {
     final uid = ref.read(authProvider).user?.id;
     if (uid != null) {

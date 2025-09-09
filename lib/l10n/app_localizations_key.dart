@@ -1,5 +1,12 @@
 enum AppLocalizationsKey {
   forumThreadLockedBanner,
+  moderatorMenuTitle,
+  pinThread,
+  unpinThread,
+  lockThread,
+  unlockThread,
+  moderatorActionSuccess,
+  moderatorActionFailed,
   voteCount,
   threadType,
   threadTypeGeneral,

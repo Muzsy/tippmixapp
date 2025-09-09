@@ -100,6 +100,16 @@ class FirestoreForumRepository implements ForumRepository {
   }
 
   @override
+  Future<void> setThreadPinned(String threadId, bool pinned) async {
+    await _threadsCol.doc(threadId).update({'pinned': pinned});
+  }
+
+  @override
+  Future<void> setThreadLocked(String threadId, bool locked) async {
+    await _threadsCol.doc(threadId).update({'locked': locked});
+  }
+
+  @override
   Future<void> addPost(Post post) async {
     // userId must equal auth.uid per security rules
     // Client transaction keeps thread aggregates in sync with posts

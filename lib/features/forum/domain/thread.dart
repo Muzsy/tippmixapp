@@ -64,4 +64,23 @@ class Thread {
     };
     return json;
   }
+
+  Thread copyWith({
+    bool? locked,
+    bool? pinned,
+  }) {
+    return Thread(
+      id: id,
+      title: title,
+      type: type,
+      fixtureId: fixtureId,
+      createdBy: createdBy,
+      createdAt: createdAt,
+      locked: locked ?? this.locked,
+      pinned: pinned ?? this.pinned,
+      lastActivityAt: lastActivityAt,
+      postsCount: postsCount,
+      votesCount: votesCount,
+    );
+  }
 }

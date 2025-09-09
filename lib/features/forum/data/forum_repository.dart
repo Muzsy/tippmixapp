@@ -29,6 +29,10 @@ abstract class ForumRepository {
 
   Future<void> updateThread(String threadId, Map<String, dynamic> data);
 
+  Future<void> setThreadPinned(String threadId, bool pinned);
+
+  Future<void> setThreadLocked(String threadId, bool locked);
+
   Future<void> deleteThread(String threadId);
 
   Future<void> addPost(Post post);
@@ -44,8 +48,10 @@ abstract class ForumRepository {
     required String postId,
   });
 
+  /// Creates a vote document; `votesCount` is updated by server triggers.
   Future<void> voteOnPost({required String postId, required String userId});
 
+  /// Deletes a vote document; `votesCount` is updated by server triggers.
   Future<void> unvoteOnPost({required String postId, required String userId});
 
   Future<bool> hasVoted({required String postId, required String userId});

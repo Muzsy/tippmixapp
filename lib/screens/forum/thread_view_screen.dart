@@ -5,6 +5,8 @@ import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 
+enum _ModAction { pin, lock }
+
 import 'composer_bar.dart';
 import 'post_item.dart';
 
@@ -54,6 +56,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
     final threadAsync = ref.watch(threadProviderFamily(widget.threadId));
     final locked = threadAsync.asData?.value.locked ?? false;
     final pinned = threadAsync.asData?.value.pinned ?? false;
+    final isModerator = ref.watch(isModeratorProvider);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -62,6 +65,52 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
             if (pinned) const Icon(Icons.push_pin),
           ],
         ),
+        actions: [
+          if (isModerator)
+            PopupMenuButton<_ModAction>(
+              tooltip: loc.moderator_menu_title,
+              onSelected: (action) async {
+                final thread = threadAsync.asData?.value;
+                if (thread == null) return;
+                try {
+                  if (action == _ModAction.pin) {
+                    final newPinned = !thread.pinned;
+                    await ref
+                        .read(forumRepositoryProvider)
+                        .setThreadPinned(thread.id, newPinned);
+                  } else {
+                    final newLocked = !thread.locked;
+                    await ref
+                        .read(forumRepositoryProvider)
+                        .setThreadLocked(thread.id, newLocked);
+                  }
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(loc.moderator_action_success)),
+                    );
+                  }
+                } catch (_) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(loc.moderator_action_failed)),
+                    );
+                  }
+                }
+              },
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: _ModAction.pin,
+                  child:
+                      Text(pinned ? loc.unpin_thread : loc.pin_thread),
+                ),
+                PopupMenuItem(
+                  value: _ModAction.lock,
+                  child:
+                      Text(locked ? loc.unlock_thread : loc.lock_thread),
+                ),
+              ],
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -119,6 +168,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         controller: _textController,
         focusNode: _focusNode,
         enabled: !locked,
+        disabledMessage: loc.forum_thread_locked_banner,
         onSubmit: () async {
           if (locked) {
             ScaffoldMessenger.of(context).showSnackBar(

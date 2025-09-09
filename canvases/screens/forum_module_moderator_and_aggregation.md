@@ -54,12 +54,12 @@ Add moderator-facing controls (pin/lock) to the forum, and migrate vote counting
 
 ✅ **Checklist**
 
-* [ ] AppBar moderator menu (pin/unpin, lock/unlock) visible only for moderators.
-* [ ] Lock switches composer to disabled state in real time; UI banner present.
-* [ ] Cloud Functions: `onCreate`/`onDelete` vote triggers adjust `posts/{postId}.votesCount`.
-* [ ] Client code no longer mutates `votesCount`; uses server value with safe fallback.
-* [ ] Repository and models updated to treat `votesCount` as read-only server field.
-* [ ] Widget/integration tests cover moderator UI visibility and lock behavior.
-* [ ] CF unit tests cover vote triggers increment/decrement and error paths.
-* [ ] CI runs CF tests and references project-root `firebase.rules` only.
-* [ ] Docs updated to describe moderator workflow and server-side aggregation.
+* [x] AppBar moderator menu (pin/unpin, lock/unlock) visible only for moderators.
+* [x] Lock switches composer to disabled state in real time; UI banner present.
+* [x] Cloud Functions: `onCreate`/`onDelete` vote triggers adjust `posts/{postId}.votesCount`.
+* [x] Client code no longer mutates `votesCount`; uses server value with safe fallback.
+* [x] Repository and models updated to treat `votesCount` as read-only server field.
+* [x] Widget/integration tests cover moderator UI visibility and lock behavior.
+* [x] CF unit tests cover vote triggers increment/decrement and error paths.
+* [x] CI runs CF tests and references project-root `firebase.rules` only.
+* [x] Docs updated to describe moderator workflow and server-side aggregation.
