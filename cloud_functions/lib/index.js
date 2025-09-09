@@ -33,8 +33,9 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.match_finalizer = exports.dev_scheduler_kick = exports.dev_publish_finalize = exports.force_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
+exports.match_finalizer = exports.onVoteDelete = exports.onVoteCreate = exports.dev_scheduler_kick = exports.dev_publish_finalize = exports.force_finalizer = exports.finalize_publish = exports.backfill_fixture_index = exports.onTicketWritten_indexFixture = exports.reserve_nickname = exports.admin_coin_ops = exports.claim_daily_bonus = exports.onFriendRequestAccepted = exports.coin_trx = exports.onUserCreate = void 0;
 require("./global");
+require("./src/lib/firebase");
 const pubsub_1 = require("firebase-functions/v2/pubsub");
 const logger = __importStar(require("firebase-functions/logger"));
 const match_finalizer_1 = require("./src/match_finalizer");
@@ -64,6 +65,9 @@ Object.defineProperty(exports, "force_finalizer", { enumerable: true, get: funct
 var dev_pubsub_emulator_1 = require("./src/dev_pubsub_emulator");
 Object.defineProperty(exports, "dev_publish_finalize", { enumerable: true, get: function () { return dev_pubsub_emulator_1.dev_publish_finalize; } });
 Object.defineProperty(exports, "dev_scheduler_kick", { enumerable: true, get: function () { return dev_pubsub_emulator_1.dev_scheduler_kick; } });
+var forumVotes_1 = require("./src/triggers/forumVotes");
+Object.defineProperty(exports, "onVoteCreate", { enumerable: true, get: function () { return forumVotes_1.onVoteCreate; } });
+Object.defineProperty(exports, "onVoteDelete", { enumerable: true, get: function () { return forumVotes_1.onVoteDelete; } });
 // Global options a global.ts-ben kerül beállításra (régió + secretek)
 // Gen2 Pub/Sub trigger – topic: result-check
 exports.match_finalizer = (0, pubsub_1.onMessagePublished)('result-check', async (event) => {

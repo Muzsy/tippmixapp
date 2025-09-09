@@ -1,5 +1,12 @@
-import * as functions from 'firebase-functions';
+import { onDocumentCreated, onDocumentDeleted } from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
+import '../lib/firebase';
+
+// Explicit Vote type for trigger payloads
+type Vote = {
+  postId: string;
+  value: number;
+};
 
 async function updateCount(postId: string, delta: number): Promise<void> {
   const snap = await admin
@@ -16,16 +23,16 @@ async function updateCount(postId: string, delta: number): Promise<void> {
   });
 }
 
-export const onVoteCreate = functions.firestore
-  .document('votes/{voteId}')
-  .onCreate(async (snapshot) => {
-    const postId = snapshot.data().entityId as string;
-    await updateCount(postId, 1);
-  });
+export const onVoteCreate = onDocumentCreated('votes/{voteId}', async (event) => {
+  const data = event.data?.data() as unknown as Vote | undefined;
+  const postId = data?.postId;
+  if (!postId) return;
+  await updateCount(postId, 1);
+});
 
-export const onVoteDelete = functions.firestore
-  .document('votes/{voteId}')
-  .onDelete(async (snapshot) => {
-    const postId = snapshot.data().entityId as string;
-    await updateCount(postId, -1);
-  });
+export const onVoteDelete = onDocumentDeleted('votes/{voteId}', async (event) => {
+  const data = event.data?.data() as unknown as Vote | undefined;
+  const postId = data?.postId;
+  if (!postId) return;
+  await updateCount(postId, -1);
+});

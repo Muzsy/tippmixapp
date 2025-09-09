@@ -1,4 +1,5 @@
 import './global';
+import './src/lib/firebase';
 import { onMessagePublished } from 'firebase-functions/v2/pubsub';
 import * as logger from 'firebase-functions/logger';
 import { match_finalizer as matchFinalizerHandler } from './src/match_finalizer';
