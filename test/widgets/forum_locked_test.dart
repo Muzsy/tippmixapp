@@ -44,11 +44,11 @@ void main() {
               locked: true,
             ))),
       ],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
-      ),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ThreadViewScreen(threadId: 't1'),
+        ),
     ));
     await tester.pump();
     final field = tester.widget<TextField>(find.byType(TextField));

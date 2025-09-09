@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/experiment_service.dart';
 
+// TODO: replace RadioListTile usage with RadioGroup when migrating to Flutter's
+// new API.
+// ignore_for_file: deprecated_member_use
+
 class DebugMenuScreen extends ConsumerStatefulWidget {
   const DebugMenuScreen({super.key});
 

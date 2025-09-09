@@ -39,10 +39,10 @@ void main() {
           threadDetailControllerProviderFamily('t1').overrideWith((ref) => controller),
           threadProviderFamily.overrideWith((ref, id) => Stream.value(lockedThread)),
         ],
-        child: MaterialApp(
+          child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const ThreadViewScreen(threadId: 't1'),
+            home: ThreadViewScreen(threadId: 't1'),
         ),
       ),
     );
@@ -69,10 +69,10 @@ void main() {
             .overrideWith((ref) => _FakeController()),
         threadProviderFamily.overrideWith((ref, id) => Stream.value(thread)),
       ],
-      child: MaterialApp(
+        child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const ThreadViewScreen(threadId: 't1'),
+          home: ThreadViewScreen(threadId: 't1'),
       ),
     ));
     final sendButton = find.widgetWithIcon(IconButton, Icons.send);

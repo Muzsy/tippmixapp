@@ -56,11 +56,11 @@ void main() {
           ),
           authProvider.overrideWith((ref) => _FakeAuthNotifier()),
         ],
-        child: MaterialApp(
-          home: const ThreadViewScreen(threadId: 't1'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-        ),
+          child: const MaterialApp(
+            home: ThreadViewScreen(threadId: 't1'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
       ),
     );
     await tester.pumpAndSettle();

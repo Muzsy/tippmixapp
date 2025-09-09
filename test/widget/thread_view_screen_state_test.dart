@@ -24,10 +24,10 @@ void main() {
             (ref) => _FakeController(const AsyncValue.data([])),
           ),
         ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: const ThreadViewScreen(threadId: 't1'),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: ThreadViewScreen(threadId: 't1'),
         ),
       ),
     );

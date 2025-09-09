@@ -83,7 +83,7 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
         AppRoute.threadView.name,
         pathParameters: {'threadId': id},
       ),
-      error: (_, __) => ScaffoldMessenger.of(context).showSnackBar(
+      error: (error, stackTrace) => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(loc.saved_error)),
       ),
       loading: () {},
@@ -104,7 +104,7 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
           child: Column(
             children: [
               DropdownButtonFormField<ThreadType>(
-                value: _type,
+                initialValue: _type,
                 decoration: InputDecoration(labelText: loc.thread_type),
                 items: [
                   DropdownMenuItem(

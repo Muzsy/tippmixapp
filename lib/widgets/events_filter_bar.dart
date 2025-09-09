@@ -122,16 +122,16 @@ class _DatePill extends StatelessWidget {
 class _Drop extends StatelessWidget {
   final String label;
   final List<String> items;
-  final String? value;
+    final String? value;
   final ValueChanged<String?> onChanged;
   const _Drop(this.label, this.items, this.value, this.onChanged);
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      isDense: true,
-      isExpanded: true,
-      value: value ?? (items.isNotEmpty ? items.first : null),
-      items: items
+      return DropdownButtonFormField<String>(
+        isDense: true,
+        isExpanded: true,
+        initialValue: value ?? (items.isNotEmpty ? items.first : null),
+        items: items
           .map(
             (e) => DropdownMenuItem(
               value: e,

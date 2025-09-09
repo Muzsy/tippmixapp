@@ -68,34 +68,32 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
           if (isModerator)
             PopupMenuButton<_ModAction>(
               tooltip: loc.moderator_menu_title,
-              onSelected: (action) async {
-                final thread = threadAsync.asData?.value;
-                if (thread == null) return;
-                try {
-                  if (action == _ModAction.pin) {
-                    final newPinned = !thread.pinned;
-                    await ref
-                        .read(forumRepositoryProvider)
-                        .setThreadPinned(thread.id, newPinned);
-                  } else {
-                    final newLocked = !thread.locked;
-                    await ref
-                        .read(forumRepositoryProvider)
-                        .setThreadLocked(thread.id, newLocked);
-                  }
-                  if (mounted) {
+                onSelected: (action) async {
+                  final thread = threadAsync.asData?.value;
+                  if (thread == null) return;
+                  try {
+                    if (action == _ModAction.pin) {
+                      final newPinned = !thread.pinned;
+                      await ref
+                          .read(forumRepositoryProvider)
+                          .setThreadPinned(thread.id, newPinned);
+                    } else {
+                      final newLocked = !thread.locked;
+                      await ref
+                          .read(forumRepositoryProvider)
+                          .setThreadLocked(thread.id, newLocked);
+                    }
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(loc.moderator_action_success)),
                     );
-                  }
-                } catch (_) {
-                  if (mounted) {
+                  } catch (_) {
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(loc.moderator_action_failed)),
                     );
                   }
-                }
-              },
+                },
               itemBuilder: (_) => [
                 PopupMenuItem(
                   value: _ModAction.pin,
