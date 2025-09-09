@@ -3,6 +3,11 @@ import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
 
+/// Thrown when the current user lacks permission for a forum action.
+class ForumPermissionException implements Exception {
+  const ForumPermissionException();
+}
+
 abstract class ForumRepository {
   Stream<List<Thread>> getThreadsByFixture(
     String fixtureId, {
@@ -43,10 +48,7 @@ abstract class ForumRepository {
     required String content,
   });
 
-  Future<void> deletePost({
-    required String threadId,
-    required String postId,
-  });
+  Future<void> deletePost({required String threadId, required String postId});
 
   /// Creates a vote document; `votesCount` is updated by server triggers.
   Future<void> voteOnPost({required String postId, required String userId});

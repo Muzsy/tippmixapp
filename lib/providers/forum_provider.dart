@@ -13,7 +13,10 @@ import 'admin_provider.dart';
 
 /// Provides the [ForumRepository] implementation.
 final forumRepositoryProvider = Provider<ForumRepository>(
-  (ref) => FirestoreForumRepository(FirebaseFirestore.instance),
+  (ref) => FirestoreForumRepository(
+    FirebaseFirestore.instance,
+    () => ref.read(isModeratorProvider),
+  ),
 );
 
 /// Holds the current filter and sort state.
@@ -53,17 +56,14 @@ final threadDetailControllerProviderFamily =
     );
 
 final threadDetailLoadingProviderFamily = Provider.family<bool, String>(
-  (ref, threadId) =>
-      ref.watch(threadDetailControllerProviderFamily(threadId).notifier)
-          .isLoadingMore,
+  (ref, threadId) => ref
+      .watch(threadDetailControllerProviderFamily(threadId).notifier)
+      .isLoadingMore,
 );
 
 /// Provides a single thread stream by id.
 final threadProviderFamily = StreamProvider.family<Thread, String>(
-  (ref, threadId) =>
-      ref.watch(forumRepositoryProvider).watchThread(threadId),
+  (ref, threadId) => ref.watch(forumRepositoryProvider).watchThread(threadId),
 );
 
-final isModeratorProvider = Provider<bool>(
-  (ref) => ref.watch(isAdminProvider),
-);
+final isModeratorProvider = Provider<bool>((ref) => ref.watch(isAdminProvider));

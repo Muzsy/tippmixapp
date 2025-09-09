@@ -10,7 +10,7 @@ import 'package:tipsterino/features/forum/providers/thread_detail_controller.dar
 void main() {
   test('forum happy path: thread, comment, vote, report', () async {
     final fs = FakeFirebaseFirestore();
-    final repo = FirestoreForumRepository(fs);
+    final repo = FirestoreForumRepository(fs, () => true);
     final composer = ComposerController(repo);
 
     final now = DateTime.now();
