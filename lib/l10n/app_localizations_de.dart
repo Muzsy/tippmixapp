@@ -453,6 +453,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get moderator_action_failed => 'Aktion fehlgeschlagen';
 
   @override
+  String get edited_label => 'bearbeitet';
+
+  @override
   String vote_count(Object count) {
     return 'Stimmen: $count';
   }

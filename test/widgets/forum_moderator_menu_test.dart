@@ -7,6 +7,7 @@ import 'package:tipsterino/features/forum/domain/thread.dart';
 import 'package:tipsterino/features/forum/providers/thread_detail_controller.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
+import 'package:tipsterino/providers/moderator_claim_provider.dart';
 import 'package:tipsterino/screens/forum/thread_view_screen.dart';
 import '../mocks/fake_forum_repository.dart';
 

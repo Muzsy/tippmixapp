@@ -4,8 +4,10 @@ import 'package:tipsterino/features/forum/domain/post.dart';
 import 'package:tipsterino/features/forum/domain/report.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
+import 'package:tipsterino/providers/moderator_claim_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
 import 'package:tipsterino/features/forum/data/forum_repository.dart';
+import 'package:tipsterino/widgets/forum/quoted_post_card.dart';
 
 class PostItem extends ConsumerStatefulWidget {
   const PostItem({
@@ -13,11 +15,13 @@ class PostItem extends ConsumerStatefulWidget {
     required this.post,
     this.onReply,
     this.quotedPost,
+    this.onTapQuoted,
   });
 
   final Post post;
   final VoidCallback? onReply;
   final Post? quotedPost;
+  final VoidCallback? onTapQuoted;
 
   @override
   ConsumerState<PostItem> createState() => _PostItemState();
@@ -166,13 +170,24 @@ class _PostItemState extends ConsumerState<PostItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.quotedPost != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(bottom: 4),
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              child: Text(widget.quotedPost!.content),
+            QuotedPostCard(
+              post: widget.quotedPost!,
+              onTap: widget.onTapQuoted,
             ),
-          Text(widget.post.content),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(child: Text(widget.post.content)),
+              if (widget.post.editedAt != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    loc.edited_label,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
       subtitle: Text(widget.post.userId),

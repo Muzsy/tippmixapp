@@ -142,6 +142,7 @@
   "unlock_thread": "Unlock thread",
   "moderator_action_success": "Action completed",
   "moderator_action_failed": "Action failed",
+  "edited_label": "edited",
   "vote_count": "Votes: {count}",
   "@vote_count": {"placeholders": {"count": {}}},
   "thread_type": "Thread type",

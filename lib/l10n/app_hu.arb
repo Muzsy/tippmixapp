@@ -142,6 +142,7 @@
   "unlock_thread": "Zárolás feloldása",
   "moderator_action_success": "Művelet sikeres",
   "moderator_action_failed": "Művelet sikertelen",
+  "edited_label": "szerkesztve",
   "vote_count": "Szavazatok: {count}",
   "@vote_count": {"placeholders": {"count": {}}},
   "thread_type": "Téma típusa",
