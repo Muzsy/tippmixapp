@@ -57,8 +57,8 @@ A fórum modul moderátori funkcióinak (pin/lock) és a szerveroldali szavazat�
 * [x] P0: törlés UI elrejtése nem‑moderátornál + repo guard
 * [x] Moderátor claim provider bekötése (custom claims)
 * [x] Functions: votesCount inkrement/dekrement, tesztekkel
-* [ ] E2E: teljes happy‑path + lock/pin forgatókönyv
-* [ ] Rules és indexek frissítése
+* [x] E2E: teljes happy‑path + lock/pin forgatókönyv
+* [x] Rules és indexek frissítése
 * [x] UX: idézet kártya + edited jelölés
 
 ---

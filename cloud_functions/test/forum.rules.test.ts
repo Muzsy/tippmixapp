@@ -59,4 +59,50 @@ describe('forum rules', () => {
       })
     );
   });
+
+  it('only moderator may delete post', async () => {
+    const user = testEnv.authenticatedContext('u1');
+    const db = user.firestore();
+    const threadRef = db.collection('threads').doc('t2');
+    await threadRef.set({
+      title: 't',
+      type: 'general',
+      createdBy: 'u1',
+      createdAt: 0,
+      pinned: false,
+      locked: false,
+      fixtureId: null,
+      lastActivityAt: 0,
+    });
+    const postRef = threadRef.collection('posts').doc('p1');
+    await postRef.set({
+      threadId: 't2',
+      userId: 'u1',
+      type: 'comment',
+      content: 'hi',
+      createdAt: 0,
+    });
+    await assertFails(postRef.delete());
+
+    const mod = testEnv.authenticatedContext('m1', {
+      roles: { moderator: true },
+    });
+    const modDb = mod.firestore();
+    await assertSucceeds(
+      modDb.collection('threads').doc('t2').collection('posts').doc('p1').delete(),
+    );
+  });
+
+  it('requires auth to create report', async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      db.collection('reports').add({
+        reporterId: 'u1',
+        entityType: 'post',
+        entityId: 'p1',
+        reason: 'spam',
+        createdAt: 0,
+      }),
+    );
+  });
 });

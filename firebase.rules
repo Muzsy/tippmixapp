@@ -5,7 +5,12 @@ service cloud.firestore {
     /* ——— SEGÉDFÜGGVÉNYEK ——— */
     function signedIn()      { return request.auth != null; }
     function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
-    function isModerator()   { return request.auth != null && request.auth.token != null && request.auth.token.moderator == true; }
+    function isModerator() {
+      return request.auth != null &&
+             request.auth.token != null &&
+             request.auth.token.roles != null &&
+             request.auth.token.roles.moderator == true;
+    }
     // ÚJ: kliens oldali ticket create ellenőrzéshez
     function isValidTicketCreate(data) {
       // Kötelező: ownerId == saját uid és kezdeti státusz 'pending'
