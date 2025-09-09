@@ -429,6 +429,50 @@ class AppLocalizationsDe extends AppLocalizations {
   String get forum_thread_locked => 'Thread ist gesperrt';
 
   @override
+  String get forum_thread_locked_banner => 'Thread ist gesperrt';
+
+  @override
+  String get moderator_menu_title => 'Moderator';
+
+  @override
+  String get pin_thread => 'Thread anheften';
+
+  @override
+  String get unpin_thread => 'Anheftung lösen';
+
+  @override
+  String get lock_thread => 'Thread sperren';
+
+  @override
+  String get unlock_thread => 'Sperre aufheben';
+
+  @override
+  String get moderator_action_success => 'Aktion erfolgreich';
+
+  @override
+  String get moderator_action_failed => 'Aktion fehlgeschlagen';
+
+  @override
+  String vote_count(Object count) {
+    return 'Stimmen: $count';
+  }
+
+  @override
+  String get thread_type => 'Thread-Typ';
+
+  @override
+  String get thread_type_general => 'Allgemein';
+
+  @override
+  String get thread_type_match => 'Match';
+
+  @override
+  String get fixture_id_label => 'Spiel-ID';
+
+  @override
+  String get error_edit_time_expired => 'Bearbeitungszeit abgelaufen';
+
+  @override
   String get forum_title => 'Forum';
 
   @override

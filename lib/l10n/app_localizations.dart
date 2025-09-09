@@ -910,6 +910,90 @@ abstract class AppLocalizations {
   /// **'Thread is locked'**
   String get forum_thread_locked;
 
+  /// No description provided for @forum_thread_locked_banner.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread is locked'**
+  String get forum_thread_locked_banner;
+
+  /// No description provided for @moderator_menu_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderator'**
+  String get moderator_menu_title;
+
+  /// No description provided for @pin_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin thread'**
+  String get pin_thread;
+
+  /// No description provided for @unpin_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin thread'**
+  String get unpin_thread;
+
+  /// No description provided for @lock_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock thread'**
+  String get lock_thread;
+
+  /// No description provided for @unlock_thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock thread'**
+  String get unlock_thread;
+
+  /// No description provided for @moderator_action_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Action completed'**
+  String get moderator_action_success;
+
+  /// No description provided for @moderator_action_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action failed'**
+  String get moderator_action_failed;
+
+  /// No description provided for @vote_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Votes: {count}'**
+  String vote_count(Object count);
+
+  /// No description provided for @thread_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread type'**
+  String get thread_type;
+
+  /// No description provided for @thread_type_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get thread_type_general;
+
+  /// No description provided for @thread_type_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Match'**
+  String get thread_type_match;
+
+  /// No description provided for @fixture_id_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixture ID'**
+  String get fixture_id_label;
+
+  /// No description provided for @error_edit_time_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit window expired'**
+  String get error_edit_time_expired;
+
   /// No description provided for @forum_title.
   ///
   /// In en, this message translates to:

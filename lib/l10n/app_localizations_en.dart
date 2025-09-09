@@ -420,6 +420,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forum_thread_locked => 'Thread is locked';
 
   @override
+  String get forum_thread_locked_banner => 'Thread is locked';
+
+  @override
+  String get moderator_menu_title => 'Moderator';
+
+  @override
+  String get pin_thread => 'Pin thread';
+
+  @override
+  String get unpin_thread => 'Unpin thread';
+
+  @override
+  String get lock_thread => 'Lock thread';
+
+  @override
+  String get unlock_thread => 'Unlock thread';
+
+  @override
+  String get moderator_action_success => 'Action completed';
+
+  @override
+  String get moderator_action_failed => 'Action failed';
+
+  @override
+  String vote_count(Object count) {
+    return 'Votes: $count';
+  }
+
+  @override
+  String get thread_type => 'Thread type';
+
+  @override
+  String get thread_type_general => 'General';
+
+  @override
+  String get thread_type_match => 'Match';
+
+  @override
+  String get fixture_id_label => 'Fixture ID';
+
+  @override
+  String get error_edit_time_expired => 'Edit window expired';
+
+  @override
   String get forum_title => 'Forum';
 
   @override
