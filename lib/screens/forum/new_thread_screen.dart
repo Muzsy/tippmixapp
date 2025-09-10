@@ -31,11 +31,12 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
       (_type != ThreadType.match || _fixtureCtrl.text.trim().isNotEmpty);
 
   @override
-  void initState() {
-    super.initState();
-    _titleCtrl.addListener(_onChanged);
-    _contentCtrl.addListener(_onChanged);
-  }
+    void initState() {
+      super.initState();
+      _titleCtrl.addListener(_onChanged);
+      _contentCtrl.addListener(_onChanged);
+      _fixtureCtrl.addListener(_onChanged);
+    }
 
   void _onChanged() => setState(() {});
 

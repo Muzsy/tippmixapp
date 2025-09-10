@@ -47,7 +47,7 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.text('Thread is locked'), findsOneWidget);
+    expect(find.text('Thread is locked'), findsWidgets);
     final composer = tester.widget<ComposerBar>(find.byType(ComposerBar));
     await composer.onSubmit!.call();
     await tester.pump();

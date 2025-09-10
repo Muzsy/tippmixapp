@@ -48,7 +48,7 @@ void main() {
           home: ThreadViewScreen(threadId: 't1'),
         ),
     ));
-    await tester.pump();
+      await tester.pumpAndSettle();
     expect(find.byType(PopupMenuButton), findsOneWidget);
 
     await tester.pumpWidget(ProviderScope(
@@ -64,7 +64,7 @@ void main() {
           home: ThreadViewScreen(threadId: 't1'),
         ),
     ));
-    await tester.pump();
+      await tester.pumpAndSettle();
     expect(find.byType(PopupMenuButton), findsNothing);
   });
 
