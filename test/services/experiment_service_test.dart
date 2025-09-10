@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tipsterino/services/experiment_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FakeRemoteConfig extends Fake implements FirebaseRemoteConfig {
   String variant;
@@ -18,6 +19,7 @@ class FakeRemoteConfig extends Fake implements FirebaseRemoteConfig {
 }
 
 void main() {
+  setUpAll(() => dotenv.testLoad(fileInput: 'USE_SUPABASE=false'));
   group('ExperimentService', () {
     test('returns cached variant when fresh', () async {
       final ts = DateTime.now().millisecondsSinceEpoch;

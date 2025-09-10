@@ -51,10 +51,11 @@ Widget _buildApp() {
       ),
       isModeratorProvider.overrideWithValue(false),
     ],
-    child: const MaterialApp(
+    child: MaterialApp(
+      theme: ThemeData(useMaterial3: false),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: ThreadViewScreen(threadId: 't1'),
+      home: const ThreadViewScreen(threadId: 't1'),
     ),
   );
 }
@@ -68,7 +69,8 @@ void main() {
         find.text(AppLocalizationsEn().forum_thread_locked_banner),
         findsWidgets,
       );
-    final sendButton = tester.widget<IconButton>(find.byIcon(Icons.send));
+    final sendButton =
+        tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.send));
     expect(sendButton.onPressed, isNull);
   });
 }
