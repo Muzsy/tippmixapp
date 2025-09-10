@@ -100,7 +100,7 @@
 * [x] Szelvény/ticket service átírása PostgREST-re, normalizált táblákra.
 * [x] Storage: `avatars` bucket, feltöltés + signed URL.
 * [x] Edge Functions: `coin_trx`, `claim_daily_bonus`, `reserve_nickname` (HTTP, JWT guard, idempotencia).
-* [ ] CRON: `match_finalizer`, `tickets_payout` ütemezése.
+* [x] CRON: `match_finalizer`, `tickets_payout` ütemezése.
 * [x] DB trigger: `votes` INSERT/DELETE → `forum_posts.votes_count` frissítés.
 * [x] RLS policy-k táblánként, tesztelt példákkal.
 * [x] Remote Config kivezetése → `config` tábla / flags.

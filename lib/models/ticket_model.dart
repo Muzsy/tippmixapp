@@ -1,5 +1,5 @@
 import 'tip_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firestore-agnosztikus modell: nem importál Firestore-t
 
 enum TicketStatus { pending, won, lost, voided }
 
@@ -69,7 +69,9 @@ class Ticket {
     );
   }
 
-  factory Ticket.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  // Legacy Firestore adapter – kept for backward compat in non-Supabase mode.
+  // Accepts a minimal duck-typed object exposing id + data().
+  factory Ticket.fromFirestore(dynamic doc) {
     final data = doc.data() ?? <String, dynamic>{};
     final t = Ticket.fromJson(data);
     // Biztosítsuk, hogy az id a doc.id legyen
@@ -94,9 +96,9 @@ class Ticket {
       'stake': stake,
       'totalOdd': totalOdd,
       'potentialWin': potentialWin,
-      // Store as Firestore Timestamp for proper ordering & cursors
-      'createdAt': Timestamp.fromDate(createdAt),
-      'updatedAt': Timestamp.fromDate(updatedAt),
+      // ISO8601 – Supabase kompatibilis; Firestore út külön rétegben kezeli
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
       'status': status.name,
     };
   }

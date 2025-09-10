@@ -1,7 +1,8 @@
 # 🧬 Data Model (EN)
 
 This document describes the key data models used in TippmixApp.
-The models are implemented in Dart and stored in Firestore.
+The models are implemented in Dart and persisted in Supabase Postgres via PostgREST. Legacy
+Firestore paths are noted only where backward compatibility is relevant.
 
 ---
 
@@ -26,22 +27,15 @@ UserModel {
 - Default `tippCoin = 1000`
 - Stored under `users/{uid}`
 
-# 💰 WalletModel (NEW)
+# 💰 Wallet / Ledger (Supabase)
 
-Stores TippCoin balance per user.
+TippCoin balance and transaction history are stored in tables:
 
-```dart
-WalletModel {
-  String userId;   // same as auth.uid
-  int coins;       // Current TippCoin balance
-  Timestamp createdAt;
-}
-```
+- `coins_ledger(id uuid pk, user_id uuid, type text, delta int, balance_after int, ref_id uuid, created_at timestamptz)`
+  - RLS: owner can select; inserts happen via Edge Functions (service role) with idempotencia ref_id alapján.
+- Balance derived from latest `balance_after` for a user. No client‑side mutation.
 
-- Location: `users/{userId}/wallet` (source of truth)
-- This document is **lazy‑created** by the mobile client on the first bet.
-- An Auth onCreate Cloud Function now seeds both locations with a 50 coin balance.
-- Ledger entries mirror to `users/{userId}/ledger/{entryId}` for audit.
+Legacy Firestore wallet/ledger paths are deprecated and only used as fallback in local tests.
 
 ## 🎯 TipModel
 
@@ -70,25 +64,26 @@ Represents a full bet slip with 1+ tips.
 
 ```dart
 TicketModel {
-  String ticketId;          // Firestore doc.id
+  String ticketId;          // UUID in Supabase; legacy Firestore doc.id accepted in compatibility layer
   String userId;
   List<TipModel> tips;      // 1..n tips
   int stake;
   double totalOdd;          // aggregate odds
   double potentialWin;
   String status;            // pending | won | lost | voided
-  Timestamp createdAt;
-  Timestamp updatedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
 }
 ```
 
-- Stored under `users/{userId}/tickets/{ticketId}`
-- Status updated after match finalization by backend job (see match_finalizer)
-- Client uses `doc.id` as canonical `ticketId` during de/serialization
+- Tables: `tickets(id uuid pk, user_id uuid, status text, stake numeric, total_odd numeric, potential_win numeric, created_at, updated_at)`
+- Items: `ticket_items(id uuid pk, ticket_id uuid fk, fixture_id text, market text, odd numeric, selection text)`
+- Status updated by backend (`match_finalizer` + `tickets_payout` Edge Functions)
 
 ## 🎁 Bonus rules & state
 
-Global bonus configuration is stored in `system_configs/bonus_rules`.
+Global bonus configuration is stored in Supabase `config` table (key/value jsonb). Legacy Firestore
+`system_configs/bonus_rules` is deprecated.
 
 ```json
 BonusRules {
@@ -99,7 +94,8 @@ BonusRules {
 }
 ```
 
-Per-user bonus progress lives at `users/{uid}/bonus_state`.
+Per‑user bonus progress is derived from `coins_ledger` entries of type `daily_bonus` or from
+server‑maintained state (if introduced later). Legacy `users/{uid}/bonus_state` is deprecated.
 
 ```json
 BonusState {
@@ -111,15 +107,16 @@ BonusState {
 }
 ```
 
-## 🔜 Planned Models
+## 🏷️ Badges, Followers & Friend Requests (Supabase)
 
-- `BadgeModel`: for achievements and badge rules
-- `LeaderboardEntryModel`: cached leaderboard data
-- `FeedEventModel`: recent user activity (for Feed)
+- `badges(user_id uuid, key text, created_at)` – RLS: owner can read/insert own
+- `followers(user_id uuid, follower_id uuid, created_at)` – public read, owner insert/delete
+- `friend_requests(id uuid, to_uid uuid, from_uid uuid, accepted bool, created_at)` – to_uid can read/update; from_uid can insert
 
 ## 🗑️ Deprecated Models
 
-- `TippCoinLogModel`: replaced by per-user ledger entries under `users/{uid}/ledger`
+- Firestore `users/{uid}/wallet`, `users/{uid}/ledger`, `system_configs/bonus_rules`
+- `TippCoinLogModel`: replaced by `coins_ledger`
 
 ## 📘 Changelog
 

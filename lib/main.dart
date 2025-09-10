@@ -56,19 +56,23 @@ Future<void> main() async {
   // accordingly. The debug token is picked up automatically by the native
   // plugin if the corresponding environment variable has been set. There is
   // no need to pass the token here in Dart.
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode
-        ? AndroidProvider.debug
-        : AndroidProvider.playIntegrity,
-    appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
-  );
+  // Skip App Check when Supabase mode is active
+  const supaMode = bool.fromEnvironment('USE_SUPABASE', defaultValue: true);
+  if (!supaMode) {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: kDebugMode
+          ? AndroidProvider.debug
+          : AndroidProvider.playIntegrity,
+      appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
+    );
 
-  if (kDebugMode) {
-    try {
-      final debugToken = await FirebaseAppCheck.instance.getToken(true);
-      debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL'}');
-    } on FirebaseException catch (e) {
-      debugPrint('[APP_CHECK] startup getToken FAILED – ignore (${e.code})');
+    if (kDebugMode) {
+      try {
+        final debugToken = await FirebaseAppCheck.instance.getToken(true);
+        debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL'}');
+      } on FirebaseException catch (e) {
+        debugPrint('[APP_CHECK] startup getToken FAILED – ignore (${e.code})');
+      }
     }
   }
 

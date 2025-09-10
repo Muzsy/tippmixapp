@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firestore-agnosztikus modell: nem importál Firestore-t
 
 /// Type of the thread.
 enum ThreadType { general, match, system }
@@ -38,16 +38,31 @@ class Thread {
   });
 
   factory Thread.fromJson(String id, Map<String, dynamic> json) {
+    DateTime parseDate(dynamic v) {
+      if (v == null) return DateTime.now();
+      if (v is DateTime) return v;
+      try {
+        final ts = (v is! String && (v as dynamic).toDate is Function)
+            ? (v as dynamic).toDate()
+            : null;
+        if (ts is DateTime) return ts;
+      } catch (_) {}
+      if (v is String) {
+        final d = DateTime.tryParse(v);
+        if (d != null) return d;
+      }
+      return DateTime.now();
+    }
     return Thread(
       id: id,
       title: json['title'] as String,
       type: ThreadTypeX.fromJson(json['type'] as String),
       fixtureId: json['fixtureId'] as String?,
       createdBy: json['createdBy'] as String,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: parseDate(json['createdAt']),
       locked: json['locked'] as bool? ?? false,
       pinned: json['pinned'] as bool? ?? false,
-      lastActivityAt: (json['lastActivityAt'] as Timestamp).toDate(),
+      lastActivityAt: parseDate(json['lastActivityAt']),
       postsCount: json['postsCount'] as int? ?? 0,
       votesCount: json['votesCount'] as int? ?? 0,
     );
@@ -60,7 +75,7 @@ class Thread {
       'type': type.toJson(),
       if (fixtureId != null) 'fixtureId': fixtureId,
       'createdBy': createdBy, // must match request.auth.uid per rules
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt.toIso8601String(),
     };
     return json;
   }

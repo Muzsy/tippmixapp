@@ -162,6 +162,8 @@ jobs:
           supabase functions deploy coin_trx || true
           supabase functions deploy claim_daily_bonus || true
           supabase functions deploy reserve_nickname || true
+          supabase functions deploy match_finalizer || true
+          supabase functions deploy tickets_payout || true
 
   terraform:
     name: Terraform fmt & validate

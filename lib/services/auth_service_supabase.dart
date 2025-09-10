@@ -25,13 +25,17 @@ class AuthServiceSupabaseAdapter extends AuthService {
   @override
   Future<User?> signInWithEmail(String email, String password) async {
     final res = await _client.auth.signInWithPassword(email: email, password: password);
-    return _mapUser(res.user);
+    final u = _mapUser(res.user);
+    if (u != null) await _ensureProfile(u);
+    return u;
   }
 
   @override
   Future<User?> registerWithEmail(String email, String password) async {
     final res = await _client.auth.signUp(email: email, password: password, emailRedirectTo: null);
-    return _mapUser(res.user);
+    final u = _mapUser(res.user);
+    if (u != null) await _ensureProfile(u);
+    return u;
   }
 
   @override
@@ -110,4 +114,13 @@ class AuthServiceSupabaseAdapter extends AuthService {
           email: u.email ?? '',
           displayName: u.userMetadata?['full_name'] as String? ?? '',
         );
+
+  Future<void> _ensureProfile(User u) async {
+    try {
+      await _client.from('profiles').upsert({
+        'id': u.id,
+        'nickname': (u.displayName.isEmpty ? null : u.displayName),
+      }, onConflict: 'id');
+    } catch (_) {}
+  }
 }

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firestore-agnosztikus modell: nem importál Firestore-t
 
 /// Type of the post within a thread.
 enum PostType { tip, comment, system }
@@ -37,6 +37,21 @@ class Post {
   });
 
   factory Post.fromJson(String id, Map<String, dynamic> json) {
+    DateTime parseDate(dynamic v) {
+      if (v == null) return DateTime.now();
+      if (v is DateTime) return v;
+      try {
+        final ts = (v is! String && (v as dynamic).toDate is Function)
+            ? (v as dynamic).toDate()
+            : null;
+        if (ts is DateTime) return ts;
+      } catch (_) {}
+      if (v is String) {
+        final d = DateTime.tryParse(v);
+        if (d != null) return d;
+      }
+      return DateTime.now();
+    }
     return Post(
       id: id,
       threadId: json['threadId'] as String,
@@ -44,8 +59,8 @@ class Post {
       type: PostTypeX.fromJson(json['type'] as String),
       content: json['content'] as String,
       quotedPostId: json['quotedPostId'] as String?,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
-      editedAt: (json['editedAt'] as Timestamp?)?.toDate(),
+      createdAt: parseDate(json['createdAt']),
+      editedAt: json['editedAt'] == null ? null : parseDate(json['editedAt']),
       votesCount: json['votesCount'] as int? ?? 0,
       isHidden: json['isHidden'] as bool? ?? false,
     );
@@ -57,7 +72,7 @@ class Post {
       'userId': userId, // must equal auth.uid per rules
       'type': type.toJson(),
       'content': content,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt.toIso8601String(),
       if (quotedPostId != null) 'quotedPostId': quotedPostId,
     };
     return json;

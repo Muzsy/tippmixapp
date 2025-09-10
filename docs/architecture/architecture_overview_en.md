@@ -12,12 +12,14 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 - Localized using `flutter_localizations` with `.arb` files.
 - Core screens: Home, Profile, MyTickets, Login, Register, Settings (WIP).
 
-### 2. Firebase Backend
+### 2. Supabase Backend
 
-- **Firebase Authentication** – email/password login.
-- **Firestore** – stores user profiles, tickets, odds snapshots.
-- **Firebase Functions** – planned for odds updates, results, TippCoin logic.
-- **Firebase Emulator** – recommended for testing Firestore writes.
+- **Auth (GoTrue)** – email/password (OAuth optional), session handling
+- **PostgREST** – `profiles`, `forum_threads`, `forum_posts`, `votes`, `tickets`, `ticket_items`, `coins_ledger`, `badges`, `followers`, `friend_requests`
+- **Edge Functions (Deno)** – `coin_trx`, `claim_daily_bonus`, `match_finalizer`, `tickets_payout`
+- **Realtime** – table changes (forum, tickets)
+- **Storage** – avatars bucket, signed URLs
+- **Cron (pg_cron/Scheduler)** – scheduled invocations of Edge Functions
 
 ### 3. External API
 
@@ -25,10 +27,10 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 - HTTP calls made via custom `ApiFootballService` class.
 - API key handling currently static; planned migration to `.env` file.
 
-### 4. Cloud Functions (Node/TypeScript)
+### 4. Edge Functions (Deno/TypeScript)
 
-- Used for match finalization (`match_finalizer.ts`).
-- May evolve into additional scheduler-driven jobs.
+- `match_finalizer` and `tickets_payout` manage results & payouts
+- `coin_trx` and `claim_daily_bonus` implement TippCoin flows (idempotent)
 
 ---
 
@@ -48,7 +50,7 @@ It outlines the core modules, layer responsibilities, and cross-cutting concerns
 └────────────┬────────────┘
              ↓
 ┌────────────┴────────────┐
-│   Data Layer            │ ← Firestore, API-Football, SharedPrefs
+│   Data Layer            │ ← Supabase (PostgREST/Realtime/Storage), API‑Football, SharedPrefs
 └─────────────────────────┘
 ```
 

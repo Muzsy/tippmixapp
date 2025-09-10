@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firestore-agnosztikus modell: nem importál Firestore-t
 
 class CoinLogModel {
   final String userId;
@@ -25,9 +25,25 @@ class CoinLogModel {
     type: json['type'] as String,
     reason: json['reason'] as String,
     transactionId: json['transactionId'] as String,
-    timestamp: (json['timestamp'] as Timestamp).toDate(),
+    timestamp: _parseDate(json['timestamp']),
     description: json['description'] as String? ?? '',
   );
+
+  static DateTime _parseDate(dynamic v) {
+    if (v == null) return DateTime.now();
+    if (v is DateTime) return v;
+    try {
+      final ts = (v is! String && (v as dynamic).toDate is Function)
+          ? (v as dynamic).toDate()
+          : null;
+      if (ts is DateTime) return ts;
+    } catch (_) {}
+    if (v is String) {
+      final d = DateTime.tryParse(v);
+      if (d != null) return d;
+    }
+    return DateTime.now();
+  }
 
   Map<String, dynamic> toJson() => {
     'userId': userId,

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import '../../services/coin_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../services/coin_service_supabase.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Tile showing the daily bonus status and allowing the user to claim it.
 class HomeTileDailyBonus extends ConsumerStatefulWidget {
@@ -25,28 +26,31 @@ class _HomeTileDailyBonusState extends ConsumerState<HomeTileDailyBonus> {
 
   Future<void> _load() async {
     try {
-      final service =
-          widget.coinService ??
-          CoinService(firestore: FirebaseFirestore.instance);
-      final claimed = await service.hasClaimedToday();
+      final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+      bool claimed;
+      if (useSupabase) {
+        claimed = await SupabaseCoinService().hasClaimedToday();
+      } else {
+        final service = widget.coinService ?? CoinService.live();
+        claimed = await service.hasClaimedToday();
+      }
       if (mounted) {
-        setState(() {
-          _claimed = claimed;
-        });
+        setState(() => _claimed = claimed);
       }
     } catch (_) {
-      if (mounted) {
-        setState(() => _claimed = false);
-      }
+      if (mounted) setState(() => _claimed = false);
     }
   }
 
   Future<void> _claim() async {
     setState(() => _loading = true);
-    final service =
-        widget.coinService ??
-        CoinService(firestore: FirebaseFirestore.instance);
-    await service.claimDailyBonus();
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      await SupabaseCoinService().claimDailyBonus();
+    } else {
+      final service = widget.coinService ?? CoinService.live();
+      await service.claimDailyBonus();
+    }
     if (mounted) {
       setState(() {
         _claimed = true;

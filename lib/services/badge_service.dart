@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/badge_config.dart';
 import '../models/badge.dart';
@@ -7,10 +8,8 @@ import '../models/user_stats_model.dart';
 
 /// Service responsible for evaluating and assigning badges to a user.
 class BadgeService {
-  final FirebaseFirestore _firestore;
-
-  BadgeService([FirebaseFirestore? firestore])
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+  // Keep legacy optional positional param for test compatibility (ignored)
+  BadgeService([Object? legacyFirestore]);
 
   /// Evaluate which badges the user has earned based on [stats].
   List<BadgeData> evaluateUserBadges(UserStatsModel stats) {
@@ -52,42 +51,50 @@ class BadgeService {
   /// Assign newly earned badges for [userId] based on [stats].
   Future<void> assignNewBadges(String userId, UserStatsModel stats) async {
     final earned = evaluateUserBadges(stats);
-    final badgesRef = _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('badges');
-    final existing = await badgesRef.get();
-    final existingKeys = existing.docs.map((d) => d.id).toSet();
-
-    for (final badge in earned) {
-      if (!existingKeys.contains(badge.key)) {
-        await badgesRef.doc(badge.key).set({
-          'key': badge.key,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      final client = Supabase.instance.client;
+      final rows = await client
+          .from('badges')
+          .select('key')
+          .eq('user_id', userId);
+      final existingKeys = (rows as List)
+          .map((r) => (r['key'] as String))
+          .toSet();
+      for (final badge in earned) {
+        if (!existingKeys.contains(badge.key)) {
+          await client.from('badges').insert({
+            'user_id': userId,
+            'key': badge.key,
+          });
+        }
       }
     }
   }
 
   /// Returns the latest earned badge for [userId] with timestamp.
   Future<EarnedBadgeModel?> getLatestBadge(String userId) async {
-    final badgesRef = _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('badges');
-    final snap = await badgesRef
-        .orderBy('timestamp', descending: true)
-        .limit(1)
-        .get();
-    if (snap.docs.isEmpty) return null;
-    final doc = snap.docs.first;
-    final key = doc.id;
-    final data = badgeConfigs.firstWhere(
-      (b) => b.key == key,
-      orElse: () => throw ArgumentError('unknown badge: $key'),
-    );
-    final ts = doc.data()['timestamp'];
-    if (ts is! Timestamp) return null;
-    return EarnedBadgeModel(badge: data, timestamp: ts.toDate());
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      final client = Supabase.instance.client;
+      final rows = await client
+          .from('badges')
+          .select('key, created_at')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
+          .limit(1);
+      if ((rows as List).isEmpty) return null;
+      final r = (rows.first as Map<String, dynamic>);
+      final key = r['key'] as String;
+      final data = badgeConfigs.firstWhere(
+        (b) => b.key == key,
+        orElse: () => throw ArgumentError('unknown badge: $key'),
+      );
+      final tsStr = r['created_at'] as String?;
+      final ts = tsStr != null ? DateTime.tryParse(tsStr) : null;
+      if (ts == null) return null;
+      return EarnedBadgeModel(badge: data, timestamp: ts);
+    }
+    return null;
   }
 }

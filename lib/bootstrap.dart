@@ -35,10 +35,14 @@ Future<void> bootstrap() async {
       }
     }
 
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+    // Skip Firebase initialization entirely when Supabase mode is active
+    final supaMode = const bool.fromEnvironment('USE_SUPABASE', defaultValue: true);
+    if (!supaMode) {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      }
     }
     // Build guard: prevent accidental prod usage in emulator mode
     if (kUseEmulator) {
@@ -47,7 +51,7 @@ Future<void> bootstrap() async {
         throw StateError('Offline/emulator mód mellett PROD Firebase projekt tiltott. (projectId=$pid)');
       }
     }
-    if (kUseEmulator) {
+    if (kUseEmulator && !supaMode) {
       final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
       FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
       // Auth emulator requires await
@@ -58,7 +62,7 @@ Future<void> bootstrap() async {
     }
     // App Check – fejlesztői / CI környezetben Debug providerre váltunk,
     // hogy a Cloud Functions 403-at elkerüljük.
-    if (kDebugMode) {
+    if (kDebugMode && !supaMode) {
       await FirebaseAppCheck.instance.activate(
         androidProvider: AndroidProvider.debug,
         appleProvider: AppleProvider.debug,

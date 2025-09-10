@@ -1,8 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/social_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../services/social_service_supabase.dart';
 import '../models/friend_request.dart';
 
-final socialServiceProvider = Provider<SocialService>((ref) {
+final socialServiceProvider = Provider<dynamic>((ref) {
+  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+  if (useSupabase) return SocialServiceSupabase();
   return SocialService();
 });
 

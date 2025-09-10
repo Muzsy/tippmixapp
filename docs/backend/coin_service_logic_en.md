@@ -2,6 +2,8 @@
 
 This document describes the logic and design of the TippCoin virtual currency system in TippmixApp.
 TippCoin is used as a betting stake and gamification reward.
+Implementation uses Supabase (Postgres + Edge Functions). Legacy Firestore notes are kept only
+for context.
 
 ---
 
@@ -18,45 +20,37 @@ TippCoin is used as a betting stake and gamification reward.
 
 ### On registration
 
-- Cloud Function seeds `users/{uid}/wallet/main` with **50** coins (user doc has no `coins` field)
+- Profiles are upserted in `profiles(id, nickname, avatar_url)`
+- Optional signup bonus may be credited via an Edge Function (future)
 
 ### On placing a ticket
 
-- `debitAndCreateTicket()` first writes the ticket to
-  `users/{uid}/tickets/{ticketId}`.
-- It then calls the `coin_trx` Cloud Function with
-  `{ amount: stake, type: 'debit', reason: 'bet', transactionId: ticketId }`.
-- The Cloud Function deducts the balance in
-  `users/{uid}/wallet/main.coins` and appends a ledger entry
-  `users/{uid}/ledger/{ticketId}` atomically.
-- If the function call fails, the client deletes the created ticket
-  (compensation) and rethrows the error.
+- Client inserts a row into `tickets` and its `ticket_items`
+- Then invokes Edge Function `coin_trx` with `{ delta: -stake, type: 'bet_stake', ref_id: ticketId }`
+- The function reads latest balance from `coins_ledger`, computes `balance_after`, and inserts a new
+  row with idempotent `ref_id`
+- Errors are surfaced to the client; compensation logic can delete the just‑created ticket if needed
 
 This keeps the client free of any direct wallet writes.
 
 ### On result finalization
 
-- `CoinService.credit(uid, potentialWin, ticketId)` runs a Firestore transaction that:
-  - checks `users/{uid}/ledger/{ticketId}` and exits if already exists (idempotent); in this case the wallet increment is skipped.
-  - increments `users/{uid}/wallet/main.coins` with `FieldValue.increment`;
-  - writes ledger entry `{ userId, amount, type: 'win', refId: ticketId, source: 'coin_trx', createdAt }`.
-- `CoinService.debit(uid, stake, ticketId)` performs the same flow with a negative amount and `type: 'bet'`.
+- Backend jobs (`match_finalizer`, `tickets_payout`) compute outcomes and credit potential wins by
+  inserting rows into `coins_ledger` (type `bet_win`, `ref_id = ticketId`), idempotensen
 
 ### Daily bonus credit
 
-- The scheduled `daily_bonus` Cloud Function grants **50** coins to each user.
-- Users can also claim a bonus via the `claim_daily_bonus` callable, which reads `system_configs/bonus_rules` and credits the wallet with `CoinService.credit(uid, amount, refId, 'daily_bonus', t, before)`.
-- Credit operations use a deterministic `refId` (`bonus:daily:YYYYMMDD`) to ensure idempotency.
-- The scheduled job paginates users in batches of 200 and logs progress via `firebase-functions/logger`.
+- Users can claim a bonus via `claim_daily_bonus` Edge Function, which checks `coins_ledger` for a
+  same‑day entry and credits e.g. **50** coins if allowed
+- Deterministic `ref_id` (e.g., `bonus:daily:YYYYMMDD`) ensures idempotency
 
 ---
 
 ## 🧾 Technical Plan
 
-- TippCoin changes must be done server-side via Cloud Functions.
-- Client code never modifies `users/{uid}/wallet/main` or `users/{uid}/ledger` directly.
-- Each transaction is logged in the ledger with an idempotent `refId`.
-- Composite Firestore index: `collectionGroup('ledger')` on `(type ASC, createdAt DESC)`.
+- TippCoin changes happen server‑side via Edge Functions
+- Client never modifies balance directly
+- Each transaction is logged in `coins_ledger` with idempotent `ref_id`
 
 ```json
 TippCoinLog {
@@ -67,42 +61,35 @@ TippCoinLog {
 }
 ```
 
-- Wallet structure:
+Tables:
 
-  ```
-  users/{uid}/wallet/main
-    coins: number
-    updatedAt: timestamp
-  users/{uid}/ledger/{ticketId}
-    userId: string
-    amount: number
-    type: 'bet' | 'win'
-    refId: string
-    source: 'coin_trx' | 'log_coin'
-    checksum: string // SHA1(uid:type:refId:amount)
-    createdAt: timestamp
-  ```
-- Legacy paths `wallets/*` and `coin_logs/*` removed
-- UI should show recent changes in profile
+```
+coins_ledger (
+  id uuid pk default gen_random_uuid(),
+  user_id uuid not null,
+  type text not null,
+  delta int not null,
+  balance_after int not null,
+  ref_id uuid,
+  created_at timestamptz default now()
+)
+```
 
 ---
 
 ## ⚠️ Current Status
 
-- `CoinService.debitCoin` and `creditCoin` only invoke `coin_trx`; all wallet updates happen server-side.
-- `CoinService.debitAndCreateTicket()` creates the ticket then triggers `coin_trx` debit.
-- If `coin_trx` is unavailable (e.g., local tests), a fallback writes to `users/{uid}/wallet/main` and `users/{uid}/ledger/{transactionId}` so paths stay consistent.
-- Wallet balance stored at `users/{uid}/wallet/main.coins` is treated as source of truth and updated by Cloud Functions.
-- `coin_logs` collection removed; per-user ledger is the sole transaction log.
-- Signup bonus and daily bonus claims are governed by `system_configs/bonus_rules`.
+- Client hívások: `SupabaseCoinService`, EdgeFn: `coin_trx`, `claim_daily_bonus`
+- Forrás: `coins_ledger`, kliens fallback nincs (csak teszthelyzetekben)
+- Bonus szabályok: `config` tábla (jsonb), edge‑oldali ellenőrzéssel
 
 ---
 
 ## 🔒 Codex/CI Notes
 
-- All TippCoin updates must be test-covered
-- User must never gain/lose coin client-side
-- Security rules must prevent unauthorized writes
+- All TippCoin updates must be test‑covered
+- User must never gain/lose coin client‑side
+- RLS must prevent unauthorized reads/writes; server role used only in EdgeFn
 
 ## 📘 Changelog
 
@@ -113,4 +100,4 @@ TippCoinLog {
 - 2025-08-22: Introduced ledger `checksum` field and callable `claim_daily_bonus`; signup bonus handled on user creation.
 - 2025-10-02: Added paginated daily bonus with structured logging and ledger type+createdAt index.
 - 2025-10-03: Enforced ledger pre-check to skip wallet increment when refId already exists.
-- 2025-08-23: Documented removal of legacy `wallets/*` path.
+- 2025-09-10: Migrated flow to Supabase (`coins_ledger` + Edge Functions)

@@ -1,20 +1,9 @@
-# Supabase Cron – Tipsterino
+-- Remote CRON scheduling for Edge Functions (use with psql on the remote DB)
+-- Replace <project-ref> with your project ref, and ensure pg_cron + pg_net are available.
 
-- match_finalizer: every 10 minutes, HTTP call to edge function `match_finalizer`
-- tickets_payout: every 10 minutes, HTTP call to edge function `tickets_payout`
-
-Notes:
-- Use `pg_cron` via SQL or the Supabase Dashboard Scheduler.
-- Prefer calling Edge Functions with a service role key from the scheduler secret store.
-- Ensure idempotency on server side; batch work to avoid spikes.
-
-Example SQL (pg_cron):
-
-```sql
 do $$
 begin
   if exists (select 1 from pg_extension where extname = 'pg_cron') then
-    -- Requires http/pg_net extension available on the project
     perform cron.schedule(
       'match_finalizer_job',
       '*/10 * * * *',
@@ -37,6 +26,4 @@ begin
     );
   end if;
 end $$;
-```
 
-Alternatively, use the Dashboard → Scheduler to configure the same HTTP calls.
