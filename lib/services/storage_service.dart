@@ -5,6 +5,8 @@ import '../utils/image_resizer.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'storage_service_supabase.dart';
 
 class StorageService {
   final FirebaseStorage _storage;
@@ -39,6 +41,10 @@ class StorageService {
   }
 }
 
-final storageServiceProvider = Provider<StorageService>((ref) {
+final storageServiceProvider = Provider<dynamic>((ref) {
+  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+  if (useSupabase) {
+    return SupabaseStorageService();
+  }
   return StorageService();
 });

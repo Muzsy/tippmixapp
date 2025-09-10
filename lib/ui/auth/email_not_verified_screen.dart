@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
 
-class EmailNotVerifiedScreen extends StatefulWidget {
+class EmailNotVerifiedScreen extends ConsumerStatefulWidget {
   const EmailNotVerifiedScreen({super.key});
   @override
-  State<EmailNotVerifiedScreen> createState() => _EmailNotVerifiedScreenState();
+  ConsumerState<EmailNotVerifiedScreen> createState() => _EmailNotVerifiedScreenState();
 }
 
-class _EmailNotVerifiedScreenState extends State<EmailNotVerifiedScreen> {
+class _EmailNotVerifiedScreenState extends ConsumerState<EmailNotVerifiedScreen> {
   bool _sending = false;
   bool _reloading = false;
 
   Future<void> _resend() async {
     setState(() => _sending = true);
-    await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+    await ref.read(authProvider.notifier).sendEmailVerification();
     if (!mounted) return;
     setState(() => _sending = false);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -23,7 +24,9 @@ class _EmailNotVerifiedScreenState extends State<EmailNotVerifiedScreen> {
 
   Future<void> _refresh() async {
     setState(() => _reloading = true);
-    await FirebaseAuth.instance.currentUser?.reload();
+    await ref.read(authProvider.notifier).logout();
+    // Itt egyszerű visszalépést használunk: a Splash/Router állapot alapján úgyis
+    // a megfelelő képernyőre kerül a felhasználó belépés után.
     if (!mounted) return;
     setState(() => _reloading = false);
   }

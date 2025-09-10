@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../providers/auth_provider.dart';
 import '../theme/brand_colors.dart';
 import '../theme/brand_colors_presets.dart';
@@ -15,6 +16,11 @@ class SocialLoginButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context)!;
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      // Supabase Auth social login nincs bekötve – ne rendereljük a gombokat
+      return const SizedBox.shrink();
+    }
     final colors =
         Theme.of(context).extension<BrandColors>() ?? brandColorsLight;
     final auth = ref.read(authServiceProvider);

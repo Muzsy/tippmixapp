@@ -1,6 +1,8 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Service responsible for fetching and caching remote experiment variants.
 class ExperimentService {
@@ -49,14 +51,32 @@ class ExperimentService {
       return variant;
     }
 
-    try {
-      await _remoteConfig.fetchAndActivate();
-      final fetched = _remoteConfig.getString(_variantKey);
-      final variant = fetched.isNotEmpty ? fetched : 'A';
-      await _saveVariant(variant);
-      return variant;
-    } catch (_) {
-      return cached ?? 'A';
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      try {
+        final res = await Supabase.instance.client
+            .from('config')
+            .select('value')
+            .eq('key', _variantKey)
+            .maybeSingle();
+        final row = (res as Map?)?.cast<String, dynamic>();
+        final value = (row?['value'] as Map?)?['variant'] as String?;
+        final variant = (value != null && value.isNotEmpty) ? value : 'A';
+        await _saveVariant(variant);
+        return variant;
+      } catch (_) {
+        return cached ?? 'A';
+      }
+    } else {
+      try {
+        await _remoteConfig.fetchAndActivate();
+        final fetched = _remoteConfig.getString(_variantKey);
+        final variant = fetched.isNotEmpty ? fetched : 'A';
+        await _saveVariant(variant);
+        return variant;
+      } catch (_) {
+        return cached ?? 'A';
+      }
     }
   }
 

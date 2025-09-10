@@ -8,6 +8,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'env/env.dart';
 
 import 'firebase_options.dart';
 
@@ -17,6 +20,21 @@ Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
+    // Initialize Supabase (idempotent-ish in practice; wrap in try-catch)
+    try {
+      if (!Supabase.instance.isInitialized) {
+        await Supabase.initialize(
+          url: Env.supabaseUrl,
+          anonKey: Env.supabaseAnonKey,
+        );
+      }
+    } catch (e) {
+      // If already initialized in tests/hot-reload, ignore
+      if (!e.toString().toLowerCase().contains('initialized')) {
+        rethrow;
+      }
+    }
+
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,

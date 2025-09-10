@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/forum/data/firestore_forum_repository.dart';
+import '../features/forum/data/supabase_forum_repository.dart';
 import '../features/forum/data/forum_repository.dart';
 import '../features/forum/domain/thread.dart';
 import '../features/forum/providers/forum_filter_state.dart';
@@ -12,12 +14,16 @@ import '../features/forum/domain/post.dart';
 import 'moderator_claim_provider.dart';
 
 /// Provides the [ForumRepository] implementation.
-final forumRepositoryProvider = Provider<ForumRepository>(
-  (ref) => FirestoreForumRepository(
+final forumRepositoryProvider = Provider<ForumRepository>((ref) {
+  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+  if (useSupabase) {
+    return SupabaseForumRepository();
+  }
+  return FirestoreForumRepository(
     FirebaseFirestore.instance,
     () => ref.read(isModeratorProvider),
-  ),
-);
+  );
+});
 
 /// Holds the current filter and sort state.
 final forumFilterProvider = StateProvider<ForumFilterState>(
@@ -65,4 +71,3 @@ final threadDetailLoadingProviderFamily = Provider.family<bool, String>(
 final threadProviderFamily = StreamProvider.family<Thread, String>(
   (ref, threadId) => ref.watch(forumRepositoryProvider).watchThread(threadId),
 );
-

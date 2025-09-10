@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'api_football_service.dart';
 import 'odds_drift_checker.dart';
 import '../widgets/odds_drift_dialog.dart';
@@ -17,17 +19,51 @@ class TicketService {
     required List<Map<String, dynamic>> tips,
     required num stake,
   }) async {
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    if (useSupabase) {
+      final client = Supabase.instance.client;
+      final u = client.auth.currentUser;
+      if (u == null) return null;
+
+      double totalOdd = 1.0;
+      for (final t in tips) {
+        final o = (t['odds'] as num?)?.toDouble() ?? 1.0;
+        totalOdd *= o;
+      }
+      final potentialWin = stake * totalOdd;
+
+      final insert = await client
+          .from('tickets')
+          .insert({
+            'user_id': u.id,
+            'status': 'pending',
+            'stake': stake,
+            'total_odd': double.parse(totalOdd.toStringAsFixed(2)),
+            'potential_win': double.parse(potentialWin.toStringAsFixed(2)),
+          })
+          .select('id')
+          .single();
+      final ticketId = insert['id'] as String;
+      final items = tips.map((t) => {
+            'ticket_id': ticketId,
+            'fixture_id': (t['eventId'] ?? t['fixtureId']).toString(),
+            'market': (t['marketKey'] ?? t['market'] ?? 'h2h').toString(),
+            'odd': (t['odds'] as num?)?.toDouble() ?? 1.0,
+            'selection': (t['outcome'] ?? t['selection']).toString(),
+          });
+      if (items.isNotEmpty) {
+        await client.from('ticket_items').insert(items.toList());
+      }
+      return ticketId;
+    }
+
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return null;
     }
     final uid = user.uid;
     final fs = FirebaseFirestore.instance;
-    final ticketRef = fs
-        .collection('users')
-        .doc(uid)
-        .collection('tickets')
-        .doc();
+    final ticketRef = fs.collection('users').doc(uid).collection('tickets').doc();
 
     double totalOdd = 1.0;
     for (final t in tips) {

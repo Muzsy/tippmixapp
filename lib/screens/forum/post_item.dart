@@ -104,6 +104,7 @@ class _PostItemState extends ConsumerState<PostItem> {
             ),
             TextField(
               controller: noteController,
+              autofocus: true,
               decoration: InputDecoration(labelText: loc.report_note_label),
             ),
           ],
@@ -219,7 +220,10 @@ class _PostItemState extends ConsumerState<PostItem> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text(loc.edit_title),
-                          content: TextField(controller: controller),
+                          content: TextField(
+                            controller: controller,
+                            autofocus: true,
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),

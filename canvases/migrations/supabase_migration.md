@@ -96,16 +96,16 @@
 * [ ] Firebase package-ek eltávolítása; `supabase_flutter` hozzáadása.
 * [ ] `bootstrap.dart`: Supabase init, Firebase init eltávolítása.
 * [ ] Auth réteg csere (email+jelszó), `profiles` tábla seed + profilbetöltés.
-* [ ] Fórum repo átírása PostgREST-re + Realtime.
-* [ ] Szelvény/ticket service átírása PostgREST-re, normalizált táblákra.
-* [ ] Storage: `avatars` bucket, feltöltés + signed URL.
-* [ ] Edge Functions: `coin_trx`, `claim_daily_bonus`, `reserve_nickname` (HTTP, JWT guard, idempotencia).
+* [x] Fórum repo átírása PostgREST-re + Realtime.
+* [x] Szelvény/ticket service átírása PostgREST-re, normalizált táblákra.
+* [x] Storage: `avatars` bucket, feltöltés + signed URL.
+* [x] Edge Functions: `coin_trx`, `claim_daily_bonus`, `reserve_nickname` (HTTP, JWT guard, idempotencia).
 * [ ] CRON: `match_finalizer`, `tickets_payout` ütemezése.
-* [ ] DB trigger: `votes` INSERT/DELETE → `forum_posts.votes_count` frissítés.
-* [ ] RLS policy-k táblánként, tesztelt példákkal.
-* [ ] Remote Config kivezetése → `config` tábla / flags.
+* [x] DB trigger: `votes` INSERT/DELETE → `forum_posts.votes_count` frissítés.
+* [x] RLS policy-k táblánként, tesztelt példákkal.
+* [x] Remote Config kivezetése → `config` tábla / flags.
 * [ ] Analytics váltás (Plausible/PostHog) – opcionális.
-* [ ] CI frissítés: Supabase deploy pipeline, környezeti kulcsok.
+* [x] CI frissítés: Supabase deploy pipeline, környezeti kulcsok.
 * [ ] Eltakarítás: App Check, régi Firebase utils, GCP deploy fájlok.
 
 ---
