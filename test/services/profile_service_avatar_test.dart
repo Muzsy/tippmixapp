@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
+
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:tipsterino/services/profile_service.dart';
+
 import 'package:tipsterino/models/user_model.dart';
+import 'package:tipsterino/services/profile_service.dart';
 
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
@@ -15,9 +17,11 @@ class MockUploadTask extends Mock implements UploadTask {}
 
 class MockTaskSnapshot extends Mock implements TaskSnapshot {}
 
+class FakeFile extends Fake implements File {}
+
 void main() {
   setUpAll(() {
-    registerFallbackValue(File('fallback.png'));
+    registerFallbackValue(FakeFile());
     registerFallbackValue(Uint8List(0));
   });
   group('ProfileService.uploadAvatar', () {
