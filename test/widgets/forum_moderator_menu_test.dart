@@ -42,14 +42,18 @@ void main() {
         isModeratorProvider.overrideWithValue(true),
         forumRepositoryProvider.overrideWithValue(_DummyRepo()),
       ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: ThreadViewScreen(threadId: 't1'),
+          home: const ThreadViewScreen(threadId: 't1'),
         ),
     ));
       await tester.pumpAndSettle();
-    expect(find.byType(PopupMenuButton), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((w) => w is PopupMenuButton),
+      findsOneWidget,
+    );
 
     await tester.pumpWidget(ProviderScope(
       overrides: [
@@ -58,14 +62,18 @@ void main() {
         isModeratorProvider.overrideWithValue(false),
         forumRepositoryProvider.overrideWithValue(_DummyRepo()),
       ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: ThreadViewScreen(threadId: 't1'),
+          home: const ThreadViewScreen(threadId: 't1'),
         ),
     ));
       await tester.pumpAndSettle();
-    expect(find.byType(PopupMenuButton), findsNothing);
+    expect(
+      find.byWidgetPredicate((w) => w is PopupMenuButton),
+      findsNothing,
+    );
   });
 
   testWidgets('pin action calls repository', (tester) async {
@@ -85,10 +93,11 @@ void main() {
         isModeratorProvider.overrideWithValue(true),
         forumRepositoryProvider.overrideWithValue(repo),
       ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: ThreadViewScreen(threadId: 't1'),
+          home: const ThreadViewScreen(threadId: 't1'),
         ),
     ));
     await tester.pump();

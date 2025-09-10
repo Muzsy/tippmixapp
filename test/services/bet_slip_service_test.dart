@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:tipsterino/models/tip_model.dart';
 import 'package:tipsterino/services/bet_slip_service.dart';
@@ -92,6 +93,7 @@ class FakeFirebaseFirestore extends Fake implements FirebaseFirestore {
 }
 
 void main() {
+  setUpAll(() => dotenv.testLoad(fileInput: 'USE_SUPABASE=false'));
   test('submitTicket writes ticket and calls CoinService', () async {
     final firestore = FakeFirebaseFirestore();
     final coinService = FakeCoinService(firestore);
