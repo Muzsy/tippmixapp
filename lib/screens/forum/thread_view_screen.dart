@@ -115,7 +115,7 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         children: [
           if (locked)
             MaterialBanner(
-              content: Text(loc.forum_thread_locked_banner),
+              content: Text(loc.forum_thread_locked),
               actions: [
                 TextButton(onPressed: () {}, child: Text(loc.ok)),
               ],
@@ -181,11 +181,11 @@ class _ThreadViewScreenState extends ConsumerState<ThreadViewScreen> {
         controller: _textController,
         focusNode: _focusNode,
         enabled: !locked,
-        disabledMessage: loc.forum_thread_locked_banner,
+        disabledMessage: loc.forum_thread_locked,
         onSubmit: () async {
           if (locked) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(loc.forum_thread_locked_banner)),
+              SnackBar(content: Text(loc.forum_thread_locked)),
             );
             return;
           }

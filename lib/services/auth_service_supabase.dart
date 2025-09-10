@@ -81,17 +81,20 @@ class AuthServiceSupabaseAdapter extends AuthService {
   // Nem támogatott social login hívások Supabase módban jelenleg
   @override
   Future<User?> signInWithGoogle() async {
-    throw AuthServiceException('auth/unsupported');
+    await _client.auth.signInWithOAuth(sb.OAuthProvider.google);
+    return _mapUser(_client.auth.currentUser);
   }
 
   @override
   Future<User?> signInWithFacebook() async {
-    throw AuthServiceException('auth/unsupported');
+    await _client.auth.signInWithOAuth(sb.OAuthProvider.facebook);
+    return _mapUser(_client.auth.currentUser);
   }
 
   @override
   Future<User?> signInWithApple() async {
-    throw AuthServiceException('auth/unsupported');
+    await _client.auth.signInWithOAuth(sb.OAuthProvider.apple);
+    return _mapUser(_client.auth.currentUser);
   }
 
   @override
