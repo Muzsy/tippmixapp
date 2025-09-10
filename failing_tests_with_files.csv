@@ -1,0 +1,13 @@
+Test description,Progress file hint,Stack file,Line
+,///home/muszy/projects/tippmixapp/test/widget/thread_view_locked_test.dart,test/src/controller.dart,2009
+shows banner and prevents posting when locked,/home/muszy/projects/tippmixapp/test/widget/thread_view_locked_test.dart:,test/src/controller.dart,2009
+,/home/muszy/projects/tippmixapp/test/widget/post_item_actions_test.dart:,,
+buttons call controller methods,/home/muszy/projects/tippmixapp/test/widget/post_item_actions_test.dart:,,
+,///home/muszy/projects/tippmixapp/test/widgets/forum_moderator_menu_test.dart,,
+menu visible only for moderators,/home/muszy/projects/tippmixapp/test/widgets/forum_moderator_menu_test.dart:,,
+,///home/muszy/projects/tippmixapp/test/widgets/forum_match_thread_test.dart,,
+requires fixture when match type selected,/home/muszy/projects/tippmixapp/test/widgets/forum_match_thread_test.dart:,,
+,///home/muszy/projects/tippmixapp/test/widgets/forum/locked_thread_composer_test.dart,test/widgets/forum_lock_behavior_test.dart,47
+composer disabled and banner visible when thread locked,/home/muszy/projects/tippmixapp/test/widgets/forum/locked_thread_composer_test.dart:,test/widgets/forum_lock_behavior_test.dart,47
+,///home/muszy/projects/tippmixapp/test/widgets/forum_lock_behavior_test.dart,,
+composer disables when thread locks,/home/muszy/projects/tippmixapp/test/widgets/forum_lock_behavior_test.dart:,,
