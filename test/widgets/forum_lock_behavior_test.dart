@@ -44,6 +44,7 @@ void main() {
 
     controller.add(base.copyWith(locked: true));
     await tester.pump();
+    await tester.pump();
     expect(find.byType(MaterialBanner), findsOneWidget);
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isFalse);
     await controller.close();

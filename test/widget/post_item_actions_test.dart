@@ -8,6 +8,7 @@ import 'package:tipsterino/models/auth_state.dart';
 import 'package:tipsterino/models/user.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/providers/forum_provider.dart';
+import 'package:tipsterino/providers/moderator_claim_provider.dart';
 import 'package:tipsterino/screens/forum/post_item.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import '../mocks/mock_auth_service.dart';
@@ -84,6 +85,7 @@ void main() {
           threadDetailControllerProviderFamily(
             't1',
           ).overrideWith((ref) => controller),
+          isModeratorProvider.overrideWithValue(true),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

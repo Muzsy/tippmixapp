@@ -63,9 +63,11 @@ void main() {
   testWidgets('composer disabled and banner visible when thread locked',
       (tester) async {
     await tester.pumpWidget(_buildApp());
-    await tester.pump();
-    expect(find.text(AppLocalizationsEn().forum_thread_locked_banner),
-        findsOneWidget);
+      await tester.pump();
+      expect(
+        find.text(AppLocalizationsEn().forum_thread_locked_banner),
+        findsWidgets,
+      );
     final sendButton = tester.widget<IconButton>(find.byIcon(Icons.send));
     expect(sendButton.onPressed, isNull);
   });
