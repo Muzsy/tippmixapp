@@ -1,0 +1,92 @@
+# Codex Goal – OTP e‑mail verifikáció (Supabase)
+# Minta: codex/goals/migrations/fill_canvas_supabase_migration.yaml alapján
+# Nyelv: HU | Séma: steps: [ name, description, outputs, (inputs) ]
+
+steps:
+  - name: Kódbázis tájékozódás és biztonsági mentés
+    description: >-
+      Olvasd be a projektet. Validáld, hogy a következő fájlok léteznek:
+      lib/services/auth_service_supabase.dart, lib/services/auth_service_base.dart,
+      lib/providers/auth_provider.dart, lib/screens/auth/login_form.dart,
+      lib/screens/auth/otp_prompt_screen.dart, lib/l10n/app_hu.arb, lib/l10n/app_en.arb.
+      Készíts lokális branch-et: feature/auth_otp_verification és futtasd a lintet.
+    outputs:
+      - "Git branch létrehozva: feature/auth_otp_verification"
+      - "Fájlok létezésének megerősítése"
+      - "Lint futtatva (de még lehetnek hibák a módosítások előtt)"
+
+  - name: AuthService interface bővítése (OTP támogatás)
+    description: >-
+      A lib/services/auth_service_base.dart fájlban bővítsd az AuthService absztrakt osztályt
+      két új metódussal: verifyEmailOtp(String email, String code) és resendSignupOtp(String email).
+      Ne törj meg létező metódusokat; hagyd érintetlenül a meglévő API-t.
+    outputs:
+      - "AuthService interface bővítve két metódussal"
+
+  - name: Supabase adapter implementáció (verifyOtp + resend)
+    description: >-
+      A lib/services/auth_service_supabase.dart fájlban implementáld az új metódusokat:
+      - verifyEmailOtp(email, code): hívd a Supabase verifyOtp‑t type: email paraméterrel,
+        majd ha nincs aktív session, hívd signInWithPassword(email, utoljára használt jelszó helyett kérd be a hívótól vagy hagyd a Notifierre – itt elegendő, ha verifyOtp lefut;
+        végül hívd meg az _ensureProfile(u) segédfüggvényt a belépés után.
+      - resendSignupOtp(email): hívd a Supabase resend(type: OtpType.signup, email: email) metódust.
+      A registerWithEmail metódus ne adjon át emailRedirectTo paramétert.
+    outputs:
+      - "AuthServiceSupabaseAdapter implementálva az OTP metódusokkal"
+
+  - name: Auth Provider / Notifier kiegészítése
+    description: >-
+      A lib/providers/auth_provider.dart fájlban add hozzá a publikus hívásokat
+      (pl. requestVerifyEmailOtp(email, code), resendSignupOtp(email)), melyek az authServiceProvider felé delegálnak.
+      Biztosíts hiba‑ és sikerjelzést a UI számára (állapotkód vagy kivétel–>üzenet mappelés meglévő struktúrával).
+    outputs:
+      - "AuthProvider – OTP hívások delegálása kész"
+
+  - name: Regisztráció utáni OTP flow a login_form.dart‑ban
+    description: >-
+      A lib/screens/auth/login_form.dart regisztrációs ágában, sikeres signup után
+      navigálj az OTP képernyőre. Add át az e‑mail címet paraméterként.
+      A visszanavigálás után (ha OTP sikeres) léptesd be a felhasználót (ha még nincs session),
+      és navigálj a főképernyőre.
+    outputs:
+      - "Regisztrációs flow OTP képernyőre visz sikeres signup után"
+
+  - name: OTP képernyő átalakítása Auth alapúra
+    description: >-
+      A lib/screens/auth/otp_prompt_screen.dart fájlban az eddigi SecurityService függést
+      váltsd Auth‑alapú hívásokra. A widget kapjon kötelező email paramétert.
+      A "Megerősít" gomb a provider.requestVerifyEmailOtp(email, code) függvényt hívja.
+      Adj hozzá egy "Kód újraküldése" gombot (cooldownnal), amely a provider.resendSignupOtp(email)‑et hívja.
+    outputs:
+      - "OTP képernyő az AuthProviderrel működik"
+
+  - name: Lokalizáció kulcsok frissítése (HU/EN/DE)
+    description: >-
+      A lib/l10n/app_hu.arb, app_en.arb és app_de.arb fájlokban ellenőrizd az alábbi kulcsokat:
+      otp_enter_code, otp_error_invalid, otp_prompt_title. Ha hiányoznak, add hozzá őket.
+      Adj hozzá (ha nincs): otp_resend, otp_sent_to, otp_expired, otp_new_code_sent.
+      Futtasd a l10n generálást.
+    outputs:
+      - "Lokalizáció frissítve és generálva"
+
+  - name: README megjegyzés a sablonról (MANUÁLIS lépés)
+    description: >-
+      A repo gyökerében hozz létre vagy frissíts egy rövid megjegyzést (pl. AUTH_OTP_NOTES.md),
+      amely leírja, hogy a Supabase Dashboardon a Confirm signup e‑mail sablonba a {{ .Token }} változót kell hagyni,
+      magic linket ({{ .ConfirmationURL }}) nem használunk. Ez MANUÁLIS, a Codex csak a fájlt frissíti.
+    outputs:
+      - "AUTH_OTP_NOTES.md létrehozva/frissítve"
+
+  - name: Build és gyors tesztek
+    description: >-
+      Futtasd: flutter analyze; flutter test (csak unit/widget). Ha bármelyik módosítás
+      törte az importot vagy a fordítást, javítsd. Ellenőrizd, hogy az OTP képernyő compile‑ol és a flow végigmegy mockolt környezetben.
+    outputs:
+      - "Analyze és unit/widget tesztek zöldek"
+
+  - name: Commit és PR
+    description: >-
+      Commitold a változásokat Conventional Commits szerint (feat: auth otp verification flow),
+      majd készíts PR‑t a fő fejlesztői ágra. A PR leírásába illeszd be a Pipálható checklistet a vászonból, és pipáld ki ami elkészült.
+    outputs:
+      - "PR létrehozva – OTP verifikáció bevezetve"
