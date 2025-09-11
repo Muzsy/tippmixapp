@@ -61,23 +61,29 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () async {
       try {
-        final res = await sb.Supabase.instance.client.functions.invoke(
-          'reserve_nickname',
-          body: {'nickname': _nickCtrl.text},
-        );
-        final data = res.data;
-        if (data is Map && data['error'] == 'nickname_taken') {
-          setState(() {
-            _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
-          });
-          return;
+        // Ha nincs bejelentkezve a user (regisztráció közben), ne hívjunk
+        // védett Edge Functiont, engedjük tovább a folyamatot és a nick foglalást
+        // a profil mentésekor intézzük.
+        final current = sb.Supabase.instance.client.auth.currentUser;
+        if (current != null) {
+          final res = await sb.Supabase.instance.client.functions.invoke(
+            'reserve_nickname',
+            body: {'nickname': _nickCtrl.text},
+          );
+          final data = res.data;
+          if (data is Map && data['error'] == 'nickname_taken') {
+            setState(() {
+              _nickError = AppLocalizations.of(context)!.auth_error_nickname_taken;
+            });
+            return;
+          }
         }
       } catch (_) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.unknown_error_try_again)),
-        );
-        return;
+        // Ne állítsuk meg a regisztrációt – jelezzük, de engedjük tovább
+        // (offline vagy nem deployolt function esetén is működjön a flow).
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.unknown_error_try_again)));
       }
       ref
           .read(registerStateNotifierProvider.notifier)
@@ -106,9 +112,12 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
     final loc = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
               key: const Key('nicknameField'),
@@ -181,7 +190,9 @@ class _RegisterStep2FormState extends ConsumerState<RegisterStep2Form> {
                 ),
               ],
             ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

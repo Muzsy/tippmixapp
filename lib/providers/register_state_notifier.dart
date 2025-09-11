@@ -71,21 +71,26 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   Future<void> completeRegistration() async {
     final user = await _auth.registerWithEmail(state.email, state.password);
     if (user == null) return;
-    {
-      final model = UserModel(
-        uid: user.id,
-        email: state.email,
-        displayName: state.nickname,
-        nickname: state.nickname,
-        avatarUrl: state.avatarUrl.isEmpty
-            ? kDefaultAvatarPath
-            : state.avatarUrl,
-        isPrivate: false,
-        fieldVisibility: const {},
-        notificationPreferences: const {},
-        dateOfBirth: state.birthDate,
-      );
-      await ProfileService.createUserProfile(model);
+    // Only attempt profile write if we have an authenticated session; otherwise
+    // skip silently (RLS would block anon writes) and rely on post‑verification
+    // flows or next login to seed/patch profile.
+    if (_auth.currentUser != null) {
+      try {
+        final model = UserModel(
+          uid: user.id,
+          email: state.email,
+          displayName: state.nickname,
+          nickname: state.nickname,
+          avatarUrl: state.avatarUrl.isEmpty ? kDefaultAvatarPath : state.avatarUrl,
+          isPrivate: false,
+          fieldVisibility: const {},
+          notificationPreferences: const {},
+          dateOfBirth: state.birthDate,
+        );
+        await ProfileService.createUserProfile(model);
+      } catch (_) {
+        // Ignore – profile will be created/updated later when session is valid
+      }
     }
   }
 }

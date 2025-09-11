@@ -11,6 +11,8 @@ import 'package:tipsterino/l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 import '../routes/app_route.dart';
 import '../services/storage_service.dart';
+import '../services/profile_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../utils/image_resizer.dart';
 
 class RegisterStep3Form extends ConsumerStatefulWidget {
@@ -81,12 +83,18 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
 
   Future<void> _finish() async {
     final notifier = ref.read(registerStateNotifierProvider.notifier);
-    if (_image != null) {
-      final storage = ref.read(storageServiceProvider);
-      final url = await storage.uploadAvatar(_image!);
-      notifier.saveAvatar(url);
-    }
     await notifier.completeRegistration();
+    if (_image != null) {
+      try {
+        final uid = sb.Supabase.instance.client.auth.currentUser?.id;
+        if (uid != null) {
+          final url = await ProfileService.uploadAvatar(uid: uid, file: _image!);
+          notifier.saveAvatar(url);
+        }
+      } catch (_) {
+        // Non‑fatal: user can set avatar later in profile
+      }
+    }
     // sikeres regisztráció után állapot törlése
     notifier.reset();
     if (mounted) context.goNamed(AppRoute.home.name);

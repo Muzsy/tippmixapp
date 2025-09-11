@@ -1,0 +1,313 @@
+steps:
+  - name: "RLS engedélyezése és alapértelmezett policy-k létrehozása"
+    description: "Engedélyezd a Row Level Security-t az összes publikus táblán, és hozz létre egy alap policy-t, hogy a felhasználó csak a saját adatait lássa. Módosítsd a migrációs SQL-t ennek megfelelően."
+    outputs:
+      - file: "supabase/migrations/20250101_init_schema.sql"
+        lines: |
+          -- Enable RLS on important tables
+          ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+          ALTER TABLE tips ENABLE ROW LEVEL SECURITY;
+          ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
+          -- Basic select policy (user can see own records)
+          CREATE POLICY "Profiles_select_own" ON profiles
+            FOR SELECT USING ( auth.uid() = id );
+          CREATE POLICY "Tips_select_own" ON tips
+            FOR SELECT USING ( auth.uid() = user_id );
+          CREATE POLICY "Tips_insert_auth" ON tips
+            FOR INSERT WITH CHECK ( auth.uid() = user_id );
+    verification: "Jelentkezz ki az alkalmazásból és próbálj meg egy védett API hívást tenni (pl. `/rest/v1/tips` lekérés anon kulccsal). **Elvárt eredmény:** a lekérés **meghiúsul (403)**, jelezve, hogy RLS aktív. Bejelentkezve pedig egy user csak a saját rekordjait kapja vissza."
+
+  - name: "Admin szerepkör bevezetése és jogosultságok frissítése"
+    description: "Adj hozzá egy adminisztrátor megkülönböztetést a felhasználókhoz, és igazítsd ennek megfelelően a jogosultsági szabályokat. Tegyél különbséget admin és normál user műveletek között az adatbázisban."
+    outputs:
+      - file: "supabase/migrations/20250101_init_schema.sql"
+        lines: |
+          -- Add is_admin flag to user profile
+          ALTER TABLE profiles ADD COLUMN is_admin boolean DEFAULT FALSE;
+          -- Allow admin to select any profile or tip (overriding user-specific policy)
+          CREATE POLICY "Profiles_select_admin" ON profiles
+            FOR SELECT TO authenticated USING ( exists ( SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.is_admin ) );
+          CREATE POLICY "Tips_select_admin" ON tips
+            FOR SELECT TO authenticated USING ( exists ( SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.is_admin ) );
+    verification: "Hozz létre egy tesztfelhasználót a Supabase Auth segítségével, majd az adatbázisban állítsd `is_admin = true` értékre. Jelentkezz be ezzel a userrel, és ellenőrizd: az admin user például más felhasználók adatait is le tudja kérni (pl. GET `/profiles?id=neq.<más_id>`), míg egy normál user továbbra is csak a sajátját látja."
+
+  - name: "Supabase Auth integrálása a frontend/backend kódba Firebase helyett"
+    description: "Cseréld le a Firebase Auth használatát Supabase Auth-ra. Inicializáld a Supabase klienskönyvtárat a megfelelő URL és anon kulcs értékekkel, és módosítsd a bejelentkezés/regisztráció folyamatot a Supabase SDK használatára."
+    outputs:
+      - file: "src/lib/supabaseClient.ts"
+        lines: |
+          import { createClient } from '@supabase/supabase-js';
+          const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!;
+          const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY!;
+          export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      - file: "src/services/authService.ts"
+        lines: |
+          // Firebase importok eltávolítva
+          import { supabase } from '../lib/supabaseClient';
+          export async function signIn(email: string, password: string) {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            return error;
+          }
+          export async function signOut() {
+            await supabase.auth.signOut();
+          }
+      - file: ".env.example"
+        lines: |
+          REACT_APP_SUPABASE_URL=https://<YOUR-PROJECT>.supabase.co
+          REACT_APP_SUPABASE_ANON_KEY=public-anon-key...
+      - file: "src/firebaseConfig.js"
+        lines: |
+          // Ezt a fájlt és a Firebase inicializációt eltávolítottuk a Supabase-re való átállás miatt.
+    verification: "Indítsd el az alkalmazást a módosított kóddal. Regisztrálj egy új felhasználót vagy jelentkezz be egy meglévővel. **Elvárt:** Sikeres bejelentkezés Supabase Auth-tal (ellenőrizd a Supabase felületén, hogy az új user megjelent), és az alkalmazás megfelelően betölti a felhasználóhoz tartozó adatokat. Győződj meg róla, hogy a konzolban nincs Firebase inicializációra utaló hiba."
+
+  - name: "Supabase Realtime (valós idejű) frissítések implementálása"
+    description: "Biztosíts valós idejű adatfrissítést Supabase Realtime segítségével. Hozz létre egy feliratkozást az érintett táblák változásaira (beillesztés, módosítás, törlés), és kezeld az így kapott eseményeket a klienst alkalmazásban."
+    outputs:
+      - file: "src/hooks/useTipsRealtime.tsx"
+        lines: |
+          import { useEffect } from 'react';
+          import { supabase } from '../lib/supabaseClient';
+          export function useTipsRealtime(onTipEvent) {
+            useEffect(() => {
+              const channel = supabase
+                .channel('public:tips')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'tips' }, payload => {
+                  onTipEvent(payload.new, payload.eventType);
+                })
+                .subscribe();
+              return () => {
+                supabase.removeChannel(channel);
+              };
+            }, [onTipEvent]);
+          }
+      - file: "src/components/TipList.jsx"
+        lines: |
+          import { useTipsRealtime } from '../hooks/useTipsRealtime';
+          ...
+          useTipsRealtime((newTip, eventType) => {
+            if(eventType === 'INSERT') {
+              setTips(current => [...current, newTip]);
+            }
+            // TODO: kezelje UPDATE/DELETE eseményeket is igény szerint
+          });
+    verification: "Nyiss meg két böngészőablakot és jelentkezz be ugyanazzal a felhasználóval mindkettőben. Az egyikben adj hozzá egy új tippet (vagy módosíts egy meglévőt). **Elvárt:** A másik ablakban néhány másodpercen belül automatikusan megjelenik a változás. Ezzel ellenőrizheted, hogy a Realtime csatorna működik. (Figyelem: győződj meg róla, hogy a Supabase projekten a `tips` tábla fel van véve a Realtime publikációkhoz.)"
+
+  - name: "Teljes adatbázis séma migráció létrehozása (Firestore → Supabase táblák)"
+    description: "Készíts egy SQL migrációt, ami létrehozza a szükséges táblákat a Firestore gyűjtemények alapján. Definiáld az összes fontos mezőt típussal, alapértelmezett értékekkel. Minden táblához adj primer kulcsot (pl. UUID generálva) és indexeld a gyakori lekérdezési mezőket."
+    outputs:
+      - file: "supabase/migrations/20250101_init_schema.sql"
+        lines: |
+          -- Profiles table (users)
+          CREATE TABLE IF NOT EXISTS profiles (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            email TEXT UNIQUE NOT NULL,
+            name TEXT,
+            is_admin BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT now()
+          );
+          -- Matches table
+          CREATE TABLE IF NOT EXISTS matches (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            home_team TEXT NOT NULL,
+            away_team TEXT NOT NULL,
+            match_date DATE NOT NULL
+          );
+          CREATE INDEX match_date_idx ON matches(match_date);
+          -- Tips table (user predictions for matches)
+          CREATE TABLE IF NOT EXISTS tips (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL,
+            match_id UUID NOT NULL,
+            prediction TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT now()
+          );
+          CREATE INDEX tips_user_idx ON tips(user_id);
+          CREATE INDEX tips_match_idx ON tips(match_id);
+    verification: "Állítsd le a futó Supabase konténert, majd futtasd: `supabase db reset`. Ez újratölti az adatbázist a migrációk alapján. Ezután csatlakozz az adatbázishoz (pl. `psql` vagy Supabase SQL editor) és ellenőrizd: **megjelentek az új táblák** (`profiles`, `matches`, `tips` stb.) a megfelelő oszlopokkal. Például futtasd: `SELECT * FROM profiles;` – hiba nélkül lefut (üres eredmény, ha nincs adat), mutatva hogy a tábla létezik."
+
+  - name: "Kapcsolatok és egyedi korlátozások hozzáadása az adatbázishoz"
+    description: "Állítsd be az idegen kulcsokat és egyéb integritási szabályokat a relációs séma megerősítéséhez. Kösd össze a táblákat (pl. tippek→felhasználók, tippek→meccsek), és adj hozzá egyedi korlátozásokat az üzleti szabályok alapján (pl. egy user csak egyszer tippelhessen egy meccsre)."
+    outputs:
+      - file: "supabase/migrations/20250102_add_constraints.sql"
+        lines: |
+          ALTER TABLE tips
+            ADD CONSTRAINT tips_user_fkey FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE,
+            ADD CONSTRAINT tips_match_fkey FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE,
+            ADD CONSTRAINT one_tip_per_match_per_user UNIQUE (user_id, match_id);
+    verification: "A migráció futtatása (`supabase db reset` vagy `db push`) után nyisd meg a psql-t és futtasd `\d tips`. **Elvárt:** a `Foreign-key constraints` szekcióban látod a `tips_user_fkey` és `tips_match_fkey` bejegyzéseket a megfelelő hivatkozásokkal, illetve a `Indexes` résznél a unique indexet. Teszteld le: próbálj meg kézzel beszúrni egy `tips` rekordot érvénytelen `user_id`-val vagy duplikált (azonos user, match páros) adattal – az adatbázisnak hibát kell dobnia, megakadályozva a következetlenséget."
+
+  - name: "Supabase Storage bucket létrehozása és jogosultsági beállítása"
+    description: "Hozz létre egy privát storage bucketet a Supabase-ben (pl. 'avatars' a felhasználói avatároknak vagy egyéb fájloknak). Állíts be RLS szabályokat a fájlhozzáféréshez: alapértelmezés szerint csak a fájl tulajdonosa férjen hozzá a saját fájljaihoz."
+    outputs:
+      - file: "supabase/migrations/20250103_storage_and_policies.sql"
+        lines: |
+          -- Create a private bucket for user uploads (requires service role to execute)
+          INSERT INTO storage.buckets (id, name) VALUES ('avatars', 'avatars') ON CONFLICT DO NOTHING;
+          -- Ensure RLS is enabled on storage.objects (Supabase might enable by default)
+          ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+          -- Allow authenticated users to upload to 'avatars' bucket
+          CREATE POLICY "Avatar_insert_auth" ON storage.objects
+            FOR INSERT TO authenticated
+            WITH CHECK ( bucket_id = 'avatars' );
+          -- Allow users to read their own files from 'avatars'
+          CREATE POLICY "Avatar_select_own" ON storage.objects
+            FOR SELECT TO authenticated
+            USING ( bucket_id = 'avatars' AND auth.uid() = owner_id );
+      - file: "src/services/fileService.ts"
+        lines: |
+          import { supabase } from '../lib/supabaseClient';
+          export async function uploadAvatar(file: File) {
+            const user = supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+            const filePath = `${user.id}/${file.name}`;
+            const { error } = await supabase.storage.from('avatars').upload(filePath, file);
+            return error;
+          }
+    verification: "A migráció alkalmazása után navigálj a Supabase Storage fülére a böngészőben. **Elvárt:** látod az újonnan létrehozott 'avatars' bucketet. Próbálj feltölteni egy fájlt a kliensen keresztül (pl. profilkép frissítése funkcióval). Az upload művelet **sikeres** kell legyen a bejelentkezett felhasználó számára. Majd próbáld meg egy másik (vagy nem bejelentkezett) felhasználóval letölteni ugyanezt a fájlt az URL ismeretében – a letöltésnek **meg kell hiúsulnia** (Forbidden), ezzel igazolva, hogy a read policy megfelelően működik."
+
+  - name: "Szerveroldali logika pótlása (triggerek vagy Edge Functionök)"
+    description: "Implementáld újra a Firebase Cloud Functions által nyújtott üzleti logikát Supabase környezetben. Egyszerű szabályokat/adatmódosításokat Postgres triggerrel oldj meg, összetettebb folyamatokat Supabase Edge Functionnel. (Példa: tipp beszúrásakor automatikusan frissüljön a felhasználó pontszáma.)"
+    outputs:
+      - file: "supabase/functions/compute_score.sql"
+        lines: |
+          -- Function to update user score after a new tip is inserted
+          CREATE OR REPLACE FUNCTION public.compute_score() 
+          RETURNS TRIGGER AS $$
+          BEGIN
+            -- Példaként: növeljük a felhasználó pontszámát 1-gyel minden tippért
+            UPDATE profiles SET score = COALESCE(score,0) + 1 
+            WHERE id = NEW.user_id;
+            RETURN NEW;
+          END;
+          $$ LANGUAGE plpgsql;
+          CREATE TRIGGER tips_after_insert
+            AFTER INSERT ON tips
+            FOR EACH ROW EXECUTE FUNCTION public.compute_score();
+      - file: "supabase/functions/notify_user.ts"
+        lines: |
+          // Example Edge Function (Deno) to notify user via email (simplified)
+          import { serve } from "https://deno.land/x/supabase_functions@1.0.0/mod.ts";
+          serve(async (req) => {
+            const { record } = await req.json();
+            // Küldj értesítést a record.user_id felhasználónak (e-mail logika ide kerülne)
+            return new Response('OK', { status: 200 });
+          });
+      - file: "supabase/.supabase/functions/notify_user.yml"
+        lines: |
+          functions:
+            notify_user:
+              runtime: deno
+              verify_jwt: true
+      - file: "docs/functions.md"
+        lines: |
+          - **Tippek utáni pontszám frissítés:** Postgres trigger (`compute_score` funkció) biztosítja.
+          - **Értesítések:** A Supabase Edge Function `notify_user` felel a felhasználók értesítéséért egy új tippről (ld. supabase/functions/notify_user.ts).
+    verification: "Hozz létre egy új tippet az alkalmazásban. **Elvárt:** a tippet létrehozó felhasználó rekordjában (profiles táblában) növekszik a pontszám. Ezt ellenőrizheted a DB-ben egy SELECT-tel. Emellett nézd meg a Supabase Functions logját: a `notify_user` függvénynek hívódnia kellett (ha konfiguráltad a Supabase Dashboardon a megfelelő trigger/event alapon). Ha pl. e-mail értesítés lenne a feladat, győződj meg róla, hogy a funkció meghívása sikeres (200 OK válasz a kódban). Minden Cloud Functionnel lefedett use-case-nek legyen most egy Supabase-beli megfelelője, és teszteld őket egyenként."
+
+  - name: "Hibakezelés és offline működés fejlesztése a kliensoldalon"
+    description: "Vizsgáld felül a kliensoldali kódrészeket adatbázis műveleteknél, és adj hozzá robusztus hibakezelést. Minden Supabase hívás után ellenőrizd az error objektumot, és jelezd a felhasználónak. Készíts fel a kódot hálózati hibákra (pl. offline mód): akár tárold lokálisan az elküldeni kívánt adatot és küldd el újra, ha visszatért a kapcsolat."
+    outputs:
+      - file: "src/components/NewTipForm.jsx"
+        lines: |
+          const handleSubmit = async () => {
+            setLoading(true);
+            const { error } = await supabase.from('tips').insert({ match_id, prediction });
+            setLoading(false);
+            if (error) {
+              setFormError('Hiba történt a tipp mentésekor. Kérjük, próbáld újra.');
+              console.error('Supabase insert error:', error);
+            } else {
+              setFormError(null);
+              // siker esetén űrlap ürítése, felugró értesítés stb.
+            }
+          };
+      - file: "src/App.js"
+        lines: |
+          window.addEventListener('online', () => {
+            console.log('Visszaállt az internetkapcsolat.');
+            // Esetleg próbáljuk újra a függőben lévő kéréseket
+          });
+          window.addEventListener('offline', () => {
+            alert('Internetkapcsolat megszakadt. A módosítások offline módban nem kerülnek mentésre.');
+          });
+    verification: "Kapcsold le a géped internetkapcsolatát, és próbálj meg az alkalmazásban egy új bejegyzést létrehozni vagy adatot betölteni. **Elvárt:** a felület figyelmeztet az internet hiányára (pl. alert vagy vizuális jelzés). Kapcsold vissza a hálózatot, és ellenőrizd, hogy az alkalmazás megfelelően reagál (esetleg automatikus újrapróbálkozás, vagy manuális frissítés után működik). Provokálj adatbázis hibát is (pl. duplikált adat beküldése, ami UNIQUE constraint sértést okoz) – **elvárt:** a UI-ban kezeljük az error-t (megjelenik a hibaüzenet, nem törik meg az alkalmazás). A konzolban ne maradjon kezeletlen Promise rejection vagy stacktrace ezzel kapcsolatban."
+
+  - name: "CI/CD pipeline frissítése Supabase integrációval"
+    description: "Módosítsd a folyamatos integráció beállításait, hogy figyelembe vegyék a Supabase használatát. Adj hozzá egy lépést a migrációk futtatására egy tesztadatbázison, és biztosítsd, hogy a tesztek a Supabase környezetben futnak. Távolíts el minden Firebase-re utaló konfigurációt (service account, emulátor), ami már nem kell."
+    outputs:
+      - file: ".github/workflows/ci.yml"
+        lines: |
+          services:
+            db:
+              image: supabase/postgres:15
+              ports: [54322:5432]
+          env:
+            SUPABASE_URL: "http://localhost:54322"
+            SUPABASE_ANON_KEY: "test-anon-key"
+            SUPABASE_SERVICE_ROLE_KEY: "test-service-key"
+          steps:
+            - name: Install Supabase CLI
+              run: npm install -g supabase
+            - name: Start Supabase (Postgres)
+              run: supabase start
+            - name: Run migrations
+              run: supabase db push
+            - name: Run tests
+              run: npm run test
+      - file: "package.json"
+        lines: |
+          "scripts": {
+            "test": "SUPABASE_URL=http://localhost:54322 SUPABASE_ANON_KEY=test-anon-key jest --passWithNoTests"
+          }
+    verification: "Indíts el egy CI futást a frissített pipeline-nal (pl. GitHub Actions workflow dispatch). **Elvárt:** a pipeline **zölden lefut**. Ellenőrizd a logokat: kell legyen benne lépés, ahol a Supabase adatbázis elindul és a migrációs script sikeresen alkalmazásra kerül (ellenőrizd, hogy nem dob hibát a migráció). A tesztlépésnek az új Supabase alapú funkciókat is le kell tesztelnie (ha vannak integrációs tesztjeid RLS-re, stb.). Győződj meg róla, hogy a régi Firebase szolgáltatói kulcsok vagy emulátor indítás nem jelenik meg a logokban. A pipeline befejeztével nézd meg a megmaradt adatbázist (ha fennmarad): tartalmazza a migrációk eredményét, ami jelzi, hogy a CI környezetben is működik a séma felépítése."
+
+  - name: "Dokumentáció frissítése a Supabase átállás tükrözésére"
+    description: "Dolgozd át a projekt dokumentációját (README, egyéb md fájlok), hogy a Firebase helyett már a Supabase legyen benne. Írj le minden új setup lépést (Supabase CLI, .env változók), az adatmodell változásait, valamint az esetleges új korlátozásokat (pl. RLS működése). Tüntesd fel a korábbi Firebase részeket archiválva vagy törölve."
+    outputs:
+      - file: "README.md"
+        lines: |
+          ## Fejlesztői környezet beállítása (Supabase)
+          1. Állítsd be a Supabase környezeti változókat (.env.local): `SUPABASE_URL`, `SUPABASE_ANON_KEY` stb.
+          2. Telepítsd a Supabase CLI-t és futtasd a `supabase start` parancsot a lokális adatbázisért.
+          3. Futtasd a migrációkat: `supabase db reset` a friss adatbázisért.
+          4. Indítsd el az alkalmazást `npm run dev`-vel.
+          *(A korábbi Firebase Firestore/Auth konfigurációra itt már nincs szükség.)*
+      - file: "docs/migration.md"
+        lines: |
+          **Átállás Supabase-re**: A Firestore gyűjtemények helyett immár Postgres táblák vannak használatban. Az RLS szabályok biztosítják az adatok védelmét (lásd: docs/rls_policies.md). A Firebase Cloud Function-ök kiváltásra kerültek SQL triggerek és Edge Functionök kombinációjával.
+      - file: "docs/rls_policies.md"
+        lines: |
+          - *profiles*: csak a saját profilod olvasható, admin bármelyiket olvashat.
+          - *tips*: csak saját tippek olvashatók/szerkeszthetők, admin mindet látja.
+          - *storage.objects*: csak a fájl tulajdonosa fér hozzá a feltöltött fájlhoz (ld. avatar bucket).
+    verification: "Nyisd meg a README.md és a releváns dokumentációs fájlokat a változtatások után. **Elvárt:** minden útmutató lépés naprakész (a leírt parancsok valóban működnek egy új környezetben), és nincs zavaró utalás a Firebase-re. Külön ellenőrizd, hogy a dokumentáció tartalmazza-e az új biztonsági modellel kapcsolatos tudnivalókat (pl. RLS rövid magyarázata a fejlesztőknek, hogyan lehet új policy-t hozzáadni). Kérj meg egy csapattagot, aki nem vett részt a migrációban, hogy a dokumentáció alapján próbálja meg beüzemelni a projektet – ennek sikerülnie kell külön segítség nélkül."
+
+  - name: "Firebase-specifikus kód és konfiguráció eltávolítása"
+    description: "Tisztítsd meg a projektet minden, már nem használt Firebase elemétől. Törölj vagy deprecatedelj minden Firebase config fájlt, SDK importot és használatot. Győződj meg róla, hogy sem a build, sem a futás során nem hivatkozik semmi Firebase-re."
+    outputs:
+      - file: "ios/GoogleService-Info.plist"
+        lines: |
+          <!-- Eltávolítva: Firebase iOS konfiguráció már nem szükséges --> 
+      - file: "android/google-services.json"
+        lines: |
+          {/* Eltávolítva: Firebase Android konfiguráció már nem szükséges */}
+      - file: "src/firebaseConfig.js"
+        lines: |
+          // (Törölve a projektből)
+      - file: "package.json"
+        lines: |
+          "dependencies": {
+            /* ... */
+            <!-- "firebase": "^9.x" bejegyzés eltávolítva --> 
+            <!-- "@react-native-firebase/app": eltávolítva, stb. -->
+          }
+    verification: "Futtass egy teljes szöveges keresést a repóban a 'firebase' kifejezésre (beleértve a konfigurációs fájlokat is). **Elvárt:** sem a kódban, sem a konfigurációkban **nincs találat** aktív Firebase használatra (legfeljebb archív megjegyzés formában). Ellenőrizd a build folyamatot (`npm run build` vagy az Xcode/Android Studio buildet, ha mobilapp): nem dob hibát hiányzó Firebase modulokra. Indítsd el az alkalmazást és nézd meg a konzolt: nem jelenik meg Firebase figyelmeztetés vagy kapcsolat felépítési kísérlet. Ezzel biztos lehetsz benne, hogy a projekt teljesen levált a Firebase-ről és nincs rejtett függőség."
+
+done_definition:
+  - "Minden adatbázis tábla RLS-sel védett, a tesztek igazolják, hogy az illetéktelen hozzáférések blokkolva vannak."
+  - "A felhasználói szerepkörök (admin vs. normál user) működnek: az admin funkciók csak adminnal elérhetők, normál userrel nem."
+  - "A bejelentkezés, adatlekérés és egyéb műveletek már Supabase-szel történnek; a Firebase kulcsokat eltávolítottuk, a rendszer önállóan fut Supabase alapon."
+  - "Valós idejű adatszinkron megvalósult: az alkalmazás frontenden azonnal reagál az adatbázis változásokra (ellenőrizve több klienssel)."
+  - "A migrációs folyamat dokumentált és reprodukálható: egy új környezetben `supabase db reset` + alkalmazásindítás után minden funkció működőképes (a seed adatok betöltésével, ha vannak)."
+  - "A CI pipeline zöld: a Supabase integrációval lefut minden teszt és build lépés. A pipeline tartalmazza a migrációk futtatását és nem maradt benne Firebase-re utaló beállítás."
+  - "A dokumentáció naprakész és útmutatást nyújt a Supabase használatához (fejlesztés, deploy, biztonsági beállítások). A csapat bármely tagja a leírás alapján megérti az új rendszert."

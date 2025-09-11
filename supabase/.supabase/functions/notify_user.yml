@@ -1,0 +1,5 @@
+functions:
+  notify_user:
+    runtime: deno
+    verify_jwt: true
+

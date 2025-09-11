@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import '../env/env.dart';
 import 'dart:async';
 
 /// Immutable state for [ThemeService].
@@ -61,21 +62,23 @@ class ThemeService extends StateNotifier<ThemeState> {
         schemeIndex: index ?? state.schemeIndex,
         isDark: dark ?? state.isDark,
       );
-      final u = sb.Supabase.instance.client.auth.currentUser;
-      if (u != null) {
-        final row = await sb.Supabase.instance.client
-            .from('user_settings')
-            .select('theme_scheme_index, theme_is_dark')
-            .eq('user_id', u.id)
-            .maybeSingle();
-        final s = (row as Map?)?.cast<String, dynamic>();
-        if (s != null) {
-          final fsIndex = s['theme_scheme_index'] as int?;
-          final fsDark = s['theme_is_dark'] as bool?;
-          newState = newState.copyWith(
-            schemeIndex: fsIndex ?? newState.schemeIndex,
-            isDark: fsDark ?? newState.isDark,
-          );
+      if (Env.isSupabaseConfigured) {
+        final u = sb.Supabase.instance.client.auth.currentUser;
+        if (u != null) {
+          final row = await sb.Supabase.instance.client
+              .from('user_settings')
+              .select('theme_scheme_index, theme_is_dark')
+              .eq('user_id', u.id)
+              .maybeSingle();
+          final s = (row as Map?)?.cast<String, dynamic>();
+          if (s != null) {
+            final fsIndex = s['theme_scheme_index'] as int?;
+            final fsDark = s['theme_is_dark'] as bool?;
+            newState = newState.copyWith(
+              schemeIndex: fsIndex ?? newState.schemeIndex,
+              isDark: fsDark ?? newState.isDark,
+            );
+          }
         }
       }
       await _prefs?.setInt(_schemeKey, newState.schemeIndex);
@@ -90,13 +93,15 @@ class ThemeService extends StateNotifier<ThemeState> {
   Future<void> saveTheme() async {
     await _initPrefs();
     await _prefs?.setInt(_schemeKey, state.schemeIndex);
-    final u = sb.Supabase.instance.client.auth.currentUser;
-    if (u != null) {
-      await sb.Supabase.instance.client.from('user_settings').upsert({
-        'user_id': u.id,
-        'theme_scheme_index': state.schemeIndex,
-        'updated_at': DateTime.now().toIso8601String(),
-      }, onConflict: 'user_id');
+    if (Env.isSupabaseConfigured) {
+      final u = sb.Supabase.instance.client.auth.currentUser;
+      if (u != null) {
+        await sb.Supabase.instance.client.from('user_settings').upsert({
+          'user_id': u.id,
+          'theme_scheme_index': state.schemeIndex,
+          'updated_at': DateTime.now().toIso8601String(),
+        }, onConflict: 'user_id');
+      }
     }
   }
 
@@ -104,13 +109,15 @@ class ThemeService extends StateNotifier<ThemeState> {
   Future<void> saveDarkMode() async {
     await _initPrefs();
     await _prefs?.setBool(_darkKey, state.isDark);
-    final u = sb.Supabase.instance.client.auth.currentUser;
-    if (u != null) {
-      await sb.Supabase.instance.client.from('user_settings').upsert({
-        'user_id': u.id,
-        'theme_is_dark': state.isDark,
-        'updated_at': DateTime.now().toIso8601String(),
-      }, onConflict: 'user_id');
+    if (Env.isSupabaseConfigured) {
+      final u = sb.Supabase.instance.client.auth.currentUser;
+      if (u != null) {
+        await sb.Supabase.instance.client.from('user_settings').upsert({
+          'user_id': u.id,
+          'theme_is_dark': state.isDark,
+          'updated_at': DateTime.now().toIso8601String(),
+        }, onConflict: 'user_id');
+      }
     }
   }
 

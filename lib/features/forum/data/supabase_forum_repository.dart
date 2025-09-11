@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tipsterino/features/forum/data/forum_repository.dart';
 import 'package:tipsterino/features/forum/domain/post.dart' as dom;
@@ -61,25 +62,24 @@ class SupabaseForumRepository implements ForumRepository {
     String threadId, {
     int limit = 20,
     DateTime? startAfter,
-  }) async* {
-    final rows = await _client
+  }) {
+    return _client
         .from('forum_posts')
-        .select('*')
+        .stream(primaryKey: ['id'])
         .eq('thread_id', threadId)
         .order('created_at', ascending: false)
-        .limit(limit);
-    final list = (rows as List).cast<Map<String, dynamic>>();
-    yield list.map(_mapPost).toList();
+        .limit(limit)
+        .map((rows) => rows.cast<Map<String, dynamic>>().map(_mapPost).toList());
   }
 
   @override
-  Stream<dom.Thread> watchThread(String threadId) async* {
-    final row = await _client
+  Stream<dom.Thread> watchThread(String threadId) {
+    return _client
         .from('forum_threads')
-        .select('*')
+        .stream(primaryKey: ['id'])
         .eq('id', threadId)
-        .single();
-    yield _mapThread((row as Map).cast<String, dynamic>());
+        .limit(1)
+        .map((rows) => _mapThread(rows.cast<Map<String, dynamic>>().first));
   }
 
   @override
@@ -123,15 +123,20 @@ class SupabaseForumRepository implements ForumRepository {
 
   @override
   Future<void> addPost(dom.Post post) async {
-    await _client.from('forum_posts').insert({
-      'id': post.id,
-      'thread_id': post.threadId,
-      'author': post.userId,
-      'body': post.content,
-      'created_at': post.createdAt.toIso8601String(),
-      'type': post.type.name,
-      if (post.quotedPostId != null) 'quoted_post_id': post.quotedPostId,
-    });
+    try {
+      await _client.from('forum_posts').insert({
+        'id': post.id,
+        'thread_id': post.threadId,
+        'author': post.userId,
+        'body': post.content,
+        'created_at': post.createdAt.toIso8601String(),
+        'type': post.type.name,
+        if (post.quotedPostId != null) 'quoted_post_id': post.quotedPostId,
+      });
+    } catch (e) {
+      // Surface better context for UI/error reporting
+      throw Exception('Post insert failed: $e');
+    }
     // The votes_count aggregation happens server-side via trigger
   }
 
@@ -141,16 +146,24 @@ class SupabaseForumRepository implements ForumRepository {
     required String postId,
     required String content,
   }) async {
-    await _client
-        .from('forum_posts')
-        .update({'body': content, 'edited_at': DateTime.now().toIso8601String()})
-        .eq('id', postId)
-        .eq('thread_id', threadId);
+    try {
+      await _client
+          .from('forum_posts')
+          .update({'body': content, 'edited_at': DateTime.now().toIso8601String()})
+          .eq('id', postId)
+          .eq('thread_id', threadId);
+    } catch (e) {
+      throw Exception('Post update failed: $e');
+    }
   }
 
   @override
   Future<void> deletePost({required String threadId, required String postId}) async {
-    await _client.from('forum_posts').delete().eq('id', postId).eq('thread_id', threadId);
+    try {
+      await _client.from('forum_posts').delete().eq('id', postId).eq('thread_id', threadId);
+    } catch (e) {
+      throw Exception('Post delete failed: $e');
+    }
   }
 
   @override

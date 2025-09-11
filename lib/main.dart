@@ -26,7 +26,12 @@ import 'router.dart';
 /// developer to supply it.
 Future<void> main() async {
   // Load environment variables from a .env file (if present).
-  await dotenv.load();
+  try {
+    await dotenv.load();
+  } catch (_) {
+    // In device/integration runs the .env asset may be missing; fall back to
+    // dart-define or process env without crashing.
+  }
   await bootstrap();
 
   // Firebase App Check removed; Supabase-only bootstrap

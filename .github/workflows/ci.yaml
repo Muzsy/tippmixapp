@@ -164,6 +164,7 @@ jobs:
           supabase functions deploy reserve_nickname || true
           supabase functions deploy match_finalizer || true
           supabase functions deploy tickets_payout || true
+          supabase functions deploy notify_user || true
 
   terraform:
     name: Terraform fmt & validate

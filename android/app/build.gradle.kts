@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
@@ -21,10 +20,6 @@ android {
     }
 
     dependencies {
-        // Firebase BOM – mindig platform("…")
-        implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-        // Debug provider
-        implementation("com.google.firebase:firebase-appcheck-debug:17.0.0")
         implementation("androidx.core:core-ktx:1.9.0")
     }
 
@@ -33,7 +28,7 @@ android {
         applicationId = "com.tipsterino.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

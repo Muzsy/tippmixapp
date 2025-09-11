@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:tipsterino/features/forum/data/forum_repository.dart';
@@ -58,6 +59,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('forum moderation happy path', (tester) async {
+    // Ensure the device test has a running Flutter app to attach to
+    await tester.pumpWidget(const MaterialApp(home: SizedBox.shrink()));
+    await tester.pumpAndSettle();
+
     final repo = _MemoryForumRepository();
     final now = DateTime.now();
 

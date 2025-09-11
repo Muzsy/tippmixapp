@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import '../env/env.dart';
 import '../routes/app_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -11,7 +12,13 @@ class SplashController extends StateNotifier<AsyncValue<AppRoute>> {
   }
 
   Future<void> _init() async {
-    // Supabase: decide route from auth + user_settings
+    // Supabase: decide route from auth + user_settings (only if configured)
+    if (!Env.isSupabaseConfigured) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        state = const AsyncData(AppRoute.login);
+      });
+      return;
+    }
     final u = sb.Supabase.instance.client.auth.currentUser;
     if (u == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service_base.dart';
 import 'package:tipsterino/models/user.dart';
 
 class MockAuthService implements AuthService {

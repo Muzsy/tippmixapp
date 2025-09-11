@@ -4,12 +4,16 @@ import '../models/user.dart';
 import '../models/auth_state.dart';
 import '../services/auth_service_base.dart';
 import '../services/auth_service_supabase.dart';
+import '../env/env.dart';
+import '../services/auth_service_noop.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.read(authServiceProvider));
 });
 
 final authServiceProvider = Provider<AuthService>((ref) {
+  // Ha nincs Supabase konfiguráció (pl. .env asset nélkül), ne dőljön el induláskor.
+  if (!Env.isSupabaseConfigured) return NoopAuthService();
   return AuthServiceSupabaseAdapter();
 });
 
