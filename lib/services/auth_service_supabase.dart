@@ -34,7 +34,7 @@ class AuthServiceSupabaseAdapter extends AuthService {
 
   @override
   Future<User?> registerWithEmail(String email, String password) async {
-    final res = await _c.auth.signUp(email: email, password: password, emailRedirectTo: null);
+    final res = await _c.auth.signUp(email: email, password: password);
     final u = _mapUser(res.user);
     if (u != null) await _ensureProfile(u);
     return u;
@@ -101,6 +101,26 @@ class AuthServiceSupabaseAdapter extends AuthService {
   Future<User?> signInWithApple() async {
     await _c.auth.signInWithOAuth(sb.OAuthProvider.apple);
     return _mapUser(_c.auth.currentUser);
+  }
+
+  @override
+  Future<void> verifyEmailOtp(String email, String code) async {
+    await _c.auth.verifyOTP(
+      email: email,
+      token: code,
+      type: sb.OtpType.email,
+    );
+    // If no active session after verification, attempt sign-in with password is
+    // deferred to the caller flow (login form) to avoid storing plaintext.
+    final u = _mapUser(_c.auth.currentUser);
+    if (u != null) {
+      await _ensureProfile(u);
+    }
+  }
+
+  @override
+  Future<void> resendSignupOtp(String email) async {
+    await _c.auth.resend(type: sb.OtpType.signup, email: email);
   }
 
   @override

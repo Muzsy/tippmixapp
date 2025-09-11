@@ -844,6 +844,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get otp_prompt_title => 'OTP eingeben';
 
   @override
+  String get otp_resend => 'Code erneut senden';
+
+  @override
+  String otp_sent_to(Object email) {
+    return 'Code gesendet an $email';
+  }
+
+  @override
+  String get otp_expired => 'Code abgelaufen, bitte neuen anfordern.';
+
+  @override
+  String get otp_new_code_sent => 'Neuer Code wurde gesendet.';
+
+  @override
   String get passwordStrengthStrong => 'Stark';
 
   @override

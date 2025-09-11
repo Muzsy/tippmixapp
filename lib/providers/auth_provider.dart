@@ -72,6 +72,32 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _authService.sendEmailVerification();
   }
 
+  // OTP verification flow
+  Future<String?> requestVerifyEmailOtp(String email, String code) async {
+    try {
+      await _authService.verifyEmailOtp(email, code);
+      // After successful verification, refresh state if session established
+      state = AuthState(user: _authService.currentUser);
+      return null;
+    } on AuthServiceException catch (e) {
+      state = AuthState(user: state.user, errorCode: e.code);
+      return e.code;
+    } catch (_) {
+      return 'auth/unknown';
+    }
+  }
+
+  Future<String?> resendSignupOtp(String email) async {
+    try {
+      await _authService.resendSignupOtp(email);
+      return null;
+    } on AuthServiceException catch (e) {
+      return e.code;
+    } catch (_) {
+      return 'auth/unknown';
+    }
+  }
+
   bool get isEmailVerified => _authService.isEmailVerified;
 
   @override

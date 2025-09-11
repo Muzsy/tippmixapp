@@ -25,8 +25,11 @@ class _RegisterWizardState extends ConsumerState<RegisterWizard> {
 
   @override
   void deactivate() {
-    // Állapot törlése, hogy a következő regisztráció tiszta legyen
-    ref.read(registerStateNotifierProvider.notifier).reset();
+    // Állapot törlésének késleltetése, hogy ne lifecycle-ben módosítsunk providert
+    Future.microtask(() {
+      if (!mounted) return;
+      ref.read(registerStateNotifierProvider.notifier).reset();
+    });
     super.deactivate();
   }
 

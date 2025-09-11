@@ -1,0 +1,51 @@
+# Codex Goal – Tickets FK hiba (profiles hiány) javítása
+# Nyelv: HU | Séma: steps: [ name, description, outputs, (inputs) ]
+
+steps:
+  - name: Előkészítés és ellenőrzés
+    description: >-
+      Hozz létre branch‑et: feature/tickets_profiles_fk_fix. Futtasd a lintet és a meglévő teszteket.
+      Ellenőrizd, hogy a Supabase projekt helyi mappája (supabase/) elérhető és verziózott.
+    outputs:
+      - "feature/tickets_profiles_fk_fix branch létrehozva"
+      - "Kiindulási állapot ellenőrizve"
+
+  - name: SQL migráció fájl létrehozása (trigger + backfill)
+    description: >-
+      Hozz létre új migrációs fájlt: supabase/migrations/YYYYMMDDHHMM_profiles_trigger_and_backfill.sql néven.
+      Írd bele az alábbiakat: handle_new_user() SECURITY DEFINER függvény, on_auth_user_created trigger az auth.users táblára,
+      majd backfill insert a hiányzó profiles rekordokra. Használj ON CONFLICT (id) DO NOTHING‑ot.
+    outputs:
+      - "Migrációs SQL létrehozva (trigger + backfill)"
+
+  - name: (Opcionális) RLS/policy pótlások
+    description: >-
+      Ugyanebben a migrációban (vagy külön fájlban) ellenőrizd, hogy a public.profiles és public.tickets táblákon engedélyezett‑e az RLS,
+      és léteznek‑e minimális policyk (select/update saját profilra; insert/select saját ticketre). Ha hiányzik, add hozzá IF NOT EXISTS guardokkal.
+    outputs:
+      - "RLS/policyk rendben vagy pótolva"
+
+  - name: ensureProfile app‑oldali hívás bevezetése (ajánlott)
+    description: >-
+      Keresd meg az auth belépési pontját (pl. session restore vagy sikeres sign‑in callback).
+      Vezesd be az idempotens ensureProfile hívást: upsert a profiles táblába (id = currentUser.id, email = currentUser.email),
+      ON CONFLICT (id) DO UPDATE SET email = excluded.email. Ha már létezik hasonló, hagyd változatlanul.
+    outputs:
+      - "ensureProfile guard bevezetve vagy megerősítve"
+
+  - name: Lokális futtatás és ellenőrzés
+    description: >-
+      Futtasd a Supabase lokál környezetet (ha nem fut). Alkalmazd a migrációkat.
+      Hozz létre teszt usert (auth sign‑up), ellenőrizd hogy a profiles rekord automatikusan létrejön.
+      Majd szimuláld a tickets beszúrást az appból: az FK hiba nem jelentkezhet.
+    outputs:
+      - "Lokális migrációk futottak, profiles auto‑insert OK"
+      - "Tickets insert FK hiba nélkül működik"
+
+  - name: Build, tesztek, PR
+    description: >-
+      Futtasd: flutter analyze; flutter test (csak unit/widget). Ha minden zöld, commit (fix: tickets profiles fk) és PR nyitása.
+      A PR leírásába illeszd be a migrációs SQL lényegét és a tesztlépéseket.
+    outputs:
+      - "Build és tesztek zöldek"
+      - "PR létrehozva"

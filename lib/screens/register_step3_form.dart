@@ -10,10 +10,12 @@ import 'package:go_router/go_router.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import '../providers/register_state_notifier.dart';
 import '../routes/app_route.dart';
-import '../services/storage_service.dart';
+// import '../services/storage_service.dart';
 import '../services/profile_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../utils/image_resizer.dart';
+import 'auth/otp_prompt_screen.dart';
+import '../../providers/auth_provider.dart';
 
 class RegisterStep3Form extends ConsumerStatefulWidget {
   const RegisterStep3Form({super.key});
@@ -95,9 +97,23 @@ class _RegisterStep3FormState extends ConsumerState<RegisterStep3Form> {
         // Non‑fatal: user can set avatar later in profile
       }
     }
-    // sikeres regisztráció után állapot törlése
+    // Ha nincs verifikálva az email, vigyük OTP képernyőre
+    final isVerified = ref.read(authProvider.notifier).isEmailVerified;
+    if (!isVerified) {
+      final email = ref.read(registerStateNotifierProvider).email;
+      if (mounted) {
+        final ok = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(builder: (_) => OtpPromptScreen(email: email)),
+        );
+        if (ok == true) {
+          if (mounted) context.goNamed(AppRoute.home.name);
+        }
+      }
+    } else {
+      if (mounted) context.goNamed(AppRoute.home.name);
+    }
+    // sikeres regisztráció/OTP után állapot törlése
     notifier.reset();
-    if (mounted) context.goNamed(AppRoute.home.name);
   }
 
   Future<void> _skip() async {

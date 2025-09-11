@@ -43,5 +43,10 @@ class NoopAuthService extends AuthService {
 
   @override
   User? get currentUser => null;
-}
 
+  @override
+  Future<void> resendSignupOtp(String email) async {}
+
+  @override
+  Future<void> verifyEmailOtp(String email, String code) async {}
+}

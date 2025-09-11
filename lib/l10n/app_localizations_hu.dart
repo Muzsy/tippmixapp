@@ -843,6 +843,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get otp_prompt_title => 'OTP megadása';
 
   @override
+  String get otp_resend => 'Kód újraküldése';
+
+  @override
+  String otp_sent_to(Object email) {
+    return 'Kód elküldve erre: $email';
+  }
+
+  @override
+  String get otp_expired => 'A kód lejárt, kérj újat.';
+
+  @override
+  String get otp_new_code_sent => 'Új kódot küldtünk.';
+
+  @override
   String get passwordStrengthStrong => 'Erős';
 
   @override

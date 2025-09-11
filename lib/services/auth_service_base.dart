@@ -20,6 +20,10 @@ abstract class AuthService {
   Future<User?> signInWithFacebook();
   Future<User?> signInWithApple();
 
+  // OTP email verification support
+  Future<void> verifyEmailOtp(String email, String code);
+  Future<void> resendSignupOtp(String email);
+
   bool get isEmailVerified;
   User? get currentUser;
 }
@@ -32,4 +36,3 @@ class AuthServiceException implements Exception {
   @override
   String toString() => code;
 }
-

@@ -1702,6 +1702,30 @@ abstract class AppLocalizations {
   /// **'Enter OTP'**
   String get otp_prompt_title;
 
+  /// No description provided for @otp_resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get otp_resend;
+
+  /// No description provided for @otp_sent_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Code sent to {email}'**
+  String otp_sent_to(Object email);
+
+  /// No description provided for @otp_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Code expired, request a new one.'**
+  String get otp_expired;
+
+  /// No description provided for @otp_new_code_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new code has been sent.'**
+  String get otp_new_code_sent;
+
   /// No description provided for @passwordStrengthStrong.
   ///
   /// In en, this message translates to:
