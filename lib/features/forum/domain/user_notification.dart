@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 /// Per-user értesítés (@mention, reply, followed thread activity)
 class UserNotification {
   final String id; // doc id
@@ -26,26 +24,27 @@ class UserNotification {
     if (postId != null) 'postId': postId,
     if (actorUid != null) 'actorUid': actorUid,
     'read': read,
-    'createdAt': Timestamp.fromDate(createdAt),
+    'createdAt': createdAt.toIso8601String(),
   };
 
-  static UserNotification fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
-    final d = doc.data() ?? <String, dynamic>{};
+  factory UserNotification.fromJson(String id, Map<String, dynamic> json) {
     return UserNotification(
-      id: doc.id,
-      type: (d['type'] ?? '').toString(),
-      threadId: (d['threadId'] ?? '').toString(),
-      postId: d['postId']?.toString(),
-      actorUid: d['actorUid']?.toString(),
-      read: (d['read'] ?? false) == true,
-      createdAt:
-          _toDateTime(d['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0),
+      id: id,
+      type: (json['type'] ?? '').toString(),
+      threadId: (json['threadId'] ?? '').toString(),
+      postId: json['postId']?.toString(),
+      actorUid: json['actorUid']?.toString(),
+      read: (json['read'] ?? false) == true,
+      createdAt: _parseDate(json['createdAt']) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 
-  static DateTime? _toDateTime(dynamic v) {
-    if (v is Timestamp) return v.toDate();
+  static DateTime? _parseDate(dynamic v) {
+    if (v == null) return null;
     if (v is DateTime) return v;
+    if (v is String) return DateTime.tryParse(v);
+    if (v is int) return DateTime.fromMillisecondsSinceEpoch(v);
     return null;
   }
 }

@@ -69,6 +69,51 @@ class Ticket {
     );
   }
 
+  /// Maps a Supabase `tickets` row (optionally including `ticket_items` list)
+  /// to a Ticket domain model.
+  factory Ticket.fromSupabase(
+    Map<String, dynamic> row, {
+    List<Map<String, dynamic>> ticketItems = const [],
+  }) {
+    String asString(dynamic v, {String fallback = ''}) =>
+        v == null ? fallback : v.toString();
+
+    double parseDouble(dynamic v, {double fallback = 0.0}) {
+      if (v == null) return fallback;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v) ?? fallback;
+      return fallback;
+    }
+
+    DateTime parseDate(dynamic v) {
+      if (v is DateTime) return v;
+      if (v is String) {
+        final d = DateTime.tryParse(v);
+        if (d != null) return d;
+      }
+      return DateTime.now();
+    }
+
+    final statusRaw = asString(row['status'] ?? 'pending').toLowerCase();
+
+    return Ticket(
+      id: asString(row['id']),
+      userId: asString(row['user_id']),
+      tips: ticketItems
+          .map((e) => TipModel.fromSupabaseTicketItem(e))
+          .toList(),
+      stake: parseDouble(row['stake'], fallback: 0.0),
+      totalOdd: parseDouble(row['total_odd'], fallback: 1.0),
+      potentialWin: parseDouble(row['potential_win'], fallback: 0.0),
+      createdAt: parseDate(row['created_at']),
+      updatedAt: parseDate(row['updated_at'] ?? row['created_at']),
+      status: TicketStatus.values.firstWhere(
+        (e) => e.name == (statusRaw == 'void' ? 'voided' : statusRaw),
+        orElse: () => TicketStatus.pending,
+      ),
+    );
+  }
+
   // Legacy Firestore adapter – kept for backward compat in non-Supabase mode.
   // Accepts a minimal duck-typed object exposing id + data().
   factory Ticket.fromFirestore(dynamic doc) {

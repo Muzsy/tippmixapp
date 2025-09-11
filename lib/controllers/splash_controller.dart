@@ -1,11 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-
-import '../models/user_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../routes/app_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -15,45 +11,28 @@ class SplashController extends StateNotifier<AsyncValue<AppRoute>> {
   }
 
   Future<void> _init() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    unawaited(Future(() async {
-      try {
-        await remoteConfig.setConfigSettings(RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 10),
-          minimumFetchInterval: const Duration(minutes: 5),
-        ));
-        await remoteConfig.fetchAndActivate();
-      } catch (_) {
-        // Remote Config fetch shouldn't block app start/login
-      }
-    }));
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
+    // Supabase: decide route from auth + user_settings
+    final u = sb.Supabase.instance.client.auth.currentUser;
+    if (u == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         state = const AsyncData(AppRoute.login);
       });
       return;
     }
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
-    final data = doc.data() ?? <String, dynamic>{};
     try {
-      final user = UserModel.fromJson(data);
-      if (user.onboardingCompleted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          state = const AsyncData(AppRoute.home);
-        });
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          state = const AsyncData(AppRoute.onboarding);
-        });
-      }
-    } catch (_) {
-      await FirebaseAuth.instance.signOut();
+      final row = await sb.Supabase.instance.client
+          .from('user_settings')
+          .select('onboarding_completed')
+          .eq('user_id', u.id)
+          .maybeSingle();
+      final data = (row as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+      final done = (data['onboarding_completed'] as bool?) ?? false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        state = const AsyncData(AppRoute.login);
+        state = AsyncData(done ? AppRoute.home : AppRoute.onboarding);
+      });
+    } catch (_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        state = const AsyncData(AppRoute.home);
       });
     }
   }

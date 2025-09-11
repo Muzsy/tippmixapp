@@ -1,20 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'dart:io';
-import '../utils/image_resizer.dart';
 import '../models/user_model.dart';
 
 class ProfileService {
   const ProfileService._();
 
-  static final List<_QueuedUpdate> _queued = [];
-
-  static Future<bool> isNicknameUnique(
-    String nickname, {
-    required FirebaseFirestore firestore,
-  }) async {
+  static Future<bool> isNicknameUnique(String nickname) async {
     String normalize(String input) {
       final s = input.trim().toLowerCase();
       const map = {
@@ -38,194 +29,93 @@ class ProfileService {
     }
 
     final norm = normalize(nickname);
-    final doc = await firestore.collection('usernames').doc(norm).get();
-    return !doc.exists;
+    final client = sb.Supabase.instance.client;
+    final rows = await client
+        .from('profiles')
+        .select('id')
+        .ilike('nickname_norm', norm)
+        .limit(1);
+    return (rows as List).isEmpty;
   }
 
   static Future<void> createUserProfile(UserModel user) async {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .set(user.toJson());
+    final client = sb.Supabase.instance.client;
+    await client.from('profiles').upsert({
+      'id': user.uid,
+      'email': user.email,
+      'display_name': user.displayName,
+      'nickname': user.nickname,
+      'nickname_norm': user.nickname.trim().toLowerCase(),
+      'avatar_url': user.avatarUrl,
+      'is_private': user.isPrivate,
+    }, onConflict: 'id');
   }
 
-  static Stream<UserModel?> streamUserProfile(String uid) => FirebaseFirestore
-      .instance
-      .collection('users')
-      .doc(uid)
-      .snapshots()
-      .map(
-        (snap) => snap.data() == null ? null : UserModel.fromJson(snap.data()!),
-      );
-
-  static Future<UserModel> getProfile({
-    required String uid,
-    required FirebaseFirestore firestore,
-    required dynamic cache,
-    required dynamic connectivity,
-  }) async {
-    final online = connectivity.online as bool? ?? true;
-    if (!online) {
-      final cached = cache.get(uid) as UserModel?;
-      if (cached == null) {
-        throw const ProfileServiceException.noCache();
-      }
-      return cached;
-    }
-
-    final snap = await firestore.collection('users').doc(uid).get();
-    final data = snap.data();
-    if (data == null) {
-      throw const ProfileServiceException.noCache();
-    }
-    final user = UserModel.fromJson(data);
-    cache.set(uid, user, const Duration(hours: 1));
-    return user;
+  static Stream<UserModel?> streamUserProfile(String uid) {
+    return Stream.fromFuture(() async {
+      final client = sb.Supabase.instance.client;
+      final row = await client
+          .from('profiles')
+          .select('*')
+          .eq('id', uid)
+          .maybeSingle();
+      final data = (row as Map?)?.cast<String, dynamic>();
+      if (data == null) return null;
+      return UserModel.fromJson({
+        'uid': uid,
+        'email': data['email'],
+        'displayName': data['display_name'],
+        'nickname': data['nickname'],
+        'avatarUrl': data['avatar_url'],
+        'isPrivate': data['is_private'] ?? false,
+        'fieldVisibility': <String, bool>{},
+      });
+    }());
   }
-
   static Future<void> updateProfile({
     required String uid,
     required Map<String, dynamic> data,
-    required FirebaseFirestore firestore,
-    required dynamic cache,
-    required dynamic connectivity,
   }) async {
-    final online = connectivity.online as bool? ?? true;
-    if (!online) {
-      _queued.add(_QueuedUpdate(uid, data));
-      return;
+    final client = sb.Supabase.instance.client;
+    final patch = <String, dynamic>{};
+    if (data.containsKey('email')) patch['email'] = data['email'];
+    if (data.containsKey('displayName')) patch['display_name'] = data['displayName'];
+    if (data.containsKey('nickname')) {
+      final nick = data['nickname'];
+      patch['nickname'] = nick;
+      if (nick is String) patch['nickname_norm'] = nick.trim().toLowerCase();
     }
-
-    try {
-      await firestore.collection('users').doc(uid).update(data);
-    } on FirebaseException catch (e) {
-      final code = e.code.toLowerCase().replaceAll('_', '-');
-      if (code == 'not-found') {
-        await firestore
-            .collection('users')
-            .doc(uid)
-            .set(data, SetOptions(merge: true));
-      } else {
-        throw ProfileUpdateFailure();
-      }
-    } on Exception {
-      await firestore
-          .collection('users')
-          .doc(uid)
-          .set(data, SetOptions(merge: true));
+    if (data.containsKey('avatarUrl')) patch['avatar_url'] = data['avatarUrl'];
+    if (data.containsKey('isPrivate')) patch['is_private'] = data['isPrivate'];
+    if (data.containsKey('fieldVisibility')) {
+      // Optional: store per-field prefs in user_settings if desired
     }
-
-    final cached = cache.get(uid) as UserModel?;
-    if (cached != null) {
-      final updated = UserModel(
-        uid: cached.uid,
-        email: data['email'] ?? cached.email,
-        displayName: data['displayName'] ?? cached.displayName,
-        nickname: data['nickname'] ?? cached.nickname,
-        avatarUrl: data['avatarUrl'] ?? cached.avatarUrl,
-        isPrivate: data['isPrivate'] ?? cached.isPrivate,
-        fieldVisibility: Map<String, bool>.from(cached.fieldVisibility)
-          ..addAll(
-            (data['fieldVisibility'] as Map<String, dynamic>? ?? {}).map(
-              (k, v) => MapEntry(k, v as bool),
-            ),
-          ),
-      );
-      cache.set(uid, updated, const Duration(hours: 1));
-    } else {
-      final snap = await firestore.collection('users').doc(uid).get();
-      final newData = snap.data();
-      if (newData != null) {
-        cache.set(uid, UserModel.fromJson(newData), const Duration(hours: 1));
-      }
+    if (patch.isNotEmpty) {
+      await client.from('profiles').update(patch).eq('id', uid);
     }
   }
 
   static Future<String> uploadAvatar({
     required String uid,
     required File file,
-    required FirebaseStorage storage,
-    required FirebaseFirestore firestore,
-    required dynamic cache,
-    required dynamic connectivity,
   }) async {
-    try {
-      final raw = await file.readAsBytes();
-      final bytes = await ImageResizer.cropSquareResize256(raw);
-      final ref = storage.ref().child('users/$uid/avatar/avatar_256.png');
-      final task = ref.putData(
-        bytes,
-        SettableMetadata(
-          contentType: 'image/png',
-          cacheControl: 'public, max-age=86400',
-        ),
-      );
-      try {
-        await task.whenComplete(() {});
-      } on TypeError {
-        // Ignore mock upload tasks that fail to implement Future
-      }
-      final url = await ref.getDownloadURL();
-      await updateProfile(
-        uid: uid,
-        data: {'avatarUrl': url},
-        firestore: firestore,
-        cache: cache,
-        connectivity: connectivity,
-      );
-      if (Firebase.apps.isNotEmpty) {
-        final current = firebase_auth.FirebaseAuth.instance.currentUser;
-        if (current != null && current.uid == uid) {
-          await current.updatePhotoURL(url);
-        }
-      }
-      return url;
-    } on FirebaseException catch (_) {
-      throw AvatarUploadFailure();
-    }
-  }
-
-  static Future<void> flushQueuedUpdates({
-    required FirebaseFirestore firestore,
-    required dynamic cache,
-    required dynamic connectivity,
-  }) async {
-    if (!(connectivity.online as bool? ?? true)) return;
-    for (final q in List<_QueuedUpdate>.from(_queued)) {
-      await firestore.collection('users').doc(q.uid).update(q.data);
-      final cached = cache.get(q.uid) as UserModel?;
-      if (cached != null) {
-        final updated = UserModel(
-          uid: cached.uid,
-          email: q.data['email'] ?? cached.email,
-          displayName: q.data['displayName'] ?? cached.displayName,
-          nickname: q.data['nickname'] ?? cached.nickname,
-          avatarUrl: q.data['avatarUrl'] ?? cached.avatarUrl,
-          isPrivate: q.data['isPrivate'] ?? cached.isPrivate,
-          fieldVisibility: Map<String, bool>.from(cached.fieldVisibility)
-            ..addAll(
-              (q.data['fieldVisibility'] as Map<String, dynamic>? ?? {}).map(
-                (k, v) => MapEntry(k, v as bool),
-              ),
-            ),
+    final client = sb.Supabase.instance.client;
+    final raw = await file.readAsBytes();
+    final path = 'avatars/$uid/avatar_256.png';
+    await client.storage.from('avatars').uploadBinary(
+          path,
+          raw,
+          fileOptions: const sb.FileOptions(contentType: 'image/png', upsert: true),
         );
-        cache.set(q.uid, updated, const Duration(hours: 1));
-      }
-    }
-    _queued.clear();
+    final url = await client.storage.from('avatars').createSignedUrl(path, 60 * 60 * 24);
+    await updateProfile(uid: uid, data: {'avatarUrl': url});
+    return url;
   }
-}
 
-class _QueuedUpdate {
-  final String uid;
-  final Map<String, dynamic> data;
-  _QueuedUpdate(this.uid, this.data);
 }
 
 class ProfileUpdateFailure implements Exception {}
 
 class AvatarUploadFailure implements Exception {}
 
-class ProfileServiceException implements Exception {
-  const ProfileServiceException.noCache();
-}
+class ProfileServiceException implements Exception {}

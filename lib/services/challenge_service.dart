@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firebase removed – minimal Supabase/no-op implementation
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 /// Type of challenge the user can receive.
 enum ChallengeType { daily, weekly, friend }
@@ -25,15 +26,20 @@ class ChallengeModel {
           orElse: () => ChallengeType.daily,
         ),
         username: json['username'] as String?,
-        endTime:
-            (json['endTime'] as Timestamp?)?.toDate() ??
-            DateTime.fromMillisecondsSinceEpoch(0),
+        endTime: () {
+          final v = json['endTime'];
+          if (v is String) {
+            return DateTime.tryParse(v) ?? DateTime.fromMillisecondsSinceEpoch(0);
+          }
+          if (v is DateTime) return v;
+          return DateTime.fromMillisecondsSinceEpoch(0);
+        }(),
       );
 
   Map<String, dynamic> toJson() => {
     'type': type.name,
     if (username != null) 'username': username,
-    'endTime': Timestamp.fromDate(endTime),
+    'endTime': endTime.toIso8601String(),
   };
 
   bool get isActive => endTime.isAfter(DateTime.now());
@@ -41,21 +47,22 @@ class ChallengeModel {
 
 /// Service responsible for fetching active challenges for a user.
 class ChallengeService {
-  final FirebaseFirestore _firestore;
-  ChallengeService([FirebaseFirestore? firestore])
-    : _firestore = firestore ?? FirebaseFirestore.instance;
-
-  CollectionReference<Map<String, dynamic>> _ref(String userId) {
-    return _firestore.collection('users/$userId/challenges');
-  }
+  ChallengeService();
 
   /// Fetch active challenges of the given user.
   Future<List<ChallengeModel>> fetchActiveChallenges(String userId) async {
-    final query = await _ref(
-      userId,
-    ).where('endTime', isGreaterThan: Timestamp.now()).get();
-    return query.docs
-        .map((d) => ChallengeModel.fromJson(d.id, d.data()))
-        .toList();
+    try {
+      final rows = await sb.Supabase.instance.client
+          .from('challenges')
+          .select('*')
+          .eq('user_id', userId);
+      final list = List<Map<String, dynamic>>.from(rows as List);
+      return list
+          .map((d) => ChallengeModel.fromJson(d['id'] as String, d))
+          .where((c) => c.isActive)
+          .toList();
+    } catch (_) {
+      return const <ChallengeModel>[];
+    }
   }
 }

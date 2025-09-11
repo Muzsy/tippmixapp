@@ -7,7 +7,7 @@ import 'package:tipsterino/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../theme/brand_colors.dart';
 import '../theme/brand_colors_presets.dart';
-import '../services/auth_service.dart';
+import '../services/auth_service_base.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
   const SocialLoginButtons({super.key});

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/tip_model.dart';
@@ -10,19 +10,23 @@ Future<String> copyTicket({
   required String ticketId,
   required List<TipModel> tips,
   String? sourceUserId,
-  FirebaseFirestore? firestore,
 }) async {
-  final fs = firestore ?? FirebaseFirestore.instance;
-  final collection = fs.collection('copied_bets/$userId');
-  final docRef = collection.doc();
-  await docRef.set({
-    'ticketId': ticketId,
-    'sourceUserId': sourceUserId,
-    'createdAt': FieldValue.serverTimestamp(),
-    'wasModified': false,
-    'tips': tips.map((e) => e.toJson()).toList(),
-  });
-  return docRef.id;
+  try {
+    final rows = await sb.Supabase.instance.client
+        .from('copied_bets')
+        .insert({
+          'user_id': userId,
+          'tips': tips.map((e) => e.toJson()).toList(),
+          'was_modified': false,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .select('id')
+        .single();
+    return (rows['id'] as String);
+  } catch (_) {
+    return '';
+  }
 }
 
 typedef CopyTicketFn =
@@ -31,7 +35,6 @@ typedef CopyTicketFn =
       required String ticketId,
       required List<TipModel> tips,
       String? sourceUserId,
-      FirebaseFirestore? firestore,
     });
 
 /// Provider exposing the [copyTicket] flow for easier testing.

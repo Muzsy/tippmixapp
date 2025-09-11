@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tipsterino/l10n/app_localizations.dart';
 
 class AuthErrorMapper {
-  String map(BuildContext context, FirebaseAuthException e) {
+  String map(BuildContext context, Object e, {String? code}) {
     final loc = AppLocalizations.of(context)!;
-    switch (e.code) {
+    final c = code ?? e.toString();
+    switch (c) {
       case 'user-not-found':
         return loc.auth_error_user_not_found;
       case 'wrong-password':

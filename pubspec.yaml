@@ -31,13 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.6.1
-  firebase_core: ^3.13.0
-  firebase_auth: ^5.6.0
-  firebase_app_check: ^0.3.2+9
-  flutter_facebook_auth:
-    path: packages/flutter_facebook_auth
-  cloud_firestore: ^5.6.9
-  cloud_functions: ^5.5.2
   flutter_dotenv: ^5.2.1
   http: ^1.1.0
   shared_preferences: ^2.2.2
@@ -45,19 +38,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
-  firebase_core_platform_interface: ^6.0.0
   clock: ^1.1.2
-  fake_cloud_firestore: ^3.1.0
   test: ^1.25.15
-  firebase_storage: ^12.4.8
   image_picker: ^1.1.2
   path: ^1.9.1
   flex_color_scheme: ^8.2.0
   dynamic_color: ^1.7.0
   args: ^2.7.0
-  firebase_remote_config: ^5.4.7
-  firebase_analytics: ^11.4.0
-  google_sign_in: ^7.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

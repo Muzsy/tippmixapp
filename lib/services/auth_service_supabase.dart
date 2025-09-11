@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../models/user.dart';
-import 'auth_service.dart';
+import 'auth_service_base.dart';
 
 /// Auth adapter, a meglévő AuthService API-t biztosítja Supabase alatt.
 class AuthServiceSupabaseAdapter extends AuthService {

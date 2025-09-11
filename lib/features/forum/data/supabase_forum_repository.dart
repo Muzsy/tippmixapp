@@ -3,6 +3,7 @@ import 'package:tipsterino/features/forum/data/forum_repository.dart';
 import 'package:tipsterino/features/forum/domain/post.dart' as dom;
 import 'package:tipsterino/features/forum/domain/thread.dart' as dom;
 import 'package:tipsterino/features/forum/providers/forum_filter_state.dart';
+import 'package:tipsterino/features/forum/domain/report.dart' as domrep;
 
 class SupabaseForumRepository implements ForumRepository {
   SupabaseForumRepository({SupabaseClient? client})
@@ -177,9 +178,14 @@ class SupabaseForumRepository implements ForumRepository {
   }
 
   @override
-  Future<void> reportPost(report) async {
-    // For parity, save to a new table `reports` (ensure RLS allows insert by owner)
-    await _client.from('reports').insert((report as dynamic).toJson());
+  Future<void> reportPost(domrep.Report report) async {
+    // Save to `reports` with owner RLS; schema currently supports post reports.
+    await _client.from('reports').insert({
+      'post_id': report.entityId,
+      'reporter_id': report.reporterId,
+      'reason': report.reason,
+      'created_at': report.createdAt.toIso8601String(),
+    });
   }
 
   dom.Thread _mapThread(Map<String, dynamic> r) {

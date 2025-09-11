@@ -1,29 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-
 import '../models/reward_model.dart';
 
 class RewardService extends StateNotifier<List<RewardModel>> {
-  RewardService([FirebaseFunctions? functions])
-    : _functions =
-          functions ?? FirebaseFunctions.instanceFor(region: 'europe-central2'),
-      super([]);
-
-  final FirebaseFunctions _functions;
+  RewardService() : super(const []);
 
   void loadRewards(List<RewardModel> rewards) {
-    state = rewards.where((r) => !r.isClaimed).toList();
+    state = List<RewardModel>.from(rewards);
   }
 
   Future<void> claimReward(RewardModel reward) async {
-    await claimRewardById(reward.id);
+    await reward.onClaim();
     reward.isClaimed = true;
     state = state.where((r) => r.id != reward.id).toList();
   }
 
   Future<void> claimRewardById(String rewardId) async {
-    final callable = _functions.httpsCallable('claim_reward');
-    await callable.call(<String, dynamic>{'rewardId': rewardId});
+    final idx = state.indexWhere((r) => r.id == rewardId);
+    if (idx == -1) return;
+    await claimReward(state[idx]);
   }
 }
 

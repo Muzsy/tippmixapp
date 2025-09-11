@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
 import '../models/auth_state.dart';
-import '../services/auth_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../services/auth_service_base.dart';
 import '../services/auth_service_supabase.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
@@ -11,11 +10,7 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
 });
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
-  if (useSupabase) {
-    return AuthServiceSupabaseAdapter();
-  }
-  return AuthService();
+  return AuthServiceSupabaseAdapter();
 });
 
 class AuthNotifier extends StateNotifier<AuthState> {

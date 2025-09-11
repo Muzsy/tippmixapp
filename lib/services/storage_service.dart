@@ -1,50 +1,16 @@
 import 'dart:io';
-import 'dart:typed_data';
-import '../utils/image_resizer.dart';
+// No resizing here; handled by Supabase service if needed
 
-import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'storage_service_supabase.dart';
 
-class StorageService {
-  final FirebaseStorage _storage;
-  final fb.FirebaseAuth _auth;
+class StorageServiceSupabaseWrapper {
+  final SupabaseStorageService _inner;
+  StorageServiceSupabaseWrapper([SupabaseStorageService? inner])
+      : _inner = inner ?? SupabaseStorageService();
 
-  StorageService({FirebaseStorage? storage, fb.FirebaseAuth? auth})
-    : _storage = storage ?? FirebaseStorage.instance,
-      _auth = auth ?? fb.FirebaseAuth.instance;
-
-  Future<String> uploadAvatar(File image) async {
-    final uid = _auth.currentUser?.uid;
-    if (uid == null) {
-      throw StateError('No user');
-    }
-    Uint8List bytes = await image.readAsBytes();
-    bytes = await ImageResizer.cropSquareResize256(bytes);
-    final ref =
-        _storage.ref().child('users/$uid/avatar/avatar_256.png');
-    final task = ref.putData(
-      bytes,
-      SettableMetadata(
-        contentType: 'image/png',
-        cacheControl: 'public, max-age=86400',
-      ),
-    );
-    try {
-      await task;
-    } on TypeError {
-      // ignore fake upload tasks not implementing Future
-    }
-    return ref.getDownloadURL();
-  }
+  Future<String> uploadAvatar(File image) => _inner.uploadAvatar(image);
 }
 
-final storageServiceProvider = Provider<dynamic>((ref) {
-  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
-  if (useSupabase) {
-    return SupabaseStorageService();
-  }
-  return StorageService();
-});
+final storageServiceProvider =
+    Provider<dynamic>((ref) => StorageServiceSupabaseWrapper());

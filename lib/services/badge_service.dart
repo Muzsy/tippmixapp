@@ -58,8 +58,8 @@ class BadgeService {
           .from('badges')
           .select('key')
           .eq('user_id', userId);
-      final existingKeys = (rows as List)
-          .map((r) => (r['key'] as String))
+      final existingKeys = List<Map<String, dynamic>>.from(rows as List)
+          .map((r) => r['key'] as String)
           .toSet();
       for (final badge in earned) {
         if (!existingKeys.contains(badge.key)) {
@@ -83,8 +83,9 @@ class BadgeService {
           .eq('user_id', userId)
           .order('created_at', ascending: false)
           .limit(1);
-      if ((rows as List).isEmpty) return null;
-      final r = (rows.first as Map<String, dynamic>);
+      final list = List<Map<String, dynamic>>.from(rows as List);
+      if (list.isEmpty) return null;
+      final r = list.first;
       final key = r['key'] as String;
       final data = badgeConfigs.firstWhere(
         (b) => b.key == key,

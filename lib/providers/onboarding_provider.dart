@@ -1,22 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import '../services/user_service.dart';
 import '../services/analytics_service.dart';
+import '../providers/auth_provider.dart';
 
 class OnboardingNotifier extends StateNotifier<int> {
-  OnboardingNotifier(this._userService, this._analytics, [FirebaseAuth? auth])
-    : _auth = auth ?? FirebaseAuth.instance,
-      super(0);
+  OnboardingNotifier(this._userService, this._analytics, this._getUid)
+      : super(0);
 
   final UserService _userService;
   final AnalyticsService _analytics;
-  final FirebaseAuth _auth;
+  final String? Function() _getUid;
 
   void setPage(int index) => state = index;
 
   Future<void> complete(Duration duration) async {
-    final uid = _auth.currentUser?.uid;
+    final uid = _getUid();
     if (uid != null) {
       await _userService.markOnboardingCompleted(uid);
       await _analytics.logOnboardingCompleted(duration);
@@ -31,11 +29,9 @@ final onboardingProvider = StateNotifierProvider<OnboardingNotifier, int>((
 ) {
   final userService = ref.watch(userServiceProvider);
   final analytics = ref.watch(analyticsServiceProvider);
-  final auth = ref.watch(firebaseAuthProvider);
-  return OnboardingNotifier(userService, analytics, auth);
+  final getUid = () => ref.read(authProvider).user?.id;
+  return OnboardingNotifier(userService, analytics, getUid);
 });
 
 final userServiceProvider = Provider<UserService>((ref) => UserService());
-final firebaseAuthProvider = Provider<FirebaseAuth>(
-  (ref) => FirebaseAuth.instance,
-);
+// FirebaseAuth provider removed

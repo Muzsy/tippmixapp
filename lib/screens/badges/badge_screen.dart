@@ -1,28 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// Firebase removed – using Supabase only
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../config/badge_config.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import '../../widgets/badge_grid_view.dart';
 
-/// Streams the keys of badges owned by the current user from Firestore.
+/// Streams the keys of badges owned by the current user.
+/// Supabase: simple query; Firestore: subcollection stream.
 final userBadgesProvider = StreamProvider<List<String>>((ref) {
-  if (Firebase.apps.isEmpty) {
-    return Stream.value([]);
-  }
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid == null) {
-    return Stream.value([]);
-  }
-  return FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .collection('badges')
-      .snapshots()
-      .map((snap) => snap.docs.map((d) => d.id).toList());
+  final u = Supabase.instance.client.auth.currentUser;
+  if (u == null) return Stream.value([]);
+  return Stream.fromFuture(() async {
+    final rows = await Supabase.instance.client
+        .from('badges')
+        .select('key')
+        .eq('user_id', u.id);
+    return List<Map<String, dynamic>>.from(rows as List)
+        .map((r) => r['key'] as String)
+        .toList();
+  }());
 });
 
 enum BadgeFilter { all, owned, missing }

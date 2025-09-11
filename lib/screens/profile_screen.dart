@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../providers/auth_provider.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import '../constants.dart';
 import '../widgets/avatar_gallery.dart';
 import '../widgets/coin_badge.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../models/user.dart' as app_user;
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// Firebase storage removed
 import 'package:go_router/go_router.dart';
 import '../routes/app_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/user_model.dart';
+import '../providers/coin_provider.dart';
+// Firestore removed
 import '../services/profile_service.dart';
 import 'profile/partials/notification_prefs_section.dart';
 import '../services/user_service.dart';
@@ -68,8 +69,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isPrivate = false;
   ImagePicker imagePicker = ImagePicker();
-  FirebaseStorage? storage;
-  FirebaseFirestore? firestore;
   final Map<String, bool> _fieldVisibility = {
     "city": true,
     "country": true,
@@ -81,11 +80,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String? _error;
   String? _avatarUrl;
 
-  Future<void> _showAvatarGallery(dynamic user) async {
+  Future<void> _showAvatarGallery(app_user.User user) async {
     final loc = AppLocalizations.of(context)!;
-    final uid = user is firebase_auth.User
-        ? user.uid
-        : (user as app_user.User).id;
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
+    final uid = user.id;
     await showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
@@ -95,13 +93,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Navigator.pop(context);
             setState(() => _avatarUrl = path);
             try {
-              if (Firebase.apps.isNotEmpty) {
+              if (useSupabase) {
                 await ProfileService.updateProfile(
                   uid: uid,
                   data: {'avatarUrl': path},
-                  firestore: FirebaseFirestore.instance,
-                  cache: _dummyCache,
-                  connectivity: _dummyConnectivity,
                 );
               }
             } catch (_) {
@@ -116,7 +111,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Future<void> _pickPhoto(dynamic user) async {
+  Future<void> _pickPhoto(app_user.User user) async {
     final loc = AppLocalizations.of(context)!;
     final picked = await imagePicker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
@@ -137,24 +132,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
     try {
-      if (storage != null && firestore != null) {
-        final url = await ProfileService.uploadAvatar(
-          uid: user is firebase_auth.User
-              ? user.uid
-              : (user as app_user.User).id,
-          file: File(picked.path),
-          storage: storage!,
-          firestore: firestore!,
-          cache: _dummyCache,
-          connectivity: _dummyConnectivity,
-        );
-        if (!mounted) return;
-        setState(() => _avatarUrl = url);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.profile_avatar_updated)));
-        await WidgetsBinding.instance.endOfFrame;
-      }
+      final uid = user.id;
+      final url = await ProfileService.uploadAvatar(
+        uid: uid,
+        file: File(picked.path),
+      );
+      if (!mounted) return;
+      setState(() => _avatarUrl = url);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.profile_avatar_updated)),
+      );
+      await WidgetsBinding.instance.endOfFrame;
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -170,14 +158,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @visibleForTesting
   Future<void> pickPhoto(
-    dynamic user, {
+    app_user.User user, {
     ImagePicker? picker,
-    FirebaseStorage? storage,
-    FirebaseFirestore? firestore,
+    Object? storage,
+    Object? firestore,
   }) {
     if (picker != null) imagePicker = picker;
-    if (storage != null) this.storage = storage;
-    if (firestore != null) this.firestore = firestore;
     return _pickPhoto(user);
   }
 
@@ -190,9 +176,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  // Minimal cache/connectivity for ProfileService calls
-  static final _dummyCache = _NoCache();
-  static final _dummyConnectivity = _AlwaysOnline();
+  // Minimal cache/connectivity stubs removed
 
   String _labelForKey(AppLocalizations loc, String key) {
     switch (key) {
@@ -230,27 +214,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (Firebase.apps.isNotEmpty) {
-      storage = FirebaseStorage.instance;
-      firestore = FirebaseFirestore.instance;
-      final user = firebase_auth.FirebaseAuth.instance.currentUser;
-      if (user != null && _avatarUrl == null) {
-        _avatarUrl = user.photoURL;
-      }
-    }
-  }
+  void initState() { super.initState(); }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final firebaseUser = Firebase.apps.isNotEmpty
-        ? firebase_auth.FirebaseAuth.instance.currentUser
-        : null;
+    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
     final user = ref.watch(authProvider).user;
 
-    if (firebaseUser == null && user == null) {
+    if (user == null) {
       if (!widget.showAppBar || Scaffold.maybeOf(context) != null) {
         return Center(child: Text(loc.not_logged_in));
       }
@@ -260,9 +232,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
     }
 
-    final uid = firebaseUser?.uid ?? user!.id;
-    final displayName = user?.displayName ?? firebaseUser?.displayName ?? '';
-    final email = user?.email ?? firebaseUser?.email ?? '';
+    final uid = user.id;
+    final displayName = user.displayName;
+    final email = user.email;
 
     final content = SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
@@ -272,51 +244,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Row(
             children: [
               GestureDetector(
-                onTap: firebaseUser != null
-                    ? () => _showAvatarGallery(firebaseUser)
-                    : null,
+                onTap: () => _showAvatarGallery(user),
                 child: buildAvatar(context, _avatarUrl, displayName),
               ),
               const Spacer(),
-              StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                stream: Firebase.apps.isNotEmpty
-                    ? FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(uid)
-                          .collection('wallet')
-                          .doc('main')
-                          .snapshots()
-                    : const Stream.empty(),
-                builder: (context, snapshot) {
-                  final data = snapshot.data?.data();
-                  final coins = data?['coins'] as int?;
-                  return CoinBadge(balance: coins);
-                },
-              ),
+              ref.watch(coinBalanceProvider).maybeWhen(
+                      data: (v) => CoinBadge(balance: v),
+                      orElse: () => const CoinBadge(balance: null),
+                    ),
             ],
           ),
           TextButton(
-            onPressed: firebaseUser != null
-                ? () => pickPhoto(firebaseUser)
-                : null,
+            onPressed: () => pickPhoto(user),
             child: Text(loc.profileUploadPhoto),
           ),
           FutureBuilder<bool>(
             future: _defaultExists(),
             builder: (context, snapshot) {
-              if (snapshot.data != true || firebaseUser == null) {
+              if (snapshot.data != true) {
                 return const SizedBox.shrink();
               }
               return TextButton(
                 onPressed: () async {
                   setState(() => _avatarUrl = kDefaultAvatarPath);
-                  if (Firebase.apps.isNotEmpty) {
+                  if (useSupabase) {
                     await ProfileService.updateProfile(
                       uid: uid,
                       data: {'avatarUrl': kDefaultAvatarPath},
-                      firestore: FirebaseFirestore.instance,
-                      cache: _dummyCache,
-                      connectivity: _dummyConnectivity,
                     );
                   }
                 },
@@ -325,50 +279,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             },
           ),
           const SizedBox(height: 8),
-          // Név + Becenév megjelenítése Firestore-ból, fallback auth displayName-re
-          if (Firebase.apps.isNotEmpty)
-            StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(uid)
-                  .snapshots(),
+          // Név + Becenév megjelenítése Supabase forrásból
+          StreamBuilder<UserModel?>(
+              stream: ProfileService.streamUserProfile(uid),
               builder: (context, snapshot) {
-                final data = snapshot.data?.data() ?? const <String, dynamic>{};
-                final nameVal = (data['displayName'] as String?)?.trim();
-                final nickVal = (data['nickname'] as String?)?.trim();
-                final name = (nameVal != null && nameVal.isNotEmpty)
-                    ? nameVal
-                    : displayName;
-                final nickname = (nickVal != null && nickVal.isNotEmpty)
-                    ? nickVal
-                    : displayName;
-                final same =
+                final model = snapshot.data;
+                final name = (model?.displayName ?? '').trim();
+                final nickname = (model?.nickname ?? displayName).trim();
+                final same = name.isEmpty ||
                     name.trim().toLowerCase() == nickname.trim().toLowerCase();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!same && name.isNotEmpty) ...[
-                      Text(
-                        '${loc.profile_name}: $name',
-                        style: const TextStyle(fontSize: 16),
-                      ),
+                      Text('${loc.profile_name}: $name', style: const TextStyle(fontSize: 16)),
                       const SizedBox(height: 8),
                     ],
-                    Text(
-                      '${loc.profile_nickname}: $nickname',
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    Text('${loc.profile_nickname}: $nickname', style: const TextStyle(fontSize: 16)),
                   ],
                 );
               },
-            )
-          else ...[
-            // When Firestore not available, avoid duplication if both fallback are equal
-            Text(
-              '${loc.profile_nickname}: $displayName',
-              style: const TextStyle(fontSize: 16),
             ),
-          ],
           const SizedBox(height: 8),
           Text(
             '${loc.profile_email}: $email',
@@ -381,13 +312,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             value: _isPrivate,
             onChanged: (v) async {
               setState(() => _isPrivate = v);
-              if (Firebase.apps.isNotEmpty) {
+              if (useSupabase) {
                 await ProfileService.updateProfile(
                   uid: uid,
                   data: {'isPrivate': v},
-                  firestore: FirebaseFirestore.instance,
-                  cache: _dummyCache,
-                  connectivity: _dummyConnectivity,
                 );
               }
             },
@@ -406,22 +334,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               value: _fieldVisibility[key]!,
               onChanged: (v) async {
                 setState(() => _fieldVisibility[key] = v);
-                if (Firebase.apps.isNotEmpty) {
+                if (useSupabase) {
                   await ProfileService.updateProfile(
                     uid: uid,
                     data: {
                       'fieldVisibility': {key: v},
                     },
-                    firestore: FirebaseFirestore.instance,
-                    cache: _dummyCache,
-                    connectivity: _dummyConnectivity,
                   );
                 }
               },
             );
           }),
           const Divider(),
-          if (Firebase.apps.isNotEmpty)
+          if (useSupabase)
             NotificationPrefsSection(uid: uid, service: UserService()),
           const SizedBox(height: 16),
           if (_error != null) ...[
@@ -458,12 +383,4 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 }
 
-class _NoCache {
-  dynamic get(String key) => null;
-  void set(String key, dynamic value, Duration ttl) {}
-  void invalidate(String key) {}
-}
-
-class _AlwaysOnline {
-  bool get online => true;
-}
+// Stub classes removed

@@ -119,6 +119,33 @@ class TipModel {
     );
   }
 
+  /// Minimal mapper from Supabase `ticket_items` row.
+  /// We may not have all fields (eventName/startTime/sportKey),
+  /// so we fill reasonable defaults.
+  factory TipModel.fromSupabaseTicketItem(Map<String, dynamic> row) {
+    String asString(dynamic v, {String fallback = ''}) =>
+        v == null ? fallback : v.toString();
+    double asDouble(dynamic v, {double fallback = 1.0}) {
+      if (v == null) return fallback;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v) ?? fallback;
+      return fallback;
+    }
+
+    return TipModel(
+      eventId: asString(row['fixture_id']),
+      eventName: '',
+      startTime: DateTime.now(),
+      sportKey: '',
+      bookmakerId: null,
+      bookmaker: null,
+      marketKey: asString(row['market'], fallback: 'h2h'),
+      outcome: asString(row['selection']),
+      odds: asDouble(row['odd'], fallback: 1.0),
+      status: TipStatus.pending,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'eventId': eventId,
     'eventName': eventName,

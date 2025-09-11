@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:tipsterino/models/ticket_model.dart';
+// Ticket model no longer needed here
 import 'package:tipsterino/models/tip_model.dart';
-import 'coin_service.dart';
 import 'ticket_service_supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -28,7 +24,7 @@ class BetSlipService {
     return totalOdd * stake;
   }
 
-  /// Ment egy szelvényt a Firestore‑ba.
+  /// Ment egy szelvényt (Supabase‑re).
   ///
   /// [tips] – a kiválasztott tippek listája.
   /// [stake] – TippCoin tét (pozitív egész).
@@ -38,9 +34,6 @@ class BetSlipService {
   static Future<void> submitTicket({
     required List<TipModel> tips,
     required int stake,
-    CoinService? coinService,
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
   }) async {
     // 1️⃣ Validáció
     if (tips.isEmpty) {
@@ -50,66 +43,31 @@ class BetSlipService {
       throw ArgumentError('invalidStake');
     }
 
-    final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
-    String userId;
-    if (useSupabase) {
-      final u = Supabase.instance.client.auth.currentUser;
-      if (u == null) {
-        throw StateError('User not logged in');
-      }
-      userId = u.id;
-    } else {
-      final firebaseAuth = auth ?? FirebaseAuth.instance;
-      final currentUser = firebaseAuth.currentUser;
-      if (currentUser == null) {
-        throw FirebaseAuthException(
-          code: 'unauthenticated',
-          message: 'User not logged in',
-        );
-      }
-      userId = currentUser.uid;
+    final u = Supabase.instance.client.auth.currentUser;
+    if (u == null) {
+      throw StateError('User not logged in');
     }
 
     // 2️⃣ Össz‑odds és várható nyeremény
     final totalOdd = calculateTotalOdd(tips);
-    final potentialWin = calculatePotentialWin(totalOdd, stake.toDouble());
+    // Calculate but not needed to send to server explicitly here
 
-    if (useSupabase) {
-      final supa = SupabaseTicketService();
-      final id = await supa.createTicket(
-        tips: tips.map((t) => t.toJson()).toList(),
-        stake: stake,
+    final supa = SupabaseTicketService();
+    final id = await supa.createTicket(
+      tips: tips.map((t) => t.toJson()).toList(),
+      stake: stake,
+    );
+    // Optional: call edge function to book ledger transaction (idempotent by ticket id)
+    try {
+      await Supabase.instance.client.functions.invoke(
+        'coin_trx',
+        body: {
+          'type': 'bet_stake',
+          'delta': -stake,
+          'ref_id': id,
+        },
       );
-      // Optional: call edge function to book ledger transaction (idempotent by ticket id)
-      try {
-        await Supabase.instance.client.functions.invoke(
-          'coin_trx',
-          body: {
-            'type': 'bet_stake',
-            'delta': -stake,
-            'ref_id': id,
-          },
-        );
-      } catch (_) {}
-    } else {
-      // 3️⃣ Ticket modell összeállítása
-      final ticketId = '${userId}_${DateTime.now().millisecondsSinceEpoch}';
-      final ticket = Ticket(
-        id: ticketId,
-        userId: userId,
-        tips: tips,
-        stake: stake.toDouble(),
-        totalOdd: totalOdd,
-        potentialWin: potentialWin,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        status: TicketStatus.pending,
-      );
-      // 4️⃣ TippCoin levonás
-      final cs = coinService ??
-          CoinService.live(firestore: firestore ?? FirebaseFirestore.instance);
-      await cs.debitAndCreateTicket(stake: stake, ticketData: ticket.toJson());
-    }
+    } catch (_) {}
 
     if (kDebugMode) {
       debugPrint('[BetSlipService] Ticket saved (stake: $stake, odds: $totalOdd)');

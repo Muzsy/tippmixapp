@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firestore removed – Supabase is the sole backend
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 
 import '../models/ticket_model.dart';
@@ -11,8 +12,8 @@ import '../widgets/ticket_details_dialog.dart';
 import '../widgets/error_with_retry.dart';
 import '../widgets/my_tickets_skeleton.dart';
 import '../services/analytics_service.dart';
-import '../services/finalizer_service.dart';
-import '../providers/onboarding_provider.dart' show firebaseAuthProvider;
+// TODO: integrate Supabase Edge Function trigger for finalizer if needed
+// FirebaseAuth provider removed
 
 const _pageSize = 20;
 
@@ -22,14 +23,27 @@ final ticketsProvider = StreamProvider.autoDispose<List<Ticket>>((ref) {
   if (uid == null) {
     return Stream.value([]);
   }
-  return FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .collection('tickets')
-      .orderBy('createdAt', descending: true)
-      .limit(_pageSize)
-      .snapshots()
-      .map((snap) => snap.docs.map((d) => Ticket.fromFirestore(d)).toList());
+  // One-shot fetch via PostgREST; pull-to-refresh invalidates provider.
+  return Stream.fromFuture(() async {
+    final client = Supabase.instance.client;
+    final rows = await client
+        .from('tickets')
+        .select(
+            'id,user_id,status,stake,total_odd,potential_win,created_at,updated_at,ticket_items(fixture_id,market,odd,selection)')
+        .eq('user_id', uid)
+        .order('created_at', ascending: false)
+        .limit(_pageSize);
+    final list = List<Map<String, dynamic>>.from(rows as List);
+    return list
+        .map((r) => Ticket.fromSupabase(
+              r,
+              ticketItems: List<Map<String, dynamic>>.from(
+                (r['ticket_items'] as List? ?? const [])
+                    .map((e) => (e as Map).cast<String, dynamic>()),
+              ),
+            ))
+        .toList();
+  }());
 });
 
 final _listViewedLoggedProvider = StateProvider.autoDispose<bool>(
@@ -50,7 +64,7 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
   final List<Ticket> _extra = [];
   bool _loadingMore = false;
   bool _hasMore = true;
-  bool _forcing = false;
+  // Supabase-only: no force finalizer FAB
 
   @override
   void initState() {
@@ -83,19 +97,28 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     try {
       final uid = ref.read(authProvider).user?.id;
       if (uid == null) return;
-      // Determine last createdAt from current list
       final current = [...?_currentBase, ..._extra];
       if (current.isEmpty) return;
       final last = current.last.createdAt;
-      final query = FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('tickets')
-          .orderBy('createdAt', descending: true)
-          .startAfter([Timestamp.fromDate(last)])
+      final client = Supabase.instance.client;
+      final rows = await client
+          .from('tickets')
+          .select(
+              'id,user_id,status,stake,total_odd,potential_win,created_at,updated_at,ticket_items(fixture_id,market,odd,selection)')
+          .eq('user_id', uid)
+          .lt('created_at', last.toIso8601String())
+          .order('created_at', ascending: false)
           .limit(_pageSize);
-      final snap = await query.get();
-      final more = snap.docs.map((d) => Ticket.fromFirestore(d)).toList();
+      final list = List<Map<String, dynamic>>.from(rows as List);
+      final more = list
+          .map((r) => Ticket.fromSupabase(
+                r,
+                ticketItems: List<Map<String, dynamic>>.from(
+                  (r['ticket_items'] as List? ?? const [])
+                      .map((e) => (e as Map).cast<String, dynamic>()),
+                ),
+              ))
+          .toList();
       if (more.isEmpty || more.length < _pageSize) {
         _hasMore = false;
       }
@@ -223,30 +246,5 @@ class _MyTicketsScreenState extends ConsumerState<MyTicketsScreen> {
     );
   }
 
-  Widget? _buildForceFab(BuildContext context) {
-    final uid = ref.watch(firebaseAuthProvider).currentUser?.uid;
-    if (uid != '2pEEqMzCsBfkrv4jWx3YP5yDb0F2') {
-      return null;
-    }
-
-    return FloatingActionButton.extended(
-      onPressed: _forcing
-          ? null
-          : () async {
-              setState(() => _forcing = true);
-              final result = await FinalizerService.forceFinalizer();
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    result == 'OK' ? 'Kiértékelés elindítva' : 'Hiba: $result',
-                  ),
-                ),
-              );
-              setState(() => _forcing = false);
-            },
-      icon: const Icon(Icons.bolt),
-      label: Text(_forcing ? 'Fut…' : 'Kiértékelés'),
-    );
-  }
+  Widget? _buildForceFab(BuildContext context) => null;
 }

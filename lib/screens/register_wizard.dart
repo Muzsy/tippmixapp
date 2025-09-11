@@ -5,11 +5,10 @@ import '../providers/register_state_notifier.dart';
 import 'register_step1_form.dart';
 import 'register_step2_form.dart';
 import 'register_step3_form.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+// Firebase Functions removed
 
 class RegisterWizard extends ConsumerStatefulWidget {
-  final FirebaseFunctions? functions;
-  const RegisterWizard({super.key, this.functions});
+  const RegisterWizard({super.key});
 
   @override
   ConsumerState<RegisterWizard> createState() => _RegisterWizardState();
@@ -52,7 +51,7 @@ class _RegisterWizardState extends ConsumerState<RegisterWizard> {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             const RegisterStep1Form(),
-            RegisterStep2Form(functions: widget.functions),
+            const RegisterStep2Form(),
             const RegisterStep3Form(),
           ],
         ),

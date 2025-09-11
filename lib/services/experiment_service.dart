@@ -1,4 +1,3 @@
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,15 +6,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// Service responsible for fetching and caching remote experiment variants.
 class ExperimentService {
   ExperimentService({
-    FirebaseRemoteConfig? remoteConfig,
     SharedPreferences? prefs,
-  })  : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance,
-        _prefs = prefs,
-        _customRemoteConfig = remoteConfig != null;
+  })  : _prefs = prefs;
 
-  final FirebaseRemoteConfig _remoteConfig;
   SharedPreferences? _prefs;
-  final bool _customRemoteConfig;
+  // Remote Config removed
 
   static const _variantKey = 'login_variant';
   static const _timestampKey = 'login_variant_ts';
@@ -43,13 +38,9 @@ class ExperimentService {
     // Offline/dev mode: skip network fetch and return deterministic default
     // If a custom remote config is provided (e.g., in tests), always allow
     // network flow so fakes/mocks can be exercised.
-    const bool useEmu = bool.fromEnvironment('USE_EMULATOR', defaultValue: true);
-    final bool skipNetwork = useEmu && !_customRemoteConfig;
-    if (skipNetwork) {
-      final variant = cached ?? 'A';
-      await _saveVariant(variant);
-      return variant;
-    }
+    final variantCache = cached ?? 'A';
+    await _saveVariant(variantCache);
+    // Supabase fetch
 
     final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
     if (useSupabase) {
@@ -67,17 +58,8 @@ class ExperimentService {
       } catch (_) {
         return cached ?? 'A';
       }
-    } else {
-      try {
-        await _remoteConfig.fetchAndActivate();
-        final fetched = _remoteConfig.getString(_variantKey);
-        final variant = fetched.isNotEmpty ? fetched : 'A';
-        await _saveVariant(variant);
-        return variant;
-      } catch (_) {
-        return cached ?? 'A';
-      }
     }
+    return 'A';
   }
 
   Future<void> _saveVariant(String variant) async {

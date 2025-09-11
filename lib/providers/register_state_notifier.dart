@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
-import '../services/auth_service.dart';
+// dotenv not needed
+import '../services/auth_service_base.dart';
 import 'auth_provider.dart';
 import '../services/profile_service.dart';
 import '../models/user_model.dart';
@@ -71,7 +71,7 @@ class RegisterStateNotifier extends StateNotifier<RegisterData> {
   Future<void> completeRegistration() async {
     final user = await _auth.registerWithEmail(state.email, state.password);
     if (user == null) return;
-    if (Firebase.apps.isNotEmpty) {
+    {
       final model = UserModel(
         uid: user.id,
         email: state.email,

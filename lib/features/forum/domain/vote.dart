@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firebase removed
 
 /// Entity types that can receive votes.
 enum VoteEntityType { post }
@@ -31,7 +31,7 @@ class Vote {
       entityType: VoteEntityTypeX.fromJson(json['entityType'] as String),
       entityId: json['entityId'] as String,
       userId: json['userId'] as String,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
     );
   }
 
@@ -39,6 +39,6 @@ class Vote {
         'entityType': entityType.toJson(),
         'entityId': entityId,
         'userId': userId, // must match auth.uid per rules
-        'createdAt': Timestamp.fromDate(createdAt),
+        'createdAt': createdAt.toIso8601String(),
       };
 }

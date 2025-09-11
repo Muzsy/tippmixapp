@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../features/forum/data/firestore_forum_repository.dart';
 import '../features/forum/data/supabase_forum_repository.dart';
 import '../features/forum/data/forum_repository.dart';
 import '../features/forum/domain/thread.dart';
@@ -11,18 +8,11 @@ import '../features/forum/providers/thread_list_controller.dart';
 import '../features/forum/providers/composer_controller.dart';
 import '../features/forum/providers/thread_detail_controller.dart';
 import '../features/forum/domain/post.dart';
-import 'moderator_claim_provider.dart';
+// import 'moderator_claim_provider.dart';
 
-/// Provides the [ForumRepository] implementation.
+/// Provides the [ForumRepository] implementation (Supabase).
 final forumRepositoryProvider = Provider<ForumRepository>((ref) {
-  final useSupabase = dotenv.env['USE_SUPABASE']?.toLowerCase() == 'true';
-  if (useSupabase) {
-    return SupabaseForumRepository();
-  }
-  return FirestoreForumRepository(
-    FirebaseFirestore.instance,
-    () => ref.read(isModeratorProvider),
-  );
+  return SupabaseForumRepository();
 });
 
 /// Holds the current filter and sort state.

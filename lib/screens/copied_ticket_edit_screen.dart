@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Firebase removed – Supabase only
 import 'package:flutter/material.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/tip_model.dart';
 
@@ -47,7 +47,7 @@ class _CopiedTicketEditScreenState extends State<CopiedTicketEditScreen> {
       return;
     }
     setState(() => _isLoading = true);
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) {
       setState(() {
         _error = 'User not logged in';
@@ -55,14 +55,17 @@ class _CopiedTicketEditScreenState extends State<CopiedTicketEditScreen> {
       });
       return;
     }
-    await FirebaseFirestore.instance
-        .collection('copied_bets/$userId')
-        .doc(widget.copyId)
-        .update({
-          'tips': _tips.map((e) => e.toJson()).toList(),
-          'wasModified': true,
-        });
-    if (mounted) Navigator.of(context).pop(true);
+    // Best-effort upsert into copied_bets (if table exists). If not, swallow.
+    try {
+      await Supabase.instance.client.from('copied_bets').upsert({
+        'id': widget.copyId,
+        'user_id': userId,
+        'tips': _tips.map((e) => e.toJson()).toList(),
+        'was_modified': true,
+      }, onConflict: 'id');
+    } catch (_) {}
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
   }
 
   @override

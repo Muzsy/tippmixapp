@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
-import '../services/auth_service.dart';
+import '../services/auth_service_base.dart';
 import 'auth_provider.dart';
 
 /// Streams authentication state changes from [AuthService].

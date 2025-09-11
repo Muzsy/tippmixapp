@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Firebase removed
 
 /// Entities that can be reported.
 enum ReportEntityType { post, thread }
@@ -48,7 +48,7 @@ class Report {
       reason: json['reason'] as String,
       message: json['message'] as String?,
       reporterId: json['reporterId'] as String,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
       status: ReportStatusX.fromJson(json['status'] as String? ?? 'open'),
     );
   }
@@ -60,7 +60,7 @@ class Report {
       'reason': reason,
       if (message != null) 'message': message,
       'reporterId': reporterId, // must match auth.uid per rules
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt.toIso8601String(),
       // 'status' excluded – client cannot set it
     };
     return json;

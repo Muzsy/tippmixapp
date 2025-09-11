@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter/foundation.dart';
+// Firebase App Check removed
 
 import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
@@ -30,53 +29,7 @@ Future<void> main() async {
   await dotenv.load();
   await bootstrap();
 
-  // --- App Check debug token configuration ---
-  // The debug token is supplied at build time via `--dart-define`. Only
-  // compile‑time definitions are considered here. Do NOT read from
-  // `Platform.environment` since that environment variable is for the native
-  // layer (the plugin uses it separately). See launch.json for how the
-  // same token is supplied both as a Dart define and an environment
-  // variable.
-  const debugToken = String.fromEnvironment(
-    'FIREBASE_APP_CHECK_DEBUG_TOKEN',
-    defaultValue: '',
-  );
-
-  // Do not halt execution if the compile-time debug token is missing. The
-  // native plugin can still read the token from the
-  // `FIREBASE_APP_CHECK_DEBUG_TOKEN` environment variable.
-  if (kDebugMode && debugToken.isEmpty) {
-    debugPrint(
-      '⚠️  FIREBASE_APP_CHECK_DEBUG_TOKEN compile-time value missing – '
-      'folytatom futást (env változó még tartalmazhat tokent).',
-    );
-  }
-
-  // Activate App Check. In debug mode the Android/iOS provider is set
-  // accordingly. The debug token is picked up automatically by the native
-  // plugin if the corresponding environment variable has been set. There is
-  // no need to pass the token here in Dart.
-  // Skip App Check when Supabase mode is active
-  const supaMode = bool.fromEnvironment('USE_SUPABASE', defaultValue: true);
-  if (!supaMode) {
-    await FirebaseAppCheck.instance.activate(
-      androidProvider: kDebugMode
-          ? AndroidProvider.debug
-          : AndroidProvider.playIntegrity,
-      appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
-    );
-
-    if (kDebugMode) {
-      try {
-        final debugToken = await FirebaseAppCheck.instance.getToken(true);
-        debugPrint('🔐 DEBUG App Check token: ${debugToken ?? 'NULL'}');
-      } on FirebaseException catch (e) {
-        debugPrint('[APP_CHECK] startup getToken FAILED – ignore (${e.code})');
-      }
-    }
-  }
-
-  // --- end debug token configuration ---
+  // Firebase App Check removed; Supabase-only bootstrap
 
   final container = ProviderContainer();
   final themeFuture = container.read(themeServiceProvider.notifier).hydrate();

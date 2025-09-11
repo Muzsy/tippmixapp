@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
@@ -74,21 +73,6 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       );
       // routing_integrity: név alapú visszanavigálás a Fogadások képernyőre
       context.goNamed(AppRoute.bets.name);
-    } on FirebaseException catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (e.code == 'insufficient_coins') {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Nincs elegendő TippCoin az egyenlegeden.'),
-            ),
-          );
-        }
-      } else {
-        rethrow;
-      }
     } catch (e) {
       setState(() {
         _errorMessage = '${loc.ticket_submit_error} $e';

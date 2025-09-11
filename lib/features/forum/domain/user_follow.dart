@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 /// Követés egy targetre (user/thread/fixture)
 class UserFollow {
   final String id; // doc id (pl. targetId)
@@ -17,23 +15,29 @@ class UserFollow {
   Map<String, dynamic> toMap() => {
     'targetType': targetType,
     'targetId': targetId,
-    'createdAt': Timestamp.fromDate(createdAt),
+    // ISO8601 string a backend-agnosztikus tároláshoz
+    'createdAt': createdAt.toIso8601String(),
   };
 
-  static UserFollow fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
-    final d = doc.data() ?? <String, dynamic>{};
+  factory UserFollow.fromJson(String id, Map<String, dynamic> json) {
     return UserFollow(
-      id: doc.id,
-      targetType: (d['targetType'] ?? '').toString(),
-      targetId: (d['targetId'] ?? '').toString(),
-      createdAt:
-          _toDateTime(d['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0),
+      id: id,
+      targetType: (json['targetType'] ?? '').toString(),
+      targetId: (json['targetId'] ?? '').toString(),
+      createdAt: _parseDate(json['createdAt']) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 
-  static DateTime? _toDateTime(dynamic v) {
-    if (v is Timestamp) return v.toDate();
+  static DateTime? _parseDate(dynamic v) {
+    if (v == null) return null;
     if (v is DateTime) return v;
+    if (v is String) {
+      return DateTime.tryParse(v);
+    }
+    if (v is int) {
+      return DateTime.fromMillisecondsSinceEpoch(v);
+    }
     return null;
   }
 }
