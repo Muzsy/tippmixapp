@@ -168,9 +168,13 @@ class SupabaseForumRepository implements ForumRepository {
 
   @override
   Future<void> voteOnPost({required String postId, required String userId}) async {
+    final uid = _client.auth.currentUser?.id;
+    if (uid == null) {
+      throw Exception('Not authenticated');
+    }
     await _client.from('votes').insert({
       'post_id': postId,
-      'user_id': userId,
+      'user_id': uid,
     });
   }
 

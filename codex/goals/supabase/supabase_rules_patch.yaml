@@ -1,0 +1,267 @@
+# Supabase jogosultsági javítások – patch készlet (2025-09-12)
+
+Az alábbi fájlokat add a repóhoz és futtasd a migrációkat. A kód illeszkedik a korábbi jelentéshez. Minden blokk külön fájlba menthető a megadott útvonalon.
+
+---
+
+## 1) `profiles` auto-provízió – auth trigger
+
+**Fájl:** `supabase/migrations/2025091201_profiles_autoprovision.sql`
+
+```sql
+-- 1) Biztonsági segédfüggvény: jelenlegi user admin-e (ha még nincs, idempotens)
+create or replace function public.is_current_user_admin()
+returns boolean
+language sql
+stable
+as $$
+  select exists(
+    select 1 from public.profiles p
+    where p.id = auth.uid() and coalesce(p.is_admin, false) = true
+  );
+$$;
+
+-- 2) Auth user létrejöttekor profil beszúrása
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public as $$
+begin
+  insert into public.profiles (id, nickname, created_at)
+  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', ''), now())
+  on conflict (id) do nothing;
+  return new;
+end; $$;
+
+-- 3) Trigger az auth.users-re
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+```
+
+---
+
+## 2) Storage RLS az `avatars` bucketre
+
+**Fájl:** `supabase/migrations/2025091202_storage_avatars_policies.sql`
+
+```sql
+-- Feltételezzük, hogy létezik az "avatars" bucket és a RLS engedélyezve van a storage.objects táblán.
+-- A névstruktúra legyen: avatars/<uid>/<filename>
+
+-- Insert saját mappába
+create policy "avatars insert own"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+    and (storage.foldername(name))[2] = auth.uid()
+  );
+
+-- Update saját mappában
+create policy "avatars update own"
+  on storage.objects for update to authenticated
+  using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+    and (storage.foldername(name))[2] = auth.uid()
+  )
+  with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+    and (storage.foldername(name))[2] = auth.uid()
+  );
+
+-- Delete saját mappából
+create policy "avatars delete own"
+  on storage.objects for delete to authenticated
+  using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+    and (storage.foldername(name))[2] = auth.uid()
+  );
+
+-- Read saját mappából (ha privát legyen az avatar)
+create policy "avatars read own"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+    and (storage.foldername(name))[2] = auth.uid()
+  );
+```
+
+> Ha publikus avatarokat akarsz, egyszerűbb a bucket `public = true` és a kliens oldalon `getPublicUrl()` használata; ebben az esetben a fenti **read** policy elhagyható.
+
+---
+
+## 3) Edge Functions – admin (service role) írás a coins táblákhoz
+
+**Fájl:** `supabase/functions/claim_daily_bonus/index.ts` (csere)
+
+```ts
+// deno-lint-ignore-file no-explicit-any
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.46.1";
+
+const url = Deno.env.get("SUPABASE_URL")!;
+const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
+const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+serve(async (req: Request) => {
+  try {
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    if (!token) return new Response(JSON.stringify({ error: "missing token" }), { status: 401 });
+
+    // 1) User ellenőrzés anon kulccsal
+    const supaAuth = createClient(url, anon, { global: { headers: { Authorization: `Bearer ${token}` } } });
+    const { data: userData, error: userErr } = await supaAuth.auth.getUser();
+    if (userErr || !userData?.user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
+    const uid = userData.user.id;
+
+    // 2) Napi bónusz jogosultság/dupla felvétel ellenőrzés (opcionális – RLS safe read)
+    const { data: lastBonus } = await supaAuth
+      .from("coins_ledger")
+      .select("id, created_at")
+      .eq("user_id", uid)
+      .eq("reason", "daily_bonus")
+      .gte("created_at", new Date(new Date().setHours(0,0,0,0)).toISOString())
+      .maybeSingle();
+
+    if (lastBonus) {
+      return new Response(JSON.stringify({ ok: true, skipped: true }), { status: 200 });
+    }
+
+    // 3) Írás service role-lal (RLS bypass)
+    const admin = createClient(url, service);
+    const { error: insErr } = await admin.from("coins_ledger").insert({
+      user_id: uid,
+      delta: 10,
+      reason: "daily_bonus",
+      meta: { source: "edge_function" },
+    });
+    if (insErr) throw insErr;
+
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e?.message ?? "internal" }), { status: 500 });
+  }
+});
+```
+
+**Fájl:** `supabase/functions/coin_trx/index.ts` (csere)
+
+```ts
+// deno-lint-ignore-file no-explicit-any
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.46.1";
+
+const url = Deno.env.get("SUPABASE_URL")!;
+const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
+const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+serve(async (req: Request) => {
+  try {
+    const { delta, reason, meta } = await req.json();
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    if (!token) return new Response(JSON.stringify({ error: "missing token" }), { status: 401 });
+
+    const supaAuth = createClient(url, anon, { global: { headers: { Authorization: `Bearer ${token}` } } });
+    const { data: userData, error: userErr } = await supaAuth.auth.getUser();
+    if (userErr || !userData?.user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
+    const uid = userData.user.id;
+
+    // RLS bypass az íráshoz
+    const admin = createClient(url, service);
+    const { error: insErr } = await admin.from("coins_ledger").insert({ user_id: uid, delta, reason, meta });
+    if (insErr) throw insErr;
+
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e?.message ?? "internal" }), { status: 500 });
+  }
+});
+```
+
+> **Megjegyzés:** A két függvény környezetében legyen beállítva a `SUPABASE_SERVICE_ROLE_KEY` secret. (Supabase: Project Settings → API → Service role key, és Functions → Secrets.)
+
+---
+
+## 4) Forum szavazás – `user_id` ne paraméterből jöjjön
+
+**Fájl:** `lib/features/forum/data/supabase_forum_repository.dart` (részlet csere)
+
+```dart
+// ... osztály eleje változatlan
+Future<void> voteOnPost({ required String postId /*, String? userId - ELTÁVOLÍTVA */ }) async {
+  final uid = _client.auth.currentUser?.id;
+  if (uid == null) {
+    throw Exception('Not authenticated');
+  }
+  final res = await _client.from('votes').insert({
+    'post_id': postId,
+    'user_id': uid,
+  });
+  if (res is PostgrestException) {
+    throw res;
+  }
+}
+```
+
+---
+
+## 5) Fórum admin update policy (pin/lock)
+
+**Fájl:** `supabase/migrations/2025091203_forum_admin_update_policies.sql`
+
+```sql
+-- Csak admin módosíthassa a pinned/locked mezőket a forum_threads táblán
+create policy forum_threads_admin_update
+  on public.forum_threads for update to authenticated
+  using (public.is_current_user_admin())
+  with check (public.is_current_user_admin());
+
+-- (Opcionális) szerző saját threadjén továbbra is szerkeszthessen – ha külön policy-val kezeled
+-- create policy forum_threads_author_update ...
+```
+
+---
+
+## 6) (Opcionális) RLS audit segédnézet
+
+**Fájl:** `supabase/migrations/2025091204_rls_audit_views.sql`
+
+```sql
+create or replace view public.v_rls_effective_policies as
+select
+  schemaname,
+  tablename,
+  policyname,
+  permissive,
+  roles,
+  cmd
+from pg_policies
+order by schemaname, tablename, policyname;
+```
+
+---
+
+# Alkalmazási sorrend (Codex számára röviden)
+
+1. Hozd létre / frissítsd a fenti **SQL** migrációs fájlokat a megadott útvonalon.
+2. Futtasd a migrációkat: `supabase db push` (self-host) vagy `supabase migration up` (remote). Ellenőrizd, hogy a triggerek és policy-k létrejöttek.
+3. Állítsd be a Functions Secrets közt a `SUPABASE_SERVICE_ROLE_KEY`-t.
+4. Cseréld az Edge Functions kódját a megadott verziókra, majd `supabase functions deploy <name>`.
+5. Cseréld a Dart repository `voteOnPost` metódusát a fenti változatra, futtasd `flutter analyze` + unit/widget tesztek.
+6. Kézi smoke-teszt:
+
+   * Új user regisztráció → `profiles` rekord automatikus létrejötte.
+   * Avatar feltöltés `avatars/<uid>/...` pathra → sikeres insert + signed URL generálás.
+   * Daily bonus hívás → egyszer / nap sikeres ledger bejegyzés.
+   * Fórum: admin userrel `pin/lock` update működik; nem adminnál RLS reject.
+
+```
+```
