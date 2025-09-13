@@ -36,7 +36,6 @@ serve(async (req: Request) => {
       user_id: uid,
       delta: 10,
       type: "daily_bonus",
-      meta: { source: "edge_function" },
     });
     if (insErr) throw insErr;
 

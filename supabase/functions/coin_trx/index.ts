@@ -8,7 +8,7 @@ const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 serve(async (req: Request) => {
   try {
-    const { delta, type, meta } = await req.json();
+    const { delta, type } = await req.json();
     const authHeader = req.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
     if (!token) return new Response(JSON.stringify({ error: "missing token" }), { status: 401 });
@@ -20,7 +20,7 @@ serve(async (req: Request) => {
 
     // RLS bypass az íráshoz
     const admin = createClient(url, service);
-    const { error: insErr } = await admin.from("coins_ledger").insert({ user_id: uid, delta, type, meta });
+    const { error: insErr } = await admin.from("coins_ledger").insert({ user_id: uid, delta, type });
     if (insErr) throw insErr;
 
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
