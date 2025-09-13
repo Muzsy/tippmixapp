@@ -84,9 +84,13 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
         AppRoute.threadView.name,
         pathParameters: {'threadId': id},
       ),
-      error: (error, stackTrace) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.saved_error)),
-      ),
+      error: (error, stackTrace) {
+        final s = error.toString();
+        final msg = s.isEmpty ? loc.saved_error : s;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg)),
+        );
+      },
       loading: () {},
     );
   }
@@ -162,4 +166,3 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
     );
   }
 }
-

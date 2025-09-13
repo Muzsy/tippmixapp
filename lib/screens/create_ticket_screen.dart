@@ -100,6 +100,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         return SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + inset),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
             if (_errorMessage != null)
               Padding(
@@ -109,10 +110,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
-            Expanded(
+            Flexible(
+              fit: FlexFit.loose,
               child: tips.isEmpty
                   ? Center(child: Text(loc.no_tips_selected))
                   : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: tips.length,
                       itemBuilder: (context, index) {
                         final TipModel tip = tips[index];

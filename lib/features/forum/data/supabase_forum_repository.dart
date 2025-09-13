@@ -84,17 +84,21 @@ class SupabaseForumRepository implements ForumRepository {
 
   @override
   Future<void> addThread(dom.Thread thread) async {
-    await _client.from('forum_threads').insert({
-      'id': thread.id,
-      'title': thread.title,
-      'author': thread.createdBy,
-      'created_at': thread.createdAt.toIso8601String(),
-      'pinned': thread.pinned,
-      'locked': thread.locked,
-      'last_activity_at': thread.lastActivityAt.toIso8601String(),
-      'type': thread.type.name,
-      if (thread.fixtureId != null) 'fixture_id': thread.fixtureId,
-    });
+    try {
+      await _client.from('forum_threads').insert({
+        'id': thread.id,
+        'title': thread.title,
+        'author': thread.createdBy,
+        'created_at': thread.createdAt.toIso8601String(),
+        'pinned': thread.pinned,
+        'locked': thread.locked,
+        'last_activity_at': thread.lastActivityAt.toIso8601String(),
+        'type': thread.type.name,
+        if (thread.fixtureId != null) 'fixture_id': thread.fixtureId,
+      });
+    } on PostgrestException catch (e) {
+      throw Exception('Thread insert failed: ${e.message}');
+    }
   }
 
   @override
@@ -133,9 +137,8 @@ class SupabaseForumRepository implements ForumRepository {
         'type': post.type.name,
         if (post.quotedPostId != null) 'quoted_post_id': post.quotedPostId,
       });
-    } catch (e) {
-      // Surface better context for UI/error reporting
-      throw Exception('Post insert failed: $e');
+    } on PostgrestException catch (e) {
+      throw Exception('Post insert failed: ${e.message}');
     }
     // The votes_count aggregation happens server-side via trigger
   }
