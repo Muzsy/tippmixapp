@@ -22,7 +22,7 @@ serve(async (req: Request) => {
       .from("coins_ledger")
       .select("id, created_at")
       .eq("user_id", uid)
-      .eq("reason", "daily_bonus")
+      .eq("type", "daily_bonus")
       .gte("created_at", new Date(new Date().setHours(0,0,0,0)).toISOString())
       .maybeSingle();
 
@@ -35,7 +35,7 @@ serve(async (req: Request) => {
     const { error: insErr } = await admin.from("coins_ledger").insert({
       user_id: uid,
       delta: 10,
-      reason: "daily_bonus",
+      type: "daily_bonus",
       meta: { source: "edge_function" },
     });
     if (insErr) throw insErr;

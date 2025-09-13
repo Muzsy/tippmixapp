@@ -31,12 +31,12 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
       (_type != ThreadType.match || _fixtureCtrl.text.trim().isNotEmpty);
 
   @override
-    void initState() {
-      super.initState();
-      _titleCtrl.addListener(_onChanged);
-      _contentCtrl.addListener(_onChanged);
-      _fixtureCtrl.addListener(_onChanged);
-    }
+  void initState() {
+    super.initState();
+    _titleCtrl.addListener(_onChanged);
+    _contentCtrl.addListener(_onChanged);
+    _fixtureCtrl.addListener(_onChanged);
+  }
 
   void _onChanged() => setState(() {});
 
@@ -97,68 +97,69 @@ class _NewThreadScreenState extends ConsumerState<NewThreadScreen> {
     final asyncState = ref.watch(composerControllerProvider);
     return Scaffold(
       appBar: AppBar(title: Text(loc.new_thread_title)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              DropdownButtonFormField<ThreadType>(
-                value: _type,
-                decoration: InputDecoration(labelText: loc.thread_type),
-                items: [
-                  DropdownMenuItem(
-                    value: ThreadType.general,
-                    child: Text(loc.thread_type_general),
-                  ),
-                  DropdownMenuItem(
-                    value: ThreadType.match,
-                    child: Text(loc.thread_type_match),
-                  ),
-                ],
-                onChanged: (v) => setState(() => _type = v ?? ThreadType.general),
-              ),
-              if (_type == ThreadType.match)
-                TextFormField(
-                  key: const Key('fixture'),
-                  controller: _fixtureCtrl,
-                  decoration: InputDecoration(labelText: loc.fixture_id_label),
-                  validator: (v) =>
-                      v!.trim().isEmpty ? loc.field_required : null,
+      body: LayoutBuilder(builder: (context, _) {
+        final inset = MediaQuery.of(context).viewInsets.bottom;
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + inset),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              children: [
+                DropdownButtonFormField<ThreadType>(
+                  value: _type,
+                  decoration: InputDecoration(labelText: loc.thread_type),
+                  items: [
+                    DropdownMenuItem(
+                      value: ThreadType.general,
+                      child: Text(loc.thread_type_general),
+                    ),
+                    DropdownMenuItem(
+                      value: ThreadType.match,
+                      child: Text(loc.thread_type_match),
+                    ),
+                  ],
+                  onChanged: (v) => setState(() => _type = v ?? ThreadType.general),
                 ),
-              const SizedBox(height: 8),
-              TextFormField(
-                key: const Key('title'),
-                controller: _titleCtrl,
-                decoration: InputDecoration(labelText: loc.new_thread_title),
-                validator: (v) =>
-                    v!.trim().isEmpty ? loc.field_required : null,
-              ),
-              TextFormField(
-                key: const Key('content'),
-                controller: _contentCtrl,
-                maxLines: 5,
-                decoration: InputDecoration(labelText: loc.first_post_hint),
-                validator: (v) =>
-                    v!.trim().isEmpty ? loc.field_required : null,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                key: const Key('submit'),
-                onPressed: _isValid && !asyncState.isLoading ? _submit : null,
-                child: asyncState.isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(loc.btn_create_thread),
-              ),
-            ],
+                if (_type == ThreadType.match)
+                  TextFormField(
+                    key: const Key('fixture'),
+                    controller: _fixtureCtrl,
+                    decoration: InputDecoration(labelText: loc.fixture_id_label),
+                    validator: (v) => v!.trim().isEmpty ? loc.field_required : null,
+                  ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  key: const Key('title'),
+                  controller: _titleCtrl,
+                  decoration: InputDecoration(labelText: loc.new_thread_title),
+                  validator: (v) => v!.trim().isEmpty ? loc.field_required : null,
+                ),
+                TextFormField(
+                  key: const Key('content'),
+                  controller: _contentCtrl,
+                  maxLines: 5,
+                  decoration: InputDecoration(labelText: loc.first_post_hint),
+                  validator: (v) => v!.trim().isEmpty ? loc.field_required : null,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  key: const Key('submit'),
+                  onPressed: _isValid && !asyncState.isLoading ? _submit : null,
+                  child: asyncState.isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(loc.btn_create_thread),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
+

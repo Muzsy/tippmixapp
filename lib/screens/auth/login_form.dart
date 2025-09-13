@@ -46,6 +46,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final error = await ref
         .read(authProvider.notifier)
         .login(_emailCtrl.text, _passCtrl.text);
+    if (!mounted) return;
     if (error == null) {
       await ref.read(analyticsServiceProvider).logLoginSuccess(widget.variant);
     }

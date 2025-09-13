@@ -139,9 +139,12 @@ class AuthServiceSupabaseAdapter extends AuthService {
 
   Future<void> _ensureProfile(User u) async {
     try {
+      final fallback = (u.displayName.isNotEmpty)
+          ? u.displayName
+          : (u.email.isNotEmpty ? u.email.split('@').first : 'user_${u.id.substring(0,8)}');
       await _c.from('profiles').upsert({
         'id': u.id,
-        'nickname': (u.displayName.isEmpty ? null : u.displayName),
+        'nickname': fallback,
       }, onConflict: 'id');
     } catch (_) {}
   }

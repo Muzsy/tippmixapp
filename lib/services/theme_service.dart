@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../env/env.dart';
 import 'dart:async';
+import '../theme/available_themes.dart';
 
 /// Immutable state for [ThemeService].
 class ThemeState {
@@ -123,7 +124,7 @@ class ThemeService extends StateNotifier<ThemeState> {
 
   /// Switches to the next available [FlexScheme].
   void toggleTheme() {
-    final next = (state.schemeIndex + 1) % FlexScheme.values.length;
+    final next = (state.schemeIndex + 1) % availableThemes.length;
     state = state.copyWith(schemeIndex: next);
     // ignore: discarded_futures
     saveTheme();
@@ -136,9 +137,9 @@ class ThemeService extends StateNotifier<ThemeState> {
     saveDarkMode();
   }
 
-  /// Sets the scheme to [index] when within range of [FlexScheme.values].
+  /// Sets the scheme to [index] when within range of [availableThemes].
   void setScheme(int index) {
-    if (index >= 0 && index < FlexScheme.values.length) {
+    if (index >= 0 && index < availableThemes.length) {
       state = state.copyWith(schemeIndex: index);
       // ignore: discarded_futures
       saveTheme();

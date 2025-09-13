@@ -93,11 +93,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         : 0.0;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text(loc.createTicketTitle)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
+      body: LayoutBuilder(builder: (context, _) {
+        final inset = MediaQuery.of(context).viewInsets.bottom;
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + inset),
+          child: Column(
+            children: [
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -183,7 +186,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             ),
           ],
         ),
-      ),
+      );
+    }),
     );
   }
 }

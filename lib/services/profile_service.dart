@@ -101,7 +101,7 @@ class ProfileService {
   }) async {
     final client = sb.Supabase.instance.client;
     final raw = await file.readAsBytes();
-    final path = 'avatars/$uid/avatar_256.png';
+    final path = '$uid/avatar_256.png';
     await client.storage.from('avatars').uploadBinary(
           path,
           raw,

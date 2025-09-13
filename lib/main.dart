@@ -10,8 +10,8 @@ import 'bootstrap.dart';
 import 'controllers/app_locale_controller.dart';
 import 'services/theme_service.dart';
 import 'theme/theme_builder.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'router.dart';
+import 'theme/available_themes.dart';
 
 /// Entry point of the application.
 ///
@@ -78,11 +78,11 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(appLocaleControllerProvider);
 
     final lightFuture = buildDynamicTheme(
-      scheme: FlexScheme.values[theme.schemeIndex],
+      scheme: availableThemes[theme.schemeIndex],
       brightness: Brightness.light,
     );
     final darkFuture = buildDynamicTheme(
-      scheme: FlexScheme.values[theme.schemeIndex],
+      scheme: availableThemes[theme.schemeIndex],
       brightness: Brightness.dark,
     );
 
@@ -92,13 +92,13 @@ class MyApp extends ConsumerWidget {
         final light =
             snapshot.data?[0] ??
             buildTheme(
-              scheme: FlexScheme.values[theme.schemeIndex],
+              scheme: availableThemes[theme.schemeIndex],
               brightness: Brightness.light,
             );
         final dark =
             snapshot.data?[1] ??
             buildTheme(
-              scheme: FlexScheme.values[theme.schemeIndex],
+              scheme: availableThemes[theme.schemeIndex],
               brightness: Brightness.dark,
             );
 

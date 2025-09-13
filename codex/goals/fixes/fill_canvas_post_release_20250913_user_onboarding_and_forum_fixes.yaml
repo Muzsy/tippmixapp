@@ -1,0 +1,114 @@
+# A Codex az alábbi lépéseket hajtsa végre. A részletes háttér a kapcsolódó vásznon: 
+# canvases/fixes/post_release_20250913_user_onboarding_and_forum_fixes.md
+
+steps:
+  - name: Migrációk létrehozása – coins_ledger balance trigger
+    description: Hozd létre az új SQL migrációs fájlt, majd futtasd a supabase migrációkat lokálisan.
+    inputs: 
+      path: supabase/migrations/20250913_coins_ledger_balance_trigger.sql
+      sql: |
+        create or replace function public.fn_coins_ledger_set_balance_after()
+        returns trigger as $$
+        declare v_prev int; begin
+          select coalesce(sum(delta),0) into v_prev from public.coins_ledger where user_id=new.user_id;
+          new.balance_after := v_prev + new.delta;
+          return new; end; $$ language plpgsql;
+
+        drop trigger if exists trg_coins_ledger_balance on public.coins_ledger;
+        create trigger trg_coins_ledger_balance
+        before insert on public.coins_ledger
+        for each row execute function public.fn_coins_ledger_set_balance_after();
+    outputs:
+      - supabase/migrations/20250913_coins_ledger_balance_trigger.sql
+
+  - name: Migrációk létrehozása – avatars policy fix
+    description: Tedd rendbe a hibás avatars policy-kat. Új migrációs fájl létrehozása.
+    inputs:
+      path: supabase/migrations/20250913_storage_avatars_policies_fix.sql
+      sql: |
+        drop policy if exists "avatars insert own" on storage.objects;
+        drop policy if exists "avatars update own" on storage.objects;
+        drop policy if exists "avatars delete own" on storage.objects;
+        drop policy if exists "avatars read own"   on storage.objects;
+
+        create policy "avatars insert own"
+          on storage.objects for insert to authenticated
+          with check (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);
+
+        create policy "avatars update own"
+          on storage.objects for update to authenticated
+          using (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text)
+          with check (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);
+
+        create policy "avatars delete own"
+          on storage.objects for delete to authenticated
+          using (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);
+
+        create policy "avatars read own"
+          on storage.objects for select to authenticated
+          using (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);
+    outputs:
+      - supabase/migrations/20250913_storage_avatars_policies_fix.sql
+
+  - name: Biztosítsd a profiles auto-provision/backfill migráció lefutását
+    description: Ellenőrizd, hogy a 202509120015_profiles_trigger_and_backfill.sql már lefutott-e; ha nem, futtasd.
+    outputs:
+      - supabase/migrations/202509120015_profiles_trigger_and_backfill.sql
+
+  - name: Edge function patch – claim_daily_bonus (reason→type)
+    description: A reason mezőt cseréld type-ra, egyéb logika változatlan. Buildeld és deploy-old a függvényt.
+    outputs:
+      - supabase/functions/claim_daily_bonus/index.ts
+      - dist/edge/claim_daily_bonus/*
+
+  - name: Edge function patch – coin_trx (reason→type)
+    description: A request body-ban és az insert-ben is type mezőt használjunk. Build + deploy.
+    outputs:
+      - supabase/functions/coin_trx/index.ts
+      - dist/edge/coin_trx/*
+
+  - name: Kliens – avatar upload path javítás
+    description: A bucket nevét ne ismételd az útvonalban. `avatars/$uid/...` helyett `$uid/...` legyen a path.
+    outputs:
+      - lib/services/profile_service.dart
+
+  - name: Kliens – profil upsert fallback nickname
+    description: Ne kerüljön null nickname az upsert-be. Email előtag vagy generált azonosító legyen a fallback.
+    outputs:
+      - lib/services/auth_service_supabase.dart
+
+  - name: Kliens – Fórum Új szál képernyő görgethető űrlap
+    description: Column helyett SingleChildScrollView + dinamikus alsó padding a billentyűzethez.
+    outputs:
+      - lib/screens/forum/new_thread_screen.dart
+
+  - name: Kliens – Szelvény képernyő overflow fix
+    description: SingleChildScrollView, `resizeToAvoidBottomInset: true`, alsó padding a `viewInsets.bottom` alapján.
+    outputs:
+      - lib/screens/create_ticket_screen.dart
+
+  - name: Kliens – Login mounted check
+    description: Await után ellenőrizd a `mounted` állapotot, csak így olvass `ref`-et.
+    outputs:
+      - lib/screens/auth/login_form.dart
+
+  - name: Kliens – téma forrásának korlátozása a két elérhető sémára
+    description: Ahol eddig `FlexScheme.values[...]` volt, ott `availableThemes[...]` legyen és a hossz-ellenőrzés is ehhez igazodjon.
+    outputs:
+      - lib/main.dart
+      - lib/services/theme_service.dart
+
+  - name: Supabase migrációk futtatása
+    description: Futtasd le a friss migrációkat lokálisan/dev környezetben. Ha Dockeres self-host, `supabase start` után `supabase db reset --linked`/`supabase db push`.
+    outputs:
+      - database schema up-to-date
+
+  - name: Edge Functions deploy
+    description: Deployáld a módosított függvényeket (claim_daily_bonus, coin_trx). Ellenőrizd a projekt kulcsokat/URL-t .env-ben.
+    outputs:
+      - edge functions deployed
+
+  - name: Smoke teszt forgatókönyv
+    description: Regisztráció → profil létrejön → daily bonus claim → coins_ledger sor + egyenleg nő → avatar feltöltés → fórum új szál → szelvény leadás → téma váltás zöld/pink között.
+    outputs:
+      - test evidence: képernyőképek / logok
