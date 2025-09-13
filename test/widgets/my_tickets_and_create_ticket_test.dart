@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:tipsterino/l10n/app_localizations.dart';
 import 'package:tipsterino/models/ticket_model.dart';
 import 'package:tipsterino/models/tip_model.dart';
 import 'package:tipsterino/models/user.dart' as app;
 import 'package:tipsterino/providers/auth_provider.dart';
-import 'package:tipsterino/providers/onboarding_provider.dart'
-    show firebaseAuthProvider;
-import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service_base.dart';
 import 'package:tipsterino/providers/bet_slip_provider.dart';
 import 'package:tipsterino/screens/create_ticket_screen.dart';
 import 'package:tipsterino/screens/my_tickets_screen.dart';
@@ -57,25 +54,27 @@ class _FakeAuthService implements AuthService {
   bool get isEmailVerified => true;
   @override
   app.User? get currentUser => null;
+
+  @override
+  Future<void> verifyEmailOtp(String email, String code) async {}
+
+  @override
+  Future<void> resendSignupOtp(String email) async {}
 }
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
-
-class MockUser extends Mock implements User {}
+// Firebase mocks removed; Supabase-only tests
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('MyTicketsScreen', () {
     testWidgets('shows empty placeholder when user is null', (tester) async {
       final authCtrl = StreamController<app.User?>();
-      final mockAuth = MockFirebaseAuth();
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             authServiceProvider.overrideWith(
               (ref) => _FakeAuthService(authCtrl),
             ),
-            firebaseAuthProvider.overrideWithValue(mockAuth),
           ],
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -121,10 +120,6 @@ void main() {
       );
 
       final authCtrl = StreamController<app.User?>();
-      final mockAuth = MockFirebaseAuth();
-      final mockUser = MockUser();
-      when(() => mockUser.uid).thenReturn('u1');
-      when(() => mockAuth.currentUser).thenReturn(mockUser);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -132,7 +127,6 @@ void main() {
             authServiceProvider.overrideWith(
               (ref) => _FakeAuthService(authCtrl),
             ),
-            firebaseAuthProvider.overrideWithValue(mockAuth),
           ],
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

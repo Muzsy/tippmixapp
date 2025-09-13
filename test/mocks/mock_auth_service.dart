@@ -82,4 +82,10 @@ class MockAuthService implements AuthService {
     Duration timeout = const Duration(minutes: 3),
     Duration interval = const Duration(seconds: 5),
   }) async => true;
+
+  @override
+  Future<void> verifyEmailOtp(String email, String code) async {}
+
+  @override
+  Future<void> resendSignupOtp(String email) async {}
 }

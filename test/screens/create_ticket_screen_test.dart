@@ -10,7 +10,7 @@ import 'package:tipsterino/screens/create_ticket_screen.dart';
 import 'package:tipsterino/providers/auth_provider.dart';
 import 'package:tipsterino/models/user.dart' as m;
 import 'package:tipsterino/models/auth_state.dart';
-import 'package:tipsterino/services/auth_service.dart';
+import 'package:tipsterino/services/auth_service_base.dart';
 
 // ------------------------------------------------------------------
 // T04 – CreateTicketScreen widget-tesztek (Sprint5) – **FIXED v3**
@@ -62,6 +62,12 @@ class _FakeAuthService implements AuthService {
     Duration timeout = const Duration(minutes: 3),
     Duration interval = const Duration(seconds: 5),
   }) async => true;
+
+  @override
+  Future<void> verifyEmailOtp(String email, String code) async {}
+
+  @override
+  Future<void> resendSignupOtp(String email) async {}
 }
 
 class _FakeAuthNotifier extends AuthNotifier {
